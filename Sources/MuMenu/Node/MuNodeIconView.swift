@@ -5,10 +5,10 @@ import SwiftUI
 struct MuNodeIconView: View {
 
     @ObservedObject var nodeVm: MuNodeVm
-    let icon: String
+    let image: UIImage
 
-    var color: Color { nodeVm.spotlight ? .white : .black }
-    var width: CGFloat { nodeVm.spotlight ? 2 : 1 }
+    var color: Color   { nodeVm.spotlight ? .white : .gray }
+    var width: CGFloat { nodeVm.spotlight ?    2.0 :   0.5 }
 
     var body: some View {
         ZStack {
@@ -20,7 +20,7 @@ struct MuNodeIconView: View {
                 .animation(Layout.flashAnim, value: width)
                 .background(Color.clear)
 
-            Image(icon)
+            Image(uiImage: image)
                 .resizable()
         }
     }

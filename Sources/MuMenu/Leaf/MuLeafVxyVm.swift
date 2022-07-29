@@ -11,10 +11,9 @@ public class MuLeafVxyVm: MuLeafVm {
 
     init (_ node: MuNode,
           _ branchVm: MuBranchVm,
-          _ prevVm: MuNodeVm?,
-          icon: String = "") {
+          _ prevVm: MuNodeVm?) {
         
-        super.init(.vxy, node, branchVm, prevVm, icon: icon)
+        super.init(.vxy, node, branchVm, prevVm)
         node.proxies.append(self)  // MuLeaf delegate for setting value
         proto = node.proto ?? prevVm?.node.proto
 

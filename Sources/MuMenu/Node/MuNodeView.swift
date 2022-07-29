@@ -18,7 +18,10 @@ struct MuNodeView: View {
                     case let n as MuLeafTapVm: MuLeafTapView(leafVm: n)
 
                     default:
-                        if let icon = nodeVm.icon {
+                        if nodeVm.node.icon.count > 0,
+                           let image = UIImage(named: nodeVm.node.icon) {
+                            MuNodeIconView(nodeVm: nodeVm, image: image)
+                        } else if let icon = nodeVm.icon {
                             Image(icon).resizable()
                         } else {
                             MuNodeTextView(nodeVm: nodeVm)
