@@ -12,7 +12,8 @@ public class MuNodeTest: MuNode {
          children: [MuNodeTest]? = nil)
     {
 
-        super.init(name: name)
+        let icon = MuIcon(.cursor, named: Layout.hoverRing)
+        super.init(name: name, icon: icon)
         
         if let children = children {
             for child in children {

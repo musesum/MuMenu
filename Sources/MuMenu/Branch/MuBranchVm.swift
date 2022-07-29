@@ -76,6 +76,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
         else if let leafType = nodeSpotVm.node.leafType() {
             
             let leafNode = MuNode(name: "✎"+nodeSpotVm.node.name,
+                                  icon: nodeSpotVm.node.icon,
                                   parent: nodeSpotVm.node)
             
             let _ = MuBranchVm

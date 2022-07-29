@@ -20,7 +20,6 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
 
     let nodeType: MuNodeType  /// node, val, vxy, seg, tog, tap
     let node: MuNode          /// each model MuNode maybe on several MuNodeVm's
-    let icon: String?         /// icon for this node (not implemented)
     var branchVm: MuBranchVm  /// branch that this node is on
     var nextBranchVm: MuBranchVm? /// branch this node generates
 
@@ -33,21 +32,19 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
     init (_ nodeType: MuNodeType,
           _ node: MuNode,
           _ branchVm: MuBranchVm,
-          _ prevVm: MuNodeVm? = nil,
-          icon: String? = nil) {
-
+          _ prevVm: MuNodeVm? = nil) {
+        
         self.nodeType = nodeType
         self.node = node
         self.branchVm = branchVm
         self.prevVm = prevVm
-        self.icon = icon
         self.panelVm = MuPanelVm(nodeType: nodeType,
                                  treeVm: branchVm.treeVm)
         prevVm?.nextBranchVm = branchVm
     }
     
     func copy() -> MuNodeVm {
-        let nodeVm = MuNodeVm(panelVm.nodeType, node, branchVm, self, icon: icon)
+        let nodeVm = MuNodeVm(panelVm.nodeType, node, branchVm, self)
         return nodeVm
     }
 

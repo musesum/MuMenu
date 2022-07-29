@@ -6,7 +6,7 @@ open class MuNode: Identifiable, Equatable {
     public let id = MuIdentity.getId()
 
     public var name: String
-    public var icon: String
+    public var icon: MuIcon
     public var children = [MuNode]()
     public var proto: MuNodeProtocol?
     public var proxies = [MuLeafProxy]()
@@ -16,7 +16,7 @@ open class MuNode: Identifiable, Equatable {
     }
 
     public init(name: String,
-                icon: String = "",
+                icon: MuIcon,
                 parent: MuNode? = nil) {
 
         self.name = name

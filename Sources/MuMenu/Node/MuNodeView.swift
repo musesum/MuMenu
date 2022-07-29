@@ -16,16 +16,7 @@ struct MuNodeView: View {
                     case let n as MuLeafSegVm: MuLeafSegView(leafVm: n)
                     case let n as MuLeafTogVm: MuLeafTogView(leafVm: n)
                     case let n as MuLeafTapVm: MuLeafTapView(leafVm: n)
-
-                    default:
-                        if nodeVm.node.icon.count > 0,
-                           let image = UIImage(named: nodeVm.node.icon) {
-                            MuNodeIconView(nodeVm: nodeVm, image: image)
-                        } else if let icon = nodeVm.icon {
-                            Image(icon).resizable()
-                        } else {
-                            MuNodeTextView(nodeVm: nodeVm)
-                        }
+                    default: MuIconView(nodeVm: nodeVm, icon: nodeVm.node.icon)
                 }
             }
             .onChange(of: geo.frame(in: .named("Canvas"))) { nodeVm.updateCenter($0) }
