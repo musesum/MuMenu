@@ -5,7 +5,7 @@ import SwiftUI
 open class MuNode: Identifiable, Equatable {
     public let id = MuIdentity.getId()
 
-    public var name: String
+    public var title: String
     public var icon: MuIcon
     public var children = [MuNode]()
     public var proto: MuNodeProtocol?
@@ -19,7 +19,7 @@ open class MuNode: Identifiable, Equatable {
                 icon: MuIcon,
                 parent: MuNode? = nil) {
 
-        self.name = name
+        self.title = name
         self.icon = icon
         parent?.children.append(self)
     }

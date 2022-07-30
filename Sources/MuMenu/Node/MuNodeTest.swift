@@ -24,16 +24,16 @@ public class MuNodeTest: MuNode {
 
     func setName(from corner: MuCorner) {
         switch corner {
-            case [.lower, .right]: name = "◢"
-            case [.lower, .left ]: name = "◣"
-            case [.upper, .right]: name = "◥"
-            case [.upper, .left ]: name = "◤"
+            case [.lower, .right]: title = "◢"
+            case [.lower, .left ]: title = "◣"
+            case [.upper, .right]: title = "◥"
+            case [.upper, .left ]: title = "◤"
 
                 // reserved for later middling roots
-            case [.upper]: name = "▲"
-            case [.right]: name = "▶︎"
-            case [.lower]: name = "▼"
-            case [.left ]: name = "◀︎"
+            case [.upper]: title = "▲"
+            case [.right]: title = "▶︎"
+            case [.lower]: title = "▼"
+            case [.left ]: title = "◀︎"
             default:       break
         }
     }

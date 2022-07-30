@@ -21,8 +21,8 @@ public class MuBranchVm: Identifiable, ObservableObject {
     var level: CGFloat = 0        /// zIndex within sub/super branches
 
     var title: String {
-        let nameFirst = nodeVms.first?.node.name ?? ""
-        let nameLast  = nodeVms.last?.node.name ?? ""
+        let nameFirst = nodeVms.first?.node.title ?? ""
+        let nameLast  = nodeVms.last?.node.title ?? ""
         return nameFirst + "…" + nameLast
     }
 
@@ -75,7 +75,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
         }
         else if let leafType = nodeSpotVm.node.leafType() {
             
-            let leafNode = MuNode(name: "✎"+nodeSpotVm.node.name,
+            let leafNode = MuNode(name: "✎"+nodeSpotVm.node.title,
                                   icon: nodeSpotVm.node.icon,
                                   parent: nodeSpotVm.node)
             

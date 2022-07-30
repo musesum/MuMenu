@@ -100,9 +100,9 @@ extension MuNodeVm {
 
     func path() -> String {
         if let prior = prevVm?.path() {
-            return prior + "." + node.name
+            return prior + "." + node.title
         } else {
-            return node.name
+            return node.title
         }
     }
 
