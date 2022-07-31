@@ -7,7 +7,7 @@ struct MuIconView: View {
     @ObservedObject var nodeVm: MuNodeVm
     let icon: MuIcon
     var color: Color { nodeVm.spotlight ? .white : .gray }
-    var fill: Color { icon.type == .cursor ? .clear : .black}
+    var fill: Color { icon.type == .cursor ? .clear : .black }
     var width: CGFloat { nodeVm.spotlight ? 2.0 : 0.5 }
 
     var body: some View {

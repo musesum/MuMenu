@@ -76,6 +76,29 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
         branchVm.expandBranch()
         branchVm.treeVm.refreshTree(branchVm)
     }
+    func refreshStatus() {
+
+        var before = [MuNodeVm]()
+        var after = [MuNodeVm]()
+
+        func deepBefore(_ nodeVm: MuNodeVm?) {
+            if let nodeVm = nodeVm {
+                deepBefore(nodeVm.prevVm)
+                before.append(nodeVm)
+            }
+        }
+
+        func deepAfter(_ nodeVm: MuNodeVm) {
+            if let nodeVm = nodeVm.nextBranchVm?.nodeSpotVm {
+                after.append(nodeVm)
+                deepAfter(nodeVm)
+            }
+        }
+
+        deepBefore(self)
+        deepAfter(self)
+        MuStatusVm.shared.update(before: before, after: after)
+    }
 }
 extension MuNodeVm {
     

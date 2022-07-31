@@ -98,7 +98,7 @@ extension MuLeafVxyVm: MuLeafProxy {
         } else {
             editing = false
         }
-
+        
         func tapThumb() {
             let touchDelta = touchState.pointNow - runwayBounds.origin
             let thumbPrior = panelVm.normalizeTouch(xy: touchDelta)
@@ -153,8 +153,8 @@ extension MuLeafVxyVm: MuLeafProxy {
     }
     public override func valueText() -> String {
         String(format: "x %.2f y %.2f",
-               expand(named: "x", thumb.x),
-               expand(named: "y", thumb.y))
+                      expand(named: "x", thumb.x),
+                      expand(named: "y", thumb.y))
     }
     public override func thumbOffset() -> CGSize {
         CGSize(width:  thumb.x * panelVm.runway,

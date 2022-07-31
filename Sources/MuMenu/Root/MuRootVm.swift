@@ -31,6 +31,7 @@ public class MuRootVm: ObservableObject, Equatable {
         if self.nodeSpotVm != nodeSpotVm  {
             self.nodeSpotVm = nodeSpotVm
             nodeSpotVm.refreshBranch()
+            nodeSpotVm.refreshStatus()
         }
     }
 
@@ -101,6 +102,7 @@ public class MuRootVm: ObservableObject, Equatable {
     func touchBegin(_ touchState: MuTouchState) {
         beginElements = viewElements
         updateRoot(touchState)
+        MuStatusVm.shared.show = true
     }
     func touchMoved(_ touchState: MuTouchState) {
         updateRoot(touchState)
@@ -115,6 +117,7 @@ public class MuRootVm: ObservableObject, Equatable {
         }
         treeSpotVm?.branchSpotVm = nil
         touchElement = .none
+        MuStatusVm.shared.show = false
     }
 
     private func updateRoot(_ touchState: MuTouchState) {
@@ -272,6 +275,7 @@ public class MuRootVm: ObservableObject, Equatable {
             for proxy in leafVm.node.proxies {
                 proxy.touchLeaf(touchState)
             }
+            MuStatusVm.shared.show = true
         }
 
         func showTrunks() {

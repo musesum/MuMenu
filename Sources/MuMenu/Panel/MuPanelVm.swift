@@ -43,10 +43,10 @@ public class MuPanelVm {
             case .none : aspect(1.0, 1.0)
             case .node : aspect(1.0, 1.0)
             case .val  : aspect(1.0, 4.0)
-            case .vxy  : aspect(4.0, 4.0)
+            case .vxy  : aspect(3.0, 3.0)
             case .tog  : aspect(1.0, 1.5)
             case .seg  : aspect(1.0, 4.0)
-            case .tap  : aspect(1.25, 1.25)
+            case .tap  : aspect(1.0, 1.0)
         }
     }
 
