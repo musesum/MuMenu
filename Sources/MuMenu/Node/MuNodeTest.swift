@@ -1,7 +1,6 @@
 // Created by warren on 10/17/21.
 
 import SwiftUI
-//import Par // CallAny
 
 /// shared between 1 or more MuNodeVm
 public class MuNodeTest: MuNode {

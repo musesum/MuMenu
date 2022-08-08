@@ -27,11 +27,11 @@ public class MuBranchVm: Identifiable, ObservableObject {
     }
 
     public init(nodes: [MuNode] = [],
-         treeVm: MuTreeVm,
-         branchPrev: MuBranchVm? = nil,
-         nodeType: MuNodeType = .node,
-         prevNodeVm: MuNodeVm? = nil,
-         level: CGFloat = 0) {
+                treeVm: MuTreeVm,
+                branchPrev: MuBranchVm? = nil,
+                nodeType: MuNodeType = .node,
+                prevNodeVm: MuNodeVm? = nil,
+                level: CGFloat = 0) {
 
         self.nodeVms = []
         self.treeVm = treeVm
@@ -75,7 +75,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
         }
         else if let leafType = nodeSpotVm.node.leafType() {
             
-            let leafNode = MuNode(name: "✎"+nodeSpotVm.node.title,
+            let leafNode = MuNode(name: "✎" + nodeSpotVm.node.title,
                                   icon: nodeSpotVm.node.icon,
                                   parent: nodeSpotVm.node)
             
