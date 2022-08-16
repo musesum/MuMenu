@@ -34,9 +34,8 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
 
     func nearestTrunk(_ touchNow: CGPoint) -> MuBranchVm? {
         if let firstBranch = branchVms.first,
-           firstBranch.show {
-
-            firstBranch.boundsPad.contains(touchNow)
+           firstBranch.show,
+           firstBranch.boundsPad.contains(touchNow) {
             return firstBranch
         }
         return nil
