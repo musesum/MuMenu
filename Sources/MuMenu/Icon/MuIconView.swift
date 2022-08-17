@@ -25,13 +25,11 @@ struct MuIconView: View {
 
                 case .none:
 
-                    MuIconTextView(icon: icon,
-                                   text: nodeVm.node.title,
+                    MuIconTextView(text: nodeVm.node.title,
                                    color: color)
                 case .abbrv:
 
-                    MuIconTextView(icon: icon,
-                                   text: nodeVm.node.icon.named,
+                    MuIconTextView(text: nodeVm.node.icon.named,
                                    color: color)
                 case .cursor:
 
@@ -42,16 +40,16 @@ struct MuIconView: View {
 
                 case .image:
 
-                    if let uiImage = UIImage(named: nodeVm.node.icon.named) {
+                    if let image = icon.image {
                         GeometryReader { geo in
-                            Image(uiImage: uiImage)
+                            Image(uiImage: image)
                                 .resizable()
                                 .padding(geo.size.width * 0.1)
                         }
                     } else {
-                        MuIconTextView(icon: icon,
-                                       text: nodeVm.node.title,
+                        MuIconTextView(text: nodeVm.node.title,
                                        color: color)
+
                     }
                 case .symbol:
 
@@ -65,7 +63,6 @@ struct MuIconView: View {
 
 private struct MuIconTextView: View {
 
-    let icon: MuIcon
     let text: String
     var color: Color
 
