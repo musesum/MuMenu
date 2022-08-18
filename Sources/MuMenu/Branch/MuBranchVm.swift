@@ -159,14 +159,15 @@ public class MuBranchVm: Identifiable, ObservableObject {
         return nil
     }
 
-    func updateBounds(_ from: CGRect) {
+    /// update from MuBranchView
+    func updateBranchBounds(_ from: CGRect) {
         if boundsNow != from {
-            boundsNow = panelVm.updateBounds(from)
+            boundsNow = panelVm.updatePanelBounds(from)
             boundsPad = boundsNow.pad(Layout.padding)
+            updateShiftRange()
         }
         if boundStart == .zero {
             updateShiftRange()
-
         }
     }
     private var boundStart: CGRect = .zero
@@ -227,7 +228,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
             let hh = abs(clampDelta.height) / boundStart.height
             branchOpacity = min(1-ww,1-hh)
         }
-       logBounds()
+       //?? logBounds()
     }
     
 }

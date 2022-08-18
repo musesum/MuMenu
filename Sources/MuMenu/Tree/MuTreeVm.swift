@@ -86,6 +86,15 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
                 branchVm = b.nodeSpotVm?.nextBranchVm
             }
         }
+        //???
+        branchVm = branchVms.first
+        while branchVm != nil {
+            if let b = branchVm {
+                b.updateShiftRange()
+                branchVm = b.nodeSpotVm?.nextBranchVm
+            }
+        }
+
         logName()
         branchVms = newBranches
     }
