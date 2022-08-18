@@ -6,18 +6,18 @@ struct MuBranchPanelView: View {
     
     var panelVm: MuPanelVm
     let spotlight: Bool
-    var strokeColor: Color { spotlight ? .gray : .clear }
+    var strokeColor: Color { spotlight ? .white : .clear }
     var lineWidth: CGFloat { spotlight ? 1 : 1 }
 
     var body: some View {
         GeometryReader { geo in
             Rectangle()
-                .opacity(0.1)
                 .background(.ultraThinMaterial)
                 .cornerRadius(panelVm.cornerRadius)
                 .overlay(RoundedRectangle(cornerRadius: panelVm.cornerRadius)
                     .stroke(strokeColor, lineWidth: lineWidth))
-                .opacity(0.5)
+                .opacity(0.66)
+
         }
     }
 }
