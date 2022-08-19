@@ -5,7 +5,6 @@ import SwiftUI
 struct MuLeafSegView: View {
     
     @ObservedObject var leafVm: MuLeafSegVm
-    var panelVm: MuPanelVm { leafVm.panelVm }
 
     var body: some View {
         MuLeafView(leafVm) {
@@ -18,12 +17,7 @@ struct MuLeafSegView: View {
                     .allowsHitTesting(false)
             }
             // thumb dot
-            Capsule()
-                .fill(.white)
-                .frame(width:  panelVm.thumbDiameter,
-                       height: panelVm.thumbDiameter)
-                .offset(leafVm.thumbOffset())
-                .allowsHitTesting(false)
+            MuLeafThumbSlideView(leafVm: leafVm)
         }
     }
 }

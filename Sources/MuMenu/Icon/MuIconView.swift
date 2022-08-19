@@ -14,13 +14,10 @@ struct MuIconView: View {
         ZStack {
             RoundedRectangle(cornerRadius: nodeVm.panelVm.cornerRadius)
                 .fill(fill)
-
-            RoundedRectangle(cornerRadius: nodeVm.panelVm.cornerRadius)
-                .stroke(color, lineWidth: width)
-                .animation(Layout.flashAnim, value: color)
-                .animation(Layout.flashAnim, value: width)
-                .background(Color.clear)
-
+                .overlay(RoundedRectangle(cornerRadius: nodeVm.panelVm.cornerRadius)
+                    .stroke(color, lineWidth: width)
+                    .background(Color.clear))
+            
             switch icon.type {
 
                 case .none:

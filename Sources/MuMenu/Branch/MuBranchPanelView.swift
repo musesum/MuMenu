@@ -17,7 +17,6 @@ struct MuBranchPanelView: View {
                 .overlay(RoundedRectangle(cornerRadius: panelVm.cornerRadius)
                     .stroke(strokeColor, lineWidth: lineWidth))
                 .opacity(0.66)
-
         }
     }
 }

@@ -87,19 +87,18 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
                 before.append(nodeVm)
             }
         }
-
         func deepAfter(_ nodeVm: MuNodeVm) {
             if let nodeVm = nodeVm.nextBranchVm?.nodeSpotVm {
                 after.append(nodeVm)
                 deepAfter(nodeVm)
             }
         }
-
         deepBefore(self)
         deepAfter(self)
         MuStatusVm.shared.update(before: before, after: after)
     }
 }
+
 extension MuNodeVm {
     
     static func cached(_ nodeType: MuNodeType,

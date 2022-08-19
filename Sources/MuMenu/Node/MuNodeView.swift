@@ -25,7 +25,6 @@ struct MuNodeView: View {
         .frame(width: panelVm.inner.width, height: panelVm.inner.height)
         .padding(Layout.padding)
         .allowsHitTesting(true)
-        .animation(.easeInOut(duration: Layout.animate), value: nodeVm.center)
     }
 }
 

@@ -20,13 +20,7 @@ struct MuLeafVxyView: View {
                             .offset(CGSize(width: $0.width, height: $0.height))
                             .allowsHitTesting(false)
                     }
-                    // thumb dot
-                    Capsule()
-                        .fill(.white)
-                        .frame(width: panelVm.thumbDiameter,
-                               height: panelVm.thumbDiameter)
-                        .offset(leafVm.thumbOffset())
-                        .allowsHitTesting(false)
+                    MuLeafThumbSlideView(leafVm: leafVm)
                 }
             }
         }
