@@ -88,7 +88,7 @@ public class MuTouchVm: ObservableObject {
     /// either center dragNode icon on spotNode or track finger
     func alignSpotWithTouch(_ touchNow: CGPoint) {
 
-        guard let rootVm = rootVm else {
+        guard let rootVm else {
             return dragIconXY = touchNow
         }
         if !touchState.touching ||

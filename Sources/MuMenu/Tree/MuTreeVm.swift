@@ -68,7 +68,7 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
 
         var delim = " " // for logName
         func logName(_ name: String? = nil) {
-            if let name = name {
+            if let name {
                 print(delim + name, terminator: "")
                 delim = "."
             } else {
@@ -81,12 +81,10 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
         while branchVm != nil {
             if let b = branchVm {
                 b.show = true
-                //?? logName(b.nodeSpotVm?.node.name)
                 newBranches.append(b)
                 branchVm = b.nodeSpotVm?.nextBranchVm
             }
         }
-        //???
         branchVm = branchVms.first
         while branchVm != nil {
             if let b = branchVm {
@@ -94,7 +92,6 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
                 branchVm = b.nodeSpotVm?.nextBranchVm
             }
         }
-
         logName()
         branchVms = newBranches
     }

@@ -110,8 +110,7 @@ public class MuRootVm: ObservableObject, Equatable {
         updateRoot(touchState)
 
         /// turn off spotlight for leaf after edit
-        if let nodeSpotVm = nodeSpotVm,
-           nodeSpotVm.nodeType.isLeaf {
+        if let nodeSpotVm, nodeSpotVm.nodeType.isLeaf {
             nodeSpotVm.spotlight = false
         }
         treeSpotVm?.branchSpotVm = nil
@@ -158,8 +157,8 @@ public class MuRootVm: ObservableObject, Equatable {
         }
 
         func hoverNodeSpot() -> Bool {
-            if let nodeSpotVm = nodeSpotVm,
-               nodeSpotVm.center.distance(touchNow) < Layout.insideNode {
+            if let center = nodeSpotVm?.center,
+                center.distance(touchNow) < Layout.insideNode {
                 touchElement = .node
                 return true
             }
@@ -185,7 +184,7 @@ public class MuRootVm: ObservableObject, Equatable {
         }
         func hoverTreeNow() -> Bool {
             // check current set of menus
-            guard let treeSpotVm = treeSpotVm else { return false }
+            guard let treeSpotVm else { return false }
             if let nearestBranch = treeSpotVm.nearestBranch(touchNow) {
 
                 if let nearestNodeVm = nearestBranch.findNearestNode(touchNow) {
@@ -298,7 +297,7 @@ public class MuRootVm: ObservableObject, Equatable {
             }
         }
         func showBranches() {
-            if let treeSpotVm = treeSpotVm {
+            if let treeSpotVm {
                 for treeVm in treeVms {
                     if treeVm == treeSpotVm {
                         treeVm.showBranches(depth: 999)

@@ -82,7 +82,7 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
         var after = [MuNodeVm]()
 
         func deepBefore(_ nodeVm: MuNodeVm?) {
-            if let nodeVm = nodeVm {
+            if let nodeVm {
                 deepBefore(nodeVm.prevVm)
                 before.append(nodeVm)
             }

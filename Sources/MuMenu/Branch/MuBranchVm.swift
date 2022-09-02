@@ -104,12 +104,12 @@ public class MuBranchVm: Identifiable, ObservableObject {
     /** May be updated after init for root tree inside update Root
      */
     func updateTree(_ treeVm: MuTreeVm?) {
-        guard let treeVm = treeVm else { return }
+        guard let treeVm else { return }
         self.treeVm = treeVm
     }
 
     func addNodeVm(_ nodeVm: MuNodeVm?) {
-        guard let nodeVm = nodeVm else { return }
+        guard let nodeVm else { return }
         if nodeVms.contains(nodeVm) { return }
         nodeVms.append(nodeVm)
     }
@@ -177,9 +177,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
 
     func updateShiftRange() {
         guard let touchVm = treeVm.rootVm?.touchVm else { return }
-
         boundStart = boundsNow - CGPoint(treeVm.treeShifting)
-
         let boundsPriorSize = branchPrev?.boundsPrior ?? .zero
         let boundsPrevSize = branchPrev?.boundStart.size ?? .zero
         let priorPadding = branchPrev == nil ? 0 : Layout.padding * 2
