@@ -16,7 +16,7 @@ public struct MuRootView: View {
 }
 
 /// space with: vert, hori, and pilot views
-private struct SpaceView: View {
+private struct ForestView: View {
     @EnvironmentObject var rootVm: MuRootVm
     var body: some View {
 
@@ -33,7 +33,7 @@ private struct LowerRightView: View {
         HStack(alignment: .bottom) {
             Spacer()
             ZStack(alignment: .bottomTrailing) {
-                SpaceView()
+                ForestView()
             }
         }
     }
@@ -46,7 +46,7 @@ private struct UpperRightView: View {
             HStack(alignment: .top) {
                 Spacer()
                 ZStack(alignment: .topTrailing) {
-                    SpaceView()
+                    ForestView()
                     Spacer()
                 }
             }
@@ -60,7 +60,7 @@ private struct LowerLeftView: View {
     var body: some View {
         HStack(alignment: .bottom) {
             ZStack(alignment: .bottomLeading) {
-                SpaceView()
+                ForestView()
             }
             Spacer()
         }
@@ -73,7 +73,7 @@ private struct UpperLeftView: View {
         VStack(alignment: .leading) {
             HStack(alignment: .top) {
                 ZStack(alignment: .topLeading) {
-                    SpaceView()
+                    ForestView()
                 }
                 Spacer()
             }

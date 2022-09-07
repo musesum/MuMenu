@@ -11,21 +11,24 @@ public class MuRootVm: ObservableObject, Equatable {
     /// what is the finger touching
     @Published var touchElement = MuElement.none
 
+    /// captures touch events to dispatch to this root
+    public let touchVm = MuTouchVm()
+
     /// which menu elements are shown on View
     var viewElements: Set<MuElement> = [.root, .trunks] {
         willSet { if viewElements != newValue {
                 log(":", [beginElements,"⟶",newValue], terminator: " ")
             } } }
 
-    /// touchBegin snapshot of viewElements, to prevent
-    /// touchEnded hiding elements show  during touchBegin
+    /// touchBegin snapshot of viewElements.
+    /// To prevent touchEnded from hiding elements that were shown during touchBegin
     var beginElements: Set<MuElement> = []
 
     var corner: MuCorner        /// corner where root begins, ex: `[south,west]`
-    public let touchVm = MuTouchVm()   /// captures touch events to dispatch to this root
     var treeVms = [MuTreeVm]()  /// vertical or horizontal stack of branches
     var treeSpotVm: MuTreeVm?   /// most recently used tree
     var nodeSpotVm: MuNodeVm?   /// current spotlight node
+
     func updateChanged(nodeSpotVm: MuNodeVm) {
         if self.nodeSpotVm != nodeSpotVm  {
             self.nodeSpotVm = nodeSpotVm
@@ -47,7 +50,7 @@ public class MuRootVm: ObservableObject, Equatable {
     }
 
     /**
-     Adjust tree offsets iPhone and iPad to avoid false positives, now that springboard adds a corner hotspot for launching the notes app. Also, adjust pilot offsets for root and for flying.
+     Adjust MuTree offsets on iPhone and iPad. Needed to avoid false positives, now that springboard has added a corner hotspot for launching the notes app. Also, adjust pilot offsets for home node and for flying.
      */
     func updateOffsets() {
 
@@ -124,13 +127,13 @@ public class MuRootVm: ObservableObject, Equatable {
 
         // stay exclusively on .leaf or .edit mode
         switch touchElement {
-            case .shift: return shiftBranches()
-            case .edit:  return editLeaf()
-            case .sky:   return hoverSpace()
-            default:     break
+            case .shift : return shiftBranches()
+            case .edit  : return editLeaf()
+            case .sky   : return hoverSpace()
+            default     : break
         }
 
-        if        hoverLeafNode() { // editing leaf or shifting branch
+        if        touchLeafNode() { // editing leaf or shifting branch
         } else if hoverNodeSpot() { // is over the same branch node
         } else if hoverRootNode() { // is tapping or over the root (home) node
         } else if hoverTreeNow()  { // shifted to new node on same tree
@@ -138,7 +141,7 @@ public class MuRootVm: ObservableObject, Equatable {
         } else {  hoverSpace()    } // hovering over canvas, plus optional UIKit drawing
         
         log(touchElement.symbol, terminator: "")
-        func hoverLeafNode() -> Bool {
+        func touchLeafNode() -> Bool {
             if touchState.phase == .begin,
                let leafVm = nodeSpotVm as? MuLeafVm {
 
@@ -165,22 +168,29 @@ public class MuRootVm: ObservableObject, Equatable {
             return false
         }
         func hoverRootNode() -> Bool {
-            let isOverRootNode = touchVm.rootIconXY.distance(touchNow) < Layout.insideNode
-            if  isOverRootNode {
-                if taps > 0 {
-                    touchElement = .none
-                    let wasShown = beginElements.hasAny([.branch,.trunks])
-                    if  wasShown { hideBranches() }
-                    else         { showBranches() }
-                } else if touchElement != .root {
-                    touchElement = .root
-                    let isShowing = viewElements.hasAny([.branch,.trunks])
-                    if  isShowing { showTrunks() }
-                    else          { showBranches() }
-                }
-                return true
+
+            if touchVm.rootIconXY.distance(touchNow) > Layout.insideNode {
+                // skip when outside root node
+                return false
             }
-            return false
+            if taps == 1, touchElement != .none {
+                touchElement = .none
+                let wasShown = beginElements.hasAny([.branch,.trunks])
+                if  wasShown { hideBranches() }
+                else         { showBranches() }
+            } else if taps > 1 {
+                let wasShown = beginElements.hasAny([.branch,.trunks])
+                if  wasShown { showBranches() }
+            } else if touchElement != .root {
+                touchElement = .root
+                let isShowing = viewElements.hasAny([.branch,.trunks])
+                if  isShowing { showTrunks() }
+                else          { showBranches() }
+            } else if let treeSpotVm {
+                treeSpotVm.shiftExpand()
+                log("🛸", terminator: "")
+            }
+            return true
         }
         func hoverTreeNow() -> Bool {
             // check current set of menus
@@ -190,7 +200,7 @@ public class MuRootVm: ObservableObject, Equatable {
                 if let nearestNodeVm = nearestBranch.findNearestNode(touchNow) {
 
                     updateChanged(nodeSpotVm: nearestNodeVm)
-                    if hoverLeafNode() {
+                    if touchLeafNode() {
                         // already set touchElement
                     } else if !viewElements.contains(.branch) {
                         log("~", terminator: "")
@@ -237,7 +247,8 @@ public class MuRootVm: ObservableObject, Equatable {
         }
         func hoverSpace() {
             if touchElement == .sky {
-                // future reference for UIKit compatibility drawing canvas
+                // future reference for UIKit compatibility drawing canas
+
             } else {
                 touchElement = (touchState.phase == .begin
                                 ? .sky // UIKit canvas

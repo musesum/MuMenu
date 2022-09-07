@@ -4,26 +4,26 @@ import SwiftUI
 public class MuTreeVm: Identifiable, Equatable, ObservableObject {
     public let id = MuIdentity.getId()
     public static func == (lhs: MuTreeVm, rhs: MuTreeVm) -> Bool { return lhs.id == rhs.id }
-
+    
     @Published var branchVms = [MuBranchVm]()
     @Published var treeShifting = CGSize.zero /// offset after shifting (by dragging leaf)
     var treeShifted = CGSize.zero
-
+    
     var rootVm: MuRootVm?
     var branchSpotVm: MuBranchVm?
     var axis: Axis
     var corner: MuCorner
-
+    
     var treeOffset = CGSize.zero
-
+    
     private var level = CGFloat(1) // starting level for branches
     private var depthShown = 0 // levels of branches shown
-
+    
     public init(axis: Axis, corner: MuCorner) {
         self.axis = axis
         self.corner = corner
     }
-
+    
     public func addBranchVms(_ branchVms: [MuBranchVm]) {
         self.branchVms.append(contentsOf: branchVms)
         for branchVm in branchVms {
@@ -31,7 +31,7 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
         }
         showBranches(depth: 1)
     }
-
+    
     func nearestTrunk(_ touchNow: CGPoint) -> MuBranchVm? {
         if let firstBranch = branchVms.first,
            firstBranch.show,
@@ -41,21 +41,21 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
         return nil
     }
     func nearestBranch(_ touchNow: CGPoint) -> MuBranchVm? {
-
+        
         let opacityThreshold = 0.6
-
+        
         if let branchSpot = branchSpotVm,
            branchSpot.boundsPad.contains(touchNow),
            branchSpot.branchOpacity > opacityThreshold,
            branchSpot.show {
-
+            
             return branchSpot
         }
-
+        
         for branchVm in branchVms {
             if branchVm.show == true,
                branchVm.branchOpacity > opacityThreshold,
-                branchVm.boundsPad.contains(touchNow) {
+               branchVm.boundsPad.contains(touchNow) {
                 branchSpotVm = branchVm
                 return branchVm
             }
@@ -63,19 +63,9 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
         branchSpotVm = nil
         return nil
     }
-
+    
     func refreshTree(_ branchVm: MuBranchVm) {
 
-        var delim = " " // for logName
-        func logName(_ name: String? = nil) {
-            if let name {
-                print(delim + name, terminator: "")
-                delim = "."
-            } else {
-                print(" ", terminator: "")
-            }
-        }
-        // begin ---------------------------
         var branchVm = branchVms.first
         var newBranches = [MuBranchVm]()
         while branchVm != nil {
@@ -92,19 +82,18 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
                 branchVm = b.nodeSpotVm?.nextBranchVm
             }
         }
-        logName()
         branchVms = newBranches
     }
-
+    
     func showBranches(depth depthNext: Int) {
-
+        
         var newBranches = [MuBranchVm]()
-
+        
         // logStart()
         if      depthShown < depthNext { expandBranches() }
         else if depthShown > depthNext { contractBranches() }
         // logFinish()
-
+        
         func expandBranches() {
             var countUp = 0
             for branch in branchVms {
@@ -137,14 +126,17 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
             print (depthShown, terminator: " ")
         }
     }
-
+    
+    func shiftExpand() {
+        treeShifting = .zero
+        treeShifted = .zero
+    }
     func shiftTree(_ rootVm: MuRootVm,
                    _ touchState: MuTouchState) {
 
         if touchState.phase == .ended {
             if touchState.tapCount > 0 {
-                treeShifting = .zero
-                treeShifted = .zero
+               shiftExpand()
             } else {
                 treeShifted = treeShifting
             }

@@ -3,7 +3,7 @@
 import SwiftUI
 
 struct MuIconView: View {
-
+    @Environment(\.colorScheme) var colorScheme
     @ObservedObject var nodeVm: MuNodeVm
     let icon: MuIcon
     var color: Color { nodeVm.spotlight ? .white : .gray }
@@ -46,13 +46,18 @@ struct MuIconView: View {
                     } else {
                         MuIconTextView(text: nodeVm.node.title,
                                        color: color)
-
                     }
                 case .symbol:
-
-                    Image(systemName: nodeVm.node.icon.named)
-                        .scaledToFit()
-                        .padding(1)
+                    if colorScheme == .dark {
+                        Image(systemName: nodeVm.node.icon.named)
+                            .scaledToFit()
+                            .padding(1)
+                    } else {
+                        Image(systemName: nodeVm.node.icon.named)
+                            .colorInvert()
+                            .scaledToFit()
+                            .padding(1)
+                    }
             }
         }
     }
