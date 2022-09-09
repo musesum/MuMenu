@@ -14,7 +14,7 @@ public class MuLeafValVm: MuLeafVm {
           _ prevVm: MuNodeVm?,
           icon: String = "") {
         
-        super.init(.val, node, branchVm, prevVm)
+        super.init(node, branchVm, prevVm)
         node.proxies.append(self) // MuLeaf delegate for setting value
         proto = node.proto ?? prevVm?.node.proto
         range = proto?.getRange(named: nodeType.name) ?? 0...1

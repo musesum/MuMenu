@@ -27,7 +27,7 @@ public class MuTouchVm: ObservableObject {
         
         let testNode = MuNodeTest("⚫︎") //todo: replace with ??
         let branchVm = MuBranchVm.cached(treeVm: treeVm)
-        rootNodeVm = MuNodeVm(.node, testNode, branchVm)
+        rootNodeVm = MuNodeVm(testNode, branchVm)
         branchVm.addNodeVm(rootNodeVm)
 
         dragNodeVm = rootNodeVm?.copy()

@@ -4,6 +4,7 @@ import SwiftUI
 
 public class MuPanelVm {
  
+    var nodes: [MuNode]
     var nodeType: MuNodeType
     var axis: Axis
     var corner: MuCorner
@@ -11,33 +12,18 @@ public class MuPanelVm {
     var spacing = CGFloat(0) /// overlap with a negative number
     var aspectSz = CGSize(width: 1, height: 1) /// multiplier aspect ratio
 
-    init(nodeType: MuNodeType,
-         count: Int = 1,
+    init(nodes: [MuNode],
          treeVm: MuTreeVm) {
 
-        self.nodeType = nodeType
-        self.count = CGFloat(max(count,1))
-        self.axis = treeVm.axis
-        self.corner = treeVm.corner
-        setAspectFromType()
-    }
-
-    init(from: MuPanelVm) {
-        self.nodeType = from.nodeType
-        self.spacing = from.spacing
-        self.axis    = from.axis
-        self.corner  = from.corner
-        self.count   = from.count
+        self.nodes    = nodes
+        self.count    = CGFloat(nodes.count)
+        self.axis     = treeVm.axis
+        self.corner   = treeVm.corner
+        self.nodeType = (count > 1 ? .node : nodes.first?.nodeType ?? .node)
         setAspectFromType()
     }
 
     func setAspectFromType() {
-
-        func aspect(_ lo: CGFloat,_ hi: CGFloat) {
-            aspectSz = axis == .vertical
-            ? CGSize(width: lo, height: hi)
-            : CGSize(width: hi, height: lo)
-        }
 
         switch nodeType {
             case .none : aspect(1.0, 1.0)
@@ -47,6 +33,11 @@ public class MuPanelVm {
             case .tog  : aspect(1.0, 1.5)
             case .seg  : aspect(1.0, 4.0)
             case .tap  : aspect(1.0, 1.0)
+        }
+        func aspect(_ lo: CGFloat,_ hi: CGFloat) {
+            aspectSz = axis == .vertical
+            ? CGSize(width: lo, height: hi)
+            : CGSize(width: hi, height: lo)
         }
     }
 
@@ -102,13 +93,13 @@ public class MuPanelVm {
         return result
     }
     var titleSize: CGSize {
-        switch nodeType {
-            case .vxy: // title is always on top
-                return CGSize(width:  inner.width,
-                              height: Layout.diameter - 8)
-           default:
-                return CGSize(width:  Layout.diameter - 8,
-                              height: Layout.diameter - 8)
+        if count == 1, nodes.first?.nodeType == .vxy {
+            // title is always on top
+            return CGSize(width:  inner.width,
+                          height: Layout.diameter - 8)
+        } else {
+            return CGSize(width:  Layout.diameter - 8,
+                          height: Layout.diameter - 8)
         }
     }
 

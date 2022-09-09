@@ -9,11 +9,11 @@ public class MuLeafVxyVm: MuLeafVm {
     var proto: MuNodeProtocol?
     var ranges = [String : ClosedRange<Float>]()
 
-    init (_ node: MuNode,
+    override init (_ node: MuNode,
           _ branchVm: MuBranchVm,
           _ prevVm: MuNodeVm?) {
         
-        super.init(.vxy, node, branchVm, prevVm)
+        super.init(node, branchVm, prevVm)
         node.proxies.append(self)  // MuLeaf delegate for setting value
         proto = node.proto ?? prevVm?.node.proto
 

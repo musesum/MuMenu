@@ -10,6 +10,7 @@ open class MuNode: Identifiable, Equatable {
     public var children = [MuNode]()
     public var proto: MuNodeProtocol?
     public var proxies = [MuLeafProxy]()
+    public var nodeType = MuNodeType.node
 
     public static func == (lhs: MuNode, rhs: MuNode) -> Bool {
         return lhs.id == rhs.id
@@ -25,8 +26,8 @@ open class MuNode: Identifiable, Equatable {
     }
 
     /// overrides this to add controls to the Menu
-    open func leafType() -> MuNodeType? {
-        return nil
+    open func getNodeType() -> MuNodeType {
+        return nodeType
     }
 
 

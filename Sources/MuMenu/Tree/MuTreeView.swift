@@ -18,7 +18,7 @@ struct MuTreeView: View {
 
                     MuBranchView(branchVm: $0,
                                  spotlight: $0 == treeVm.branchSpotVm)
-                        .zIndex($0.level)
+                        .zIndex($0.zindex)
                 }
             }
             .offset(treeVm.treeOffset)
@@ -31,7 +31,7 @@ struct MuTreeView: View {
                     
                     MuBranchView(branchVm: $0,
                                  spotlight: $0 == treeVm.branchSpotVm)
-                        .zIndex($0.level)
+                        .zIndex($0.zindex)
                 }
             }
             .offset(treeVm.treeOffset)

@@ -51,7 +51,7 @@ public enum MuNodeType: String {
             default     : self = .none
         }
     }
-    var isLeaf: Bool {
+    public var isLeaf: Bool {
         switch self {
             case .node, .none: return false
             default: return true

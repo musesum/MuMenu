@@ -13,7 +13,7 @@ public class MuLeafTogVm: MuLeafVm {
           _ prevVm: MuNodeVm?,
           icon: String = "") {
 
-        super.init(.tog, node, branchVm, prevVm) 
+        super.init(node, branchVm, prevVm) 
         node.proxies.append(self) 
         proto = node.proto ?? prevVm?.node.proto
         thumb = CGFloat(proto?.getAny(named: nodeType.name) as? Float ?? .zero)

@@ -13,7 +13,7 @@ public class MuLeafTapVm: MuLeafVm {
           _ prevVm: MuNodeVm?,
           icon: String = "") {
         
-        super.init(.tap, node, branchVm, prevVm)
+        super.init(node, branchVm, prevVm)
         node.proxies.append(self) // MuLeaf delegate for setting value
         proto = node.proto ?? prevVm?.node.proto
     }

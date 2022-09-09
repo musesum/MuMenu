@@ -12,18 +12,18 @@ public enum MuIconType { case none, cursor, image, symbol, abbrv }
 
 public class MuIcon {
     public static var altBundle: Bundle?
-    var type = MuIconType.none
+    var iconType = MuIconType.none
     var named = ""
     var image: UIImage? {
-        type == .image
+        iconType == .image
         ? (UIImage(named: named) ??
            UIImage(named: named, in: MuIcon.altBundle, with: nil))
         : nil
     }
 
 
-    public init(_ type: MuIconType, named: String) {
-        self.type = type
+    public init(_ iconType: MuIconType, named: String) {
+        self.iconType = iconType
         self.named = named
     }
 }

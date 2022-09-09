@@ -19,7 +19,9 @@ struct MuPanelAxisView<Content: View>: View {
         // .horizonal ScrollView shifts and truncates the inner views
         // so, perhaps there is a phantom space for indicators?
         
-        if panelVm.axis == .vertical  || panelVm.nodeType == .vxy {
+        if (panelVm.axis == .vertical  ||
+            panelVm.nodeType == .vxy)
+            {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading,
                        spacing: panelVm.spacing,
