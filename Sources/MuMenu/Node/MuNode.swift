@@ -8,8 +8,8 @@ open class MuNode: Identifiable, Equatable {
     public var title: String
     public var icon: MuIcon
     public var children = [MuNode]()
-    public var proto: MuNodeProtocol?
-    public var proxies = [MuLeafProxy]()
+    public var nodeProto: MuNodeProtocol?
+    public var proxies = [MuLeafProtocol]()
     public var nodeType = MuNodeType.node
 
     public static func == (lhs: MuNode, rhs: MuNode) -> Bool {
@@ -24,11 +24,5 @@ open class MuNode: Identifiable, Equatable {
         self.icon = icon
         parent?.children.append(self)
     }
-
-    /// overrides this to add controls to the Menu
-    open func getNodeType() -> MuNodeType {
-        return nodeType
-    }
-
 
 }

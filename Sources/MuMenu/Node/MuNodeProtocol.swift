@@ -16,6 +16,9 @@ public protocol MuNodeProtocol {
     /// set multiple named values
     func setAnys(_ anys: [(String, Any)])
 
+    /// reset node to default value
+    func resetDefault()
+
     /// get single named value
     func getAny(named: String) -> Any?
 
@@ -28,7 +31,7 @@ public protocol MuNodeProtocol {
     /// get multiple named ranges
     func getRanges(named: [String]) -> [(String, ClosedRange<Float>)]
 
-    /// callback from outside sizer
+    /// callback
     ///
     ///     - parameters:
     ///         - any: the calling class

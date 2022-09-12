@@ -12,7 +12,6 @@ public struct MuRootView: View {
             default:               LowerRightView()
         }
     }
-    public init() {}
 }
 
 /// space with: vert, hori, and pilot views

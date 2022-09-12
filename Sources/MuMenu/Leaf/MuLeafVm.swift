@@ -2,38 +2,42 @@
 
 import SwiftUI
 
-/// MuLeaf* Model and View  protocols
-public protocol MuLeafProxy {
-
-    /// update value from user touch gesture
-    func touchLeaf(_ touchState: MuTouchState)
-
-    /// update from model, not touch gesture
-    func updateLeaf(_ point: Any)
-
-    /// refresh View from current thumb
-    func updateView()
-
-    /// title for control value
-    func valueText() -> String
-
-    /// position of thumb in control
-    func thumbOffset() -> CGSize
-}
-
 /// extend MuNodeVm to show title and thumb position
 public class MuLeafVm: MuNodeVm {
 
+    var nodeProto: MuNodeProtocol?
+
+    override init (_ node: MuNode,
+          _ branchVm: MuBranchVm,
+          _ prevVm: MuNodeVm? = nil) {
+        
+        super.init(node, branchVm, prevVm)
+        
+        nodeProto = node.nodeProto ?? prevVm?.node.nodeProto
+    }
+
+
     /// updated textual title of control value
     @objc dynamic func valueText() -> String {
-        print("*** override MuLeafVm.status")
+        print("*** need to override MuLeafVm.status")
         return "oops"
     }
 
     /// updated position of thumb inside control
     @objc dynamic func thumbOffset() -> CGSize {
-        print("*** override MuLeafVmoffset")
+        print("*** need to override thumbOffset")
         return .zero
+    }
+
+    /// updated position of thumb inside control
+    @objc dynamic func updateLeaf(_ any: Any) -> Any {
+        print("*** need to override updaetLeaf")
+        return any
+    }
+
+    /// updated position of thumb inside control
+    @objc dynamic func refreshValue() {
+        print("*** need to override refreshValue")
     }
 
     /// bounds for control surface, used to determin if touch is inside control area

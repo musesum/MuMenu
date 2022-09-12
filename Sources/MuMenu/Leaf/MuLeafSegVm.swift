@@ -6,7 +6,6 @@ import SwiftUI
 public class MuLeafSegVm: MuLeafVm {
 
     var thumb = CGFloat(0)
-    var proto: MuNodeProtocol?
     var range: ClosedRange<Float> = 0...1
 
     init (_ node: MuNode,
@@ -16,15 +15,14 @@ public class MuLeafSegVm: MuLeafVm {
 
         super.init(node, branchVm, prevVm)
         node.proxies.append(self) // MuLeaf delegate for setting value
-        proto = node.proto ?? prevVm?.node.proto
-        range = proto?.getRange(named: nodeType.name) ?? 0...1
-        thumb = normalizeValue
+        
+        refreshValue()
         updatePanelSizes()
     }
 
     /// get current value and normalize 0...1 based on defined range
     var normalizeValue: CGFloat {
-        let val = (proto?.getAny(named: nodeType.name) as? Float) ?? .zero
+        let val = (nodeProto?.getAny(named: nodeType.name) as? Float) ?? .zero
         return CGFloat(scale(val, from: range, to: 0...1))
     }
     /// normalize point to 0...1 based on defined range
@@ -38,7 +36,9 @@ public class MuLeafSegVm: MuLeafVm {
         scale(Float(nearestTick), from: 0...1, to: range)
     }
 
-    lazy var count: CGFloat = { CGFloat(range.upperBound - range.lowerBound) }()
+    lazy var count: CGFloat = {
+        CGFloat(range.upperBound - range.lowerBound)
+    }()
 
 
     /// adjust branch and panel sizes for smaller segments
@@ -53,8 +53,6 @@ public class MuLeafSegVm: MuLeafVm {
     }
 
     var nearestTick: CGFloat { return round(thumb*count)/count }
-
-    //var offset: CGSize { CGSize(width: 0, height: nearestTick * runway) }
 
     /// ticks above and below nearest tick,
     /// but never on panel border or thumb border
@@ -87,66 +85,5 @@ public class MuLeafSegVm: MuLeafVm {
     /// touchBegin inside thumb will Not move thumb.
     /// So, determing delta from center at touchState.begin
     var thumbBeginΔ = CGFloat.zero
-}
-
-extension MuLeafSegVm: MuLeafProxy {
-
-    /// user touch gesture inside runway
-    public func touchLeaf(_ touchState: MuTouchState) {
-
-        if touchState.phase == .begin {
-            touchThumbBegin()
-            updateView()
-            editing = true
-        } else if touchState.phase != .ended {
-            touchThumbNext()
-            updateView()
-            editing = true
-        } else {
-            editing = false
-        }
-
-        /// user touched control, translate to normalized thumb (0...1)
-        func touchThumbNext() {
-            if !runwayBounds.contains(touchState.pointNow) {
-                // slowly erode thumbBegin∆ when out of bounds
-                thumbBeginΔ = thumbBeginΔ * 0.85
-            }
-            let touchDelta = touchState.pointNow - runwayBounds.origin
-            thumb = normalizeTouch(touchDelta) + thumbBeginΔ
-        }
-        func touchThumbBegin() {
-            let thumbPrev = thumb
-            let touchDelta = touchState.pointNow - runwayBounds.origin
-            let thumbNext = normalizeTouch(touchDelta)
-            let touchedInsideThumb = abs(thumbNext.distance(to: thumbPrev)) < thumbRadius
-            thumbBeginΔ = touchedInsideThumb ? thumbPrev - thumbNext : .zero
-            thumb = thumbNext + thumbBeginΔ
-        }
-    }
-    public func updateLeaf(_ any: Any) {
-        if let v = any as? Float {
-            editing = true
-            thumb = CGFloat(scale(v, from: range, to: 0...1))
-            editing = false
-        }
-    }
-
-    // View -----------------------
-
-    /// expand normalized thumb to View coordinates and update outside model
-    public func updateView() {
-        proto?.setAny(named: nodeType.name, expanded)
-    }
-    public override func valueText() -> String {
-        range.upperBound > 1
-        ? String(format: "%.f", scale(Float(thumb), from: 0...1, to: range))
-        : String(format: "%.1f", thumb)
-    }
-    public override func thumbOffset() -> CGSize {
-        panelVm.axis == .vertical
-        ? CGSize(width: 1, height: (1-thumb) * panelVm.runway)
-        : CGSize(width: thumb * panelVm.runway, height: 1)
-    }
 }
 

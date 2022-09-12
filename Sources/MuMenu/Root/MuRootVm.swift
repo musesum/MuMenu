@@ -27,7 +27,7 @@ public class MuRootVm: ObservableObject, Equatable {
     var corner: MuCorner        /// corner where root begins, ex: `[south,west]`
     var treeVms = [MuTreeVm]()  /// vertical or horizontal stack of branches
     var treeSpotVm: MuTreeVm?   /// most recently used tree
-    var nodeSpotVm: MuNodeVm?   /// current spotlight node
+    var nodeSpotVm: MuNodeVm?   /// current last touched or hovered node
 
     func updateChanged(nodeSpotVm: MuNodeVm) {
         if self.nodeSpotVm != nodeSpotVm  {
@@ -104,6 +104,12 @@ public class MuRootVm: ObservableObject, Equatable {
     func touchBegin(_ touchState: MuTouchState) {
         beginElements = viewElements
         updateRoot(touchState)
+        if touchState.tapCount > 0,
+           let nodeSpotVm,
+           !nodeSpotVm.nodeType.isLeaf {
+
+            nodeSpotVm.tapping(touchState.tapCount)
+        }
         MuStatusVm.shared.show = true
     }
     func touchMoved(_ touchState: MuTouchState) {
@@ -173,22 +179,31 @@ public class MuRootVm: ObservableObject, Equatable {
                 // skip when outside root node
                 return false
             }
-            if taps == 1, touchElement != .none {
-                touchElement = .none
-                let wasShown = beginElements.hasAny([.branch,.trunks])
-                if  wasShown { hideBranches() }
-                else         { showBranches() }
-            } else if taps > 1 {
-                let wasShown = beginElements.hasAny([.branch,.trunks])
-                if  wasShown { showBranches() }
-            } else if touchElement != .root {
-                touchElement = .root
-                let isShowing = viewElements.hasAny([.branch,.trunks])
-                if  isShowing { showTrunks() }
-                else          { showBranches() }
-            } else if let treeSpotVm {
-                treeSpotVm.shiftExpand()
-                log("🛸", terminator: "")
+            switch taps {
+                case 1:
+                    touchElement = .none
+                    let wasShown = beginElements.hasAny([.branch,.trunks])
+                    if  wasShown { hideBranches() }
+                    else         { showBranches() }
+                case 2:
+                    let wasShown = beginElements.hasAny([.branch,.trunks])
+                    if  wasShown { showBranches() }
+                    nodeSpotVm?.tapping(taps)
+                case 3:
+                    if let firstBranch = treeSpotVm?.branchVms.first,
+                       let firstSpotVm = firstBranch.nodeSpotVm {
+                        firstSpotVm.tapping(taps)
+                    }
+                default:
+                    if touchElement != .root {
+                        touchElement = .root
+                        let isShowing = viewElements.hasAny([.branch,.trunks])
+                        if  isShowing { showTrunks() }
+                        else          { showBranches() }
+                    } else if let treeSpotVm {
+                        treeSpotVm.shiftExpand()
+                        log("🛸", terminator: "")
+                    }
             }
             return true
         }
