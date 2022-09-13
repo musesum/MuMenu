@@ -40,6 +40,8 @@ public class MuTouchVm: ObservableObject {
     /// via MuBranchView::@GestureState touchNow .onChange
     public func touchUpdate(_ touchNow: CGPoint) {
 
+        log("touch", [touchNow], terminator: " ") //???
+
         if !touchState.touching    { begin() }
         else if touchNow == .zero  { ended() }
         else                       { moved() }
