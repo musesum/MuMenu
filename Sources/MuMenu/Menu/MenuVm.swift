@@ -3,7 +3,7 @@
 import SwiftUI
 
 open class MenuVm {
-    var rootVm: MuRootVm
+    public var rootVm: MuRootVm
     public init(_ rootVm: MuRootVm) {
         self.rootVm = rootVm
     }

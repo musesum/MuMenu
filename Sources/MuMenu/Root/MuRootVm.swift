@@ -20,8 +20,8 @@ public class MuRootVm: ObservableObject, Equatable {
                 log(":", [beginElements,"⟶",newValue], terminator: " ")
             } } }
 
-    /// touchBegin snapshot of viewElements.
-    /// To prevent touchEnded from hiding elements that were shown during touchBegin
+    /// `touchBegin` snapshot of viewElements.
+    /// To prevent touchEnded from hiding elements that were shown during `touchBegin`
     var beginElements: Set<MuElement> = []
 
     var corner: MuCorner        /// corner where root begins, ex: `[south,west]`
@@ -101,6 +101,16 @@ public class MuRootVm: ObservableObject, Equatable {
         }
     }
 
+    func hitTest(_ point: CGPoint) -> Bool {
+        for treeVm in treeVms {
+            for branchVm in treeVm.branchVms {
+                if branchVm.show, branchVm.boundsNow.contains(point) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
     func touchBegin(_ touchState: MuTouchState) {
         beginElements = viewElements
         updateRoot(touchState)
@@ -135,16 +145,14 @@ public class MuRootVm: ObservableObject, Equatable {
         switch touchElement {
             case .shift : return shiftBranches()
             case .edit  : return editLeaf()
-            case .sky   : return hoverSpace()
             default     : break
         }
-
         if        touchLeafNode() { // editing leaf or shifting branch
         } else if hoverNodeSpot() { // is over the same branch node
         } else if hoverRootNode() { // is tapping or over the root (home) node
         } else if hoverTreeNow()  { // shifted to new node on same tree
         } else if hoverTreeAlts() { // shifted to space reserved for alternate tree
-        } else {  hoverSpace()    } // hovering over canvas, plus optional UIKit drawing
+        } else {  hoverSpace()    } // hovering over canvas
         
         log(touchElement.symbol, terminator: "")
         func touchLeafNode() -> Bool {
@@ -175,7 +183,7 @@ public class MuRootVm: ObservableObject, Equatable {
         }
         func hoverRootNode() -> Bool {
 
-            if touchVm.rootIconXY.distance(touchNow) > Layout.insideNode {
+            if !(touchVm.rootNodeVm?.contains(touchNow) ?? false) {
                 // skip when outside root node
                 return false
             }
@@ -260,16 +268,9 @@ public class MuRootVm: ObservableObject, Equatable {
             }
             return false
         }
-        func hoverSpace() {
-            if touchElement == .sky {
-                // future reference for UIKit compatibility drawing canas
-
-            } else {
-                touchElement = (touchState.phase == .begin
-                                ? .sky // UIKit canvas
-                                : .space) // SwiftUI menu mode
-                nodeSpotVm = nil
-            }
+        func hoverSpace() { 
+            touchElement = .space
+            nodeSpotVm = nil
         }
 
         //  show/hide/stack -----------
@@ -346,4 +347,5 @@ public class MuRootVm: ObservableObject, Equatable {
             viewElements = [.root]
         }
     }
+
 }

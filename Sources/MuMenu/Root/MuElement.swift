@@ -12,7 +12,6 @@ enum MuElement: String  {
     case shift  /// shifting branches by dragging header for leaf
     case edit   /// editing area inside a leaf
     case space  /// hovering over canvas while on menu
-    case sky    /// began drawing on canvas, so no menu
     case edge   /// unsafe area to expand accordian
     
     public var symbol: String {
@@ -24,7 +23,6 @@ enum MuElement: String  {
             case .node   : return "￮"
             case .shift  : return "⊪"
             case .edit   : return "✎"
-            case .sky    : return "✶"
             case .space  : return "⬚"
             case .edge   : return "⫼"
         }
@@ -39,7 +37,6 @@ enum MuElement: String  {
             case .shift  : return "shift"
             case .edit   : return "edit"
             case .space  : return "space"
-            case .sky    : return "sky"
             case .edge   : return "edge"
         }
     }

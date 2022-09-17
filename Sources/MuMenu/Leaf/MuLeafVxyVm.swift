@@ -60,7 +60,7 @@ public class MuLeafVxyVm: MuLeafVm {
         Layout.diameter / max(runwayBounds.height,runwayBounds.width) / 2
     }()
 
-    /// touchBegin inside thumb will probably be off-center.
+    /// `touchBegin` inside thumb will probably be off-center.
     /// To avoid a sudden jump, thumbBeginΔ adds an offset.
     var thumbBeginΔ = CGPoint.zero
 }

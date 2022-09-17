@@ -33,15 +33,6 @@ extension MuLeafVxyVm: MuLeafProtocol {
             thumbBeginΔ = thumb - thumbPrior
         }
 
-        /// user touched control, translate to normalized thumb (0...1)
-        func touchThumbNext() {
-            if !runwayBounds.contains(touchState.pointNow) {
-                // slowly erode thumbBegin∆ when out of bounds
-                thumbBeginΔ = thumbBeginΔ * 0.85
-            }
-            let touchDelta = touchState.pointNow - runwayBounds.origin
-            thumb = panelVm.normalizeTouch(xy: touchDelta) + thumbBeginΔ
-        }
         func touchThumbBegin() {
             let thumbPrev = thumb
             let touchDelta = touchState.pointNow - runwayBounds.origin
@@ -51,6 +42,15 @@ extension MuLeafVxyVm: MuLeafProtocol {
             thumb = thumbNext + thumbBeginΔ
         }
 
+        /// user touched control, translate to normalized thumb (0...1)
+        func touchThumbNext() {
+            if !runwayBounds.contains(touchState.pointNow) {
+                // slowly erode thumbBegin∆ when out of bounds
+                thumbBeginΔ = thumbBeginΔ * 0.85
+            }
+            let touchDelta = touchState.pointNow - runwayBounds.origin
+            thumb = panelVm.normalizeTouch(xy: touchDelta) + thumbBeginΔ
+        }
         /// double touch will align thumb to center, corners or sides.
         func quantizeThumb(_ point: CGPoint) -> CGPoint {
             let x = round(point.x * 2) / 2

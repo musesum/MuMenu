@@ -39,7 +39,7 @@ public class MuLeafValVm: MuLeafVm {
         Layout.diameter / max(runwayBounds.height,runwayBounds.width) / 2
     }()
 
-    /// touchBegin inside thumb will Not move thumb.
+    /// `touchBegin` inside thumb will Not move thumb.
     /// So, determing delta from center at touchState.begin
     var thumbBeginΔ = CGFloat.zero
 }

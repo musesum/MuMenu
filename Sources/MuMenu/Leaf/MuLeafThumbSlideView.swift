@@ -1,12 +1,6 @@
-//
-//  File.swift
-//  
-//
 //  Created by warren on 8/18/22.
-//
 
 import SwiftUI
-
 
 struct MuLeafThumbSlideView: View {
 
@@ -14,7 +8,6 @@ struct MuLeafThumbSlideView: View {
     var panelVm: MuPanelVm { leafVm.panelVm }
     var spotlight: Bool { leafVm.spotlight }
     var color: Color { Layout.tapColor(spotlight) }
-    var blend: BlendMode { spotlight ? .normal : .colorDodge }
 
     var body: some View {
         ZStack {
@@ -25,11 +18,19 @@ struct MuLeafThumbSlideView: View {
                 .offset(leafVm.thumbOffset())
                 .allowsHitTesting(false)
 
-            MuIconView(nodeVm: leafVm, icon: leafVm.node.icon)
-                .frame(width:  panelVm.thumbDiameter,
-                       height: panelVm.thumbDiameter)
-                .offset(leafVm.thumbOffset())
-                .blendMode(blend)
+            if spotlight {
+                MuIconView(nodeVm: leafVm, icon: leafVm.node.icon)
+                    .frame(width:  panelVm.thumbDiameter,
+                           height: panelVm.thumbDiameter)
+                    .offset(leafVm.thumbOffset())
+                    .colorInvert()
+
+            } else {
+                MuIconView(nodeVm: leafVm, icon: leafVm.node.icon)
+                    .frame(width:  panelVm.thumbDiameter,
+                           height: panelVm.thumbDiameter)
+                    .offset(leafVm.thumbOffset())
+            }
         }
     }
 }

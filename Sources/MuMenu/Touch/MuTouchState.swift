@@ -9,11 +9,11 @@ public class MuTouchState {
     let speedThreshold = CGFloat(400) /// test to skip branches
     let moveThreshold = CGFloat(5)   /// move distance to reset tapCount
 
-    var touchCount = 0  // count touchBegin's within tapThreshold
-    var tapCount = 0    // count touchEnd's within tapThreshold
-    var isFast = false  // is moving fast to skip branches
-    var pointNow = CGPoint.zero // current position of touch
-    var phase = MuTouchPhase.none // begin, moved, ended
+    var touchCount = 0  /// count `touchBegin`s within tapThreshold
+    var tapCount = 0    /// count `touchEnd`s within tapThreshold
+    var isFast = false  /// is moving fast to skip branches
+    var pointNow = CGPoint.zero /// current position of touch
+    var phase = MuTouchPhase.none /// begin, moved, ended
     var touching: Bool { return timeBegin > timeEnded }
 
     private var timeBegin  = TimeInterval(0) /// starting time for tap candidate

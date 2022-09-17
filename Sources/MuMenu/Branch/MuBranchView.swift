@@ -30,8 +30,8 @@ struct MuBranchView: View {
                     }
                 }
             }
-            .onAppear { branchVm.updateBranchBounds(geo.frame(in: .named("Canvas"))) }
-            .onChange(of: geo.frame(in: .named("Canvas"))) { branchVm.updateBranchBounds($0) }
+            .onAppear { branchVm.updateBranchBounds(geo.frame(in: .global)) }
+            .onChange(of: geo.frame(in: .global)) { branchVm.updateBranchBounds($0) }
         }
         .frame(width: panelVm.outer.width, height: panelVm.outer.height)
         .offset(branchVm.branchShift)

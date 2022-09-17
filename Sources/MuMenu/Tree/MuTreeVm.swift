@@ -145,7 +145,7 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
 
         treeShifting = shiftConstrained()
 
-        log("\ntreeShifting", [treeShifting, "root", rootVm.touchVm.rootIconXY])
+        log("\ntreeShifting", [treeShifting, "root", rootVm.touchVm.parkIconXY])
         for branchVm in branchVms {
             branchVm.shiftBranch() 
         }

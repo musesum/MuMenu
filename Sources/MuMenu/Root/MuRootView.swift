@@ -4,6 +4,7 @@ import SwiftUI
 public struct MuRootView: View {
     @EnvironmentObject var rootVm: MuRootVm
     public var body: some View {
+        
         switch rootVm.corner {
             case [.lower, .right]: LowerRightView()
             case [.lower, .left ]: LowerLeftView()
@@ -11,6 +12,7 @@ public struct MuRootView: View {
             case [.upper, .left ]: UpperLeftView()
             default:               LowerRightView()
         }
+
     }
 }
 
@@ -18,7 +20,6 @@ public struct MuRootView: View {
 private struct ForestView: View {
     @EnvironmentObject var rootVm: MuRootVm
     var body: some View {
-
         ForEach(rootVm.treeVms, id: \.id) {
             MuTreeView(treeVm: $0)
         }
@@ -28,12 +29,15 @@ private struct ForestView: View {
 
 /// lower right corner of space
 private struct LowerRightView: View {
+    @EnvironmentObject var rootVm: MuRootVm
     var body: some View {
-        HStack(alignment: .bottom) {
-            Spacer()
-            ZStack(alignment: .bottomTrailing) {
-                ForestView()
-            }
+
+            HStack(alignment: .bottom) {
+                Spacer()
+                ZStack(alignment: .bottomTrailing) {
+                    ForestView()
+                }
+
         }
     }
 }

@@ -19,8 +19,8 @@ struct MuNodeView: View {
                     default: MuIconView(nodeVm: nodeVm, icon: nodeVm.node.icon)
                 }
             }
-            .onChange(of: geo.frame(in: .named("Canvas"))) { nodeVm.updateCenter($0) }
-            .onAppear { nodeVm.updateCenter(geo.frame(in: .named("Canvas"))) }
+            .onChange(of: geo.frame(in: .global)) { nodeVm.updateCenter($0) }
+            .onAppear { nodeVm.updateCenter(geo.frame(in: .global)) }
         }
         .frame(width: panelVm.inner.width, height: panelVm.inner.height)
         .padding(Layout.padding)

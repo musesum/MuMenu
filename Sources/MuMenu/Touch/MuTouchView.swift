@@ -8,30 +8,31 @@ struct MuTouchView: View {
 
     var body: some View {
 
-        GeometryReader() { geo in
-            // root icon
+        GeometryReader() { geo  in
+            // parked icon
             if let rootNodeVm = touchVm.rootNodeVm {
                 
                 MuNodeView(nodeVm: rootNodeVm)
                     .frame(width: Layout.diameter, height: Layout.diameter)
-                    .onAppear { touchVm.updateRootIcon(geo.frame(in: .named("Canvas"))) }
-                    .onChange(of: geo.frame(in: .named("Canvas"))) { touchVm.updateRootIcon($0) }
+                    .onAppear { touchVm.updateRootIcon(geo.frame(in: .global)) }
+                    .onChange(of: geo.frame(in: .global)) { touchVm.updateRootIcon($0) }
                     .padding(Layout.padding)
-                    .opacity(touchVm.rootAlpha + 0.1)
-                    .position(touchVm.rootIconXY)
+                    .opacity(touchVm.parkIconAlpha + 0.1)
+                    .position(touchVm.parkIconXY)
             }
 
-            // hovering node icon, follows touch
+            // drag icon, follows touch
             if let dragNodeVm = touchVm.dragNodeVm {
 
                 MuNodeView(nodeVm: dragNodeVm)
                     .position(touchVm.dragIconXY)
-                    .animation(.easeInOut(duration: Layout.animate), value: touchVm.dragIconXY)
+                    .animation(.easeInOut(duration: Layout.animate),
+                               value: touchVm.dragIconXY)
                 
-                    .opacity(1-touchVm.rootAlpha)
+                    .opacity(1-touchVm.parkIconAlpha)
                     .offset(touchVm.dragNodeΔ)
             }
         }
-        .animation(.easeInOut(duration: Layout.animate), value: touchVm.rootAlpha)
+        .animation(.easeInOut(duration: Layout.animate), value: touchVm.parkIconAlpha)
     }
 }

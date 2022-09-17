@@ -6,12 +6,12 @@ import SwiftUI
 public class MuTouchVm: ObservableObject {
 
     @Published var dragIconXY = CGPoint.zero /// current position
-    public var rootIconXY = CGPoint.zero     /// fixed positino of root icon
+    public var parkIconXY = CGPoint.zero     /// fixed position of icon
 
-    /// hide root icon while hovering elsewhere
-    var rootAlpha: CGFloat {
-        (dragIconXY == rootIconXY) || (dragIconXY == .zero) ? 1 : 0 }
-
+    /// hide park icon while hovering elsewhere
+    var parkIconAlpha: CGFloat {
+        (dragIconXY == parkIconXY) || (dragIconXY == .zero) ? 1 : 0
+    }
     var rootVm: MuRootVm?
     var rootNodeVm: MuNodeVm?  /// fixed root node in corner in which to drag from
     var dragNodeVm: MuNodeVm?  /// drag from root with duplicate node icon
@@ -37,28 +37,38 @@ public class MuTouchVm: ObservableObject {
         }
     }
 
-    /// via MuBranchView::@GestureState touchNow .onChange
-    public func touchUpdate(_ touchNow: CGPoint) {
+    /// called by UIKit to see if UITouchBegin hits a menu.
+    /// If not, it will not call touch
+    public func hitTest(_ touchNow: CGPoint) -> Bool {
+        if let rootNodeVm, rootNodeVm.contains(touchNow) {
+            log("rootNodeVm.center",[rootNodeVm.center])
+            return true // hits the root (home) node icon
+        } else if let rootVm, rootVm.hitTest(touchNow) {
+            return true // hits one of the shown branches
+        }
+        return false // does NOT hit menu
+    }
 
-        log("touch", [touchNow], terminator: " ") //???
+    /// called directly by SwiftUI Drag, or
+    /// indirectly by UIKIt touchesUpdate (above)
+    public func touchMenuUpdate(_ touchMenu: CGPoint) {
 
         if !touchState.touching    { begin() }
-        else if touchNow == .zero  { ended() }
+        else if touchMenu == .zero { ended() }
         else                       { moved() }
 
-        alignSpotWithTouch(touchNow)
+        alignDragIcon(touchMenu)
 
         func begin() {
-            touchState.begin(touchNow)
+            touchState.begin(touchMenu)
             rootVm?.touchBegin(touchState)
             // log("touch", [touchNow], terminator: " ")
         }
 
         func moved() {
-            dragIconXY = touchNow
-            touchState.moved(touchNow)
+            touchState.moved(touchMenu)
 
-            if let rootVm = rootVm {
+            if let rootVm {
 
                 if touchState.isFast,
                    // has a child branch to skip
@@ -73,34 +83,44 @@ public class MuTouchVm: ObservableObject {
         func ended() {
             touchState.ended()
             rootVm?.touchEnded(touchState)
-            dragIconXY = rootIconXY
+            dragIconXY = parkIconXY
             spotNodeΔ = .zero // no spotNode to align with
             rootNodeΔ = .zero // go back to rootNode
         }
-
     }
 
     /// updated on startup or change in screen orientation
     func updateRootIcon(_ from: CGRect) {
-        rootIconXY = rootVm?.cornerXY(in: from) ?? .zero
-        dragIconXY = rootIconXY
+        parkIconXY = rootVm?.cornerXY(in: from) ?? .zero
+        dragIconXY = parkIconXY
         //log("*** rootIconXY: ", [from,rootIconXY])
     }
     
     /// either center dragNode icon on spotNode or track finger
-    func alignSpotWithTouch(_ touchNow: CGPoint) {
+    func alignDragIcon(_ touchMenu: CGPoint) {
 
         guard let rootVm else {
-            return dragIconXY = touchNow
+            return dragIconXY = touchMenu - bounds.origin
         }
         if !touchState.touching ||
             rootVm.touchElement == .root ||
             rootVm.nodeSpotVm?.nodeType.isLeaf ?? false {
 
-            dragIconXY = rootIconXY
+            // park the dragIcon
+            dragIconXY = parkIconXY
+
+        } else if let nodeSpot = rootVm.nodeSpotVm {
+
+            dragIconXY = nodeSpot.center - bounds.origin
 
         } else {
-            dragIconXY =  rootVm.nodeSpotVm?.center ?? touchNow
+
+            dragIconXY = touchMenu - bounds.origin
         }
+    }
+    var bounds = CGRect.zero
+    func updateBounds(_ bounds: CGRect) {
+        self.bounds = bounds
+        // log("RootVm",[bounds])
     }
 }

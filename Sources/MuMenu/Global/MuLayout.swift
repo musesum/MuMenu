@@ -49,6 +49,4 @@ struct Layout {
                      : Color(white: 0.5, opacity: 0.90))
         return color
     }
-
-
 }

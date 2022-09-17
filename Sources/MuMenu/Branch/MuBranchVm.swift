@@ -163,7 +163,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
 
         boundsPrior = boundsPriorSize + boundsPrevSize + priorPadding
 
-        let rxy = touchVm.rootIconXY
+        let rxy = touchVm.parkIconXY
         let rx = rxy.x - Layout.radius
         let ry = rxy.y - Layout.radius
 
