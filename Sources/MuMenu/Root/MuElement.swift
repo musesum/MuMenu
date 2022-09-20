@@ -16,14 +16,14 @@ enum MuElement: String  {
     
     public var symbol: String {
         switch self {
-            case .none   : return "⋄"
+            case .none   : return "ø"
             case .root   : return "√"
             case .trunks : return "ᛘ"
             case .branch : return "𐂷"
-            case .node   : return "￮"
+            case .node   : return "ⓝ"
             case .shift  : return "⊪"
             case .edit   : return "✎"
-            case .space  : return "⬚"
+            case .space  : return "◌"
             case .edge   : return "⫼"
         }
     }

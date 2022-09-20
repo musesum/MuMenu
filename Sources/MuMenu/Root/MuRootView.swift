@@ -31,7 +31,6 @@ private struct ForestView: View {
 private struct LowerRightView: View {
     @EnvironmentObject var rootVm: MuRootVm
     var body: some View {
-
             HStack(alignment: .bottom) {
                 Spacer()
                 ZStack(alignment: .bottomTrailing) {
