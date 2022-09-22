@@ -3,6 +3,8 @@
 
 import SwiftUI
 
+/// SwiftUI DragGesture to navigate menu
+///
 public struct MenuDragView: View {
 
     @GestureState private var touchXY: CGPoint = .zero
@@ -17,24 +19,26 @@ public struct MenuDragView: View {
             GeometryReader { geo in
                 MuStatusView()
                     .frame(width: geo.size.width, height: 18, alignment: .top)
-
                 MuRootView()
                     .environmentObject(menuVm.rootVm)
                     .onAppear() { menuVm.rootVm.touchVm.updateBounds(geo.frame(in: .global)) }
-                // gestures provided by Drag
-                    .allowsHitTesting(true)
                     .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .global)
                         .updating($touchXY) { (value, touchXY, _) in
                             touchXY = value.location })
                     .onChange(of: touchXY) { menuVm.rootVm.touchVm.touchMenuUpdate($0) }
+                    .allowsHitTesting(true) // gestures provided by Drag
+
                 // .defersSystemGestures(on: .vertical)
             }
         }
     }
 }
 
-/// UIKit UITouch replaces drag
-public struct MenuView: View {
+/// UIKit UITouch to navigate menu
+///
+/// requires a ViewController to managage view hierarcy
+///
+public struct MenuTouchView: View {
 
     let menuVm: MenuVm
     let statusVm = MuStatusVm.shared
@@ -50,8 +54,7 @@ public struct MenuView: View {
                 MuRootView()
                     .environmentObject(menuVm.rootVm)
                     .onAppear() { menuVm.rootVm.touchVm.updateBounds(geo.frame(in: .global)) }
-                // gestures provided by UITouch
-                    .allowsHitTesting(false)
+                    .allowsHitTesting(false) // gestures provided by UITouch
             }
         }
     }
