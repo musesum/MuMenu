@@ -8,6 +8,9 @@ public class MuBranchVm: Identifiable, ObservableObject {
     static func == (lhs: MuBranchVm, rhs: MuBranchVm?) -> Bool { lhs.id == (rhs?.id ?? -1) }
 
     @Published var show = true
+    var duration: CGFloat { Layout.animate  }
+    var branchOpacity: CGFloat = 1 // branch may be partially occluded
+    var viewOpacity: CGFloat { show ? branchOpacity : 0 }
 
     var treeVm: MuTreeVm       /// my tree; which unfolds a hierarchy of branches
     var nodeVms: [MuNodeVm]    /// all the node View Models on this branch
@@ -93,7 +96,6 @@ public class MuBranchVm: Identifiable, ObservableObject {
         nodeVms.append(nodeVm)
     }
 
-
     func findNearestNode(_ touchNow: CGPoint) -> MuNodeVm? {
 
         // is hovering over same node as before
@@ -150,8 +152,8 @@ public class MuBranchVm: Identifiable, ObservableObject {
         }
     }
     private var boundStart: CGRect = .zero
-    @Published var branchShift: CGSize = .zero //??
-    var branchOpacity: CGFloat = 1
+    @Published var branchShift: CGSize = .zero
+
     private var shiftRange: RangeXY = (0...1, 0...1)
 
     func updateShiftRange() {

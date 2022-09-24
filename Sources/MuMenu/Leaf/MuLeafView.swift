@@ -29,7 +29,7 @@ struct MuLeafView<Content: View>: View {
         } else {
             VStack {
                 // vertical title is always on top
-                // so that hand doesn't over value text
+                // so that hand doesn't occlude value text
                 MuLeafTitleView(leafVm)
                 MuLeafBodyView(leafVm, content)
             }

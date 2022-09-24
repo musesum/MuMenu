@@ -132,7 +132,8 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
         treeShifted = .zero
     }
     func shiftTree(_ rootVm: MuRootVm,
-                   _ touchState: MuTouchState) {
+                   _ touchState: MuTouchState,
+                   minZero: Bool = false) {
 
         if touchState.phase == .ended {
             if touchState.tapCount > 0 {
@@ -144,14 +145,14 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
         }
 
         treeShifting = shiftConstrained()
-        //log("\ntreeShifting", [treeShifting, "root", rootVm.touchVm.parkIconXY])
+        // log("\ntreeShifting", [treeShifting, "root", rootVm.touchVm.parkIconXY])
         for branchVm in branchVms {
             branchVm.shiftBranch() 
         }
 
         /// constrain shifting only towards root's corner
         func shiftConstrained() -> CGSize {
-            let beginΔ = touchState.pointBeginΔ
+            let beginΔ = minZero ? .zero : touchState.pointBeginΔ
             let beginLimit =  (axis == .vertical
                                ? CGSize(width:  beginΔ.x, height: 0)
                                : CGSize(width: 0, height: beginΔ.y) )

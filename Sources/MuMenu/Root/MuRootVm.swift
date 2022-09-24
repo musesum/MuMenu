@@ -10,19 +10,18 @@ public class MuRootVm: ObservableObject, Equatable {
 
     /// what is the finger touching
     @Published var touchElement = MuElement.none
+    var beginTouchElement = MuElement.none
 
     /// captures touch events to dispatch to this root
     public let touchVm = MuTouchVm()
 
     /// which menu elements are shown on View
-    var viewElements: Set<MuElement> = [.root, .trunks] {
-        willSet { if viewElements != newValue {
-                log(":", [beginElements,"⟶",newValue], terminator: " ")
-            } } }
+    var viewElements: Set<MuElement> = [.root, .trunks]
+    // { willSet { if viewElements != newValue { log(":", [beginViewElements,"⟶",newValue], terminator: " ") } } }
 
     /// `touchBegin` snapshot of viewElements.
     /// To prevent touchEnded from hiding elements that were shown during `touchBegin`
-    var beginElements: Set<MuElement> = []
+    var beginViewElements: Set<MuElement> = []
 
     var corner: MuCorner        /// corner where root begins, ex: `[south,west]`
     var treeVms = [MuTreeVm]()  /// vertical or horizontal stack of branches
@@ -111,17 +110,20 @@ public class MuRootVm: ObservableObject, Equatable {
         }
         return false
     }
+
     func touchBegin(_ touchState: MuTouchState) {
-        beginElements = viewElements
+
+        beginViewElements = viewElements
         updateRoot(touchState)
         if touchState.tapCount > 0,
            let nodeSpotVm,
            !nodeSpotVm.nodeType.isLeaf {
-
             nodeSpotVm.tapping(touchState.tapCount)
         }
-        MuStatusVm.shared.show = true
+        MuStatusVm.shared.show = touchElement != .edit
+        beginTouchElement = touchElement
     }
+
     func touchMoved(_ touchState: MuTouchState) {
         updateRoot(touchState)
     }
@@ -154,7 +156,8 @@ public class MuRootVm: ObservableObject, Equatable {
         } else if hoverTreeAlts() { // shifted to space reserved for alternate tree
         } else {  hoverSpace()    } // hovering over canvas
         
-        log(touchElement.symbol, terminator: "")
+        // log(touchElement.symbol, terminator: "")
+        
         func touchLeafNode() -> Bool {
             if touchState.phase == .begin,
                let leafVm = nodeSpotVm as? MuLeafVm {
@@ -183,18 +186,24 @@ public class MuRootVm: ObservableObject, Equatable {
         }
         func hoverRootNode() -> Bool {
 
-            if !(touchVm.rootNodeVm?.contains(touchNow) ?? false) {
-                // skip when outside root node
+            let touchingRoot = touchVm.rootNodeVm?.contains(touchNow) ?? false
+            if !touchingRoot {
+                if beginTouchElement == .root {
+                    // when dragging root over branches, expand tree
+                    treeSpotVm?.shiftTree(self, touchState, minZero: true)
+                    // do this only once
+                    beginTouchElement = .none
+                }
                 return false
             }
             switch taps {
                 case 1:
                     touchElement = .none
-                    let wasShown = beginElements.hasAny([.branch,.trunks])
+                    let wasShown = beginViewElements.hasAny([.branch,.trunks])
                     if  wasShown { hideBranches() }
                     else         { showBranches() }
                 case 2:
-                    let wasShown = beginElements.hasAny([.branch,.trunks])
+                    let wasShown = beginViewElements.hasAny([.branch,.trunks])
                     if  wasShown { showBranches() }
                     nodeSpotVm?.tapping(taps)
                 case 3:
@@ -210,7 +219,7 @@ public class MuRootVm: ObservableObject, Equatable {
                         else          { showBranches() }
                     } else if let treeSpotVm {
                         treeSpotVm.shiftExpand()
-                        log("🛸", terminator: "")
+                        // log("🛸", terminator: "")
                     }
             }
             return true
@@ -226,7 +235,7 @@ public class MuRootVm: ObservableObject, Equatable {
                     if touchLeafNode() {
                         // already set touchElement
                     } else if !viewElements.contains(.branch) {
-                        log("~", terminator: "")
+                        // log("~", terminator: "")
                         viewElements = [.root,.branch]
                         touchElement = .branch
                     }
@@ -249,7 +258,7 @@ public class MuRootVm: ObservableObject, Equatable {
                 if treeVm != treeSpotVm,
                    let nearestTrunk = treeVm.nearestTrunk(touchNow),
                    let nearestNode = nearestTrunk.findNearestNode(touchNow) {
-                    treeSpotVm = treeVm                  // set new tree
+                    treeSpotVm = treeVm // set new tree
 
                     for treeVm in treeVms {
                         if treeVm == treeSpotVm {
@@ -260,7 +269,7 @@ public class MuRootVm: ObservableObject, Equatable {
                     }
                     updateChanged(nodeSpotVm: nearestNode)
 
-                    log("≈", terminator: "")
+                    // log("≈", terminator: "")
                     viewElements = [.root,.branch]
                     touchElement = .branch
                     return true
@@ -300,7 +309,8 @@ public class MuRootVm: ObservableObject, Equatable {
             for proxy in leafVm.node.proxies {
                 proxy.touchLeaf(touchState)
             }
-            MuStatusVm.shared.show = true
+            // hide status line
+            MuStatusVm.shared.show = false
         }
 
         func showTrunks() {
@@ -311,7 +321,7 @@ public class MuRootVm: ObservableObject, Equatable {
                     treeVm.showBranches(depth: 1)
                 }
                 treeSpotVm = nil
-                log("+ᛘ", terminator: "")
+                // log("+ᛘ", terminator: "")
                 viewElements = [.root, .trunks]
             }
         }
@@ -319,7 +329,7 @@ public class MuRootVm: ObservableObject, Equatable {
             if let treeVm = treeVms.first {
                 treeSpotVm = treeVm
                 treeVm.showBranches(depth: 999)
-                log("+𐂷", terminator: "")
+                // log("+𐂷", terminator: "")
                 viewElements = [.root,.branch]
             }
         }
@@ -331,7 +341,7 @@ public class MuRootVm: ObservableObject, Equatable {
                     } else {
                         treeVm.showBranches(depth: 0)
                     }
-                    log("+𐂷", terminator: "")
+                    // log("+𐂷", terminator: "")
                     viewElements = [.root,.branch]
                 }
             } else {
@@ -343,7 +353,7 @@ public class MuRootVm: ObservableObject, Equatable {
                 treeVm.showBranches(depth: 0)
             }
             treeSpotVm = nil
-            log("-𐂷", terminator: "")
+            // log("-𐂷", terminator: "")
             viewElements = [.root]
         }
     }

@@ -3,12 +3,10 @@
 import SwiftUI
 
 struct MuBranchView: View {
-    //var id = MuIdentity.getId()
 
     @EnvironmentObject var rootVm: MuRootVm
     @ObservedObject var branchVm: MuBranchVm
 
-    var opacity: CGFloat { branchVm.show ? 1 : 0 }
     var panelVm: MuPanelVm { branchVm.panelVm }
     var spotlight: Bool
 
@@ -35,8 +33,9 @@ struct MuBranchView: View {
         }
         .frame(width: panelVm.outer.width, height: panelVm.outer.height)
         .offset(branchVm.branchShift)
-        .opacity(opacity * branchVm.branchOpacity)
-        .animation(.easeInOut(duration: Layout.animate/2), value: opacity)
+        .opacity(branchVm.viewOpacity)
+        .animation(.easeInOut(duration: branchVm.duration), value: branchVm.viewOpacity)
+        .animation(.easeInOut(duration: branchVm.duration), value: branchVm.branchShift )
         //.onTapGesture { } // allow scrolling
     }
 }

@@ -13,8 +13,7 @@ struct MuLeafThumbTapView: View {
     @ObservedObject var leafVm: MuLeafVm
     var panelVm: MuPanelVm { leafVm.panelVm }
     var value: CGFloat
-    var color: Color { Layout.thumbColor(value) }
-    var blend: BlendMode { value == 1 ? .exclusion : .colorDodge }
+    var color: Color { leafVm.spotlight ? .white : .gray }
 
     var body: some View {
         ZStack {
@@ -29,7 +28,6 @@ struct MuLeafThumbTapView: View {
                 .frame(width:  panelVm.thumbDiameter,
                        height: panelVm.thumbDiameter)
                 .offset(leafVm.thumbOffset())
-                .blendMode(blend)
         }
     }
 }

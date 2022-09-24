@@ -1,9 +1,4 @@
-//
-//  File.swift
-//  
-//
 //  Created by warren on 7/29/22.
-//
 
 import Foundation
 import UIKit

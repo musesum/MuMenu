@@ -23,8 +23,6 @@ struct MuLeafThumbSlideView: View {
                     .frame(width:  panelVm.thumbDiameter,
                            height: panelVm.thumbDiameter)
                     .offset(leafVm.thumbOffset())
-                    .colorInvert()
-
             } else {
                 MuIconView(nodeVm: leafVm, icon: leafVm.node.icon)
                     .frame(width:  panelVm.thumbDiameter,

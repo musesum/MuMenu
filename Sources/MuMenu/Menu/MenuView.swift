@@ -26,8 +26,7 @@ public struct MenuDragView: View {
                         .updating($touchXY) { (value, touchXY, _) in
                             touchXY = value.location })
                     .onChange(of: touchXY) { menuVm.rootVm.touchVm.touchMenuUpdate($0) }
-                    .allowsHitTesting(true) // gestures provided by Drag
-
+                    .allowsHitTesting(true) // gestures provided by DragGesture
                 // .defersSystemGestures(on: .vertical)
             }
         }
