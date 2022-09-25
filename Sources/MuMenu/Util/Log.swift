@@ -3,11 +3,11 @@
 import SwiftUI
 
 public func log(_ title: String,
-         format: String = "%.0f",
-         _ items: [Any] = [],
-         length: Int = 0,
-         terminator: String = "\n") {
-
+                format: String = "%.0f",
+                _ items: [Any] = [],
+                length: Int = 0,
+                terminator: String = "\n") {
+    
     var text = title
     for item in items {
         switch item {

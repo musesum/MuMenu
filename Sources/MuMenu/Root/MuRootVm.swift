@@ -115,11 +115,7 @@ public class MuRootVm: ObservableObject, Equatable {
 
         beginViewElements = viewElements
         updateRoot(touchState)
-        if touchState.tapCount > 0,
-           let nodeSpotVm,
-           !nodeSpotVm.nodeType.isLeaf {
-            nodeSpotVm.tapping(touchState.tapCount)
-        }
+        nodeSpotVm?.touching(touchState)
         MuStatusVm.shared.show = touchElement != .edit
         beginTouchElement = touchElement
     }
@@ -141,7 +137,6 @@ public class MuRootVm: ObservableObject, Equatable {
 
     private func updateRoot(_ touchState: MuTouchState) {
         let touchNow = touchState.pointNow
-        let taps = touchState.tapCount
 
         // stay exclusively on .leaf or .edit mode
         switch touchElement {
@@ -163,13 +158,11 @@ public class MuRootVm: ObservableObject, Equatable {
                let leafVm = nodeSpotVm as? MuLeafVm {
 
                 if leafVm.runwayBounds.contains(touchNow) {
-                    // inside runway
-                    editLeaf()
+                    editLeaf() // inside runway
                     return true
 
                 } else if leafVm.branchVm.boundsNow.contains(touchNow) {
-                    // inside branch containing runway
-                    shiftBranches()
+                    shiftBranches() // inside branch containing runway
                     return true
                 }
             }
@@ -196,7 +189,7 @@ public class MuRootVm: ObservableObject, Equatable {
                 }
                 return false
             }
-            switch taps {
+            switch touchState.touchEndedCount {
                 case 1:
                     touchElement = .none
                     let wasShown = beginViewElements.hasAny([.branch,.trunks])
@@ -205,11 +198,11 @@ public class MuRootVm: ObservableObject, Equatable {
                 case 2:
                     let wasShown = beginViewElements.hasAny([.branch,.trunks])
                     if  wasShown { showBranches() }
-                    nodeSpotVm?.tapping(taps)
+                    nodeSpotVm?.touching(touchState)
                 case 3:
                     if let firstBranch = treeSpotVm?.branchVms.first,
                        let firstSpotVm = firstBranch.nodeSpotVm {
-                        firstSpotVm.tapping(taps)
+                        firstSpotVm.touching(touchState)
                     }
                 default:
                     if touchElement != .root {

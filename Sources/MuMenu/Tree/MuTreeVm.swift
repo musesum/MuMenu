@@ -136,7 +136,7 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
                    minZero: Bool = false) {
 
         if touchState.phase == .ended {
-            if touchState.tapCount > 0 {
+            if touchState.touchEndedCount > 0 {
                shiftExpand()
             } else {
                 treeShifted = treeShifting

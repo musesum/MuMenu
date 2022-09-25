@@ -25,6 +25,9 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
     var nextBranchVm: MuBranchVm? /// branch this node generates
     var prevNodeVm: MuNodeVm?     /// parent nodeVm in hierarchy
 
+    var myTouchBeginTime = TimeInterval(0)
+    var myTouchBeginCount = 0
+
     var center = CGPoint.zero /// current position
 
     init (_ node: MuNode,
@@ -99,7 +102,9 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
     func refreshView() {
         editing = editing
     }
-    func tapping(_ tapCount: Int) {
+
+    /// reset leaf to default value
+    func maybeTapLeaf() {
         if nodeType.isLeaf,
            let leafVm = self as? MuLeafVm,
            let nodeProto = leafVm.nodeProto {
@@ -108,17 +113,36 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
             leafVm.refreshValue()
             refreshView()
         }
-        if let nextBranchVm {
-            if tapCount < 3 {
-                // update only chain of spotlight nodes
-                nextBranchVm.nodeSpotVm?.tapping(tapCount)
-            } else {
-                // update all descendants
-                for nodeVm in nextBranchVm.nodeVms {
-                    nodeVm.tapping(tapCount)
-                }
-            }
+    }
+    /// update all descendants
+    func tapAllDescendants() {
+        maybeTapLeaf()
+        for nodeVm in nextBranchVm?.nodeVms ?? [] {
+            nodeVm.tapAllDescendants()
         }
+    }
+    /// update only chain of spotlight nodes
+    func tapSpotlights() {
+        maybeTapLeaf()
+        nextBranchVm?.nodeSpotVm?.tapSpotlights()
+    }
+    /// handle repeated touchBegin counts on self
+    func touching(_ touchState: MuTouchState) {
+
+        let timeDelta = touchState.timeBegin - myTouchBeginTime
+        if timeDelta < touchState.tapThreshold {
+            myTouchBeginCount += 1
+        } else {
+            myTouchBeginCount = 0
+        }
+        myTouchBeginTime = touchState.timeBegin
+        switch myTouchBeginCount {
+            case 0: break
+            case 1: tapSpotlights()
+            case 2,3: tapAllDescendants() //???
+            default: return
+        }
+        print("(\(touchState.touchBeginCount),\(myTouchBeginCount))", terminator: "  ")
     }
 }
 

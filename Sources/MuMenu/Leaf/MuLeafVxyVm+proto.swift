@@ -9,7 +9,7 @@ extension MuLeafVxyVm: MuLeafProtocol {
 
         if touchState.phase == .begin {
 
-            if touchState.touchCount == 1 {
+            if touchState.touchBeginCount == 1 {
                 tapThumb()
                 updateView()
                 editing = true
