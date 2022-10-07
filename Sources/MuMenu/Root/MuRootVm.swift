@@ -171,7 +171,7 @@ public class MuRootVm: ObservableObject, Equatable {
 
         func hoverNodeSpot() -> Bool {
             if let center = nodeSpotVm?.center,
-                center.distance(touchNow) < Layout.insideNode {
+               center.distance(touchNow) < Layout.insideNode {
                 touchElement = .node
                 return true
             }
@@ -270,7 +270,7 @@ public class MuRootVm: ObservableObject, Equatable {
             }
             return false
         }
-        func hoverSpace() { 
+        func hoverSpace() {
             touchElement = .space
             nodeSpotVm = nil
         }
@@ -341,14 +341,14 @@ public class MuRootVm: ObservableObject, Equatable {
                 showTrunks()
             }
         }
-        func hideBranches() {
-            for treeVm in treeVms {
-                treeVm.showBranches(depth: 0)
-            }
-            treeSpotVm = nil
-            // log("-𐂷", terminator: "")
-            viewElements = [.root]
-        }
     }
-
+    public func hideBranches() {
+        for treeVm in treeVms {
+            treeVm.showBranches(depth: 0)
+        }
+        treeSpotVm = nil
+        // log("-𐂷", terminator: "")
+        viewElements = [.root]
+    }
+    
 }

@@ -29,7 +29,7 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
         for branchVm in branchVms {
             branchVm.updateTree(self)
         }
-        showBranches(depth: 1)
+        showBranches(depth: 0)
     }
     
     func nearestTrunk(_ touchNow: CGPoint) -> MuBranchVm? {
