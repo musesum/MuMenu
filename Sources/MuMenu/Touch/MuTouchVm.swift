@@ -6,7 +6,7 @@ import SwiftUI
 public class MuTouchVm: ObservableObject {
 
     @Published var dragIconXY = CGPoint.zero /// current position
-    public var parkIconXY = CGPoint.zero     /// fixed position of icon
+    public var parkIconXY = CGPoint.zero     /// fixed position of icon 
 
     /// hide park icon while hovering elsewhere
     var parkIconAlpha: CGFloat {
