@@ -27,6 +27,21 @@ public struct MuCorner: OptionSet {
         return "\(printable)"
     }
 
+    public func abbreviation () -> String {
+        switch self {
+            case [.lower, .right]: return "SE"
+            case [.lower, .left ]: return "SW"
+            case [.upper, .right]: return "NE"
+            case [.upper, .left ]: return "NW"
+
+                // reserved for later middling roots
+            case [.upper]: return "N"
+            case [.right]: return "E"
+            case [.lower]: return "S"
+            case [.left ]: return "W"
+            default:       return "??"
+        }
+    }
     public func indicator () -> String {
         switch self {
             case [.lower, .right]: return "◢"
@@ -34,7 +49,7 @@ public struct MuCorner: OptionSet {
             case [.upper, .right]: return "◥"
             case [.upper, .left ]: return "◤"
 
-            // reserved for later middling roots
+                // reserved for later middling roots
             case [.upper]: return "▲"
             case [.right]: return "▶︎"
             case [.lower]: return "▼"
