@@ -3,7 +3,7 @@
 import SwiftUI
 
 open class MuNode: Identifiable, Equatable {
-    public let id = MuIdentity.getId()
+    public let id = MuNodeIdentity.getId()
 
     public var title: String
     public var icon: MuIcon
@@ -23,6 +23,10 @@ open class MuNode: Identifiable, Equatable {
         self.title = name
         self.icon = icon
         parent?.children.append(self)
+    }
+
+    open func touch() {
+        // when view is touched, may save 
     }
 
 }

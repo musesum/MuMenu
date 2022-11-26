@@ -3,7 +3,7 @@
 import SwiftUI
 
 public class MuBranchVm: Identifiable, ObservableObject {
-    public let id = MuIdentity.getId()
+    public let id = MuNodeIdentity.getId()
     static func == (lhs: MuBranchVm, rhs: MuBranchVm) -> Bool { lhs.id == rhs.id }
     static func == (lhs: MuBranchVm, rhs: MuBranchVm?) -> Bool { lhs.id == (rhs?.id ?? -1) }
 
@@ -108,7 +108,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
             if distance < Layout.diameter {
                 nodeSpotVm?.spotlight = false
                 nodeSpotVm = nodeVm
-                nodeSpotVm?.spotlight = true
+                nodeSpotVm?.spot(on: true)
                 nodeVm.superSpotlight()
                 return nodeVm
             }
@@ -132,7 +132,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
             if let leafVm = nodeVm as? MuLeafVm,
                leafVm.branchVm.boundsNow.contains(touchNow) {
                 nodeSpotVm = leafVm
-                nodeSpotVm?.spotlight = true
+                nodeSpotVm?.spot(on: true)
                 leafVm.superSpotlight()
                 return leafVm
             }

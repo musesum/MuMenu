@@ -2,7 +2,7 @@
 import SwiftUI
 
 public class MuTreeVm: Identifiable, Equatable, ObservableObject {
-    public let id = MuIdentity.getId()
+    public let id = MuNodeIdentity.getId()
     public static func == (lhs: MuTreeVm, rhs: MuTreeVm) -> Bool { return lhs.id == rhs.id }
     
     @Published var branchVms = [MuBranchVm]()

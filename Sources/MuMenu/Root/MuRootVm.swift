@@ -5,7 +5,7 @@
 import SwiftUI
 
 public class MuRootVm: ObservableObject, Equatable {
-    let id = MuIdentity.getId()
+    let id = MuNodeIdentity.getId()
     public static func == (lhs: MuRootVm, rhs: MuRootVm) -> Bool { return lhs.id == rhs.id }
 
     /// what is the finger touching

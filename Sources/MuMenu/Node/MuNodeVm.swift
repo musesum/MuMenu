@@ -3,7 +3,7 @@
 import SwiftUI
 
 public class MuNodeVm: Identifiable, Equatable, ObservableObject {
-    public let id =  MuIdentity.getId()
+    public let id =  MuNodeIdentity.getId()
     public static func == (lhs: MuNodeVm, rhs: MuNodeVm) -> Bool { return lhs.id == rhs.id }
 
     /// publish changing value of leaf (or order of node, later)
@@ -12,12 +12,13 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
     /// publish when selected or is under cursor
     @Published var spotlight = false
 
-    func publishChanged(spotlight nextSpotlight: Bool) {
-        if spotlight != nextSpotlight {
-            spotlight = nextSpotlight
+    func spot(on: Bool) {
+        if on == spotlight { return }
+        if on == true {
+            node.touch()
         }
+        spotlight = on
     }
-
     var nodeType: MuNodeType  /// node, val, vxy, seg, tog, tap
     let node: MuNode          /// each model MuNode maybe on several MuNodeVm's
     var panelVm: MuPanelVm    /// the panel that this node belongs to
