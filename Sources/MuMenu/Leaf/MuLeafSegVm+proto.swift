@@ -45,7 +45,7 @@ extension MuLeafSegVm: MuLeafProtocol {
     }
     
     public func updateLeaf(_ any: Any) {
-        if let v = any as? Float {
+        if let v = any as? Double {
             editing = true
             thumb = CGFloat(scale(v, from: range, to: 0...1))
             editing = false
@@ -59,7 +59,7 @@ extension MuLeafSegVm: MuLeafProtocol {
     }
     public override func valueText() -> String {
         range.upperBound > 1
-        ? String(format: "%.f", scale(Float(thumb), from: 0...1, to: range))
+        ? String(format: "%.f", scale(Double(thumb), from: 0...1, to: range))
         : String(format: "%.1f", thumb)
     }
     public override func thumbOffset() -> CGSize {

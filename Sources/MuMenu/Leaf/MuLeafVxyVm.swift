@@ -6,7 +6,7 @@ import SwiftUI
 public class MuLeafVxyVm: MuLeafVm {
     
     var thumb: CGPoint = .zero /// normalized to 0...1
-    var ranges = [String : ClosedRange<Float>]()
+    var ranges = [String : ClosedRange<Double>]()
 
     override init (_ node: MuNode,
                    _ branchVm: MuBranchVm,
@@ -16,15 +16,15 @@ public class MuLeafVxyVm: MuLeafVm {
         node.proxies.append(self)  // MuLeaf delegate for setting value
         refreshValue()
     }
-    func normalizeNamed(_ name: String, _ range: ClosedRange<Float>?) -> CGFloat {
-        let val = (nodeProto?.getAny(named: name) as? Float) ?? .zero
+    func normalizeNamed(_ name: String, _ range: ClosedRange<Double>?) -> CGFloat {
+        let val = (nodeProto?.getAny(named: name) as? Double) ?? .zero
         let norm = scale(val, from: range ?? 0...1, to: 0...1)
         return CGFloat(norm)
     }
-    func expand(named: String, _ value: CGFloat) -> Float {
+    func expand(named: String, _ value: CGFloat) -> Double {
 
         let range = ranges[named] ?? 0...1
-        let result = scale(Float(value), from: 0...1, to: range)
+        let result = scale(Double(value), from: 0...1, to: range)
         return result
     }
 

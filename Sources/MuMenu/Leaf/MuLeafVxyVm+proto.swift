@@ -75,8 +75,8 @@ extension MuLeafVxyVm: MuLeafProtocol {
     public func updateLeaf(_ any: Any) {
         if let p = any as? CGPoint {
             editing = true
-            let x = scale(Float(p.x), from: ranges["x"] ?? 0...1, to: 0...1)
-            let y = scale(Float(p.y), from: ranges["y"] ?? 0...1, to: 0...1)
+            let x = scale(Double(p.x), from: ranges["x"] ?? 0...1, to: 0...1)
+            let y = scale(Double(p.y), from: ranges["y"] ?? 0...1, to: 0...1)
             thumb = CGPoint(x: CGFloat(x), y: CGFloat(y))
             editing = false
         }

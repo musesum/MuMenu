@@ -6,7 +6,7 @@ import SwiftUI
 public class MuLeafSegVm: MuLeafVm {
 
     var thumb = CGFloat(0)
-    var range: ClosedRange<Float> = 0...1
+    var range: ClosedRange<Double> = 0...1
 
     init (_ node: MuNode,
           _ branchVm: MuBranchVm,
@@ -22,7 +22,7 @@ public class MuLeafSegVm: MuLeafVm {
 
     /// get current value and normalize 0...1 based on defined range
     var normalizeValue: CGFloat {
-        let val = (nodeProto?.getAny(named: nodeType.name) as? Float) ?? .zero
+        let val = (nodeProto?.getAny(named: nodeType.name) as? Double) ?? .zero
         return CGFloat(scale(val, from: range, to: 0...1))
     }
     /// normalize point to 0...1 based on defined range
@@ -32,8 +32,8 @@ public class MuLeafSegVm: MuLeafVm {
     }
     
     /// scale up normalized to defined range
-    var expanded: Float {
-        scale(Float(nearestTick), from: 0...1, to: range)
+    var expanded: Double {
+        scale(Double(nearestTick), from: 0...1, to: range)
     }
 
     lazy var count: CGFloat = {
@@ -61,7 +61,7 @@ public class MuLeafSegVm: MuLeafVm {
         var result = [CGSize]()
         let runway = panelVm.runway
         let radius = panelVm.thumbRadius
-        let count = range.upperBound - range.lowerBound
+        let count = Float(range.upperBound - range.lowerBound)
         if count < 1 { return [] }
         let span = (1/max(1,count))
         let margin = Layout.radius - 2

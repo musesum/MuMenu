@@ -51,7 +51,7 @@ extension MuLeafValVm: MuLeafProtocol {
     }
 
     public func updateLeaf(_ any: Any) {
-        if let v = any as? Float {
+        if let v = any as? Double {
             editing = true
             thumb = CGFloat(scale(v, from: range, to: 0...1))
             editing = false

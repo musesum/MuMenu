@@ -26,10 +26,10 @@ public protocol MuNodeProtocol {
     func getAnys(named: [String]) -> [(String, Any?)]
 
     /// get single named range
-    func getRange(named: String) -> ClosedRange<Float>
+    func getRange(named: String) -> ClosedRange<Double>
 
     /// get multiple named ranges
-    func getRanges(named: [String]) -> [(String, ClosedRange<Float>)]
+    func getRanges(named: [String]) -> [(String, ClosedRange<Double>)]
 
     /// callback
     ///

@@ -6,7 +6,7 @@ import SwiftUI
 public class MuLeafValVm: MuLeafVm {
 
     var thumb = CGFloat(0)
-    var range: ClosedRange<Float> = 0...1
+    var range: ClosedRange<Double> = 0...1
 
     init (_ node: MuNode,
           _ branchVm: MuBranchVm,
@@ -19,13 +19,13 @@ public class MuLeafValVm: MuLeafVm {
     }
 
     func normalizeNamed(_ name: String) -> CGFloat {
-        let val = (nodeProto?.getAny(named: name) as? Float) ?? .zero
+        let val = (nodeProto?.getAny(named: name) as? Double) ?? .zero
         let norm = scale(val, from: range, to: 0...1)
         return CGFloat(norm)
     }
 
-    var expanded: Float {
-        scale(Float(thumb), from: 0...1, to: range)
+    var expanded: Double {
+        scale(Double(thumb), from: 0...1, to: range)
     }
 
     func normalizeTouch(_ point: CGPoint) -> CGFloat {
