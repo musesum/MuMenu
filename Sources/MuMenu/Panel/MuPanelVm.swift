@@ -33,6 +33,7 @@ public class MuPanelVm {
             case .tog  : aspect(1.0, 1.5)
             case .seg  : aspect(1.0, 4.0)
             case .tap  : aspect(1.0, 1.0)
+            case .peer : aspect(6.0, 4.0)
         }
         func aspect(_ lo: CGFloat,_ hi: CGFloat) {
             aspectSz = axis == .vertical
@@ -71,7 +72,7 @@ public class MuPanelVm {
 
         switch nodeType {
 
-            case .val, .seg, .tog, .tap:
+            case .val, .seg, .tog, .tap, .peer:
 
                 result = inner + (
                     axis == .vertical

@@ -16,6 +16,9 @@ struct MuNodeView: View {
                     case let n as MuLeafSegVm: MuLeafSegView(leafVm: n)
                     case let n as MuLeafTogVm: MuLeafTogView(leafVm: n)
                     case let n as MuLeafTapVm: MuLeafTapView(leafVm: n)
+
+                    case let n as MuLeafPeerVm: MuLeafPeerView(leafVm: n)
+                        
                     default: MuIconView(nodeVm: nodeVm, icon: nodeVm.node.icon)
                 }
             }
@@ -24,7 +27,6 @@ struct MuNodeView: View {
         }
         .frame(width: panelVm.inner.width, height: panelVm.inner.height)
         .padding(Layout.padding)
-        .allowsHitTesting(true)
     }
 }
 

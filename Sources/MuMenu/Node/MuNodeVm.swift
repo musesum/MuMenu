@@ -3,7 +3,7 @@
 import SwiftUI
 
 public class MuNodeVm: Identifiable, Equatable, ObservableObject {
-    public let id =  MuNodeIdentity.getId()
+    public let id = MuNodeIdentity.getId()
     public static func == (lhs: MuNodeVm, rhs: MuNodeVm) -> Bool { return lhs.id == rhs.id }
 
     /// publish changing value of leaf (or order of node, later)

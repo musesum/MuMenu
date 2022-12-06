@@ -15,11 +15,15 @@ extension MuNodeVm {
                        icon: String = "") -> MuNodeVm {
 
         switch nodeType {
-            case .val: return MuLeafValVm(node, branchVm, prevVm)
             case .vxy: return MuLeafVxyVm(node, branchVm, prevVm)
+            case .val: return MuLeafValVm(node, branchVm, prevVm)
+            case .seg: return MuLeafSegVm(node, branchVm, prevVm)
+
             case .tog: return MuLeafTogVm(node, branchVm, prevVm)
             case .tap: return MuLeafTapVm(node, branchVm, prevVm)
-            case .seg: return MuLeafSegVm(node, branchVm, prevVm)
+                
+            case .peer: return MuLeafPeerVm(node, branchVm, prevVm)
+
             default:   return MuNodeVm(node, branchVm, prevVm)
         }
     }

@@ -1,12 +1,8 @@
-//
-//  File.swift
-//  
-//
-//  Created by warren on 9/10/22.
+//  Created by warren on 12/5/22.
 
 import SwiftUI
 
-extension MuLeafTapVm: MuLeafProtocol {
+extension MuLeafPeerVm: MuLeafProtocol {
 
     public func touchLeaf(_ touchState: MuTouchState) {
         if touchState.phase == .begin {
@@ -37,9 +33,10 @@ extension MuLeafTapVm: MuLeafProtocol {
         nodeProto?.setAny(named: nodeType.name, thumb)
     }
     public override func valueText() -> String {
-        editing ? "1" :  "0"
+        ""
     }
     public override func thumbOffset() -> CGSize {
         CGSize(width: 0, height:  panelVm.runway)
     }
+
 }

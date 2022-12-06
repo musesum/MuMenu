@@ -10,6 +10,7 @@ public enum MuNodeType: String {
     case tog  // toggle on/off
     case tap  // tap a button
     case seg  // segment control
+    case peer // join a peer network
     
     public var description: String {
         switch self {
@@ -20,6 +21,7 @@ public enum MuNodeType: String {
             case .tog  : return "tog"
             case .seg  : return "seg"
             case .tap  : return "tap"
+            case .peer : return "join"
         }
     }
     public var name: String {
@@ -34,6 +36,7 @@ public enum MuNodeType: String {
             case .tog  : return "◧⃝"
             case .seg  : return "◔⃝"
             case .tap  : return "◉⃝"
+            case .peer : return "⇵⃝"
         }
     }
 
@@ -48,6 +51,7 @@ public enum MuNodeType: String {
             case "tog"  : self = .tog
             case "seg"  : self = .seg
             case "tap"  : self = .tap
+            case "join" : self = .peer
             default     : self = .none
         }
     }
@@ -60,4 +64,4 @@ public enum MuNodeType: String {
 
 }
 
-public let MuNodeLeaves = Set<String>(["val", "vxy", "tog", "seg", "tap"])
+public let MuNodeLeaves = Set<String>(["val", "vxy", "tog", "seg", "tap", "peer"])

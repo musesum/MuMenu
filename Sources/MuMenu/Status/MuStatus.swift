@@ -1,16 +1,11 @@
-//
-//  File.swift
-//  
-//
 //  Created by warren on 7/30/22.
-//
 
 import SwiftUI
 
 class MuStatusVm: ObservableObject {
     static var shared = MuStatusVm()
     var before = [MuNodeVm]()
-    var after = [MuNodeVm] ()
+    var after  = [MuNodeVm]()
     var beforeStr: String {
         var line = ""
         var delim = "• "
