@@ -17,7 +17,7 @@ extension MuBranchVm {
                        prevNodeVm: MuNodeVm? = nil,
                        zindex: CGFloat = 0) -> MuBranchVm {
 
-        /// predict hash of next Branch
+        /// predict hash of next Branch //??? 
         var nextHash: Int {
             var hasher = Hasher()
             hasher.combine(prevNodeVm?.hashValue ?? 0)

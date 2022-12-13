@@ -4,18 +4,19 @@ import SwiftUI
 import MultipeerConnectivity
 
 /// This is the View Model for PeersView
-public class PeersVm: ObservableObject {
+class PeersVm: ObservableObject {
 
     public static let shared = PeersVm()
 
-    /// myName and one secound counter
-    @Published public var peersTitle = ""
+    /// myName and one second counter
+    @Published var peersTitle = ""
 
     /// list of connected peers and their counter
-    @Published public var peersList = ""
+    @Published var peersList = ""
 
-    public var peersController: PeersController
-    private var peersCounter = [String: Int]()
+    private var peersController: PeersController
+    private var peerCounter = [String: Int]()
+    private var peerStreamed = [String: Bool]()
 
     init() {
         peersController = PeersController.shared
@@ -29,41 +30,64 @@ public class PeersVm: ObservableObject {
     /// create a 1 second counter and send my count to all of my peers
     private func oneSecondCounter() {
         var count = Int(0)
+        let myName = peersController.myName
         func loopNext() {
-            count += 1
-            peersController.sendMessage(["count": count] )
-            peersTitle = "\(peersController.myName): \(count)"
+            count += 4
+
+            // viaStream: false will use MCSessionDelegate
+            // viaStream: true  will use StreamDelegate
+            peersController.sendMessage(["peerName": myName,
+                                         "count": count],
+                                        viaStream: false)
+
+            peersTitle = "\(myName): \(count)"
         }
-        _ = Timer.scheduledTimer(withTimeInterval: 1, repeats: true)  {_ in
+        _ = Timer.scheduledTimer(withTimeInterval: 4, repeats: true)  {_ in
             loopNext()
         }
     }
 }
 extension PeersVm: PeersControllerDelegate {
 
-    public func didChange() {
+    func didChange() {
 
         var peerList = ""
 
         for (name,state) in peersController.peerState {
-            peerList += "\n" + state.icon() + name
 
-            if let count = peersCounter[name]  {
+            peerList += "\n \(state.icon()) \(name)"
+
+            if let count = peerCounter[name]  {
                 peerList += ": \(count)"
+            }
+            if let streamed = peerStreamed[name] {
+                peerList += streamed ? "💧" : "⚡️"
             }
         }
         self.peersList = peerList
     }
 
 
-    public func received(message: [String: Any],
-                  from peer: MCPeerID) {
+    func received(data: Data, viaStream: Bool) {
 
-        // filter for internal 1 second counter
-        // other delegates may capture other messages
-        if let count = message["count"] as? Int {
-            peersCounter[peer.displayName] = count
-            didChange()
+        do {
+            let message = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String : Any]
+
+            // filter for internal 1 second counter
+            // other delegates may capture other messages
+
+            if  let peerName = message["peerName"] as? String,
+                let count = message["count"] as? Int {
+
+                peersController.fixConnectedState(for: peerName)
+
+                peerCounter[peerName] = count
+                peerStreamed[peerName] = viaStream
+                didChange()
+            }
+        }
+        catch {
+
         }
     }
 

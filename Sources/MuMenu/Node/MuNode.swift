@@ -7,13 +7,39 @@ open class MuNode: Identifiable, Equatable {
 
     public var title: String
     public var icon: MuIcon
+    public var parent: MuNode?
     public var children = [MuNode]()
     public var nodeProto: MuNodeProtocol?
     public var proxies = [MuLeafProtocol]()
     public var nodeType = MuNodeType.node
 
+    /// path and hash get updated through MuNodeDispatch::bindDispatch
+    public lazy var path: String? = {
+        if let parent,
+           let parentPath = parent.path {
+            return parentPath + "." + title
+        } else {
+            return title
+        }
+    }()
+
+    public lazy var hash: Int = {
+        if let path {
+            return Int(title.strHash())
+        } else {
+            print("⁉️ MuNode path==nil")
+            return -1
+        }
+    }()
+
+    public lazy var hashPath: [Int] = {
+        var _hashPath = parent?.hashPath ?? []
+        _hashPath.append(hash)
+        return _hashPath
+    }()
+
     public static func == (lhs: MuNode, rhs: MuNode) -> Bool {
-        return lhs.id == rhs.id
+        return lhs.hash == rhs.hash
     }
 
     public init(name: String,
@@ -22,6 +48,7 @@ open class MuNode: Identifiable, Equatable {
 
         self.title = name
         self.icon = icon
+        self.parent = parent
         parent?.children.append(self)
     }
 

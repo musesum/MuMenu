@@ -14,7 +14,7 @@ public struct MuCorner: OptionSet {
     public static let left  = MuCorner(rawValue: 1 << 2) // 4
     public static let right = MuCorner(rawValue: 1 << 3) // 8
 
-    static public var debugDescriptions: [(Self, String)] = [
+    static public var description: [(Self, String)] = [
         (.upper , "upper"),
         (.lower , "lower"),
         (.left  , "left"),
@@ -22,7 +22,7 @@ public struct MuCorner: OptionSet {
     ]
 
     public var description: String {
-        let result: [String] = Self.debugDescriptions.filter { contains($0.0) }.map { $0.1 }
+        let result: [String] = Self.description.filter { contains($0.0) }.map { $0.1 }
         let printable = result.joined(separator: ", ")
         return "\(printable)"
     }

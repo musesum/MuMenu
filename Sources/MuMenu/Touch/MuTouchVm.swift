@@ -27,7 +27,7 @@ public class MuTouchVm: ObservableObject {
         
         let testNode = MuNodeTest("⚫︎") //todo: replace with ??
         let branchVm = MuBranchVm.cached(treeVm: treeVm)
-        rootNodeVm = MuNodeVm(testNode, branchVm)
+        rootNodeVm = MuNodeVm(testNode, branchVm, nil)
         branchVm.addNodeVm(rootNodeVm)
 
         dragNodeVm = rootNodeVm?.copy()
@@ -37,36 +37,24 @@ public class MuTouchVm: ObservableObject {
         }
     }
 
-    /// called by UIKit to see if UITouchBegin hits a menu.
-    /// If not, it will not call touch
-    public func hitTest(_ touchNow: CGPoint) -> Bool {
-        if let rootNodeVm, rootNodeVm.contains(touchNow) {
-            log("rootNodeVm.center",[rootNodeVm.center])
-            return true // hits the root (home) node icon
-        } else if let rootVm, rootVm.hitTest(touchNow) {
-            return true // hits one of the shown branches
-        }
-        return false // does NOT hit menu
-    }
 
-    /// called directly by SwiftUI Drag, or
-    /// indirectly by UIKIt touchesUpdate (above)
-    public func touchMenuUpdate(_ touchMenu: CGPoint) {
+    /// called either by SwiftUI MenuView DragGesture or UIKIt touchesUpdate
+    public func touchMenuUpdate(_ touchPoint: CGPoint) {
 
-        if !touchState.touching    { begin() }
-        else if touchMenu == .zero { ended() }
-        else                       { moved() }
+        if !touchState.touching     { begin() }
+        else if touchPoint == .zero { ended() }
+        else                        { moved() }
 
-        alignDragIcon(touchMenu)
+        alignDragIcon(touchPoint)
 
         func begin() {
-            touchState.begin(touchMenu)
+            touchState.begin(touchPoint)
             rootVm?.touchBegin(touchState)
             // log("touch", [touchNow], terminator: " ")
         }
 
         func moved() {
-            touchState.moved(touchMenu)
+            touchState.moved(touchPoint)
 
             if let rootVm {
 

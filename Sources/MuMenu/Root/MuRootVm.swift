@@ -100,15 +100,15 @@ public class MuRootVm: ObservableObject, Equatable {
         }
     }
 
-    func hitTest(_ point: CGPoint) -> Bool {
+    func hitTest(_ point: CGPoint) -> MuNodeVm? {
         for treeVm in treeVms {
             for branchVm in treeVm.branchVms {
                 if branchVm.show, branchVm.boundsNow.contains(point) {
-                    return true
+                    return branchVm.findNearestNode(point)
                 }
             }
         }
-        return false
+        return nil
     }
 
     func touchBegin(_ touchState: MuTouchState) {

@@ -12,6 +12,7 @@ public func log(_ title: String,
     for item in items {
         switch item {
             case let v as CGFloat : text += String(format: "(\(format)) ", v)
+
             case let v as Float   : text += String(format: "(\(format)) ", v)
             case let v as CGPoint : text += String(format: "∙(\(format), \(format)) ", v.x, v.y)
             case let v as CGSize  : text += String(format: "∘(\(format), \(format)) ",
@@ -21,6 +22,17 @@ public func log(_ title: String,
             case let v as MuElement: text += "\(v.symbol)"
             case let v as Set<MuElement>: text += "\(MuElement.symbols(v))"
             case let v as String: text += v
+
+            case let v as Int     : text += " \(v)"
+            case let v as [Int]:
+                var delim = ""
+                text += " ["
+                for vv in v {
+                    text += (delim + "\(vv)")
+                    delim = ","
+                }
+                text += "]"
+
 
             case let (x,y) as RangeXY:
 
