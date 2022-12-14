@@ -54,6 +54,15 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
         path?.strHash() ?? -1
     }()
 
+    public lazy var nodeVmPath: [MuNodeVm] = {
+        var path = [MuNodeVm]()
+        if let prevNodeVm {
+            path.append(contentsOf: prevNodeVm.nodeVmPath)
+        }
+        path.append(self)
+        return path
+    }()
+    
 
     public init (_ node: MuNode,
                  _ branchVm: MuBranchVm,
@@ -67,6 +76,10 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
                                  treeVm: branchVm.treeVm)
 
         prevVm?.nextBranchVm = branchVm
+
+        if prevNodeVm == nil {
+            print(".", terminator: "")
+        }
     }
     
     func copy() -> MuNodeVm {

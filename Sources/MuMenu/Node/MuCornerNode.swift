@@ -3,13 +3,12 @@
 import SwiftUI
 
 /// shared between 1 or more MuNodeVm
-public class MuNodeTest: MuNode {
+public class MuCornerNode: MuNode {
     
     public init(_ name: String,
-         type: MuNodeType = .node,
-         parent: MuNode? = nil,
-         children: [MuNodeTest]? = nil)
-    {
+                type: MuNodeType = .node,
+                parent: MuNode? = nil,
+                children: [MuCornerNode]? = nil) {
 
         let icon = MuIcon(.cursor, named: Layout.hoverRing)
         super.init(name: name, icon: icon)
