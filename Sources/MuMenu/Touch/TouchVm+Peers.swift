@@ -1,11 +1,7 @@
-//
-//  File.swift
-//  
-//
 //  Created by warren on 12/13/22.
-//
 
 import Foundation
+
 extension MuTouchVm {
 
     /// called by UIKit to see if UITouchBegin hits a menu.
@@ -23,26 +19,12 @@ extension MuTouchVm {
         return nil // does NOT hit menu
     }
 
-    public func gotoHashPath(_ hashPath: [Int]) {
-        if let lastHash = hashPath.last,
-           rootVm?.nodeSpotVm?.hash == lastHash {
-            print("*** gotoHashPath nodeSpotVm?.hash == lastHash")
+    public func gotoMenuItem(_ menuItem: TouchMenuItem) {
+
+        guard let rootVm else {  return print ("⁉️ gotoHashPath rootVm == nil")}
+        let hashPath = menuItem.hashPath
+        for treeVm in rootVm.treeVms {
+            if treeVm.followHashPath(hashPath) { return }
         }
-        else if let firstHash = hashPath.first,
-                let rootNodeVm,
-                let rootVm,
-                let nodeSpotVm = rootVm.nodeSpotVm {
-
-            let rootPath = rootNodeVm.node.hashPath
-            let rootHash = rootPath.first ?? -1
-
-                log("hashPath", [hashPath])
-                log("rootPath", [rootPath])
-                log("nodeSpotVm", [nodeSpotVm.node.hashPath])
-
-        } else {
-            print("*** not yet")
-        }
-
     }
 }

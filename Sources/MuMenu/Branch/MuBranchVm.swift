@@ -38,7 +38,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
     public init(nodes: [MuNode] = [],
                 treeVm: MuTreeVm,
                 branchPrev: MuBranchVm? = nil,
-                prevNodeVm: MuNodeVm? = nil,
+                prevNodeVm: MuNodeVm?,
                 zindex: CGFloat = 0) {
 
         self.nodeVms = []
@@ -98,9 +98,11 @@ public class MuBranchVm: Identifiable, ObservableObject {
 
     func findNearestNode(_ touchNow: CGPoint) -> MuNodeVm? {
 
-        // is hovering over same node as before
-        if nodeSpotVm?.contains(touchNow) ?? false {
-            return nodeSpotVm
+        if let nodeSpotVm {
+            if nodeSpotVm.contains(touchNow) ||
+                nodeSpotVm.nodeType.isLeaf {
+                return nodeSpotVm
+            }
         }
         for nodeVm in nodeVms {
             let distance = nodeVm.center.distance(touchNow)
