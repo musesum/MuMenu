@@ -43,4 +43,3 @@ extension PeersController: MCNearbyServiceBrowserDelegate {
         logPeer("didNotStartBrowsingForPeers: \(error)")
     }
 }
-

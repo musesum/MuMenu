@@ -9,7 +9,7 @@ public protocol MuLeafProtocol {
     func touchLeaf(_ touchState: MuTouchState)
 
     /// update from model, not touch gesture
-    func updateLeaf(_ point: Any)
+    func updateLeaf(_ any: Any)
 
     /// refresh View from current thumb
     func updateView()

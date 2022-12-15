@@ -73,12 +73,27 @@ extension MuLeafVxyVm: MuLeafProtocol {
 
     /// update from model - not touch
     public func updateLeaf(_ any: Any) {
-        if let p = any as? CGPoint {
-            editing = true
-            let x = scale(Double(p.x), from: ranges["x"] ?? 0...1, to: 0...1)
-            let y = scale(Double(p.y), from: ranges["y"] ?? 0...1, to: 0...1)
-            thumb = CGPoint(x: CGFloat(x), y: CGFloat(y))
-            editing = false
+        switch any {
+            case let v as [String: Double]:
+
+                if let x = v["x"],
+                   let y = v["y"] {
+
+                    editing = true
+                    let xx = scale(x, from: ranges["x"] ?? 0...1, to: 0...1)
+                    let yy = scale(y, from: ranges["y"] ?? 0...1, to: 0...1)
+                    thumb = CGPoint(x: CGFloat(xx), y: CGFloat(yy))
+                    editing = false
+                }
+            case let p as CGPoint:
+
+                editing = true
+                let x = scale(Double(p.x), from: ranges["x"] ?? 0...1, to: 0...1)
+                let y = scale(Double(p.y), from: ranges["y"] ?? 0...1, to: 0...1)
+                thumb = CGPoint(x: CGFloat(x), y: CGFloat(y))
+                editing = false
+            default:
+                print("⁉️ unknown upddate type")
         }
     }
 

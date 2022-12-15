@@ -15,14 +15,6 @@ public class PeersController: NSObject {
 
     public static var shared = PeersController()
 
-    /// Info.plist values for this service are:
-    ///
-    ///     Bonjour Services
-    ///        _deepmuse-peer._tcp
-    ///        _deepmuse-peer._udp
-    ///
-    let serviceType = "deepmuse-peer"
-
     private let myPeerID = MCPeerID(displayName: UIDevice.current.name)
     private let startTime = Date().timeIntervalSince1970
 
@@ -56,13 +48,13 @@ public class PeersController: NSObject {
     }
 
     func startBrowsing() {
-        browser = MCNearbyServiceBrowser(peer: myPeerID, serviceType: serviceType)
+        browser = MCNearbyServiceBrowser(peer: myPeerID, serviceType: PeerServiceType)
         browser?.delegate = self
         browser?.startBrowsingForPeers()
     }
 
     func startAdvertising() {
-        advertiser = MCNearbyServiceAdvertiser(peer: myPeerID, discoveryInfo: nil, serviceType: serviceType)
+        advertiser = MCNearbyServiceAdvertiser(peer: myPeerID, discoveryInfo: nil, serviceType: PeerServiceType)
         advertiser?.delegate = self
         advertiser?.startAdvertisingPeer()
     }
@@ -79,10 +71,8 @@ public class PeersController: NSObject {
     }
 
     func logPeer(_ body: PeerName) {
-#if false
         let logTime = String(format: "%.2f", elapsedTime())
         print("⚡️ \(logTime) \(myName): \(body)")
-#endif
     }
 }
 

@@ -32,17 +32,15 @@ class PeersVm: ObservableObject {
         var count = Int(0)
         let myName = peersController.myName
         func loopNext() {
-            count += 4
+            count += 1
 
             // viaStream: false will use MCSessionDelegate
             // viaStream: true  will use StreamDelegate
-            peersController.sendMessage(["peerName": myName,
-                                         "count": count],
-                                        viaStream: false)
-
+            peersController.sendMessage(["peerName": myName, "count": count],
+                                        viaStream: true)
             peersTitle = "\(myName): \(count)"
         }
-        _ = Timer.scheduledTimer(withTimeInterval: 4, repeats: true)  {_ in
+        _ = Timer.scheduledTimer(withTimeInterval: 1, repeats: true)  {_ in
             loopNext()
         }
     }
