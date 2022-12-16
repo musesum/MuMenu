@@ -7,23 +7,25 @@ extension MuTreeVm { // + Peer
 
     func followHashPath(_ hashPath: [Int]) -> Bool {
 
-        log("from ", [hashPath])
+        func logPath(_ s: String,_  t: String = "\n" ) {
+            //print(s, terminator: t)
+        }
 
         var branchVm = branchVms.first
 
         for hash in hashPath {
 
-            print("\(hash)", terminator: ": ")
+            logPath("\(hash)", ": ")
             if let foundNodeVm = findNode(hash) {
-                print("  found: \"\(foundNodeVm.node.title)\"")
+                logPath("  found: \"\(foundNodeVm.node.title)\"")
                 foundNodeVm.refreshBranch()
                 branchVm = foundNodeVm.nextBranchVm
                 if branchVm == nil {
-                    print("*** done")
+                    logPath("*** done")
                     return true
                 }
             } else {
-                print(" not found")
+                logPath(" not found")
             }
 
         }
@@ -33,9 +35,9 @@ extension MuTreeVm { // + Peer
 
             if let nodeVms = branchVm?.nodeVms {
 
-                print("  ")
+                logPath("  ")
                 for nodeVm in nodeVms {
-                    print("\"\(nodeVm.node.title)\"", terminator: ", ")
+                    logPath("\"\(nodeVm.node.title)\"", ", ")
                     let nodeHash = nodeVm.node.hash
                     if nodeHash == hash {
                         return nodeVm
