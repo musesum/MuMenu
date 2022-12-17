@@ -32,7 +32,7 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
     var myTouchBeginTime = TimeInterval(0)
     var myTouchBeginCount = 0
 
-    var center = CGPoint.zero /// current position
+    public var center = CGPoint.zero /// current position
 
     /// path and hash get updated through MuNodeDispatch::bindDispatch
     lazy var path: String? = {

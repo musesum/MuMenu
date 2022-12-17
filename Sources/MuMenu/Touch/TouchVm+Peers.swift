@@ -24,7 +24,10 @@ extension MuTouchVm {
         guard let rootVm else {  return print ("⁉️ gotoHashPath rootVm == nil")}
         let hashPath = menuItem.hashPath
         for treeVm in rootVm.treeVms {
-            if treeVm.followHashPath(hashPath) { return }
+            if let foundNodeVm = treeVm.followHashPath(hashPath) {
+                let foundXY = foundNodeVm.center
+                touchMenuUpdate(foundXY)
+            }
         }
     }
 }

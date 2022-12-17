@@ -4,13 +4,7 @@ import Foundation
 
 extension MuTreeVm { // + Peer
 
-
-    func followHashPath(_ hashPath: [Int]) -> Bool {
-
-        func logPath(_ s: String,_  t: String = "\n" ) {
-            //print(s, terminator: t)
-        }
-
+    func followHashPath(_ hashPath: [Int]) -> MuNodeVm? {
         var branchVm = branchVms.first
 
         for hash in hashPath {
@@ -22,14 +16,14 @@ extension MuTreeVm { // + Peer
                 branchVm = foundNodeVm.nextBranchVm
                 if branchVm == nil {
                     logPath("*** done")
-                    return true
+                    return foundNodeVm
                 }
             } else {
                 logPath(" not found")
             }
 
         }
-        return false
+        return nil
 
         func findNode(_ hash: Int) -> MuNodeVm? {
 
@@ -45,6 +39,9 @@ extension MuTreeVm { // + Peer
                 }
             }
             return nil
+        }
+        func logPath(_ s: String,_  t: String = "\n" ) {
+            //print(s, terminator: t)
         }
     }
 
