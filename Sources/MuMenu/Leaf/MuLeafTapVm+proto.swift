@@ -9,11 +9,11 @@ import SwiftUI
 extension MuLeafTapVm: MuLeafProtocol {
 
     public func touchLeaf(_ touchState: MuTouchState) {
-        if touchState.phase == .begin {
+        if touchState.phase == .began {
             thumb = 1
             updateView()
             editing = true
-        } else if touchState.phase == .ended {
+        } else if touchState.phase.isDone() {
             thumb = 0
             updateView()
             editing = false

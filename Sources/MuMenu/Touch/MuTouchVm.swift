@@ -6,7 +6,7 @@ import SwiftUI
 public class MuTouchVm: ObservableObject {
 
     @Published var dragIconXY = CGPoint.zero /// current position
-    public var parkIconXY = CGPoint.zero     /// fixed position of icon 
+    public var parkIconXY = CGPoint.zero     /// fixed position of icon
 
     /// hide park icon while hovering elsewhere
     var parkIconAlpha: CGFloat {
@@ -36,45 +36,57 @@ public class MuTouchVm: ObservableObject {
             dragNodeΔ = CGSize(width: rightOffset, height: 0)
         }
     }
-
-
+    
+    public func updateTouchXY(_ touchXY: CGPoint) {
+        
+        if !touchState.touching  { begin(touchXY) }
+        else if touchXY == .zero { ended(touchXY) }
+        else                     { moved(touchXY) }
+        
+        alignCursor(touchXY)
+    }
+    
     /// called either by SwiftUI MenuView DragGesture or UIKIt touchesUpdate
-    public func touchMenuUpdate(_ touchPoint: CGPoint) {
+    public func updateNodeVm(_ nodeVm: MuNodeVm,
+                             _ menuItem: TouchMenuItem) {
 
-        if !touchState.touching     { begin() }
-        else if touchPoint == .zero { ended() }
-        else                        { moved() }
+        print("touchNodeUpdate \(nodeVm.node.title)") //??? 
+        let foundXY = nodeVm.center
+        let touchXY = menuItem.isDone() ? .zero : foundXY
 
-        alignDragIcon(touchPoint)
+        if !touchState.touching  { begin(touchXY) }
+        else if touchXY == .zero { ended(touchXY) }
+        else                     { moved(touchXY) }
 
-        func begin() {
-            touchState.begin(touchPoint)
-            rootVm?.touchBegin(touchState)
-            // log("touch", [touchNow], terminator: " ")
-        }
+        alignCursor(touchXY)
+    }
+    func begin(_ touchXY: CGPoint) {
+        touchState.begin(touchXY)
+        rootVm?.touchBegin(touchState)
+        // log("touch", [touchNow], terminator: " ")
+    }
 
-        func moved() {
-            touchState.moved(touchPoint)
+    func moved(_ touchXY: CGPoint)  {
+        touchState.moved(touchXY)
 
-            if let rootVm {
+        if let rootVm {
 
-                if touchState.isFast,
-                   // has a child branch to skip
-                   rootVm.nodeSpotVm?.nextBranchVm?.nodeSpotVm != nil {
-                    // log("🏁", terminator: " ")
-                } else {
-                    rootVm.touchMoved(touchState)
-                }
+            if touchState.isFast,
+               // has a child branch to skip
+               rootVm.nodeSpotVm?.nextBranchVm?.nodeSpotVm != nil {
+                // log("🏁", terminator: " ")
+            } else {
+                rootVm.touchMoved(touchState)
             }
         }
+    }
 
-        func ended() {
-            touchState.ended()
-            rootVm?.touchEnded(touchState)
-            dragIconXY = parkIconXY
-            spotNodeΔ = .zero // no spotNode to align with
-            rootNodeΔ = .zero // go back to rootNode
-        }
+    func ended(_ touchXY: CGPoint)  {
+        touchState.ended()
+        rootVm?.touchEnded(touchState)
+        dragIconXY = parkIconXY
+        spotNodeΔ = .zero // no spotNode to align with
+        rootNodeΔ = .zero // go back to rootNode
     }
 
     /// updated on startup or change in screen orientation
@@ -85,7 +97,7 @@ public class MuTouchVm: ObservableObject {
     }
     
     /// either center dragNode icon on spotNode or track finger
-    func alignDragIcon(_ touchMenu: CGPoint) {
+    func alignCursor(_ touchMenu: CGPoint) {
 
         guard let rootVm else {
             return dragIconXY = touchMenu - bounds.origin

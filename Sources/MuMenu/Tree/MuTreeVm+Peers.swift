@@ -15,7 +15,7 @@ extension MuTreeVm { // + Peer
                 foundNodeVm.refreshBranch()
                 branchVm = foundNodeVm.nextBranchVm
                 if branchVm == nil {
-                    logPath("*** done")
+                    print("*** done \(foundNodeVm.node.title)")
                     return foundNodeVm
                 }
             } else {

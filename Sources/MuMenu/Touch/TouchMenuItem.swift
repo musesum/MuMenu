@@ -2,9 +2,11 @@
 
 import UIKit
 
+
 public struct TouchMenuItem: Codable {
     
     public var time      : TimeInterval
+    public var type      : String
     public var cornerStr : String
     public var menuKey   : Int
     public var hashPath  : [Int]
@@ -24,12 +26,14 @@ public struct TouchMenuItem: Codable {
 
     public init(_ menuKey: Int,
                 _ cornerStr: String,
+                _ nodeType: MuNodeType,
                 _ hashPath: [Int],
                 _ nextXY: CGPoint,
                 _ phase: UITouch.Phase) {
         
         self.menuKey = menuKey
         self.cornerStr = cornerStr
+        self.type = nodeType.rawValue
         self.hashPath = hashPath
         self.time = Date().timeIntervalSince1970
         self.nextX = Float(nextXY.x)
@@ -38,11 +42,12 @@ public struct TouchMenuItem: Codable {
     }
     
     enum CodingKeys: String, CodingKey {
-        case menuKey, cornerStr, time, hashPath, nextX, nextY, phase }
+        case menuKey, cornerStr, type, time, hashPath, nextX, nextY, phase }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         try menuKey   = container.decode(Int    .self , forKey: .menuKey   )
+        try type      = container.decode(String .self , forKey: .type )
         try cornerStr = container.decode(String .self , forKey: .cornerStr )
         try time      = container.decode(Double .self , forKey: .time      )
         try hashPath  = container.decode([Int]  .self , forKey: .hashPath  )

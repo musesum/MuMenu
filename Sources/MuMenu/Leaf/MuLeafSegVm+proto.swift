@@ -7,11 +7,11 @@ extension MuLeafSegVm: MuLeafProtocol {
     /// user touch gesture inside runway
     public func touchLeaf(_ touchState: MuTouchState) {
 
-        if touchState.phase == .begin {
+        if touchState.phase == .began {
             touchThumbBegin()
             updateView()
             editing = true
-        } else if touchState.phase != .ended {
+        } else if !touchState.phase.isDone() {
             touchThumbNext()
             updateView()
             editing = true

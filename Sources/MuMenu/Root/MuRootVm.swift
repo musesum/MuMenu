@@ -26,13 +26,35 @@ public class MuRootVm: ObservableObject, Equatable {
     var corner: MuCorner        /// corner where root begins, ex: `[south,west]`
     var treeVms = [MuTreeVm]()  /// vertical or horizontal stack of branches
     var treeSpotVm: MuTreeVm?   /// most recently used tree
-    var nodeSpotVm: MuNodeVm?   /// current last touched or hovered node
+    public var nodeSpotVm: MuNodeVm?   /// current last touched or hovered node
 
-    func updateChanged(nodeSpotVm: MuNodeVm) {
+    func updateSpot(_ nodeSpotVm: MuNodeVm, _ touchState: MuTouchState) {
+
         if self.nodeSpotVm != nodeSpotVm  {
             self.nodeSpotVm = nodeSpotVm
             nodeSpotVm.refreshBranch()
             nodeSpotVm.refreshStatus()
+
+            let peersC = PeersController.shared
+            if peersC.hasPeers {
+                do {
+                    let menuKey = "remote".hash
+                    let cornerStr = corner.abbreviation()
+                    let nodeType = nodeSpotVm.nodeType
+                    let hashPath = nodeSpotVm.node.hashPath
+                    let nextXY = CGPoint.zero
+                    let phase = touchState.phase
+
+
+                    let item = TouchMenuItem(menuKey, cornerStr, nodeType, hashPath, nextXY, phase)
+
+                    let encoder = JSONEncoder()
+                    let data = try encoder.encode(item)
+                    peersC.sendMessage(data, viaStream: true)
+                } catch {
+                    print(error)
+                }
+            }
         }
     }
 
@@ -47,6 +69,7 @@ public class MuRootVm: ObservableObject, Equatable {
             treeVm.rootVm = self
         }
     }
+    
 
     /**
      Adjust MuTree offsets on iPhone and iPad. Needed to avoid false positives, now that springboard has added a corner hotspot for launching the notes app. Also, adjust pilot offsets for home node and for flying.
@@ -150,11 +173,11 @@ public class MuRootVm: ObservableObject, Equatable {
         } else if hoverTreeNow()  { // shifted to new node on same tree
         } else if hoverTreeAlts() { // shifted to space reserved for alternate tree
         } else {  hoverSpace()    } // hovering over canvas
-        
+
         // log(touchElement.symbol, terminator: "")
-        
+
         func touchLeafNode() -> Bool {
-            if touchState.phase == .begin,
+            if touchState.phase == .began,
                let leafVm = nodeSpotVm as? MuLeafVm {
 
                 if leafVm.runwayBounds.contains(touchNow) {
@@ -224,7 +247,7 @@ public class MuRootVm: ObservableObject, Equatable {
 
                 if let nearestNodeVm = nearestBranch.findNearestNode(touchNow) {
 
-                    updateChanged(nodeSpotVm: nearestNodeVm)
+                    updateSpot(nearestNodeVm, touchState)
                     if touchLeafNode() {
                         // already set touchElement
                     } else if !viewElements.contains(.branch) {
@@ -236,8 +259,8 @@ public class MuRootVm: ObservableObject, Equatable {
 
                 } else if let nearestLeafVm = nearestBranch.findNearestLeaf(touchNow) {
                     // special case where not touching on leaf runway but is touching headline
-                    if touchState.phase == .begin {
-                        updateChanged(nodeSpotVm: nearestLeafVm)
+                    if touchState.phase == .began {
+                        updateSpot(nearestLeafVm, touchState)
                         touchElement = .shift
                         return true
                     }
@@ -251,6 +274,7 @@ public class MuRootVm: ObservableObject, Equatable {
                 if treeVm != treeSpotVm,
                    let nearestTrunk = treeVm.nearestTrunk(touchNow),
                    let nearestNode = nearestTrunk.findNearestNode(touchNow) {
+
                     treeSpotVm = treeVm // set new tree
 
                     for treeVm in treeVms {
@@ -260,7 +284,7 @@ public class MuRootVm: ObservableObject, Equatable {
                             treeVm.showBranches(depth: 0)
                         }
                     }
-                    updateChanged(nodeSpotVm: nearestNode)
+                    updateSpot(nearestNode, touchState)
 
                     // log("≈", terminator: "")
                     viewElements = [.root,.branch]
@@ -350,5 +374,4 @@ public class MuRootVm: ObservableObject, Equatable {
         // log("-𐂷", terminator: "")
         viewElements = [.root]
     }
-    
 }

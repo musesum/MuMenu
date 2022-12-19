@@ -21,12 +21,12 @@ extension MuTouchVm {
 
     public func gotoMenuItem(_ menuItem: TouchMenuItem) {
 
-        guard let rootVm else {  return print ("⁉️ gotoHashPath rootVm == nil")}
+        guard let rootVm else { return }
         let hashPath = menuItem.hashPath
         for treeVm in rootVm.treeVms {
             if let foundNodeVm = treeVm.followHashPath(hashPath) {
-                let foundXY = foundNodeVm.center
-                touchMenuUpdate(foundXY)
+                updateNodeVm(foundNodeVm, menuItem)
+                break
             }
         }
     }

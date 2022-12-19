@@ -7,7 +7,7 @@ extension MuLeafVxyVm: MuLeafProtocol {
     /// user touch gesture inside runway
     public func touchLeaf(_ touchState: MuTouchState) {
 
-        if touchState.phase == .begin {
+        if touchState.phase == .began {
 
             if touchState.touchBeginCount == 1 {
                 tapThumb()
@@ -18,7 +18,7 @@ extension MuLeafVxyVm: MuLeafProtocol {
                 updateView()
                 editing = true
             }
-        } else if touchState.phase != .ended {
+        } else if !touchState.phase.isDone() {
             touchThumbNext()
             updateView()
             editing = true

@@ -10,11 +10,11 @@ import Foundation
 extension MuLeafTogVm: MuLeafProtocol {
 
     public func touchLeaf(_ touchState: MuTouchState) {
-        if !editing, touchState.phase == .begin  {
+        if !editing, touchState.phase == .began  {
             thumb = (thumb==1 ? 0 : 1)
             updateView()
             editing = true
-        } else if editing,  touchState.phase == .ended {
+        } else if editing, touchState.phase.isDone() {
             editing = false
         }
     }

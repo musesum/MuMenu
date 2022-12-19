@@ -6,14 +6,14 @@ public class MuTouchState {
 
     public enum MuTouchPhase { case none, begin, moved, ended }
     let tapThreshold = TimeInterval(0.5) /// tap time threshold
-    let speedThreshold = CGFloat(400) /// test to skip branches
+    let speedThreshold = CGFloat(300) /// test to skip branches
     let moveThreshold = CGFloat(5)   /// move distance to reset touchEndCount
 
     var touchBeginCount = 0  /// count `touchBegin`s within tapThreshold
     var touchEndedCount = 0    /// count `touchEnd`s within tapThreshold
     var isFast = false  /// is moving fast to skip branches
     var pointNow = CGPoint.zero /// current position of touch
-    var phase = MuTouchPhase.none /// begin, moved, ended
+    var phase = UITouch.Phase.ended
     var touching: Bool { return timeBegin > timeEnded }
 
     var timeBegin  = TimeInterval(0) /// starting time for tap candidate
@@ -29,7 +29,7 @@ public class MuTouchState {
 
     func begin(_ pointNow: CGPoint) {
 
-        phase = .begin
+        phase = .began
 
         let timeNow = Date().timeIntervalSince1970
         timeBegin = timeNow
