@@ -10,11 +10,13 @@ extension MuLeafValVm: MuLeafProtocol {
 
         if touchState.phase == .began {
             touchThumbBegin()
-            updateView()
+            updateSync()
+            updatePeers()
             editing = true
         } else if !touchState.phase.isDone()  {
             touchThumbNext()
-            updateView()
+            updateSync()
+            updatePeers()
             editing = true
         } else {
             editing = false
@@ -39,14 +41,14 @@ extension MuLeafValVm: MuLeafProtocol {
         }
     }
     
-    // MARK: - Value
+    // MARK: - Value from model
 
     public override func refreshValue() {
         thumb[0] = normalizeNamed(nodeType.name)
         range = menuSync?.getRange(named: nodeType.name) ?? 0...1
     }
 
-    public func updateLeaf(_ any: Any) {
+    public override func updateLeaf(_ any: Any) {
         if let v = any as? Double {
             editing = true
             thumb[0] = CGFloat(scale(v, from: range, to: 0...1))
@@ -56,7 +58,7 @@ extension MuLeafValVm: MuLeafProtocol {
     // MARK: - View
 
     /// expand normalized thumb to View coordinates and update outside model
-    public func updateView() {
+    public override func updateSync() {
         menuSync?.setAny(named: nodeType.name, expanded)
     }
     public override func valueText() -> String {

@@ -25,7 +25,17 @@ extension MuTouchVm {
         let hashPath = menuItem.hashPath
         for treeVm in rootVm.treeVms {
             if let foundNodeVm = treeVm.followHashPath(hashPath) {
-                updateNodeVm(foundNodeVm, menuItem)
+                if let leafVm = foundNodeVm as? MuLeafVm {
+                    var thumb = [Double]()
+                    for point in menuItem.point {
+                        thumb.append(Double(point))
+                    }
+                    leafVm.updateLeaf(thumb)
+                    leafVm.updateSync()
+
+                } else {
+                    updateNodeVm(foundNodeVm, menuItem)
+                }
                 break
             }
         }

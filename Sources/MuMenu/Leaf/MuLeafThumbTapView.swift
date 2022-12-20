@@ -1,10 +1,4 @@
-//
-//  File.swift
-//  MuseSky2
-//
 //  Created by warren on 8/18/22.
-//  Copyright © 2022 Muse. All rights reserved.
-//
 
 import SwiftUI
 
@@ -12,7 +6,6 @@ struct MuLeafThumbTapView: View {
 
     @ObservedObject var leafVm: MuLeafVm
     var panelVm: MuPanelVm { leafVm.panelVm }
-    var value: CGFloat
     var color: Color { leafVm.spotlight ? .white : .gray }
 
     var body: some View {

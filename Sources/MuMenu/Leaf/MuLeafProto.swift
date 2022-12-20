@@ -11,8 +11,8 @@ public protocol MuLeafProtocol {
     /// update from model, not touch gesture
     func updateLeaf(_ any: Any)
 
-    /// refresh View from current thumb
-    func updateView()
+    /// synchronize model
+    func updateSync()
 
     /// title for control value
     func valueText() -> String

@@ -11,16 +11,19 @@ extension MuLeafVxyVm: MuLeafProtocol {
 
             if touchState.touchBeginCount == 1 {
                 tapThumb()
-                updateView()
+                updateSync()
+                updatePeers()
                 editing = true
             } else {
                 touchThumbBegin()
-                updateView()
+                updateSync()
+                updatePeers()
                 editing = true
             }
         } else if !touchState.phase.isDone() {
             touchThumbNext()
-            updateView()
+            updateSync()
+            updatePeers()
             editing = true
         } else {
             editing = false
@@ -30,6 +33,7 @@ extension MuLeafVxyVm: MuLeafProtocol {
             let touchDelta = touchState.pointNow - runwayBounds.origin
             let thumbPrior = panelVm.normalizeTouch(xy: touchDelta)
             thumb = quantizeThumb(thumbPrior)
+
             let x = thumb[0] - thumbPrior[0]
             let y = thumb[1] - thumbPrior[1]
             thumbBeginΔ = [x, y]
@@ -76,35 +80,38 @@ extension MuLeafVxyVm: MuLeafProtocol {
     }
 
     /// update from model - not touch
-    public func updateLeaf(_ any: Any) {
+    public override func updateLeaf(_ any: Any) {
         switch any {
+            case let v as [Double]:
+                updateThumb(v[0], v[1])
+
             case let v as [String: Double]:
 
                 if let x = v["x"],
                    let y = v["y"] {
-
-                    editing = true
-                    let xx = scale(x, from: ranges["x"] ?? 0...1, to: 0...1)
-                    let yy = scale(y, from: ranges["y"] ?? 0...1, to: 0...1)
-                    thumb = [xx,yy]
-                    editing = false
+                    updateThumb(x,y)
                 }
-            case let p as CGPoint:
+            case let v as CGPoint:
+                updateThumb(Double(v.x), Double(v.y))
 
-                editing = true
-                let xx = scale(Double(p.x), from: ranges["x"] ?? 0...1, to: 0...1)
-                let yy = scale(Double(p.y), from: ranges["y"] ?? 0...1, to: 0...1)
-                thumb = [xx,yy]
-                editing = false
             default:
                 print("⁉️ unknown upddate type")
         }
+        func updateThumb(_ x: Double, _ y: Double) {
+
+            editing = true
+            let xx = scale(x, from: ranges["x"] ?? 0...1, to: 0...1)
+            let yy = scale(y, from: ranges["y"] ?? 0...1, to: 0...1)
+            thumb = [xx,yy]
+            editing = false
+        }
+
     }
 
     // MARK: - View
 
     /// expand normalized thumb to View coordinates and update outside model
-    public func updateView() {
+    public override func updateSync() {
         let x = expand(named: "x", thumb[0])
         let y = expand(named: "y", thumb[1])
         menuSync?.setAnys([("x", x),("y", y)])

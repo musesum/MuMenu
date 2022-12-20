@@ -31,6 +31,9 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
     
     var myTouchBeginTime = TimeInterval(0)
     var myTouchBeginCount = 0
+    lazy var rootVm: MuRootVm = {
+        branchVm.treeVm.rootVm! //??? 
+    }()
 
     public var center = CGPoint.zero /// current position
 
@@ -137,8 +140,6 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
     func refreshView() {
         editing = editing
     }
-
-
 
 }
 

@@ -10,7 +10,16 @@ extension Array where Element == Double {
         for index in 0 ..< lhs.count {
             let left = lhs[index]
             let right = index < rhs.count ? rhs[index] : 0
-            result.append(left - right)
+            result.append(left + right)
+        }
+        return result
+    }
+    public static func + (lhs: [Double], rhs: [Double]) -> [Double] {
+        var result = [Double]()
+        for index in 0 ..< lhs.count {
+            let left = lhs[index]
+            let right = index < rhs.count ? rhs[index] : 0
+            result.append(left + right)
         }
         return result
     }

@@ -11,11 +11,13 @@ extension MuLeafTapVm: MuLeafProtocol {
     public func touchLeaf(_ touchState: MuTouchState) {
         if touchState.phase == .began {
             thumb[0] = 1
-            updateView()
+            updateSync()
+            updatePeers()
             editing = true
         } else if touchState.phase.isDone() {
             thumb[0] = 0
-            updateView()
+            updateSync()
+            updatePeers()
             editing = false
         }
     }
@@ -24,7 +26,7 @@ extension MuLeafTapVm: MuLeafProtocol {
         // no change
     }
 
-    public func updateLeaf(_ any: Any) {
+    public override func updateLeaf(_ any: Any) {
         editing = true
         Schedule(0.125) {
             self.editing = false
@@ -33,7 +35,7 @@ extension MuLeafTapVm: MuLeafProtocol {
 
     //MARK: - View
 
-    public func updateView() {
+    public override func updateSync() {
         menuSync?.setAny(named: nodeType.name, thumb)
     }
     public override func valueText() -> String {
