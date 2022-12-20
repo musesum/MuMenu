@@ -3,12 +3,12 @@
 import SwiftUI
 import Par // Visitor
 
-/// exchange values with outside model
+/// synchronize values with outside model, such as Tr3
 ///
-/// *Anys superlative is needed for CGPoint and other multidimensional controls.
+/// *Anys (s superlative) is needed for CGPoint and other multidimensional controls.
 /// Should synchronize set and get of multiple values to avoid jitter
 ///
-public protocol MuNodeProtocol {
+public protocol MuMenuSync {
 
     /// set single named value
     func setAny(named: String,_ any: Any)

@@ -6,11 +6,11 @@ extension MuLeafPeerVm: MuLeafProtocol {
 
     public func touchLeaf(_ touchState: MuTouchState) {
         if touchState.phase == .began {
-            thumb = 1
+            thumb[0] = 1
             updateView()
             editing = true
         } else if touchState.phase.isDone() {
-            thumb = 0
+            thumb[0] = 0
             updateView()
             editing = false
         }
@@ -30,7 +30,7 @@ extension MuLeafPeerVm: MuLeafProtocol {
     //MARK: - View
 
     public func updateView() {
-        nodeProto?.setAny(named: nodeType.name, thumb)
+        menuSync?.setAny(named: nodeType.name, thumb)
     }
     public override func valueText() -> String {
         ""

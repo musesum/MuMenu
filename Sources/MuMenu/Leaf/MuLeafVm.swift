@@ -5,15 +5,17 @@ import SwiftUI
 /// extend MuNodeVm to show title and thumb position
 public class MuLeafVm: MuNodeVm {
 
-    var nodeProto: MuNodeProtocol?
+    var menuSync: MuMenuSync?
+    var thumb = [Double](repeatElement(0, count: 2)) /// normalized to 0...1
 
     override init (_ node: MuNode,
-          _ branchVm: MuBranchVm,
-          _ prevVm: MuNodeVm? = nil) {
+                   _ branchVm: MuBranchVm,
+                   _ prevVm: MuNodeVm? = nil) {
         
         super.init(node, branchVm, prevVm)
-        
-        nodeProto = node.nodeProto ?? prevVm?.node.nodeProto
+
+        // some leaves spawn a child view
+        menuSync = node.menuSync ?? prevVm?.node.menuSync
     }
 
 
@@ -31,7 +33,7 @@ public class MuLeafVm: MuNodeVm {
 
     /// updated position of thumb inside control
     @objc dynamic func updateLeaf(_ any: Any) -> Any {
-        print("*** need to override updaetLeaf")
+        print("*** need to override updateLeaf")
         return any
     }
 

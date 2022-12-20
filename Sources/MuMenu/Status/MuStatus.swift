@@ -4,6 +4,7 @@ import SwiftUI
 
 class MuStatusVm: ObservableObject {
     static var shared = MuStatusVm()
+
     var before = [MuNodeVm]()
     var after  = [MuNodeVm]()
     var beforeStr: String {

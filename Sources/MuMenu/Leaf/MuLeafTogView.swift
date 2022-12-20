@@ -9,7 +9,8 @@ struct MuLeafTogView: View {
 
     var body: some View {
         MuLeafView(leafVm) {
-            MuLeafThumbTapView(leafVm: leafVm, value: leafVm.thumb)
+            MuLeafThumbTapView(leafVm: leafVm,
+                               value: leafVm.thumb[0])
         }
     }
 }

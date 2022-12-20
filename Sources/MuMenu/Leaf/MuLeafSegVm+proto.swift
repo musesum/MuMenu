@@ -26,28 +26,28 @@ extension MuLeafSegVm: MuLeafProtocol {
                 thumbBeginΔ = thumbBeginΔ * 0.85
             }
             let touchDelta = touchState.pointNow - runwayBounds.origin
-            thumb = normalizeTouch(touchDelta) + thumbBeginΔ
+            thumb[0] = normalizeTouch(touchDelta) + thumbBeginΔ
         }
         func touchThumbBegin() {
-            let thumbPrev = thumb
+            let thumbPrev = thumb[0]
             let touchDelta = touchState.pointNow - runwayBounds.origin
             let thumbNext = normalizeTouch(touchDelta)
             let touchedInsideThumb = abs(thumbNext.distance(to: thumbPrev)) < thumbRadius
             thumbBeginΔ = touchedInsideThumb ? thumbPrev - thumbNext : .zero
-            thumb = thumbNext + thumbBeginΔ
+            thumb[0] = thumbNext + thumbBeginΔ
         }
     }
 
     // MARK: - Value
     public override func refreshValue() {
-        range = nodeProto?.getRange(named: nodeType.name) ?? 0...1
-        thumb = normalizeValue
+        range = menuSync?.getRange(named: nodeType.name) ?? 0...1
+        thumb[0] = normalizeValue
     }
     
     public func updateLeaf(_ any: Any) {
         if let v = any as? Double {
             editing = true
-            thumb = CGFloat(scale(v, from: range, to: 0...1))
+            thumb[0] = CGFloat(scale(v, from: range, to: 0...1))
             editing = false
         }
     }
@@ -55,17 +55,17 @@ extension MuLeafSegVm: MuLeafProtocol {
 
     /// expand normalized thumb to View coordinates and update outside model
     public func updateView() {
-        nodeProto?.setAny(named: nodeType.name, expanded)
+        menuSync?.setAny(named: nodeType.name, expanded)
     }
     public override func valueText() -> String {
         range.upperBound > 1
-        ? String(format: "%.f", scale(Double(thumb), from: 0...1, to: range))
-        : String(format: "%.1f", thumb)
+        ? String(format: "%.f", scale(Double(thumb[0]), from: 0...1, to: range))
+        : String(format: "%.1f", thumb[0])
     }
     public override func thumbOffset() -> CGSize {
         panelVm.axis == .vertical
-        ? CGSize(width: 1, height: (1-thumb) * panelVm.runway)
-        : CGSize(width: thumb * panelVm.runway, height: 1)
+        ? CGSize(width: 1, height: (1-thumb[0]) * panelVm.runway)
+        : CGSize(width: thumb[0] * panelVm.runway, height: 1)
     }
 
    

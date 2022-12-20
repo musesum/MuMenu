@@ -104,7 +104,7 @@ public class MuPanelVm {
         }
     }
 
-    func normalizeTouch(xy: CGPoint) -> CGPoint {
+    func normalizeTouch(xy: CGPoint) -> [Double] {
         let xMax = (inner.width  - thumbRadius)
         let yMax = (inner.height - thumbRadius)
         let xRange = thumbRadius...xMax
@@ -113,24 +113,21 @@ public class MuPanelVm {
         let yClamp = xy.y.clamped(to: yRange)
         let xNormal = (xClamp - thumbRadius) / runway
         let yNormal = (yClamp - thumbRadius) / runway
-        let result = CGPoint(x: xNormal, y: (1-yNormal))
-        return result
+        return [xNormal, 1-yNormal]
     }
 
     /// convert touch coordinates to 0...1
-    func normalizeTouch(v: CGFloat) -> CGFloat {
+    func normalizeTouch(v: CGFloat) -> Double {
         if axis == .vertical {
             let yMax = (inner.height - thumbRadius)
             let yClamp = v.clamped(to: thumbRadius...yMax)
             let yNormal = (yClamp - thumbRadius) / runway
-            let result = CGFloat(yNormal)
-            return 1 - result // invert so that 0 is on bottom
+            return 1.0 - yNormal // invert so that 0 is on bottom
         } else {
             let xMax = (inner.width  - thumbRadius)
             let xClamp = v.clamped(to: thumbRadius...xMax)
             let xNormal = (xClamp - thumbRadius) / runway
-            let result = CGFloat(xNormal)
-            return result
+            return xNormal
         }
     }
 

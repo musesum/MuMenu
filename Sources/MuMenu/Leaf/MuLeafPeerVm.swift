@@ -6,7 +6,6 @@ import SwiftUI
 /// tap control
 public class MuLeafPeerVm: MuLeafVm {
 
-    var thumb = CGFloat.zero
     var peersVm = PeersVm.shared
 
     init (_ node: MuNode,
@@ -15,7 +14,7 @@ public class MuLeafPeerVm: MuLeafVm {
           icon: String = "") {
 
         super.init(node, branchVm, prevVm)
-        node.proxies.append(self)
+        node.leaves.append(self)
     }
 }
 

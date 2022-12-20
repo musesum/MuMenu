@@ -5,7 +5,6 @@ import SwiftUI
 /// 1d slider control
 public class MuLeafValVm: MuLeafVm {
 
-    var thumb = CGFloat(0)
     var range: ClosedRange<Double> = 0...1
 
     init (_ node: MuNode,
@@ -14,18 +13,18 @@ public class MuLeafValVm: MuLeafVm {
           icon: String = "") {
         
         super.init(node, branchVm, prevVm)
-        node.proxies.append(self) // MuLeaf delegate for setting value
+        node.leaves.append(self) // MuLeaf delegate for setting value
         refreshValue()
     }
 
     func normalizeNamed(_ name: String) -> CGFloat {
-        let val = (nodeProto?.getAny(named: name) as? Double) ?? .zero
+        let val = (menuSync?.getAny(named: name) as? Double) ?? .zero
         let norm = scale(val, from: range, to: 0...1)
         return CGFloat(norm)
     }
 
     var expanded: Double {
-        scale(Double(thumb), from: 0...1, to: range)
+        scale(Double(thumb[0]), from: 0...1, to: range)
     }
 
     func normalizeTouch(_ point: CGPoint) -> CGFloat {

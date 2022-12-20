@@ -2,10 +2,7 @@
 
 import SwiftUI
 
-
 public class MuLeafTapVm: MuLeafVm {
-
-    var thumb = CGFloat.zero
 
     init (_ node: MuNode,
           _ branchVm: MuBranchVm,
@@ -13,7 +10,7 @@ public class MuLeafTapVm: MuLeafVm {
           icon: String = "") {
         
         super.init(node, branchVm, prevVm)
-        node.proxies.append(self) // MuLeaf delegate for setting value
+        node.leaves.append(self) // MuLeaf delegate for setting value
         refreshValue()
     }
 }

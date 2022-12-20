@@ -8,9 +8,9 @@ extension MuNodeVm { // + Touch
     func maybeTapLeaf() {
         if nodeType.isLeaf,
            let leafVm = self as? MuLeafVm,
-           let nodeProto = leafVm.nodeProto {
+           let menuSync = leafVm.menuSync {
 
-            nodeProto.resetDefault()
+            menuSync.resetDefault()
             leafVm.refreshValue()
             refreshView()
         }

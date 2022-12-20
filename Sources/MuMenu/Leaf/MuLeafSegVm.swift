@@ -5,7 +5,6 @@ import SwiftUI
 /// segmented control
 public class MuLeafSegVm: MuLeafVm {
 
-    var thumb = CGFloat(0)
     var range: ClosedRange<Double> = 0...1
 
     init (_ node: MuNode,
@@ -14,7 +13,7 @@ public class MuLeafSegVm: MuLeafVm {
           icon: String = "") {
 
         super.init(node, branchVm, prevVm)
-        node.proxies.append(self) // MuLeaf delegate for setting value
+        node.leaves.append(self) // MuLeaf delegate for setting value
         
         refreshValue()
         updatePanelSizes()
@@ -22,11 +21,11 @@ public class MuLeafSegVm: MuLeafVm {
 
     /// get current value and normalize 0...1 based on defined range
     var normalizeValue: CGFloat {
-        let val = (nodeProto?.getAny(named: nodeType.name) as? Double) ?? .zero
+        let val = (menuSync?.getAny(named: nodeType.name) as? Double) ?? .zero
         return CGFloat(scale(val, from: range, to: 0...1))
     }
     /// normalize point to 0...1 based on defined range
-    func normalizeTouch(_ point: CGPoint) -> CGFloat {
+    func normalizeTouch(_ point: CGPoint) -> Double {
         let v = panelVm.axis == .vertical ? point.y : point.x
         return panelVm.normalizeTouch(v: v)
     }
@@ -52,7 +51,7 @@ public class MuLeafSegVm: MuLeafVm {
         branchVm.show = true // refresh view
     }
 
-    var nearestTick: CGFloat { return round(thumb*count)/count }
+    var nearestTick: CGFloat { return round(thumb[0]*count)/count }
 
     /// ticks above and below nearest tick,
     /// but never on panel border or thumb border
@@ -84,6 +83,6 @@ public class MuLeafSegVm: MuLeafVm {
 
     /// `touchBegin` inside thumb will Not move thumb.
     /// So, determing delta from center at touchState.begin
-    var thumbBeginΔ = CGFloat.zero
+    var thumbBeginΔ = Double(0)
 }
 

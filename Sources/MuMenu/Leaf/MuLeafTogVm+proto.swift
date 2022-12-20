@@ -11,7 +11,7 @@ extension MuLeafTogVm: MuLeafProtocol {
 
     public func touchLeaf(_ touchState: MuTouchState) {
         if !editing, touchState.phase == .began  {
-            thumb = (thumb==1 ? 0 : 1)
+            thumb[0] = (thumb[0]==1.0 ? 0 : 1)
             updateView()
             editing = true
         } else if editing, touchState.phase.isDone() {
@@ -21,14 +21,16 @@ extension MuLeafTogVm: MuLeafProtocol {
     // MARK: - Value
 
     public override func refreshValue() {
-        thumb = CGFloat(nodeProto?.getAny(named: nodeType.name) as? Float ?? .zero)
+        if let menuSync {
+            thumb[0] = menuSync.getAny(named: nodeType.name) as? Double ?? 0
+        }
     }
     
     public func updateLeaf(_ any: Any) {
 
         if let v = any as? Float {
             editing = true
-            thumb = (v < 1 ? 0 : 1)
+            thumb[0] = (v < 1.0 ? 0 : 1)
             editing = false
         }
     }
@@ -36,15 +38,15 @@ extension MuLeafTogVm: MuLeafProtocol {
     // MARK: - View
 
     public func updateView() {
-        nodeProto?.setAny(named: nodeType.name, thumb)
+        menuSync?.setAny(named: nodeType.name, thumb)
     }
     public override func valueText() -> String {
-        thumb == 1 ? "1" : "0"
+        thumb[0] == 1.0 ? "1" : "0"
     }
     public override func thumbOffset() -> CGSize {
         panelVm.axis == .vertical
-        ? CGSize(width: 1, height: (1-thumb) * panelVm.runway)
-        : CGSize(width: thumb * panelVm.runway, height: 1)
+        ? CGSize(width: 1, height: (1-thumb[0]) * panelVm.runway)
+        : CGSize(width: thumb[0] * panelVm.runway, height: 1)
     }
 
     

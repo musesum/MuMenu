@@ -5,7 +5,6 @@ import SwiftUI
 /// 2d XY control
 public class MuLeafVxyVm: MuLeafVm {
     
-    var thumb: CGPoint = .zero /// normalized to 0...1
     var ranges = [String : ClosedRange<Double>]()
 
     override init (_ node: MuNode,
@@ -13,13 +12,15 @@ public class MuLeafVxyVm: MuLeafVm {
                    _ prevVm: MuNodeVm?) {
         
         super.init(node, branchVm, prevVm)
-        node.proxies.append(self)  // MuLeaf delegate for setting value
+        node.leaves.append(self)  //MuLeafProtocol for exchanging flaue
         refreshValue()
     }
-    func normalizeNamed(_ name: String, _ range: ClosedRange<Double>?) -> CGFloat {
-        let val = (nodeProto?.getAny(named: name) as? Double) ?? .zero
+    func normalizeNamed(_ name: String,
+                        _ range: ClosedRange<Double>?) -> Double {
+        
+        let val = (menuSync?.getAny(named: name) as? Double) ?? .zero
         let norm = scale(val, from: range ?? 0...1, to: 0...1)
-        return CGFloat(norm)
+        return norm
     }
     func expand(named: String, _ value: CGFloat) -> Double {
 
@@ -32,8 +33,8 @@ public class MuLeafVxyVm: MuLeafVm {
     /// shown at center, corner, and sides.
     /// So: NW, N, NE, E, SE, S, SW, W, Center
     var nearestTick: CGPoint {
-        CGPoint(x: round(thumb.x * 2) / 2,
-                y: round(thumb.y * 2) / 2)
+        CGPoint(x: round(thumb[0] * 2) / 2,
+                y: round(thumb[1] * 2) / 2)
     }
 
     /// ticks above and below nearest tick,
@@ -62,5 +63,5 @@ public class MuLeafVxyVm: MuLeafVm {
 
     /// `touchBegin` inside thumb will probably be off-center.
     /// To avoid a sudden jump, thumbBeginΔ adds an offset.
-    var thumbBeginΔ = CGPoint.zero
+    var thumbBeginΔ = [Double](repeatElement(0, count: 2))
 }

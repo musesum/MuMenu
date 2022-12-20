@@ -45,7 +45,6 @@ public class MuRootVm: ObservableObject, Equatable {
                     let nextXY = CGPoint.zero
                     let phase = touchState.phase
 
-
                     let item = TouchMenuItem(menuKey, cornerStr, nodeType, hashPath, nextXY, phase)
 
                     let encoder = JSONEncoder()
@@ -319,11 +318,11 @@ public class MuRootVm: ObservableObject, Equatable {
                 // begin touch inside control runway
                 touchElement = .edit
                 // leaf spotlight on if not ended
-                leafVm.spotlight = touchState.phase != .ended
+                leafVm.spotlight = !touchState.phase.isDone()
                 // branch spotlight off
                 leafVm.branchVm.treeVm.branchSpotVm = nil
             }
-            for proxy in leafVm.node.proxies {
+            for proxy in leafVm.node.leaves {
                 proxy.touchLeaf(touchState)
             }
             // hide status line

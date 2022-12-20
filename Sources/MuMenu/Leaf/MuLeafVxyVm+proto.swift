@@ -30,15 +30,18 @@ extension MuLeafVxyVm: MuLeafProtocol {
             let touchDelta = touchState.pointNow - runwayBounds.origin
             let thumbPrior = panelVm.normalizeTouch(xy: touchDelta)
             thumb = quantizeThumb(thumbPrior)
-            thumbBeginΔ = thumb - thumbPrior
+            let x = thumb[0] - thumbPrior[0]
+            let y = thumb[1] - thumbPrior[1]
+            thumbBeginΔ = [x, y]
         }
 
         func touchThumbBegin() {
             let thumbPrev = thumb
             let touchDelta = touchState.pointNow - runwayBounds.origin
             let thumbNext = panelVm.normalizeTouch(xy: touchDelta)
-            let touchedInsideThumb = thumbNext.distance(thumbPrev) < thumbRadius
-            thumbBeginΔ = touchedInsideThumb ? thumbPrev - thumbNext : .zero
+            let distance = thumbNext.distance(thumbPrev)
+            let touchedInsideThumb = distance < thumbRadius
+            thumbBeginΔ = touchedInsideThumb ? thumbPrev - thumbNext : [0,0]
             thumb = thumbNext + thumbBeginΔ
         }
 
@@ -52,23 +55,24 @@ extension MuLeafVxyVm: MuLeafProtocol {
             thumb = panelVm.normalizeTouch(xy: touchDelta) + thumbBeginΔ
         }
         /// double touch will align thumb to center, corners or sides.
-        func quantizeThumb(_ point: CGPoint) -> CGPoint {
-            let x = round(point.x * 2) / 2
-            let y = round(point.y * 2) / 2
-            return CGPoint(x: x, y: y)
+        func quantizeThumb(_ point: [Double]) -> [Double] {
+
+            let x = round(point[0] * 2) / 2
+            let y = round(point[1] * 2) / 2
+            return [x,y]
         }
     }
     // MARK: - Value
 
     public override func refreshValue() {
-        if let nameRanges = nodeProto?.getRanges(named: ["x","y"]) {
+        if let nameRanges = menuSync?.getRanges(named: ["x","y"]) {
             for (name,range) in nameRanges {
                 ranges[name] = range
             }
         }
-        let x = normalizeNamed("x",ranges["x"])
-        let y = normalizeNamed("y",ranges["y"])
-        thumb = CGPoint(x: x, y: y)
+        let xx = normalizeNamed("x",ranges["x"])
+        let yy = normalizeNamed("y",ranges["y"])
+        thumb = [xx,yy]
     }
 
     /// update from model - not touch
@@ -82,15 +86,15 @@ extension MuLeafVxyVm: MuLeafProtocol {
                     editing = true
                     let xx = scale(x, from: ranges["x"] ?? 0...1, to: 0...1)
                     let yy = scale(y, from: ranges["y"] ?? 0...1, to: 0...1)
-                    thumb = CGPoint(x: CGFloat(xx), y: CGFloat(yy))
+                    thumb = [xx,yy]
                     editing = false
                 }
             case let p as CGPoint:
 
                 editing = true
-                let x = scale(Double(p.x), from: ranges["x"] ?? 0...1, to: 0...1)
-                let y = scale(Double(p.y), from: ranges["y"] ?? 0...1, to: 0...1)
-                thumb = CGPoint(x: CGFloat(x), y: CGFloat(y))
+                let xx = scale(Double(p.x), from: ranges["x"] ?? 0...1, to: 0...1)
+                let yy = scale(Double(p.y), from: ranges["y"] ?? 0...1, to: 0...1)
+                thumb = [xx,yy]
                 editing = false
             default:
                 print("⁉️ unknown upddate type")
@@ -101,18 +105,18 @@ extension MuLeafVxyVm: MuLeafProtocol {
 
     /// expand normalized thumb to View coordinates and update outside model
     public func updateView() {
-        let x = expand(named: "x", thumb.x)
-        let y = expand(named: "y", thumb.y)
-        nodeProto?.setAnys([("x", x),("y", y)])
+        let x = expand(named: "x", thumb[0])
+        let y = expand(named: "y", thumb[1])
+        menuSync?.setAnys([("x", x),("y", y)])
     }
     public override func valueText() -> String {
         String(format: "x %.2f y %.2f",
-               expand(named: "x", thumb.x),
-               expand(named: "y", thumb.y))
+               expand(named: "x", thumb[0]),
+               expand(named: "y", thumb[1]))
     }
     public override func thumbOffset() -> CGSize {
-        CGSize(width:  thumb.x * panelVm.runway,
-               height: (1-thumb.y) * panelVm.runway)
+        CGSize(width:  thumb[0] * panelVm.runway,
+               height: (1-thumb[1]) * panelVm.runway)
     }
 
 }
