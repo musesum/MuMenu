@@ -36,15 +36,17 @@ public class MuRootVm: ObservableObject, Equatable {
             self.nodeSpotVm = newSpotVm
             newSpotVm.refreshBranch()
             newSpotVm.refreshStatus()
-            updatePeers(newSpotVm)
+            sendToPeers(newSpotVm)
         }
     }
 
-    func updatePeers(_ nodeVm: MuNodeVm, thumb: [Double] = [0,0]) {
+    func sendToPeers(_ nodeVm: MuNodeVm, thumb: [Double] = [0,0]) {
 
         if peers.hasPeers {
             do {
-                let menuKey = "leaf".hash
+                let menuKey = (nodeVm.nodeType.isLeaf
+                               ? "leaf".hash
+                               : "node".hash)
                 let cornerStr = corner.abbreviation()
                 let nodeType = nodeVm.nodeType
                 let hashPath = nodeVm.node.hashPath

@@ -12,7 +12,7 @@ class MuStatusVm: ObservableObject {
         var delim = "• "
         for vm in before {
             if let leafVm = vm as? MuLeafVm {
-                line += delim + leafVm.valueText()
+                line += delim + (leafVm.leafProto?.valueText() ?? "??")
             } else {
                 line += delim + vm.node.title
             }
@@ -25,7 +25,7 @@ class MuStatusVm: ObservableObject {
         var delim = "• "
         for vm in after {
             if let leafVm = vm as? MuLeafVm {
-                line += delim + leafVm.valueText()
+                line += delim + (leafVm.leafProto?.valueText() ?? "??")
             } else {
                 line += delim + vm.node.title
             }

@@ -10,6 +10,7 @@ public class MuLeafTapVm: MuLeafVm {
           icon: String = "") {
         
         super.init(node, branchVm, prevVm)
+        super.leafProto = self
         node.leaves.append(self) // MuLeaf delegate for setting value
         refreshValue()
     }

@@ -12,6 +12,7 @@ public class MuLeafVxyVm: MuLeafVm {
                    _ prevVm: MuNodeVm?) {
         
         super.init(node, branchVm, prevVm)
+        super.leafProto = self
         node.leaves.append(self)  //MuLeafProtocol for exchanging flaue
         refreshValue()
     }

@@ -8,6 +8,7 @@ struct MuLeafThumbSlideView: View {
     var panelVm: MuPanelVm { leafVm.panelVm }
     var spotlight: Bool { leafVm.spotlight }
     var color: Color { Layout.tapColor(spotlight) }
+    var thumbOffset: CGSize { leafVm.leafProto?.thumbOffset() ?? .zero }
 
     var body: some View {
         ZStack {
@@ -15,19 +16,19 @@ struct MuLeafThumbSlideView: View {
                 .fill(color)
                 .frame(width:  panelVm.thumbDiameter,
                        height: panelVm.thumbDiameter)
-                .offset(leafVm.thumbOffset())
+                .offset(thumbOffset)
                 .allowsHitTesting(false)
 
             if spotlight {
                 MuIconView(nodeVm: leafVm, icon: leafVm.node.icon)
                     .frame(width:  panelVm.thumbDiameter,
                            height: panelVm.thumbDiameter)
-                    .offset(leafVm.thumbOffset())
+                    .offset(thumbOffset)
             } else {
                 MuIconView(nodeVm: leafVm, icon: leafVm.node.icon)
                     .frame(width:  panelVm.thumbDiameter,
                            height: panelVm.thumbDiameter)
-                    .offset(leafVm.thumbOffset())
+                    .offset(thumbOffset)
             }
         }
     }

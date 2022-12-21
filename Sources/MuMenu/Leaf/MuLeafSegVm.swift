@@ -13,17 +13,13 @@ public class MuLeafSegVm: MuLeafVm {
           icon: String = "") {
 
         super.init(node, branchVm, prevVm)
+        super.leafProto = self
         node.leaves.append(self) // MuLeaf delegate for setting value
         
         refreshValue()
         updatePanelSizes()
     }
 
-    /// get current value and normalize 0...1 based on defined range
-    var normalizeValue: CGFloat {
-        let val = (menuSync?.getAny(named: nodeType.name) as? Double) ?? .zero
-        return CGFloat(scale(val, from: range, to: 0...1))
-    }
     /// normalize point to 0...1 based on defined range
     func normalizeTouch(_ point: CGPoint) -> Double {
         let v = panelVm.axis == .vertical ? point.y : point.x

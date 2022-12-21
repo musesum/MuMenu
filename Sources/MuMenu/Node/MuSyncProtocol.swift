@@ -11,10 +11,10 @@ import Par // Visitor
 public protocol MuMenuSync {
 
     /// set single named value
-    func setAny(named: String,_ any: Any)
+    func setAny(named: String,_ any: Any, _ visitor: Visitor)
 
     /// set multiple named values
-    func setAnys(_ anys: [(String, Any)])
+    func setAnys(_ anys: [(String, Any)], _ visitor: Visitor)
 
     /// reset node to default value
     func resetDefault()
@@ -31,10 +31,6 @@ public protocol MuMenuSync {
     /// get multiple named ranges
     func getRanges(named: [String]) -> [(String, ClosedRange<Double>)]
 
-    /// callback
-    ///
-    ///     - parameters:
-    ///         - any: the calling class
-    ///         - visitor: break visit loops
-    func getting(_ any: Any, _ visitor: Visitor)
+    /// callback from model to update leaf with new model values
+    func syncModel(_ any: Any, _ visitor: Visitor)
 }

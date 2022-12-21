@@ -1,50 +1,47 @@
-//
-//  File.swift
-//  
-//
 //  Created by warren on 9/10/22.
-//
+
 
 import Foundation
+import Par
 
 extension MuLeafTogVm: MuLeafProtocol {
 
     public func touchLeaf(_ touchState: MuTouchState) {
         if !editing, touchState.phase == .began  {
             thumb[0] = (thumb[0]==1.0 ? 0 : 1)
-            updateSync()
-            updatePeers()
             editing = true
         } else if editing, touchState.phase.isDone() {
             editing = false
         }
+        updateSync()
     }
-    // MARK: - Value from model
 
-    public override func refreshValue() {
+    public func refreshValue() {
         if let menuSync {
             thumb[0] = menuSync.getAny(named: nodeType.name) as? Double ?? 0
         }
     }
     
-    public override func updateLeaf(_ any: Any) {
-
-        if let v = any as? Float {
-            editing = true
-            thumb[0] = (v < 1.0 ? 0 : 1)
-            editing = false
+    public func updateLeaf(_ any: Any,_ visitor: Visitor) {
+        visitor.startVisit(hash, visit)
+        func visit() {
+            if let v = any as? [Double] {
+                editing = true
+                thumb[0] = (v[0] < 1.0 ? 0 : 1)
+                editing = false
+            }
+            updateSync(visitor)
         }
     }
 
-    // MARK: - View
-
-    public override func updateSync() {
-        menuSync?.setAny(named: nodeType.name, thumb)
+    public func updateSync(_ visitor: Visitor = Visitor()) {
+        menuSync?.setAny(named: nodeType.name, thumb[0], visitor)
+        updatePeers(visitor)
     }
-    public override func valueText() -> String {
+    public func valueText() -> String {
         thumb[0] == 1.0 ? "1" : "0"
     }
-    public override func thumbOffset() -> CGSize {
+    public func thumbOffset() -> CGSize {
         panelVm.axis == .vertical
         ? CGSize(width: 1, height: (1-thumb[0]) * panelVm.runway)
         : CGSize(width: thumb[0] * panelVm.runway, height: 1)

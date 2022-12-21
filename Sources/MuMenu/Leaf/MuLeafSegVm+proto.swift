@@ -1,6 +1,7 @@
 //  Created by warren on 9/10/22.
 
 import SwiftUI
+import Par // Visitor
 
 extension MuLeafSegVm: MuLeafProtocol {
 
@@ -9,17 +10,14 @@ extension MuLeafSegVm: MuLeafProtocol {
 
         if touchState.phase == .began {
             touchThumbBegin()
-            updateSync()
-            updatePeers()
             editing = true
         } else if !touchState.phase.isDone() {
             touchThumbNext()
-            updateSync()
-            updatePeers()
             editing = true
         } else {
             editing = false
         }
+        updateSync()
 
         /// user touched control, translate to normalized thumb (0...1)
         func touchThumbNext() {
@@ -40,32 +38,44 @@ extension MuLeafSegVm: MuLeafProtocol {
         }
     }
 
-    // MARK: - Value from model
-
-    public override func refreshValue() {
-        range = menuSync?.getRange(named: nodeType.name) ?? 0...1
-        thumb[0] = normalizeValue
-    }
-    
-    public override func updateLeaf(_ any: Any) {
-        if let v = any as? Double {
-            editing = true
-            thumb[0] = CGFloat(scale(v, from: range, to: 0...1))
-            editing = false
+    public func refreshValue() {
+        if let menuSync {
+            range = menuSync.getRange(named: nodeType.name)
+            if let val = menuSync.getAny(named: nodeType.name) as? Double {
+                thumb[0] = scale(val, from: range, to: 0...1)
+            } else {
+                print("⁉️ refreshValue is not Double")
+                thumb[0] = 0
+            }
         }
     }
-    // MARK: - View
-
-    /// expand normalized thumb to View coordinates and update outside model
-    public override func updateSync() {
-        menuSync?.setAny(named: nodeType.name, expanded)
+    
+    public func updateLeaf(_ any: Any, _ visitor: Visitor) {
+        visitor.startVisit(hash,visit)
+        func visit() {
+            if let v = any as? [Double] {
+                editing = true
+                thumb[0] = CGFloat(scale(v[0], from: range, to: 0...1))
+                editing = false
+            }
+            menuSync?.setAny(named: nodeType.name, expanded, visitor)
+            updateSync(visitor)
+        }
     }
-    public override func valueText() -> String {
+
+    private func updateSync(_ visitor: Visitor = Visitor()) {
+        visitor.startVisit(hash, visit)
+        func visit() {
+            menuSync?.setAny(named: nodeType.name, expanded, visitor)
+            updatePeers(visitor)
+        }
+    }
+    public func valueText() -> String {
         range.upperBound > 1
         ? String(format: "%.f", scale(Double(thumb[0]), from: 0...1, to: range))
         : String(format: "%.1f", thumb[0])
     }
-    public override func thumbOffset() -> CGSize {
+    public func thumbOffset() -> CGSize {
         panelVm.axis == .vertical
         ? CGSize(width: 1, height: (1-thumb[0]) * panelVm.runway)
         : CGSize(width: thumb[0] * panelVm.runway, height: 1)

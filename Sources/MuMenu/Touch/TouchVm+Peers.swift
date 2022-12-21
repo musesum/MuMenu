@@ -1,7 +1,7 @@
 //  Created by warren on 12/13/22.
 
 import Foundation
-
+import Par // Visitor
 extension MuTouchVm {
 
     /// called by UIKit to see if UITouchBegin hits a menu.
@@ -19,7 +19,7 @@ extension MuTouchVm {
         return nil // does NOT hit menu
     }
 
-    public func gotoMenuItem(_ menuItem: TouchMenuItem) {
+    public func gotoRemoteItem(_ menuItem: TouchMenuItem) {
 
         guard let rootVm else { return }
         let hashPath = menuItem.hashPath
@@ -30,9 +30,11 @@ extension MuTouchVm {
                     for point in menuItem.point {
                         thumb.append(Double(point))
                     }
-                    leafVm.updateLeaf(thumb)
-                    leafVm.updateSync()
-
+                    DispatchQueue.main.async {
+                        if let leafProto = leafVm.leafProto {
+                            leafProto.updateLeaf(thumb, Visitor().fromRemote())
+                        }
+                    }
                 } else {
                     updateNodeVm(foundNodeVm, menuItem)
                 }

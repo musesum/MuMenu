@@ -1,6 +1,7 @@
 //  Created by warren on 9/10/22.
 
 import Foundation
+import Par // Visitor
 
 /// MuLeaf* Model and View  protocols
 public protocol MuLeafProtocol {
@@ -9,10 +10,7 @@ public protocol MuLeafProtocol {
     func touchLeaf(_ touchState: MuTouchState)
 
     /// update from model, not touch gesture
-    func updateLeaf(_ any: Any)
-
-    /// synchronize model
-    func updateSync()
+    func updateLeaf(_ any: Any, _ visitor: Visitor)
 
     /// title for control value
     func valueText() -> String

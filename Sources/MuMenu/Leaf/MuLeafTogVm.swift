@@ -10,7 +10,8 @@ public class MuLeafTogVm: MuLeafVm {
           _ prevVm: MuNodeVm?,
           icon: String = "") {
 
-        super.init(node, branchVm, prevVm) 
+        super.init(node, branchVm, prevVm)
+        super.leafProto = self
         node.leaves.append(self) 
         refreshValue()
     }

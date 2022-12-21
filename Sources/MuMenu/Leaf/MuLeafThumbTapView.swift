@@ -7,6 +7,7 @@ struct MuLeafThumbTapView: View {
     @ObservedObject var leafVm: MuLeafVm
     var panelVm: MuPanelVm { leafVm.panelVm }
     var color: Color { leafVm.spotlight ? .white : .gray }
+    var thumbOffset: CGSize { leafVm.leafProto?.thumbOffset() ?? .zero }
 
     var body: some View {
         ZStack {
@@ -14,13 +15,13 @@ struct MuLeafThumbTapView: View {
                 .fill(color)
                 .frame(width:  panelVm.thumbDiameter,
                        height: panelVm.thumbDiameter)
-                .offset(leafVm.thumbOffset())
+                .offset(thumbOffset)
                 .allowsHitTesting(false)
 
             MuIconView(nodeVm: leafVm, icon: leafVm.node.icon)
                 .frame(width:  panelVm.thumbDiameter,
                        height: panelVm.thumbDiameter)
-                .offset(leafVm.thumbOffset())
+                .offset(thumbOffset)
         }
     }
 }

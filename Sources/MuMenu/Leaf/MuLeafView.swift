@@ -42,12 +42,13 @@ struct MuLeafTitleView: View {
 
     @ObservedObject var leafVm: MuLeafVm
     var panelVm: MuPanelVm { leafVm.panelVm }
+    var valueText: String { leafVm.leafProto?.valueText() ?? "??"}
 
     init(_ leafVm: MuLeafVm) {
         self.leafVm = leafVm
     }
     var body: some View {
-        Text(leafVm.valueText())
+        Text(valueText)
             .scaledToFit()
             .minimumScaleFactor(0.01)
             .foregroundColor(Color.white)

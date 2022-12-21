@@ -14,7 +14,9 @@ public class MuLeafPeerVm: MuLeafVm {
           icon: String = "") {
 
         super.init(node, branchVm, prevVm)
+        super.leafProto = self
         node.leaves.append(self)
+
     }
 }
 

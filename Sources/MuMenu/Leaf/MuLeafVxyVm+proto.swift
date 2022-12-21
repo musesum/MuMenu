@@ -1,6 +1,7 @@
 //  Created by warren on 9/10/22.
 
 import SwiftUI
+import Par
 
 extension MuLeafVxyVm: MuLeafProtocol {
 
@@ -8,26 +9,20 @@ extension MuLeafVxyVm: MuLeafProtocol {
     public func touchLeaf(_ touchState: MuTouchState) {
 
         if touchState.phase == .began {
-
             if touchState.touchBeginCount == 1 {
                 tapThumb()
-                updateSync()
-                updatePeers()
                 editing = true
             } else {
                 touchThumbBegin()
-                updateSync()
-                updatePeers()
                 editing = true
             }
         } else if !touchState.phase.isDone() {
             touchThumbNext()
-            updateSync()
-            updatePeers()
             editing = true
         } else {
             editing = false
         }
+        updateSync()
 
         func tapThumb() {
             let touchDelta = touchState.pointNow - runwayBounds.origin
@@ -68,7 +63,7 @@ extension MuLeafVxyVm: MuLeafProtocol {
     }
     // MARK: - Value
 
-    public override func refreshValue() {
+    public func refreshValue() {
         if let nameRanges = menuSync?.getRanges(named: ["x","y"]) {
             for (name,range) in nameRanges {
                 ranges[name] = range
@@ -80,23 +75,29 @@ extension MuLeafVxyVm: MuLeafProtocol {
     }
 
     /// update from model - not touch
-    public override func updateLeaf(_ any: Any) {
-        switch any {
-            case let v as [Double]:
-                updateThumb(v[0], v[1])
-
-            case let v as [String: Double]:
-
-                if let x = v["x"],
-                   let y = v["y"] {
-                    updateThumb(x,y)
-                }
-            case let v as CGPoint:
-                updateThumb(Double(v.x), Double(v.y))
-
-            default:
-                print("⁉️ unknown upddate type")
+    public func updateLeaf(_ any: Any, _ visitor: Visitor) {
+        visitor.startVisit(hash,visit)
+        func visit() {
+            
+            switch any {
+                case let v as [Double]:
+                    updateThumb(v[0], v[1])
+                    
+                case let v as [String: Double]:
+                    
+                    if let x = v["x"],
+                       let y = v["y"] {
+                        updateThumb(x,y)
+                    }
+                case let v as CGPoint:
+                    updateThumb(Double(v.x), Double(v.y))
+                    
+                default:
+                    print("⁉️ unknown upddate type")
+            }
+            updateSync(visitor)
         }
+
         func updateThumb(_ x: Double, _ y: Double) {
 
             editing = true
@@ -110,18 +111,19 @@ extension MuLeafVxyVm: MuLeafProtocol {
 
     // MARK: - View
 
-    /// expand normalized thumb to View coordinates and update outside model
-    public override func updateSync() {
+    public func updateSync(_ visitor: Visitor = Visitor()) {
+        
         let x = expand(named: "x", thumb[0])
         let y = expand(named: "y", thumb[1])
-        menuSync?.setAnys([("x", x),("y", y)])
+        menuSync?.setAnys([("x", x),("y", y)], visitor)
+        updatePeers(visitor)
     }
-    public override func valueText() -> String {
+    public func valueText() -> String {
         String(format: "x %.2f y %.2f",
                expand(named: "x", thumb[0]),
                expand(named: "y", thumb[1]))
     }
-    public override func thumbOffset() -> CGSize {
+    public func thumbOffset() -> CGSize {
         CGSize(width:  thumb[0] * panelVm.runway,
                height: (1-thumb[1]) * panelVm.runway)
     }
