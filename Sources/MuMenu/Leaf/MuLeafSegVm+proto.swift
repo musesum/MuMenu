@@ -17,7 +17,7 @@ extension MuLeafSegVm: MuLeafProtocol {
         } else {
             editing = false
         }
-        updateSync()
+        updateSync(Visitor())
 
         /// user touched control, translate to normalized thumb (0...1)
         func touchThumbNext() {
@@ -53,17 +53,18 @@ extension MuLeafSegVm: MuLeafProtocol {
     public func updateLeaf(_ any: Any, _ visitor: Visitor) {
         visitor.startVisit(hash,visit)
         func visit() {
-            if let v = any as? [Double] {
-                editing = true
-                thumb[0] = CGFloat(scale(v[0], from: range, to: 0...1))
-                editing = false
+            editing = true
+            switch any {
+                case let v as Double:   thumb[0] = CGFloat(scale(v,    from: range, to: 0...1))
+                case let v as [Double]: thumb[0] = CGFloat(scale(v[0], from: range, to: 0...1))
+                default: break
             }
-            menuSync?.setAny(named: nodeType.name, expanded, visitor)
+            editing = false
             updateSync(visitor)
         }
     }
 
-    private func updateSync(_ visitor: Visitor = Visitor()) {
+    private func updateSync(_ visitor: Visitor) {
         visitor.startVisit(hash, visit)
         func visit() {
             menuSync?.setAny(named: nodeType.name, expanded, visitor)

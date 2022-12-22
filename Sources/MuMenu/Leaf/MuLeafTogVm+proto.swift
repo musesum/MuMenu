@@ -13,7 +13,7 @@ extension MuLeafTogVm: MuLeafProtocol {
         } else if editing, touchState.phase.isDone() {
             editing = false
         }
-        updateSync()
+        updateSync(Visitor())
     }
 
     public func refreshValue() {
@@ -25,16 +25,18 @@ extension MuLeafTogVm: MuLeafProtocol {
     public func updateLeaf(_ any: Any,_ visitor: Visitor) {
         visitor.startVisit(hash, visit)
         func visit() {
-            if let v = any as? [Double] {
-                editing = true
-                thumb[0] = (v[0] < 1.0 ? 0 : 1)
-                editing = false
+            editing = true
+            switch any {
+                case let v as Double:   thumb[0] = (v    < 1.0 ? 0 : 1)
+                case let v as [Double]: thumb[0] = (v[0] < 1.0 ? 0 : 1)
+                default: break
             }
+            editing = false
             updateSync(visitor)
         }
     }
 
-    public func updateSync(_ visitor: Visitor = Visitor()) {
+    public func updateSync(_ visitor: Visitor) {
         menuSync?.setAny(named: nodeType.name, thumb[0], visitor)
         updatePeers(visitor)
     }

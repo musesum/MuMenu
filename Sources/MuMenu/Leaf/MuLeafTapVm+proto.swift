@@ -17,7 +17,7 @@ extension MuLeafTapVm: MuLeafProtocol {
             thumb[0] = 0
             editing = false
         }
-        updateSync()
+        updateSync(Visitor())
     }
 
     public func refreshValue() {
@@ -35,7 +35,7 @@ extension MuLeafTapVm: MuLeafProtocol {
         }
     }
 
-    private func updateSync(_ visitor: Visitor = Visitor()) {
+    private func updateSync(_ visitor: Visitor) {
         menuSync?.setAny(named: nodeType.name, thumb[0], visitor)
         updatePeers(visitor)
     }

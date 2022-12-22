@@ -22,7 +22,7 @@ extension MuLeafVxyVm: MuLeafProtocol {
         } else {
             editing = false
         }
-        updateSync()
+        updateSync(Visitor())
 
         func tapThumb() {
             let touchDelta = touchState.pointNow - runwayBounds.origin
@@ -111,7 +111,7 @@ extension MuLeafVxyVm: MuLeafProtocol {
 
     // MARK: - View
 
-    public func updateSync(_ visitor: Visitor = Visitor()) {
+    public func updateSync(_ visitor: Visitor) {
         
         let x = expand(named: "x", thumb[0])
         let y = expand(named: "y", thumb[1])
