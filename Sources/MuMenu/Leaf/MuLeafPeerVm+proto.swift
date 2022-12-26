@@ -5,41 +5,11 @@ import Par
 
 extension MuLeafPeerVm: MuLeafProtocol {
 
-    public func touchLeaf(_ touchState: MuTouchState) {
-        if touchState.phase == .began {
-            thumb[0] = 1
-            editing = true
-        } else if touchState.phase.isDone() {
-            thumb[0] = 0
-            editing = false
-        } else {
-            return
-        }
-        updateSync(Visitor())
-    }
-
-    public func refreshValue() {
-        // no change
-    }
-
-    public func updateLeaf(_ any: Any, _ visitor: Visitor) {
-        visitor.startVisit(hash,visit)
-        func visit() {
-            self.editing = true
-            Schedule(0.125) {
-                self.editing = false
-            }
-            self.updateSync(visitor)
-        }
-    }
-    
-    private func updateSync(_ visitor: Visitor) {
-        self.menuSync?.setAny(named: nodeType.name, thumb, visitor)
-        self.updatePeers(visitor)
-    }
-    public func valueText() -> String {
-        ""
-    }
+    public func touchLeaf(_ touchState: MuTouchState) {}
+    public func refreshValue() {}
+    public func updateLeaf(_ any: Any, _ visitor: Visitor) {}
+    private func updateSync(_ visitor: Visitor) {}
+    public func valueText() -> String { "" }
     public func thumbOffset() -> CGSize {
         CGSize(width: 0, height:  panelVm.runway)
     }

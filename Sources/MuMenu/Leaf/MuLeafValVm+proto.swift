@@ -49,8 +49,8 @@ extension MuLeafValVm: MuLeafProtocol {
         func visit() {
             editing = true
             switch any {
-                case let v as Double:   thumb[0] = CGFloat(scale(v,    from: range, to: 0...1))
-                case let v as [Double]: thumb[0] = CGFloat(scale(v[0], from: range, to: 0...1))
+                case let v as Double:   thumb[0] = v,  
+                case let v as [Double]: thumb[0] = v[0]
                 default: break
             }
             editing = false
@@ -58,7 +58,7 @@ extension MuLeafValVm: MuLeafProtocol {
         }
     }
 
-    public func updateSync(_ visitor: Visitor) {
+    private func updateSync(_ visitor: Visitor) {
         menuSync?.setAny(named: nodeType.name, expanded, visitor)
         updatePeers(visitor)
     }

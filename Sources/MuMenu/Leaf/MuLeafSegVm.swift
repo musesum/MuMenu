@@ -26,13 +26,14 @@ public class MuLeafSegVm: MuLeafVm {
         return panelVm.normalizeTouch(v: v)
     }
     
+
     /// scale up normalized to defined range
     var expanded: Double {
         scale(Double(nearestTick), from: 0...1, to: range)
     }
 
-    lazy var count: CGFloat = {
-        CGFloat(range.upperBound - range.lowerBound)
+    lazy var count: Double = {
+        range.upperBound - range.lowerBound
     }()
 
 
@@ -47,7 +48,7 @@ public class MuLeafSegVm: MuLeafVm {
         branchVm.show = true // refresh view
     }
 
-    var nearestTick: CGFloat { return round(thumb[0]*count)/count }
+    var nearestTick: Double { return round(thumb[0]*count)/count }
 
     /// ticks above and below nearest tick,
     /// but never on panel border or thumb border

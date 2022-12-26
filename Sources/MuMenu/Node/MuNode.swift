@@ -25,7 +25,11 @@ open class MuNode: Identifiable, Equatable {
 
     public lazy var hash: Int = {
         if let path {
-            return Int(title.strHash())
+            if nodeType.isLeaf {
+                return Int(title.strHash()) + 1
+            } else {
+                return Int(title.strHash())
+            }
         } else {
             print("⁉️ MuNode path==nil")
             return -1

@@ -39,7 +39,9 @@ public class MuLeafVm: MuNodeVm {
         // log("runwayBounds", [runwayBounds], terminator: " ")
     }
     /// does control surface contain point
-    override func contains(_ point: CGPoint) -> Bool {
-        return runwayBounds.contains(point)
+    override func containsPoint(_ point: CGPoint) -> Bool {
+        let contained = runwayBounds.contains(point)
+        print(contained ? "+" : "-", terminator: "") //???
+        return contained
     }
 }

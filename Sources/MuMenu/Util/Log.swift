@@ -1,6 +1,7 @@
 // Created by warren on 10/5/21.
 
 import SwiftUI
+import Tr3 // .digits
 
 public func log(_ title: String,
                 format: String = "%.0f",
@@ -12,11 +13,9 @@ public func log(_ title: String,
     for item in items {
         switch item {
             case let v as CGFloat : text += String(format: "(\(format)) ", v)
-
             case let v as Float   : text += String(format: "(\(format)) ", v)
             case let v as CGPoint : text += String(format: "∙(\(format), \(format)) ", v.x, v.y)
-            case let v as CGSize  : text += String(format: "∘(\(format), \(format)) ",
-                                                   v.width, v.height)
+            case let v as CGSize  : text += String(format: "∘(\(format), \(format)) ", v.width, v.height)
             case let v as CGRect  : text += String(format: "▭(\(format),\(format); \(format),\(format)) ", v.origin.x, v.origin.y, v.size.width, v.size.height)
 
             case let v as MuElement: text += "\(v.symbol)"
@@ -24,6 +23,7 @@ public func log(_ title: String,
             case let v as String: text += v
 
             case let v as Int     : text += " \(v)"
+
             case let v as [Int]:
                 var delim = ""
                 text += " ["
@@ -31,8 +31,24 @@ public func log(_ title: String,
                     text += (delim + "\(vv)")
                     delim = ","
                 }
-                text += "]"
+                text += "] "
 
+
+            case let v as Double:
+
+                text += v.digits(0...1) + " "
+
+            case let v as [Double]:
+                var delim = ""
+                text += " ["
+                for vv in v {
+                    text += (delim + "\(vv.digits(0...1))")
+                    delim = ","
+                }
+                text += "] "
+
+            case let v as Bool:
+                text += v ? "true " : "false "
 
             case let (x,y) as RangeXY:
 

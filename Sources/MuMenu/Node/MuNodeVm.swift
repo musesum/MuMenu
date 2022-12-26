@@ -25,7 +25,7 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
     public var nodeType: MuNodeType  /// node, val, vxy, seg, tog, tap
 
     var panelVm: MuPanelVm    /// the panel that this node belongs to
-    var branchVm: MuBranchVm  /// branch that this node is on
+    public var branchVm: MuBranchVm  /// branch that this node is on
     var nextBranchVm: MuBranchVm? /// branch this node generates
     var prevNodeVm: MuNodeVm?     /// parent nodeVm in hierarchy
     
@@ -103,7 +103,7 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
                          y: fr.origin.y + fr.size.height/2)
     }
     
-    func contains(_ point: CGPoint) -> Bool {
+    func containsPoint(_ point: CGPoint) -> Bool {
         center.distance(point) < Layout.diameter
     }
     
@@ -139,6 +139,10 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
     
     func refreshView() {
         editing = editing
+    }
+
+    func lastShownNodeVm() -> MuNodeVm? {
+        return branchVm.treeVm.branchVms.last?.nodeSpotVm
     }
 
 }

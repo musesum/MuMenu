@@ -40,7 +40,10 @@ extension MuLeafVxyVm: MuLeafProtocol {
             let thumbNext = panelVm.normalizeTouch(xy: touchDelta)
             let distance = thumbNext.distance(thumbPrev)
             let touchedInsideThumb = distance < thumbRadius
-            thumbBeginΔ = touchedInsideThumb ? thumbPrev - thumbNext : [0,0]
+            thumbBeginΔ = (touchedInsideThumb
+                           ? (thumbPrev - thumbNext)
+                           : [0,0])
+
             thumb = thumbNext + thumbBeginΔ
         }
 
@@ -76,55 +79,35 @@ extension MuLeafVxyVm: MuLeafProtocol {
 
     /// update from model - not touch
     public func updateLeaf(_ any: Any, _ visitor: Visitor) {
-        visitor.startVisit(hash,visit)
+        visitor.startVisit(hash, visit)
         func visit() {
-            
-            switch any {
-                case let v as [Double]:
-                    updateThumb(v[0], v[1])
-                    
-                case let v as [String: Double]:
-                    
-                    if let x = v["x"],
-                       let y = v["y"] {
-                        updateThumb(x,y)
-                    }
-                case let v as CGPoint:
-                    updateThumb(Double(v.x), Double(v.y))
-                    
-                default:
-                    print("⁉️ unknown upddate type")
+            editing = true
+            if let v = any as? [Double], v.count == 2 {
+                    thumb = [v[0],v[1]]
+            } else {
+                print("⁉️ unknown upddate type")
             }
+            editing = false
             updateSync(visitor)
         }
-
-        func updateThumb(_ x: Double, _ y: Double) {
-
-            editing = true
-            let xx = scale(x, from: ranges["x"] ?? 0...1, to: 0...1)
-            let yy = scale(y, from: ranges["y"] ?? 0...1, to: 0...1)
-            thumb = [xx,yy]
-            editing = false
-        }
-
     }
 
-    // MARK: - View
-
-    public func updateSync(_ visitor: Visitor) {
+    private func updateSync(_ visitor: Visitor) {
         
         let x = expand(named: "x", thumb[0])
         let y = expand(named: "y", thumb[1])
         menuSync?.setAnys([("x", x),("y", y)], visitor)
         updatePeers(visitor)
     }
+
     public func valueText() -> String {
         String(format: "x %.2f y %.2f",
                expand(named: "x", thumb[0]),
                expand(named: "y", thumb[1]))
     }
+
     public func thumbOffset() -> CGSize {
-        CGSize(width:  thumb[0] * panelVm.runway,
+        CGSize(width:     thumb[0]  * panelVm.runway,
                height: (1-thumb[1]) * panelVm.runway)
     }
 

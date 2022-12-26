@@ -49,10 +49,11 @@ public class MuRootVm: ObservableObject, Equatable {
                                : "node".hash)
                 let cornerStr = corner.abbreviation()
                 let nodeType = nodeVm.nodeType
-                let hashPath = nodeVm.node.hashPath
                 let phase = touchState?.phase ?? .began
+                let treePath = nodeVm.lastShownNodeVm()?.node.hashPath ?? nodeVm.node.hashPath
+                let treeNow = nodeVm.node.hash
 
-                let item = TouchMenuItem(menuKey, cornerStr, nodeType, hashPath, thumb, phase)
+                let item = TouchMenuItem(menuKey, cornerStr, nodeType, treePath, treeNow, thumb, phase)
 
                 let encoder = JSONEncoder()
                 let data = try encoder.encode(item)
@@ -211,7 +212,7 @@ public class MuRootVm: ObservableObject, Equatable {
         }
         func hoverRootNode() -> Bool {
             
-            let touchingRoot = touchVm.rootNodeVm?.contains(touchNow) ?? false
+            let touchingRoot = touchVm.rootNodeVm?.containsPoint(touchNow) ?? false
             if !touchingRoot {
                 if beginTouchElement == .root {
                     // when dragging root over branches, expand tree

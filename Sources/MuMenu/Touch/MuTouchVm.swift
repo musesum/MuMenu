@@ -21,6 +21,10 @@ public class MuTouchVm: ObservableObject {
     private var spotNodeΔ = CGSize.zero /// offset between touch point and center in coord
     var dragNodeΔ: CGSize = .zero /// weird kludge to compsate for small right offset
 
+    public var corner: MuCorner?  {
+        rootVm?.corner
+    }
+
     public func setRoot(_ rootVm: MuRootVm) {
         guard let treeVm = rootVm.treeSpotVm else { return }
         self.rootVm = rootVm
@@ -61,13 +65,13 @@ public class MuTouchVm: ObservableObject {
         alignCursor(touchXY)
     }
     func begin(_ touchXY: CGPoint) {
-        touchState.begin(touchXY)
+        touchState.beginPoint(touchXY)
         rootVm?.touchBegin(touchState)
         // log("touch", [touchNow], terminator: " ")
     }
 
     func moved(_ touchXY: CGPoint)  {
-        touchState.moved(touchXY)
+        touchState.movedPoint(touchXY)
 
         if let rootVm {
 

@@ -2,19 +2,16 @@
 
 import Foundation
 import Par // Visitor
+
 extension MuTouchVm {
 
     /// called by UIKit to see if UITouchBegin hits a menu.
     /// If not, it will not call touch
-    public func hitTest(_ touchNow: CGPoint) -> (MuCorner, MuNodeVm)? {
-        guard let corner = rootVm?.corner else {
-            print("⁉️ hitTest rootVm?.corner == nil")
-            return nil
-        }
-        if let rootNodeVm, rootNodeVm.contains(touchNow) {
-            return (corner,rootNodeVm) // hits the root (home) node icon
+    public func hitTest(_ touchNow: CGPoint) ->  MuNodeVm? {
+        if let rootNodeVm, rootNodeVm.containsPoint(touchNow) {
+            return rootNodeVm // hits the root (home) node icon
         } else if let rootVm, let nodeVm = rootVm.hitTest(touchNow) {
-            return (corner,nodeVm) // hits one of the shown branches
+            return nodeVm // hits one of the shown branches
         }
         return nil // does NOT hit menu
     }
@@ -22,24 +19,26 @@ extension MuTouchVm {
     public func gotoRemoteItem(_ menuItem: TouchMenuItem) {
 
         guard let rootVm else { return }
-        let hashPath = menuItem.hashPath
+        let treePath = menuItem.treePath
+        let treeNow = menuItem.treeNow
         for treeVm in rootVm.treeVms {
-            if let foundNodeVm = treeVm.followHashPath(hashPath) {
+            if let foundNodeVm = treeVm.followHashPath(treePath, treeNow) {
                 if let leafVm = foundNodeVm as? MuLeafVm {
-                    var thumb = [Double]()
-                    for point in menuItem.point {
-                        thumb.append(Double(point))
-                    }
-                    DispatchQueue.main.async {
-                        if let leafProto = leafVm.leafProto {
-                            leafProto.updateLeaf(thumb, Visitor().fromRemote())
-                        }
-                    }
+                    updateLeafVm(leafVm, menuItem)
                 } else {
                     updateNodeVm(foundNodeVm, menuItem)
                 }
                 break
             }
+        }
+    }
+    func updateLeafVm(_ leafVm: MuLeafVm,
+                      _ menuItem: TouchMenuItem) {
+        DispatchQueue.main.async {
+            if let leafProto = leafVm.leafProto {
+                leafProto.updateLeaf(menuItem.thumb, Visitor().fromRemote())
+            }
+
         }
     }
 }

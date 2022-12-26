@@ -52,5 +52,6 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
         }
         branchVms = newBranches
     }
+
   
 }

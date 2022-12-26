@@ -28,9 +28,12 @@ extension MuLeafTapVm: MuLeafProtocol {
         visitor.startVisit(hash, visit)
         func visit() {
             editing = true
-            Schedule(0.125) {
-                self.editing = false
+            switch any {
+                case let v as Double:   thumb[0] = v
+                case let v as [Double]: thumb[0] = v[0]
+                default: break
             }
+            editing = false
             updateSync(visitor)
         }
     }

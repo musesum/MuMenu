@@ -9,13 +9,14 @@ public struct TouchMenuItem: Codable {
     public var type      : String
     public var cornerStr : String
     public var menuKey   : Int
-    public var hashPath  : [Int]
-    public let point     : [Float]
+    public var treePath  : [Int] // last shown item on tree
+    public var treeNow   : Int // hash of currently selected item
+    public let thumb     : [Double]
     public let phase     : Int // UITouch.Phase
     
     public var nextXY: CGPoint {
-        CGPoint(x: CGFloat(point[0]),
-                y: CGFloat(point[1]))
+        CGPoint(x: CGFloat(thumb[0]),
+                y: CGFloat(thumb[1]))
     }
     
     public func isDone() -> Bool {
@@ -23,38 +24,44 @@ public struct TouchMenuItem: Codable {
                 phase == UITouch.Phase.cancelled.rawValue)
     }
     
+    // init with CGPoint
     public init(_ menuKey: Int,
                 _ cornerStr: String,
                 _ nodeType: MuNodeType,
-                _ hashPath: [Int],
+                _ treePath: [Int],
+                _ treeNow: Int,
                 _ point: CGPoint,
                 _ phase: UITouch.Phase) {
         
         self.menuKey = menuKey
         self.cornerStr = cornerStr
         self.type = nodeType.rawValue
-        self.hashPath = hashPath
+        self.treePath = treePath
+        self.treeNow = treeNow
         self.time = Date().timeIntervalSince1970
-        self.point = [Float(point.x), Float(point.y)]
+        self.thumb = [Double(point.x), Double(point.y)]
         self.phase = phase.rawValue
     }
+    // init with thumb
     public init(_ menuKey: Int,
                 _ cornerStr: String,
                 _ nodeType: MuNodeType,
-                _ hashPath: [Int],
+                _ treePath: [Int],
+                _ treeNow: Int,
                 _ thumb: [Double],
                 _ phase: UITouch.Phase) {
-
+        
         self.menuKey = menuKey
         self.cornerStr = cornerStr
         self.type = nodeType.rawValue
-        self.hashPath = hashPath
+        self.treePath = treePath
+        self.treeNow = treeNow
         self.time = Date().timeIntervalSince1970
-        self.point = [Float(thumb[0]), Float(thumb[1])]
+        self.thumb = thumb
         self.phase = phase.rawValue
     }
     enum CodingKeys: String, CodingKey {
-        case menuKey, cornerStr, type, time, hashPath, point, phase }
+        case menuKey, cornerStr, type, time, treePath, treeNow, thumb, phase }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -62,8 +69,9 @@ public struct TouchMenuItem: Codable {
         try type      = container.decode(String  .self , forKey: .type      )
         try cornerStr = container.decode(String  .self , forKey: .cornerStr )
         try time      = container.decode(Double  .self , forKey: .time      )
-        try hashPath  = container.decode([Int]   .self , forKey: .hashPath  )
-        try point     = container.decode([Float] .self , forKey: .point     )
+        try treePath  = container.decode([Int]   .self , forKey: .treePath  )
+        try treeNow   = container.decode(Int     .self , forKey: .treeNow   )
+        try thumb     = container.decode([Double].self , forKey: .thumb     )
         try phase     = container.decode(Int     .self , forKey: .phase     )
     }
 }

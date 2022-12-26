@@ -13,12 +13,14 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/musesum/Par.git", from: "0.2.0"),
+        .package(url: "https://github.com/musesum/Tr3.git", from: "0.2.0"),
     ],
     targets: [
         .target(
             name: "MuMenu",
             dependencies: [
-                .product(name: "Par", package: "Par")]),
+                .product(name: "Par", package: "Par"),
+                .product(name: "Tr3", package: "Tr3")]),
         .testTarget(
             name: "MuMenuTests",
             dependencies: ["MuMenu"]),

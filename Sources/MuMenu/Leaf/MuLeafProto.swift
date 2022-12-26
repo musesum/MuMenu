@@ -9,7 +9,7 @@ public protocol MuLeafProtocol {
     /// update value from user touch gesture
     func touchLeaf(_ touchState: MuTouchState)
 
-    /// update from model, not touch gesture
+    /// update from model normalized range of 0...1, not touch gesture
     func updateLeaf(_ any: Any, _ visitor: Visitor)
 
     /// title for control value

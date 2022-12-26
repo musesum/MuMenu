@@ -4,19 +4,28 @@ import Foundation
 
 extension MuTreeVm { // + Peer
 
-    func followHashPath(_ hashPath: [Int]) -> MuNodeVm? {
+    func followHashPath(_ treeHashPath: [Int],
+                        _ treeNowHash: Int) -> MuNodeVm? {
+
         var branchVm = branchVms.first
+        var nodeNow: MuNodeVm?
 
-        for hash in hashPath {
-
+        for hash in treeHashPath {
+            
             logPath("\(hash)", ": ")
-            if let foundNodeVm = findNode(hash) {
-                logPath("  found: \"\(foundNodeVm.node.title)\"")
-                foundNodeVm.refreshBranch()
-                branchVm = foundNodeVm.nextBranchVm
+            if let stepNode = findNode(hash) {
+                let stepHash = stepNode.node.hash
+                if stepHash == treeNowHash {
+                    nodeNow = stepNode
+                }
+                logPath("  found: \"\(stepNode.node.title)\"")
+                if !stepNode.nodeType.isLeaf {
+                    stepNode.refreshBranch()
+                }
+                branchVm = stepNode.nextBranchVm
                 if branchVm == nil {
-                    logPath(" done: \(foundNodeVm.node.title)")
-                    return foundNodeVm
+                    logPath(" done: \(stepNode.node.title)")
+                    return nodeNow ?? stepNode
                 }
             } else {
                 logPath(" not found")

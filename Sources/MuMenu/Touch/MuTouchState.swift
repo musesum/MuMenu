@@ -27,7 +27,7 @@ public class MuTouchState {
     private var pointPrev   = CGPoint.zero /// last reported touch while moving
     private var touchSpeed  = CGFloat.zero /// speed of movement
 
-    func begin(_ pointNow: CGPoint) {
+    func beginPoint(_ pointNow: CGPoint) {
 
         phase = .began
 
@@ -43,7 +43,7 @@ public class MuTouchState {
         updateTouchBeginCount()
     }
 
-    func moved(_ point: CGPoint) {
+    func movedPoint(_ point: CGPoint) {
         phase = .moved
         updateTimePoint(point)
         if point.distance(pointBegin) > moveThreshold {

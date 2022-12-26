@@ -36,7 +36,7 @@ extension MuLeafTogVm: MuLeafProtocol {
         }
     }
 
-    public func updateSync(_ visitor: Visitor) {
+    private func updateSync(_ visitor: Visitor) {
         menuSync?.setAny(named: nodeType.name, thumb[0], visitor)
         updatePeers(visitor)
     }

@@ -12,7 +12,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
     var branchOpacity: CGFloat = 1 // branch may be partially occluded
     var viewOpacity: CGFloat { show ? branchOpacity : 0 }
 
-    var treeVm: MuTreeVm       /// my tree; which unfolds a hierarchy of branches
+    public var treeVm: MuTreeVm       /// my tree; which unfolds a hierarchy of branches
     var nodeVms: [MuNodeVm]    /// all the node View Models on this branch
     var nodeSpotVm: MuNodeVm?  /// current node, nodeSpotVm.branchVm is next branch
     var panelVm: MuPanelVm     /// background + stroke model for BranchView
@@ -99,7 +99,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
     func findNearestNode(_ touchNow: CGPoint) -> MuNodeVm? {
 
         if let nodeSpotVm {
-            if nodeSpotVm.contains(touchNow) ||
+            if nodeSpotVm.containsPoint(touchNow) ||
                 nodeSpotVm.nodeType.isLeaf {
                 return nodeSpotVm
             }

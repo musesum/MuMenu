@@ -23,11 +23,10 @@ public class MuLeafValVm: MuLeafVm {
         let norm = scale(val, from: range, to: 0...1)
         return CGFloat(norm)
     }
-
+    /// scale up normalized to defined range
     var expanded: Double {
-        scale(Double(thumb[0]), from: 0...1, to: range)
+        scale(thumb[0], from: 0...1, to: range)
     }
-
     func normalizeTouch(_ point: CGPoint) -> CGFloat {
         let v = panelVm.axis == .vertical ? point.y : point.x
         let vv = panelVm.normalizeTouch(v: v)
