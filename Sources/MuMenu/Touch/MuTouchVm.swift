@@ -41,58 +41,55 @@ public class MuTouchVm: ObservableObject {
         }
     }
     
-    public func updateTouchXY(_ touchXY: CGPoint) {
+    public func updateDragXY(_ touchXY: CGPoint) {
         
-        if !touchState.touching  { begin(touchXY) }
-        else if touchXY == .zero { ended(touchXY) }
-        else                     { moved(touchXY) }
+        if !touchState.touching  { begin(touchXY, fromRemote: false) }
+        else if touchXY == .zero { ended(touchXY, fromRemote: false) }
+        else                     { moved(touchXY, fromRemote: false) }
         
         alignCursor(touchXY)
     }
-    
-    /// called either by SwiftUI MenuView DragGesture or UIKIt touchesUpdate
-    public func updateNodeVm(_ nodeVm: MuNodeVm,
-                             _ menuItem: TouchMenuItem) {
 
-        print("touchNodeUpdate \(nodeVm.node.title)") //??? 
-        let foundXY = nodeVm.center
-        let touchXY = menuItem.isDone() ? .zero : foundXY
+    public func updateTouchXY(_ touchXY: CGPoint,
+                              _ phase: Int) {
 
-        if !touchState.touching  { begin(touchXY) }
-        else if touchXY == .zero { ended(touchXY) }
-        else                     { moved(touchXY) }
-
+        let phase = UITouch.Phase(rawValue: phase)
+        switch phase {
+            case .began: begin(touchXY, fromRemote: false)
+            case .moved: moved(touchXY, fromRemote: false)
+            default:     ended(touchXY, fromRemote: false)
+        }
         alignCursor(touchXY)
     }
-    func begin(_ touchXY: CGPoint) {
+    func begin(_ touchXY: CGPoint, fromRemote: Bool) {
         touchState.beginPoint(touchXY)
-        rootVm?.touchBegin(touchState)
+        rootVm?.touchBegin(touchState, fromRemote)
         // log("touch", [touchNow], terminator: " ")
     }
-
-    func moved(_ touchXY: CGPoint)  {
+    
+    func moved(_ touchXY: CGPoint, fromRemote: Bool)  {
+        
         touchState.movedPoint(touchXY)
-
+        
         if let rootVm {
-
+            
             if touchState.isFast,
                // has a child branch to skip
                rootVm.nodeSpotVm?.nextBranchVm?.nodeSpotVm != nil {
                 // log("🏁", terminator: " ")
             } else {
-                rootVm.touchMoved(touchState)
+                rootVm.touchMoved(touchState, fromRemote)
             }
         }
     }
-
-    func ended(_ touchXY: CGPoint)  {
+    
+    func ended(_ touchXY: CGPoint, fromRemote: Bool) {
         touchState.ended()
-        rootVm?.touchEnded(touchState)
+        rootVm?.touchEnded(touchState, fromRemote)
         dragIconXY = parkIconXY
         spotNodeΔ = .zero // no spotNode to align with
         rootNodeΔ = .zero // go back to rootNode
     }
-
     /// updated on startup or change in screen orientation
     func updateRootIcon(_ from: CGRect) {
         parkIconXY = rootVm?.cornerXY(in: from) ?? .zero
@@ -101,10 +98,10 @@ public class MuTouchVm: ObservableObject {
     }
     
     /// either center dragNode icon on spotNode or track finger
-    func alignCursor(_ touchMenu: CGPoint) {
+    func alignCursor(_ touchXY: CGPoint) {
 
         guard let rootVm else {
-            return dragIconXY = touchMenu - bounds.origin
+            return dragIconXY = touchXY - bounds.origin
         }
         if !touchState.touching ||
             rootVm.touchElement == .root ||
@@ -119,7 +116,7 @@ public class MuTouchVm: ObservableObject {
 
         } else {
 
-            dragIconXY = touchMenu - bounds.origin
+            dragIconXY = touchXY - bounds.origin
         }
     }
     var bounds = CGRect.zero

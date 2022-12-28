@@ -25,7 +25,7 @@ public struct MenuDragView: View {
                     .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .global)
                         .updating($touchXY) { (value, touchXY, _) in
                             touchXY = value.location })
-                    .onChange(of: touchXY) { menuVm.rootVm.touchVm.updateTouchXY($0) }
+                    .onChange(of: touchXY) { menuVm.rootVm.touchVm.updateDragXY($0) }
                     .allowsHitTesting(true) // gestures provided by DragGesture
                 // .defersSystemGestures(on: .vertical)
             }

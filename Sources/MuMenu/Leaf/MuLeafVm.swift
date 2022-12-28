@@ -15,7 +15,7 @@ public class MuLeafVm: MuNodeVm {
     
     func updatePeers(_ visitor: Visitor) {
         if !visitor.wasRemote() {
-            rootVm.sendToPeers(self, thumb: thumb)
+            rootVm.sendToPeers(self, thumb)
         }
     }
 
@@ -27,7 +27,6 @@ public class MuLeafVm: MuNodeVm {
         
         // some leaves spawn a child view
         menuSync = node.menuSync ?? prevVm?.node.menuSync
-        
     }
 
     /// bounds for control surface, used to determin if touch is inside control area

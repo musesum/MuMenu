@@ -49,7 +49,7 @@ extension MuLeafValVm: MuLeafProtocol {
         func visit() {
             editing = true
             switch any {
-                case let v as Double:   thumb[0] = v,  
+                case let v as Double:   thumb[0] = v 
                 case let v as [Double]: thumb[0] = v[0]
                 default: break
             }

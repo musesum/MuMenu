@@ -30,17 +30,20 @@ public class MuRootVm: ObservableObject, Equatable {
 
     let peers = PeersController.shared
 
-    func updateSpot(_ newSpotVm: MuNodeVm) {
+    func updateSpot(_ newSpotVm: MuNodeVm,
+                    _ fromRemote: Bool) {
         
         if self.nodeSpotVm != newSpotVm  {
             self.nodeSpotVm = newSpotVm
             newSpotVm.refreshBranch()
             newSpotVm.refreshStatus()
-            sendToPeers(newSpotVm)
+            if !fromRemote {
+                sendToPeers(newSpotVm, [0,0])
+            }
         }
     }
 
-    func sendToPeers(_ nodeVm: MuNodeVm, thumb: [Double] = [0,0]) {
+    func sendToPeers(_ nodeVm: MuNodeVm,_ thumb: [Double]) {
 
         if peers.hasPeers {
             do {
@@ -141,22 +144,29 @@ public class MuRootVm: ObservableObject, Equatable {
         return nil
     }
     var touchState: MuTouchState?
-    func touchBegin(_ touchState: MuTouchState) {
+
+    func touchBegin(_ touchState: MuTouchState,
+                    _ fromRemote: Bool) {
+
         self.touchState = touchState
         beginViewElements = viewElements
-        updateRoot()
+        updateRoot(fromRemote)
         nodeSpotVm?.touching(touchState)
         MuStatusVm.shared.show = touchElement != .edit
         beginTouchElement = touchElement
     }
     
-    func touchMoved(_ touchState: MuTouchState) {
+    func touchMoved(_ touchState: MuTouchState,
+                    _ fromRemote: Bool) {
+
         self.touchState = touchState
-        updateRoot()
+        updateRoot(fromRemote)
     }
-    func touchEnded(_ touchState: MuTouchState) {
+    func touchEnded(_ touchState: MuTouchState,
+                    _ fromRemote: Bool) {
+        
         self.touchState = touchState
-        updateRoot()
+        updateRoot(fromRemote)
         
         /// turn off spotlight for leaf after edit
         if let nodeSpotVm, nodeSpotVm.nodeType.isLeaf {
@@ -165,9 +175,16 @@ public class MuRootVm: ObservableObject, Equatable {
         treeSpotVm?.branchSpotVm = nil
         touchElement = .none
         MuStatusVm.shared.show = false
+        if !fromRemote, let nodeSpotVm {
+            if let leafVm = nodeSpotVm as? MuLeafVm {
+                sendToPeers(nodeSpotVm, leafVm.thumb)
+            } else {
+                sendToPeers(nodeSpotVm, [0,0])
+            }
+        }
     }
     
-    private func updateRoot() {
+    private func updateRoot(_ fromRemote: Bool) {
         guard let touchState else { return }
         let touchNow = touchState.pointNow
         
@@ -257,7 +274,7 @@ public class MuRootVm: ObservableObject, Equatable {
                 
                 if let nearestNodeVm = nearestBranch.findNearestNode(touchNow) {
                     
-                    updateSpot(nearestNodeVm)
+                    updateSpot(nearestNodeVm, fromRemote)
                     if touchLeafNode() {
                         // already set touchElement
                     } else if !viewElements.contains(.branch) {
@@ -270,7 +287,7 @@ public class MuRootVm: ObservableObject, Equatable {
                 } else if let nearestLeafVm = nearestBranch.findNearestLeaf(touchNow) {
                     // special case where not touching on leaf runway but is touching headline
                     if touchState.phase == .began {
-                        updateSpot(nearestLeafVm)
+                        updateSpot(nearestLeafVm, fromRemote)
                         touchElement = .shift
                         return true
                     }
@@ -294,7 +311,7 @@ public class MuRootVm: ObservableObject, Equatable {
                             treeVm.showBranches(depth: 0)
                         }
                     }
-                    updateSpot(nearestNode)
+                    updateSpot(nearestNode, fromRemote)
                     
                     // log("≈", terminator: "")
                     viewElements = [.root,.branch]

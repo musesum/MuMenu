@@ -33,7 +33,6 @@ public func log(_ title: String,
                 }
                 text += "] "
 
-
             case let v as Double:
 
                 text += v.digits(0...1) + " "

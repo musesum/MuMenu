@@ -2,6 +2,7 @@
 
 import Foundation
 import Par // Visitor
+import UIKit
 
 extension MuTouchVm {
 
@@ -24,21 +25,36 @@ extension MuTouchVm {
         for treeVm in rootVm.treeVms {
             if let foundNodeVm = treeVm.followHashPath(treePath, treeNow) {
                 if let leafVm = foundNodeVm as? MuLeafVm {
-                    updateLeafVm(leafVm, menuItem)
+                    updateRemoteLeafVm(leafVm, menuItem)
                 } else {
-                    updateNodeVm(foundNodeVm, menuItem)
+                    updateRemoteNodeVm(foundNodeVm, menuItem)
                 }
                 break
             }
         }
+
     }
-    func updateLeafVm(_ leafVm: MuLeafVm,
-                      _ menuItem: TouchMenuItem) {
+    func updateRemoteLeafVm(_ leafVm: MuLeafVm,
+                            _ menuItem: TouchMenuItem) {
         DispatchQueue.main.async {
             if let leafProto = leafVm.leafProto {
                 leafProto.updateLeaf(menuItem.thumb, Visitor().fromRemote())
             }
 
         }
+    }
+    /// called either by SwiftUI MenuView DragGesture or UIKIt touchesUpdate
+    public func updateRemoteNodeVm(_ nodeVm: MuNodeVm,
+                                   _ menuItem: TouchMenuItem) {
+
+        let xy = nodeVm.center
+        let phase = UITouch.Phase(rawValue: menuItem.phase)
+
+        switch phase {
+            case .began: begin(xy, fromRemote: true)
+            case .moved: moved(xy, fromRemote: true)
+            default:     ended(xy, fromRemote: true)
+        }
+        alignCursor(xy)
     }
 }

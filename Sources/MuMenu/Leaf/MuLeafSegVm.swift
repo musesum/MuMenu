@@ -26,7 +26,6 @@ public class MuLeafSegVm: MuLeafVm {
         return panelVm.normalizeTouch(v: v)
     }
     
-
     /// scale up normalized to defined range
     var expanded: Double {
         scale(Double(nearestTick), from: 0...1, to: range)
