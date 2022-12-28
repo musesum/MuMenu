@@ -9,12 +9,11 @@ public class MuLeafVm: MuNodeVm {
     var menuSync: MuMenuSync?
     var leafProto: MuLeafProtocol?
 
-    
     /// normalized to 0...1
     var thumb = [Double](repeatElement(0, count: 2))
     
     func updatePeers(_ visitor: Visitor) {
-        if !visitor.wasRemote() {
+        if visitor.isLocal() {
             rootVm.sendToPeers(self, thumb)
         }
     }

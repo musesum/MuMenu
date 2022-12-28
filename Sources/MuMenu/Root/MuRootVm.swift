@@ -47,16 +47,18 @@ public class MuRootVm: ObservableObject, Equatable {
 
         if peers.hasPeers {
             do {
-                let menuKey = (nodeVm.nodeType.isLeaf
-                               ? "leaf".hash
-                               : "node".hash)
-                let cornerStr = corner.abbreviation()
-                let nodeType = nodeVm.nodeType
-                let phase = touchState?.phase ?? .began
-                let treePath = nodeVm.lastShownNodeVm()?.node.hashPath ?? nodeVm.node.hashPath
-                let treeNow = nodeVm.node.hash
-
-                let item = TouchMenuItem(menuKey, cornerStr, nodeType, treePath, treeNow, thumb, phase)
+                let menuKey = (
+                    nodeVm.nodeType.isLeaf
+                    ? "leaf".hash
+                    : "node".hash)
+                let item = TouchMenuItem(
+                    menuKey,
+                    corner.abbreviation(),
+                    nodeVm.nodeType,
+                    nodeVm.node.hashPath,
+                    nodeVm.node.hash,
+                    thumb,
+                    touchState?.phase ?? .began)
 
                 let encoder = JSONEncoder()
                 let data = try encoder.encode(item)

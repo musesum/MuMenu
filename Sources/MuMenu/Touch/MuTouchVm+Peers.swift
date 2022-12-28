@@ -22,6 +22,7 @@ extension MuTouchVm {
         guard let rootVm else { return }
         let treePath = menuItem.treePath
         let treeNow = menuItem.treeNow
+        log("gotoRemoteItem", ["treeNow:", treeNow, "treePath:", treePath])
         for treeVm in rootVm.treeVms {
             if let foundNodeVm = treeVm.followHashPath(treePath, treeNow) {
                 if let leafVm = foundNodeVm as? MuLeafVm {
@@ -32,15 +33,15 @@ extension MuTouchVm {
                 break
             }
         }
-
     }
+
     func updateRemoteLeafVm(_ leafVm: MuLeafVm,
                             _ menuItem: TouchMenuItem) {
+        
         DispatchQueue.main.async {
             if let leafProto = leafVm.leafProto {
-                leafProto.updateLeaf(menuItem.thumb, Visitor().fromRemote())
+                leafProto.updateLeaf(menuItem.thumb, Visitor(fromRemote: true))
             }
-
         }
     }
     /// called either by SwiftUI MenuView DragGesture or UIKIt touchesUpdate

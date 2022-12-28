@@ -23,8 +23,7 @@ extension MuLeafTogVm: MuLeafProtocol {
     }
     
     public func updateLeaf(_ any: Any,_ visitor: Visitor) {
-        visitor.startVisit(hash, visit)
-        func visit() {
+        if visitor.newVisit(hash) {
             editing = true
             switch any {
                 case let v as Double:   thumb[0] = (v    < 1.0 ? 0 : 1)

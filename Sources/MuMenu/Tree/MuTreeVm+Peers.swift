@@ -4,53 +4,41 @@ import Foundation
 
 extension MuTreeVm { // + Peer
 
-    func followHashPath(_ treeHashPath: [Int],
-                        _ treeNowHash: Int) -> MuNodeVm? {
+    func followHashPath(_ treePath: [Int],
+                        _ treeNow: Int) -> MuNodeVm? {
 
         var branchVm = branchVms.first
         var nodeNow: MuNodeVm?
+        log("followHashPath ", [" treeNow:", treeNow, " treePath: ", treePath])
+        for treeHash in treePath {
 
-        for hash in treeHashPath {
-            
-            logPath("\(hash)", ": ")
-            if let stepNode = findNode(hash) {
-                let stepHash = stepNode.node.hash
-                if stepHash == treeNowHash {
-                    nodeNow = stepNode
+            if let stepNodeVm = findNode(treeHash) {
+                if stepNodeVm.node.hash == treeNow {
+                    // nodeNow may be in middle of shown treePath
+                    nodeNow = stepNodeVm
                 }
-                logPath("  found: \"\(stepNode.node.title)\"")
-                if !stepNode.nodeType.isLeaf {
-                    stepNode.refreshBranch()
+                if !stepNodeVm.nodeType.isLeaf {
+                    stepNodeVm.refreshBranch()
                 }
-                branchVm = stepNode.nextBranchVm
+                branchVm = stepNodeVm.nextBranchVm
+
                 if branchVm == nil {
-                    logPath(" done: \(stepNode.node.title)")
-                    return nodeNow ?? stepNode
+                    return nodeNow ?? stepNodeVm
                 }
-            } else {
-                logPath(" not found")
             }
-
         }
         return nil
 
-        func findNode(_ hash: Int) -> MuNodeVm? {
+        func findNode(_ treeHash: Int) -> MuNodeVm? {
 
             if let nodeVms = branchVm?.nodeVms {
-
-                logPath("  ")
                 for nodeVm in nodeVms {
-                    logPath("\"\(nodeVm.node.title)\"", ", ")
-                    let nodeHash = nodeVm.node.hash
-                    if nodeHash == hash {
+                    if nodeVm.node.hash == treeHash {
                         return nodeVm
                     }
                 }
             }
             return nil
-        }
-        func logPath(_ s: String,_  t: String = "\n" ) {
-            //print(s, terminator: t)
         }
     }
 
