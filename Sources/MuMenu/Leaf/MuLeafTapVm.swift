@@ -28,8 +28,11 @@ public class MuLeafTapVm: MuLeafVm {
     }
 
     func updateSync(_ visitor: Visitor) {
-        menuSync?.setAny(named: nodeType.name, thumb[0], visitor)
-        updatePeers(visitor)
+
+        if let menuSync, menuSync.setAny(named: nodeType.name, thumb[0], visitor) {
+
+            updatePeers(visitor)
+        }
     }
 }
 

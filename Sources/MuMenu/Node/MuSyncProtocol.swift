@@ -11,10 +11,12 @@ import Par // Visitor
 public protocol MuMenuSync {
 
     /// set single named value
-    func setAny(named: String,_ any: Any, _ visitor: Visitor)
+    /// return false if already visit (may happen when Vm shared same node
+    func setAny(named: String,_ any: Any, _ visitor: Visitor) -> Bool
 
     /// set multiple named values
-    func setAnys(_ anys: [(String, Any)], _ visitor: Visitor)
+    /// // return false if already visit (may happen when Vm shared same node
+    func setAnys(_ anys: [(String, Any)], _ visitor: Visitor) -> Bool
 
     /// reset node to default value
     func resetDefault()

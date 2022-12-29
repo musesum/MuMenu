@@ -9,7 +9,7 @@ extension MuTreeVm { // + Peer
 
         var branchVm = branchVms.first
         var nodeNow: MuNodeVm?
-        log("followHashPath ", [" treeNow:", treeNow, " treePath: ", treePath])
+        //??? log("followHashPath ", [" treeNow:", treeNow, " treePath: ", treePath])
         for treeHash in treePath {
 
             if let stepNodeVm = findNode(treeHash) {

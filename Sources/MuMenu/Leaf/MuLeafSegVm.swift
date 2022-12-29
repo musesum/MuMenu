@@ -118,8 +118,11 @@ public class MuLeafSegVm: MuLeafVm {
     }
 
     func updateSync(_ visitor: Visitor) {
-        menuSync?.setAny(named: nodeType.name, expanded, visitor)
-        updatePeers(visitor)
+
+        if let menuSync, menuSync.setAny(named: nodeType.name, expanded, visitor) {
+
+            updatePeers(visitor)
+        }
     }
 
 }

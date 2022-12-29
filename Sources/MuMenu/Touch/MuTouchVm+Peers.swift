@@ -22,9 +22,11 @@ extension MuTouchVm {
         guard let rootVm else { return }
         let treePath = menuItem.treePath
         let treeNow = menuItem.treeNow
-        log("gotoRemoteItem", ["treeNow:", treeNow, "treePath:", treePath])
+
         for treeVm in rootVm.treeVms {
-            if let foundNodeVm = treeVm.followHashPath(treePath, treeNow) {
+            if treeVm.corner.str() == menuItem.cornerStr,
+               let foundNodeVm = treeVm.followHashPath(treePath, treeNow) {
+
                 if let leafVm = foundNodeVm as? MuLeafVm {
                     updateRemoteLeafVm(leafVm, menuItem)
                 } else {

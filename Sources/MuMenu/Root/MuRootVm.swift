@@ -52,6 +52,9 @@ public class MuRootVm: ObservableObject, Equatable {
                     nodeVm.nodeType.isLeaf
                     ? "leaf".hash
                     : "node".hash)
+                if corner.str() == "SW" {
+                    print(corner.str(), terminator: " ")
+                }
                 let item = TouchMenuItem(
                     menuKey   : menuKey,
                     cornerStr : corner.str(),
@@ -193,13 +196,8 @@ public class MuRootVm: ObservableObject, Equatable {
         
         // stay exclusively on .leaf or .edit mode
         switch touchElement {
-            case .shift:
-                return shiftBranches()
-            case .edit:
-                if let leafVm = nodeSpotVm as? MuLeafVm {
-                    editLeaf(leafVm)
-                }
-                return
+            case .shift: return shiftBranches()
+            case .edit:  return editLeaf(nodeSpotVm)
             default: break
         }
         if        touchLeafNode() { // editing leaf or shifting branch
@@ -348,8 +346,8 @@ public class MuRootVm: ObservableObject, Equatable {
             treeSpotVm?.shiftTree(self, touchState)
         }
         
-        func editLeaf(_ leafVm: MuLeafVm) {
-            //??? guard let leafVm = nodeSpotVm as? MuLeafVm else { return }
+        func editLeaf(_ nodeVm: MuNodeVm?) {
+            guard let leafVm = nodeSpotVm as? MuLeafVm else { return }
             if touchElement != .edit {
                 // begin touch inside control runway
                 touchElement = .edit
@@ -359,9 +357,7 @@ public class MuRootVm: ObservableObject, Equatable {
                 leafVm.branchVm.treeVm.branchSpotVm = nil
             }
             leafVm.touchLeaf(touchState)
-//???            for leafProto in leafVm.node.leafProtos {
-//                leafProto.touchLeaf(touchState)
-//            }
+
             // hide status line
             MuStatusVm.shared.show = false
         }

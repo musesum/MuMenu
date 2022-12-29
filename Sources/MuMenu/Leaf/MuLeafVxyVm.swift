@@ -69,7 +69,7 @@ public class MuLeafVxyVm: MuLeafVm {
 
     /// user touch gesture inside runway
     override public func touchLeaf(_ touchState: MuTouchState,
-                          visitor: Visitor = Visitor()) {
+                                   visitor: Visitor = Visitor()) {
 
         if visitor.newVisit(hash) {
             if touchState.phase == .began {
@@ -129,13 +129,15 @@ public class MuLeafVxyVm: MuLeafVm {
             return [x,y]
         }
     }
-    /// called by touchLeaf via user touch and updateLeaf via model update
-     func updateSync(_ visitor: Visitor) {
+    /// called via user touch or via model update
+    func updateSync(_ visitor: Visitor) {
 
         let x = expand(named: "x", thumb[0])
         let y = expand(named: "y", thumb[1])
-        menuSync?.setAnys([("x", x),("y", y)], visitor)
-        updatePeers(visitor)
-    }
 
+        if let menuSync, menuSync.setAnys([("x", x),("y", y)], visitor) {
+            updatePeers(visitor)
+        }
+    }
+    
 }
