@@ -9,17 +9,7 @@ import Par
 
 extension MuLeafTapVm: MuLeafProtocol {
 
-    public func touchLeaf(_ touchState: MuTouchState) {
-        if touchState.phase == .began {
-            thumb[0] = 1
-            editing = true
-        } else if touchState.phase.isDone() {
-            thumb[0] = 0
-            editing = false
-        }
-        updateSync(Visitor())
-    }
-
+    
     public func refreshValue() {
         // no change
     }
@@ -37,10 +27,7 @@ extension MuLeafTapVm: MuLeafProtocol {
         }
     }
 
-    private func updateSync(_ visitor: Visitor) {
-        menuSync?.setAny(named: nodeType.name, thumb[0], visitor)
-        updatePeers(visitor)
-    }
+
     public func valueText() -> String {
         editing ? "1" :  "0"
     }

@@ -2,8 +2,8 @@
 
 
 import SwiftUI
+import Par
 
-/// tap control
 public class MuLeafPeerVm: MuLeafVm {
 
     var peersVm = PeersVm.shared
@@ -15,8 +15,11 @@ public class MuLeafPeerVm: MuLeafVm {
 
         super.init(node, branchVm, prevVm)
         super.leafProto = self
-        node.leaves.append(self)
-
+        node.leafProtos.append(self)
     }
+    override public func touchLeaf(_ : MuTouchState,
+                                   visitor: Visitor) {}
+    func updateSync(_ visitor: Visitor) {}
+    
 }
 

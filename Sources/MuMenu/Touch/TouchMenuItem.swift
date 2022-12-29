@@ -23,33 +23,15 @@ public struct TouchMenuItem: Codable {
         return (phase == UITouch.Phase.ended.rawValue ||
                 phase == UITouch.Phase.cancelled.rawValue)
     }
-    
-    // init with CGPoint
-    public init(_ menuKey: Int,
-                _ cornerStr: String,
-                _ nodeType: MuNodeType,
-                _ treePath: [Int],
-                _ treeNow: Int,
-                _ point: CGPoint,
-                _ phase: UITouch.Phase) {
-        
-        self.menuKey = menuKey
-        self.cornerStr = cornerStr
-        self.type = nodeType.rawValue
-        self.treePath = treePath
-        self.treeNow = treeNow
-        self.time = Date().timeIntervalSince1970
-        self.thumb = [Double(point.x), Double(point.y)]
-        self.phase = phase.rawValue
-    }
+
     // init with thumb
-    public init(_ menuKey: Int,
-                _ cornerStr: String,
-                _ nodeType: MuNodeType,
-                _ treePath: [Int],
-                _ treeNow: Int,
-                _ thumb: [Double],
-                _ phase: UITouch.Phase) {
+    public init(menuKey   : Int,
+                cornerStr : String,
+                nodeType  : MuNodeType,
+                treePath  : [Int],
+                treeNow   : Int,
+                thumb     : [Double],
+                phase     : UITouch.Phase) {
         
         self.menuKey = menuKey
         self.cornerStr = cornerStr
@@ -65,13 +47,13 @@ public struct TouchMenuItem: Codable {
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        try menuKey   = container.decode(Int     .self , forKey: .menuKey   )
-        try type      = container.decode(String  .self , forKey: .type      )
-        try cornerStr = container.decode(String  .self , forKey: .cornerStr )
-        try time      = container.decode(Double  .self , forKey: .time      )
-        try treePath  = container.decode([Int]   .self , forKey: .treePath  )
-        try treeNow   = container.decode(Int     .self , forKey: .treeNow   )
-        try thumb     = container.decode([Double].self , forKey: .thumb     )
-        try phase     = container.decode(Int     .self , forKey: .phase     )
+        try menuKey   = container.decode(Int     .self, forKey: .menuKey  )
+        try type      = container.decode(String  .self, forKey: .type     )
+        try cornerStr = container.decode(String  .self, forKey: .cornerStr)
+        try time      = container.decode(Double  .self, forKey: .time     )
+        try treePath  = container.decode([Int]   .self, forKey: .treePath )
+        try treeNow   = container.decode(Int     .self, forKey: .treeNow  )
+        try thumb     = container.decode([Double].self, forKey: .thumb    )
+        try phase     = container.decode(Int     .self, forKey: .phase    )
     }
 }

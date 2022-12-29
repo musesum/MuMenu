@@ -1,6 +1,7 @@
 //  Created by warren on 12/10/21.
 
 import SwiftUI
+import Par // Visitor
 
 /// segmented control
 public class MuLeafSegVm: MuLeafVm {
@@ -14,7 +15,7 @@ public class MuLeafSegVm: MuLeafVm {
 
         super.init(node, branchVm, prevVm)
         super.leafProto = self
-        node.leaves.append(self) // MuLeaf delegate for setting value
+        node.leafProtos.append(self) // MuLeaf delegate for setting value
         
         refreshValue()
         updatePanelSizes()
@@ -80,5 +81,46 @@ public class MuLeafSegVm: MuLeafVm {
     /// `touchBegin` inside thumb will Not move thumb.
     /// So, determing delta from center at touchState.begin
     var thumbBeginΔ = Double(0)
+
+
+    /// user touch gesture inside runway
+    override public func touchLeaf(_ touchState: MuTouchState,
+                                   visitor: Visitor = Visitor()) {
+
+        if touchState.phase == .began {
+            touchThumbBegin()
+            editing = true
+        } else if !touchState.phase.isDone() {
+            touchThumbNext()
+            editing = true
+        } else {
+            editing = false
+        }
+        updateSync(visitor)
+
+        func touchThumbBegin() {
+            let thumbPrev = thumb[0]
+            let touchDelta = touchState.pointNow - runwayBounds.origin
+            let thumbNext = normalizeTouch(touchDelta)
+            let touchedInsideThumb = abs(thumbNext.distance(to: thumbPrev)) < thumbRadius
+            thumbBeginΔ = touchedInsideThumb ? thumbPrev - thumbNext : .zero
+            thumb[0] = thumbNext + thumbBeginΔ
+        }
+        /// user touched control, translate to normalized thumb (0...1)
+        func touchThumbNext() {
+            if !runwayBounds.contains(touchState.pointNow) {
+                // slowly erode thumbBegin∆ when out of bounds
+                thumbBeginΔ = thumbBeginΔ * 0.85
+            }
+            let touchDelta = touchState.pointNow - runwayBounds.origin
+            thumb[0] = normalizeTouch(touchDelta) + thumbBeginΔ
+        }
+    }
+
+    func updateSync(_ visitor: Visitor) {
+        menuSync?.setAny(named: nodeType.name, expanded, visitor)
+        updatePeers(visitor)
+    }
+
 }
 

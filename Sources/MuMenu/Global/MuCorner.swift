@@ -27,7 +27,7 @@ public struct MuCorner: OptionSet {
         return "\(printable)"
     }
 
-    public func abbreviation () -> String {
+    public func str() -> String {
         switch self {
             case [.lower, .right]: return "SE"
             case [.lower, .left ]: return "SW"

@@ -10,7 +10,7 @@ open class MuNode: Identifiable, Equatable {
     public var parent: MuNode?
     public var children = [MuNode]()
     public var menuSync: MuMenuSync?
-    public var leaves = [MuLeafProtocol]()
+    public var leafProtos = [MuLeafProtocol]()
     public var nodeType = MuNodeType.node
 
     /// path and hash get updated through MuNodeDispatch::bindDispatch

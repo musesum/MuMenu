@@ -41,7 +41,7 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
     lazy var path: String? = {
         var path = ""
         if let corner = branchVm.treeVm.rootVm?.corner {
-            path = corner.abbreviation() + "."
+            path = corner.str() + "."
         } else {
             print("⁉️ MuNodeVm rootVm corner")
         }

@@ -1,6 +1,7 @@
 //  Created by warren on 5/10/22.
 
 import SwiftUI
+import Par // Visitor
 
 public class MuLeafTapVm: MuLeafVm {
 
@@ -11,8 +12,24 @@ public class MuLeafTapVm: MuLeafVm {
         
         super.init(node, branchVm, prevVm)
         super.leafProto = self
-        node.leaves.append(self) // MuLeaf delegate for setting value
+        node.leafProtos.append(self) // MuLeaf delegate for setting value
         refreshValue()
+    }
+    override public func touchLeaf(_ touchState: MuTouchState,
+                                   visitor: Visitor = Visitor()) {
+        if touchState.phase == .began {
+            thumb[0] = 1
+            editing = true
+        } else if touchState.phase.isDone() {
+            thumb[0] = 0
+            editing = false
+        }
+        updateSync(visitor)
+    }
+
+    func updateSync(_ visitor: Visitor) {
+        menuSync?.setAny(named: nodeType.name, thumb[0], visitor)
+        updatePeers(visitor)
     }
 }
 

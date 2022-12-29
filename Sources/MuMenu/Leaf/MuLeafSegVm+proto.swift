@@ -1,42 +1,9 @@
 //  Created by warren on 9/10/22.
 
 import SwiftUI
-import Par // Visitor
+import Par
 
 extension MuLeafSegVm: MuLeafProtocol {
-
-    /// user touch gesture inside runway
-    public func touchLeaf(_ touchState: MuTouchState) {
-
-        if touchState.phase == .began {
-            touchThumbBegin()
-            editing = true
-        } else if !touchState.phase.isDone() {
-            touchThumbNext()
-            editing = true
-        } else {
-            editing = false
-        }
-        updateSync(Visitor())
-
-        func touchThumbBegin() {
-            let thumbPrev = thumb[0]
-            let touchDelta = touchState.pointNow - runwayBounds.origin
-            let thumbNext = normalizeTouch(touchDelta)
-            let touchedInsideThumb = abs(thumbNext.distance(to: thumbPrev)) < thumbRadius
-            thumbBeginΔ = touchedInsideThumb ? thumbPrev - thumbNext : .zero
-            thumb[0] = thumbNext + thumbBeginΔ
-        }
-        /// user touched control, translate to normalized thumb (0...1)
-        func touchThumbNext() {
-            if !runwayBounds.contains(touchState.pointNow) {
-                // slowly erode thumbBegin∆ when out of bounds
-                thumbBeginΔ = thumbBeginΔ * 0.85
-            }
-            let touchDelta = touchState.pointNow - runwayBounds.origin
-            thumb[0] = normalizeTouch(touchDelta) + thumbBeginΔ
-        }
-    }
 
     public func refreshValue() {
         if let menuSync {
@@ -63,11 +30,6 @@ extension MuLeafSegVm: MuLeafProtocol {
         }
     }
 
-    private func updateSync(_ visitor: Visitor) {
-        menuSync?.setAny(named: nodeType.name, expanded, visitor)
-        updatePeers(visitor)
-    }
-
     public func valueText() -> String {
         range.upperBound > 1
         ? String(format: "%.f", scale(thumb[0], from: 0...1, to: range))
@@ -80,5 +42,4 @@ extension MuLeafSegVm: MuLeafProtocol {
         : CGSize(width: thumb[0] * panelVm.runway, height: 1)
     }
 
-   
 }

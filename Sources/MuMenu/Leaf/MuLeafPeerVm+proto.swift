@@ -1,14 +1,11 @@
 //  Created by warren on 12/5/22.
 
 import SwiftUI
-import Par
-
+import Par // Visitor
 extension MuLeafPeerVm: MuLeafProtocol {
 
-    public func touchLeaf(_ touchState: MuTouchState) {}
     public func refreshValue() {}
     public func updateLeaf(_ any: Any, _ visitor: Visitor) {}
-    private func updateSync(_ visitor: Visitor) {}
     public func valueText() -> String { "" }
     public func thumbOffset() -> CGSize {
         CGSize(width: 0, height:  panelVm.runway)

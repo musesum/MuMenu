@@ -42,4 +42,8 @@ public class MuLeafVm: MuNodeVm {
         print(contained ? "+" : "-", terminator: "") //???
         return contained
     }
+    public func touchLeaf(_ touchState: MuTouchState,
+                          visitor: Visitor = Visitor()) {
+        print("*** MuLeafVm::touchLeaf override me")
+    }
 }

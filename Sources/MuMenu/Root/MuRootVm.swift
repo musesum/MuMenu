@@ -43,7 +43,8 @@ public class MuRootVm: ObservableObject, Equatable {
         }
     }
 
-    func sendToPeers(_ nodeVm: MuNodeVm,_ thumb: [Double]) {
+    func sendToPeers(_ nodeVm: MuNodeVm,
+                     _ thumb: [Double]) {
 
         if peers.hasPeers {
             do {
@@ -52,13 +53,13 @@ public class MuRootVm: ObservableObject, Equatable {
                     ? "leaf".hash
                     : "node".hash)
                 let item = TouchMenuItem(
-                    menuKey,
-                    corner.abbreviation(),
-                    nodeVm.nodeType,
-                    nodeVm.node.hashPath,
-                    nodeVm.node.hash,
-                    thumb,
-                    touchState?.phase ?? .began)
+                    menuKey   : menuKey,
+                    cornerStr : corner.str(),
+                    nodeType  : nodeVm.nodeType,
+                    treePath  : nodeVm.node.hashPath,
+                    treeNow   : nodeVm.node.hash,
+                    thumb     : thumb,
+                    phase     : touchState?.phase ?? .began)
 
                 let encoder = JSONEncoder()
                 let data = try encoder.encode(item)
@@ -192,9 +193,14 @@ public class MuRootVm: ObservableObject, Equatable {
         
         // stay exclusively on .leaf or .edit mode
         switch touchElement {
-            case .shift : return shiftBranches()
-            case .edit  : return editLeaf()
-            default     : break
+            case .shift:
+                return shiftBranches()
+            case .edit:
+                if let leafVm = nodeSpotVm as? MuLeafVm {
+                    editLeaf(leafVm)
+                }
+                return
+            default: break
         }
         if        touchLeafNode() { // editing leaf or shifting branch
         } else if hoverNodeSpot() { // is over the same branch node
@@ -210,7 +216,7 @@ public class MuRootVm: ObservableObject, Equatable {
                let leafVm = nodeSpotVm as? MuLeafVm {
                 
                 if leafVm.runwayBounds.contains(touchNow) {
-                    editLeaf() // inside runway
+                    editLeaf(leafVm) // inside runway
                     return true
                     
                 } else if leafVm.branchVm.boundsNow.contains(touchNow) {
@@ -342,8 +348,8 @@ public class MuRootVm: ObservableObject, Equatable {
             treeSpotVm?.shiftTree(self, touchState)
         }
         
-        func editLeaf() {
-            guard let leafVm = nodeSpotVm as? MuLeafVm else { return }
+        func editLeaf(_ leafVm: MuLeafVm) {
+            //??? guard let leafVm = nodeSpotVm as? MuLeafVm else { return }
             if touchElement != .edit {
                 // begin touch inside control runway
                 touchElement = .edit
@@ -352,9 +358,10 @@ public class MuRootVm: ObservableObject, Equatable {
                 // branch spotlight off
                 leafVm.branchVm.treeVm.branchSpotVm = nil
             }
-            for proxy in leafVm.node.leaves {
-                proxy.touchLeaf(touchState)
-            }
+            leafVm.touchLeaf(touchState)
+//???            for leafProto in leafVm.node.leafProtos {
+//                leafProto.touchLeaf(touchState)
+//            }
             // hide status line
             MuStatusVm.shared.show = false
         }
