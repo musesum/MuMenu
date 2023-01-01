@@ -23,7 +23,7 @@ public class MuLeafSegVm: MuLeafVm {
 
     /// normalize point to 0...1 based on defined range
     func normalizeTouch(_ point: CGPoint) -> Double {
-        let v = panelVm.axis == .vertical ? point.y : point.x
+        let v = panelVm.isVertical ? point.y : point.x
         return panelVm.normalizeTouch(v: v)
     }
     
@@ -39,7 +39,7 @@ public class MuLeafSegVm: MuLeafVm {
 
     /// adjust branch and panel sizes for smaller segments
     func updatePanelSizes() {
-        let size = panelVm.axis == .vertical
+        let size = panelVm.isVertical
         ? CGSize(width: 1, height: count.clamped(to: 2...4))
         : CGSize(width: count.clamped(to: 2...4), height: 1)
 
@@ -65,7 +65,7 @@ public class MuLeafSegVm: MuLeafVm {
         for v in stride(from: 0, through: Float(1), by: span) {
 
             let ofs = CGFloat(v) * runway + radius
-            let size = panelVm.axis == .vertical
+            let size = panelVm.isVertical
             ? CGSize(width: margin, height: ofs)
             : CGSize(width: ofs, height: margin)
             result.append (size)

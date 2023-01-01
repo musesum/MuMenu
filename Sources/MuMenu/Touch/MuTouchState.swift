@@ -17,7 +17,7 @@ public class MuTouchState {
     var touching: Bool { return timeBegin > timeEnded }
 
     var timeBegin  = TimeInterval(0) /// starting time for tap candidate
-    var pointBeginΔ: CGPoint { pointNow - pointBegin }/// pointNow - pointBegin
+    var moved: CGPoint { pointNow - pointBegin }/// pointNow - pointBegin
                                    ///
     private var timePrev   = TimeInterval(0) /// previous time of touch
     private var timeEnded  = TimeInterval(0) /// ending time for tap candidate

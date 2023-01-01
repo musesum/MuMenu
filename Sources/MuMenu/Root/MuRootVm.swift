@@ -52,9 +52,7 @@ public class MuRootVm: ObservableObject, Equatable {
                     nodeVm.nodeType.isLeaf
                     ? "leaf".hash
                     : "node".hash)
-                if corner.str() == "SW" {
-                    print(corner.str(), terminator: " ")
-                }
+
                 let item = TouchMenuItem(
                     menuKey   : menuKey,
                     cornerStr : corner.str(),
@@ -80,7 +78,7 @@ public class MuRootVm: ObservableObject, Equatable {
         self.treeVms = treeVms
         treeSpotVm = treeVms.first
         touchVm.setRoot(self)
-        updateOffsets()
+        updateTreeOffsets()
         for treeVm in treeVms {
             treeVm.rootVm = self
         }
@@ -90,7 +88,7 @@ public class MuRootVm: ObservableObject, Equatable {
     /**
      Adjust MuTree offsets on iPhone and iPad. Needed to avoid false positives, now that springboard has added a corner hotspot for launching the notes app. Also, adjust pilot offsets for home node and for flying.
      */
-    func updateOffsets() {
+    func updateTreeOffsets() {
         
         let idiom = UIDevice.current.userInterfaceIdiom
         let margin = 2 * Layout.padding
@@ -114,7 +112,7 @@ public class MuRootVm: ObservableObject, Equatable {
         }
         
         for treeVm in treeVms {
-            treeVm.treeOffset = (treeVm.axis == .horizontal ? hOfs : vOfs)
+            treeVm.treeOffset = (treeVm.isVertical ? vOfs : hOfs)
         }
     }
     
@@ -158,7 +156,7 @@ public class MuRootVm: ObservableObject, Equatable {
         beginViewElements = viewElements
         updateRoot(fromRemote)
         nodeSpotVm?.touching(touchState)
-        MuStatusVm.shared.show = touchElement != .edit
+        MuStatusVm.statusLine(touchElement == .edit ? .on : .off)
         beginTouchElement = touchElement
     }
     
@@ -180,7 +178,7 @@ public class MuRootVm: ObservableObject, Equatable {
         }
         treeSpotVm?.branchSpotVm = nil
         touchElement = .none
-        MuStatusVm.shared.show = false
+        MuStatusVm.statusLine(.off)
         if !fromRemote, let nodeSpotVm {
             if let leafVm = nodeSpotVm as? MuLeafVm {
                 sendToPeers(nodeSpotVm, leafVm.thumb)
@@ -239,7 +237,7 @@ public class MuRootVm: ObservableObject, Equatable {
             if !touchingRoot {
                 if beginTouchElement == .root {
                     // when dragging root over branches, expand tree
-                    treeSpotVm?.shiftTree(self, touchState, minZero: true)
+                    treeSpotVm?.shiftExpandLast() //????
                     // do this only once
                     beginTouchElement = .none
                 }
@@ -267,7 +265,7 @@ public class MuRootVm: ObservableObject, Equatable {
                         if  isShowing { showTrunks() }
                         else          { showBranches() }
                     } else if let treeSpotVm {
-                        treeSpotVm.shiftExpand()
+                        treeSpotVm.shiftExpandLast()
                         // log("🛸", terminator: "")
                     }
             }
@@ -338,28 +336,23 @@ public class MuRootVm: ObservableObject, Equatable {
             guard let leafVm = nodeSpotVm as? MuLeafVm else { return }
             // begin touch on title section to possibly stack branches
             touchElement = .shift
-            // leaf spotlight off
-            leafVm.spotlight = false
-            // set spotlight on
-            leafVm.branchVm.treeVm.branchSpotVm = leafVm.branchVm
-            
-            treeSpotVm?.shiftTree(self, touchState)
+            leafVm.spot(.off)
+            leafVm.branchSpot(.on)
+            treeSpotVm?.shiftTree(touchState)
         }
         
         func editLeaf(_ nodeVm: MuNodeVm?) {
             guard let leafVm = nodeSpotVm as? MuLeafVm else { return }
             if touchElement != .edit {
-                // begin touch inside control runway
                 touchElement = .edit
-                // leaf spotlight on if not ended
-                leafVm.spotlight = !touchState.phase.isDone()
-                // branch spotlight off
-                leafVm.branchVm.treeVm.branchSpotVm = nil
+                let touchDone = touchState.phase.isDone()
+                leafVm.spot(touchDone ? .off : .on)
+                leafVm.branchSpot(.off)
             }
             leafVm.touchLeaf(touchState)
 
             // hide status line
-            MuStatusVm.shared.show = false
+            MuStatusVm.statusLine(.off)
         }
         
         func showTrunks() {

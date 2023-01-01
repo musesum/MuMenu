@@ -3,6 +3,8 @@
 import SwiftUI
 import Par
 
+public enum Toggle { case on, off }
+
 /// extend MuNodeVm to show title and thumb position
 public class MuLeafVm: MuNodeVm {
     
@@ -34,16 +36,28 @@ public class MuLeafVm: MuNodeVm {
     /// updated by View after auto-layout
     func updateRunwayBounds(_ bounds: CGRect) {
         runwayBounds = bounds
-        // log("runwayBounds", [runwayBounds], terminator: " ")
     }
     /// does control surface contain point
     override func containsPoint(_ point: CGPoint) -> Bool {
         let contained = runwayBounds.contains(point)
-        print(contained ? "+" : "-", terminator: "") //???
         return contained
     }
     public func touchLeaf(_ touchState: MuTouchState,
                           visitor: Visitor = Visitor()) {
         print("*** MuLeafVm::touchLeaf override me")
     }
+
+    public func spot(_ tog: Toggle) {
+        switch tog {
+            case .on: spotlight = true
+            case .off: spotlight = false
+        }
+    }
+    public func branchSpot(_ tog: Toggle) {
+        switch tog {
+            case .on:  branchVm.treeVm.branchSpotVm = branchVm
+            case .off: branchVm.treeVm.branchSpotVm = nil
+        }
+    }
+
 }

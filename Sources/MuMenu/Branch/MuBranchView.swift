@@ -16,7 +16,7 @@ struct MuBranchView: View {
                 MuBranchPanelView(panelVm: panelVm,
                                   spotlight: spotlight)
 
-                let reverse = (panelVm.axis == .vertical
+                let reverse = (panelVm.isVertical
                                ? rootVm.corner.contains(.lower) ? true : false
                                : rootVm.corner.contains(.right) ? true : false )
 

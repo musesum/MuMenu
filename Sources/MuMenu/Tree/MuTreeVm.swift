@@ -1,7 +1,10 @@
 // Created by warren 10/27/21.
 import SwiftUI
 
+
+
 public class MuTreeVm: Identifiable, Equatable, ObservableObject {
+    
     public let id = MuNodeIdentity.getId()
     public static func == (lhs: MuTreeVm, rhs: MuTreeVm) -> Bool { return lhs.id == rhs.id }
     
@@ -11,17 +14,15 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
     
     var rootVm: MuRootVm?
     var branchSpotVm: MuBranchVm?
-    var axis: Axis
-    var corner: MuCorner
-    
-    var treeOffset = CGSize.zero
-    
-    var level = CGFloat(1) // starting level for branches
+    var cornerAxis: CornerAxis
+    let isVertical: Bool
+    var treeOffset = CGSize.zero // offset of menu tree from corner
     var depthShown = 0 // levels of branches shown
+    var goingInward = false
     
     public init(axis: Axis, corner: MuCorner) {
-        self.axis = axis
-        self.corner = corner
+        self.cornerAxis = CornerAxis(corner, axis)
+        self.isVertical = axis == .vertical
     }
     
     public func addBranchVms(_ branchVms: [MuBranchVm]) {

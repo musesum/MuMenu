@@ -9,10 +9,10 @@ extension MuTreeVm { // +Show
 
         var newBranches = [MuBranchVm]()
 
-        // logStart()
+        logStart()
         if      depthShown < depthNext { expandBranches() }
         else if depthShown > depthNext { contractBranches() }
-        // logFinish()
+        logFinish()
 
         func expandBranches() {
             var countUp = 0
@@ -39,7 +39,7 @@ extension MuTreeVm { // +Show
             depthShown = depthNext
         }
         func logStart() {
-            let symbol = (axis == .vertical) ? "V⃝" : "H⃝"
+            let symbol = (isVertical) ? "V⃝" : "H⃝"
             print ("\(symbol) \(depthShown)⇨\(depthNext)", terminator: "=")
         }
         func logFinish() {

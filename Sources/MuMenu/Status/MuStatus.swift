@@ -50,6 +50,13 @@ class MuStatusVm: ObservableObject {
         }
     }
     @Published var show = false
+
+    static func statusLine(_ tog: Toggle) {
+        switch tog {
+            case .on:  shared.show = true
+            case .off: shared.show = false
+        }
+    }
 }
 
 struct MuStatusView: View {

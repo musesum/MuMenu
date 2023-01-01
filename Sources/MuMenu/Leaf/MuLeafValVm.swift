@@ -29,7 +29,7 @@ public class MuLeafValVm: MuLeafVm {
         scale(thumb[0], from: 0...1, to: range)
     }
     func normalizeTouch(_ point: CGPoint) -> CGFloat {
-        let v = panelVm.axis == .vertical ? point.y : point.x
+        let v = panelVm.isVertical ? point.y : point.x
         let vv = panelVm.normalizeTouch(v: v)
         return vv 
     }

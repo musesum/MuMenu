@@ -64,4 +64,5 @@ public enum MuNodeType: String {
 
 }
 
+public let MuNodeLeafNames = ["val", "vxy", "tog", "seg", "tap", "peer", "x", "y"]
 public let MuNodeLeaves = Set<String>(["val", "vxy", "tog", "seg", "tap", "peer"])

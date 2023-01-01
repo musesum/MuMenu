@@ -219,7 +219,7 @@ extension CGPoint {
 }
 
 extension CGSize {
-
+    
     public init(_ xy: CGPoint) {
         self.init()
         self.width = xy.x
@@ -243,16 +243,16 @@ extension CGSize {
         let s = CGSize(width: ww, height: hh)
         return s
     }
-
+    
     public static func / (lhs: CGSize, rhs: CGFloat) -> CGSize {
-
+        
         let ww = lhs.width / rhs
         let hh = lhs.height / rhs
         let s = CGSize(width: ww, height: hh)
         return s
     }
     public static func * (lhs: CGSize, rhs: CGFloat) -> CGSize {
-
+        
         let ww = lhs.width * rhs
         let hh = lhs.height * rhs
         let s = CGSize(width: ww, height: hh)
@@ -264,18 +264,18 @@ extension CGSize {
         let s = CGSize(width: ww, height: hh)
         return s
     }
-
+    
     public static func + (lhs: CGSize, rhs: CGPoint) -> CGSize {
         let ww = lhs.width + rhs.x
         let hh = lhs.height + rhs.y
         let s = CGSize(width: ww, height: hh)
         return s
     }
-
+    
     public func string(_ format: String = "%2.0f,%-2.0f") -> String {
         return String(format: format, width, height) // touch delta
     }
-
+    
     public func clamp(_ widthvalue: ClosedRange<CGFloat>,
                       _ heightvalue: ClosedRange<CGFloat>) -> CGSize {
         
@@ -286,10 +286,10 @@ extension CGSize {
     /// may overlay lower right edges, but not upper left
     public func clamped(to: RangeXY) -> CGSize {
         let (xClamp,yClamp) = to
-
+        
         let ww = self.width.clamped(to: xClamp)
         let hh = self.height.clamped(to: yClamp)
-
+        
         let size = CGSize(width: ww, height: hh)
         return size
     }

@@ -14,24 +14,26 @@ struct MuLeafView<Content: View>: View {
     }
 
     var body: some View {
-        if panelVm.axis == .horizontal {
+
+        if panelVm.isVertical {
+            VStack {
+                // vertical title is always on top
+                // so that hand doesn't occlude value text
+                MuLeafTitleView(leafVm)
+                MuLeafBodyView(leafVm, content)
+            }
+
+        } else {
             HStack {
                 // horizontal title is farthest away from root
                 // to allow control to be a bit more reachable
-                if panelVm.corner.contains(.left) {
+                if panelVm.cornerAxis.corner.contains(.left) {
                     MuLeafBodyView(leafVm, content)
                     MuLeafTitleView(leafVm)
                 } else {
                     MuLeafTitleView(leafVm)
                     MuLeafBodyView(leafVm, content)
                 }
-            }
-        } else {
-            VStack {
-                // vertical title is always on top
-                // so that hand doesn't occlude value text
-                MuLeafTitleView(leafVm)
-                MuLeafBodyView(leafVm, content)
             }
         }
     }

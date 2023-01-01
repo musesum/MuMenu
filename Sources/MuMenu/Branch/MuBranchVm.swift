@@ -143,9 +143,9 @@ public class MuBranchVm: Identifiable, ObservableObject {
     }
 
     /// update from MuBranchView
-    func updateBranchBounds(_ from: CGRect) {
-        if boundsNow != from {
-            boundsNow = panelVm.updatePanelBounds(from)
+    func updateBranchBounds(_ fromBounds: CGRect) {
+        if boundsNow != fromBounds {
+            boundsNow = panelVm.updatePanelBounds(fromBounds)
             boundsPad = boundsNow.pad(Layout.padding)
             updateShiftRange()
         }
@@ -156,7 +156,8 @@ public class MuBranchVm: Identifiable, ObservableObject {
     private var boundStart: CGRect = .zero
     @Published var branchShift: CGSize = .zero
 
-    private var shiftRange: RangeXY = (0...1, 0...1)
+    var shiftRange: RangeXY = (0...1, 0...1)
+    var limit: CGFloat = 0
 
     func updateShiftRange() {
         guard let touchVm = treeVm.rootVm?.touchVm else { return }
@@ -168,31 +169,21 @@ public class MuBranchVm: Identifiable, ObservableObject {
         boundsPrior = boundsPriorSize + boundsPrevSize + priorPadding
 
         let rxy = touchVm.parkIconXY
-        let rx = rxy.x - Layout.radius
-        let ry = rxy.y - Layout.radius
+        let rx = rxy.x - Layout.radius - Layout.padding
+        let ry = rxy.y - Layout.radius - Layout.padding
 
         let pw = boundsPrior.width
         let ph = boundsPrior.height
 
-        shiftRange = (treeVm.axis == .vertical
-                      ? (treeVm.corner.contains(.left)
-                         ? (min(0, rx-pw)...0, 0...0)
-                         : (0...max(0, pw), 0...0))
-                      : (treeVm.corner.contains(.upper)
-                         ? (0...0, min(0,ry-ph)...0)
-                         : (0...0, 0...max(0, ph))))
-        shiftBranch()
-        // logBounds()
-    }
+        switch treeVm.cornerAxis.bound {
+            case .lowX: shiftRange = (min(0, rx-pw)...0, 0...0)
+            case .uprX: shiftRange = (0...max(0, pw), 0...0)
+            case .lowY: shiftRange = (0...0, min(0,ry-ph)...0)
+            case .uprY: shiftRange = (0...0, 0...max(0, ph))
+        }
 
-    func logBounds() {
-        log(title.pad(17), [shiftRange], length: 30)
-        log("now", [boundsNow], length: 22)
-        log("prior", [boundsPrior], length: 17)
-        log("shift", [branchShift], length: 15)
-        log("opacity",format: "%.2f", [branchOpacity])
-        //log("outer", [panelVm.outer], length: 16)
-        //log("level", [level])
+        shiftBranch()
+        logBounds()
     }
 
     func shiftBranch() {
@@ -210,7 +201,18 @@ public class MuBranchVm: Identifiable, ObservableObject {
             branchOpacity = min(1-ww,1-hh)
         }
     }
-    
+
+    func logBounds() {
+
+        log(title.pad(17), [shiftRange], length: 30)
+        log("shift", [branchShift], length: 15)
+        log("now", [boundsNow], length: 22)
+        log("prior", [boundsPrior], length: 17)
+        log("opacity",format: "%.2f", [branchOpacity])
+        //log("outer", [panelVm.outer], length: 16)
+        //log("level", [level])
+    }
+
 }
 
 

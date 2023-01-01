@@ -6,8 +6,8 @@ public class MuPanelVm {
  
     var nodes: [MuNode]
     var nodeType: MuNodeType
-    var axis: Axis
-    var corner: MuCorner
+    var cornerAxis: CornerAxis
+    let isVertical: Bool
     var count: CGFloat
     var spacing = CGFloat(0) /// overlap with a negative number
     var aspectSz = CGSize(width: 1, height: 1) /// multiplier aspect ratio
@@ -17,8 +17,8 @@ public class MuPanelVm {
 
         self.nodes    = nodes
         self.count    = CGFloat(nodes.count)
-        self.axis     = treeVm.axis
-        self.corner   = treeVm.corner
+        self.cornerAxis = treeVm.cornerAxis
+        self.isVertical = treeVm.isVertical
         self.nodeType = (count > 1 ? .node : nodes.first?.nodeType ?? .node)
         setAspectFromType()
     }
@@ -36,7 +36,7 @@ public class MuPanelVm {
             case .peer : aspect(6.0, 4.0)
         }
         func aspect(_ lo: CGFloat,_ hi: CGFloat) {
-            aspectSz = axis == .vertical
+            aspectSz = isVertical
             ? CGSize(width: lo, height: hi)
             : CGSize(width: hi, height: lo)
         }
@@ -48,7 +48,7 @@ public class MuPanelVm {
     lazy var thumbDiameter : CGFloat = { thumbRadius * 2 }()
 
     var runway: CGFloat {
-        let result = axis == .vertical
+        let result = isVertical
         ? inner.height - thumbDiameter
         : inner.width - thumbDiameter
         return result
@@ -75,7 +75,7 @@ public class MuPanelVm {
             case .val, .seg, .tog, .tap, .peer:
 
                 result = inner + (
-                    axis == .vertical
+                    isVertical
                     ? CGSize(width: padpad, height: outerDiameter)
                     : CGSize(width: outerDiameter, height: padpad))
 
@@ -86,8 +86,8 @@ public class MuPanelVm {
             case .none, .node:
 
                 let longer = (outerDiameter + spacing) * count
-                let width  = (axis == .vertical ? outerDiameter : longer)
-                let height = (axis == .vertical ? longer : outerDiameter)
+                let width  = (isVertical ? outerDiameter : longer)
+                let height = (isVertical ? longer : outerDiameter)
 
                 result = CGSize(width: width, height: height)
         }
@@ -118,7 +118,7 @@ public class MuPanelVm {
 
     /// convert touch coordinates to 0...1
     func normalizeTouch(v: CGFloat) -> Double {
-        if axis == .vertical {
+        if isVertical {
             let yMax = (inner.height - thumbRadius)
             let yClamp = v.clamped(to: thumbRadius...yMax)
             let yNormal = (yClamp - thumbRadius) / runway
@@ -133,7 +133,7 @@ public class MuPanelVm {
 
     func updatePanelBounds(_ bounds: CGRect) -> CGRect {
         var result = bounds
-        if (axis == .vertical) {
+        if isVertical {
             if bounds.minY < 0 {
                 spacing = bounds.minY/max(count,1)
                 result.size.height += bounds.minY

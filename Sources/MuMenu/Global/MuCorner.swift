@@ -5,6 +5,7 @@ import Foundation
 public struct MuCorner: OptionSet {
 
     public let rawValue: Int
+
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }
@@ -57,5 +58,6 @@ public struct MuCorner: OptionSet {
             default:       return "??"
         }
     }
+
 }
 

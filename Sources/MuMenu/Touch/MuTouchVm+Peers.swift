@@ -24,7 +24,7 @@ extension MuTouchVm {
         let treeNow = menuItem.treeNow
 
         for treeVm in rootVm.treeVms {
-            if treeVm.corner.str() == menuItem.cornerStr,
+            if treeVm.cornerAxis.corner.str() == menuItem.cornerStr,
                let foundNodeVm = treeVm.followHashPath(treePath, treeNow) {
 
                 if let leafVm = foundNodeVm as? MuLeafVm {

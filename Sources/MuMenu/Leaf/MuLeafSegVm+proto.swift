@@ -37,7 +37,7 @@ extension MuLeafSegVm: MuLeafProtocol {
     }
 
     public func thumbOffset() -> CGSize {
-        panelVm.axis == .vertical
+        panelVm.isVertical
         ? CGSize(width: 1, height: (1-thumb[0]) * panelVm.runway)
         : CGSize(width: thumb[0] * panelVm.runway, height: 1)
     }
