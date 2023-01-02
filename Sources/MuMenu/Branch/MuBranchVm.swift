@@ -203,14 +203,14 @@ public class MuBranchVm: Identifiable, ObservableObject {
     }
 
     func logBounds() {
-
+        #if false
         log(title.pad(17), [shiftRange], length: 30)
         log("shift", [branchShift], length: 15)
         log("now", [boundsNow], length: 22)
         log("prior", [boundsPrior], length: 17)
         log("opacity",format: "%.2f", [branchOpacity])
         //log("outer", [panelVm.outer], length: 16)
-        //log("level", [level])
+        #endif
     }
 
 }
