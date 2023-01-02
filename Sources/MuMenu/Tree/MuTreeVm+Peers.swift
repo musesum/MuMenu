@@ -2,14 +2,24 @@
 
 import Foundation
 
-extension MuTreeVm { // + Peer
+extension MuTreeVm { // + Peers
 
-    func followHashPath(_ treePath: [Int],
-                        _ treeNow: Int) -> MuNodeVm? {
+    func followHashPath(_ menuItem: TouchMenuItem) -> MuNodeVm? {
+
+        let menuType = MuMenuType(menuItem.type)
+        let treePath = menuItem.hashPath
+        let treeNow = menuItem.hashNow
+        let startIndex = menuItem.startIndex
 
         var branchVm = branchVms.first
         var nodeNow: MuNodeVm?
-        //??? log("followHashPath ", [" treeNow:", treeNow, " treePath: ", treePath])
+
+        log("followHashPath ", [
+            " type:", menuItem.type,
+            " startIndex:",startIndex,
+            " treeNow:", treeNow,
+            " treePath: ", treePath])
+
         for treeHash in treePath {
 
             if let stepNodeVm = findNode(treeHash) {
@@ -23,11 +33,18 @@ extension MuTreeVm { // + Peer
                 branchVm = stepNodeVm.nextBranchVm
 
                 if branchVm == nil {
-                    return nodeNow ?? stepNodeVm
+                    return finalize(nodeNow ?? stepNodeVm)
                 }
             }
         }
         return nil
+
+        func finalize(_ nodeVm: MuNodeVm) -> MuNodeVm? {
+            if menuType == .tree {
+                shiftTree(to: startIndex)
+            }
+            return nodeVm
+        }
 
         func findNode(_ treeHash: Int) -> MuNodeVm? {
 

@@ -106,7 +106,6 @@ public class MuBranchVm: Identifiable, ObservableObject {
         }
         for nodeVm in nodeVms {
             let distance = nodeVm.center.distance(touchNow)
-            // log("D",[distance], terminator: " ")
             if distance < Layout.diameter {
                 nodeSpotVm?.spotlight = false
                 nodeSpotVm = nodeVm
@@ -186,10 +185,11 @@ public class MuBranchVm: Identifiable, ObservableObject {
         logBounds()
     }
 
-    func shiftBranch() {
+    @discardableResult
+    func shiftBranch() -> CGFloat {
 
         let treeShifting = treeVm.treeShifting
-        if boundsNow == .zero { return }
+        if boundsNow == .zero { return 0 }
         branchShift = treeShifting.clamped(to: shiftRange)
         let clampDelta = branchShift-treeShifting
 
@@ -200,6 +200,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
             let hh = abs(clampDelta.height) / boundStart.height
             branchOpacity = min(1-ww,1-hh)
         }
+        return branchOpacity
     }
 
     func logBounds() {

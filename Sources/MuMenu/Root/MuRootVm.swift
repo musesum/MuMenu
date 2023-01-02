@@ -57,8 +57,9 @@ public class MuRootVm: ObservableObject, Equatable {
                     menuKey   : menuKey,
                     cornerStr : corner.str(),
                     nodeType  : nodeVm.nodeType,
-                    treePath  : nodeVm.node.hashPath,
-                    treeNow   : nodeVm.node.hash,
+                    hashPath  : nodeVm.node.hashPath,
+                    hashNow   : nodeVm.node.hash,
+                    startIndex: treeSpotVm?.startIndex ?? 0,
                     thumb     : thumb,
                     phase     : touchState?.phase ?? .began)
 
@@ -237,7 +238,7 @@ public class MuRootVm: ObservableObject, Equatable {
             if !touchingRoot {
                 if beginTouchElement == .root {
                     // when dragging root over branches, expand tree
-                    treeSpotVm?.shiftExpandLast() //????
+                    treeSpotVm?.shiftExpandLast(touchState) 
                     // do this only once
                     beginTouchElement = .none
                 }

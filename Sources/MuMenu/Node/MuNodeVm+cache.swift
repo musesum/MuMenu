@@ -8,7 +8,7 @@ import SwiftUI
 
 extension MuNodeVm {
 
-    static func cached(_ nodeType: MuNodeType,
+    static func cached(_ nodeType: MuMenuType,
                        _ node: MuNode,
                        _ branchVm: MuBranchVm,
                        _ prevNodeVm: MuNodeVm?,

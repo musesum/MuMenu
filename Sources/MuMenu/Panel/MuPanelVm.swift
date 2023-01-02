@@ -5,7 +5,7 @@ import SwiftUI
 public class MuPanelVm {
  
     var nodes: [MuNode]
-    var nodeType: MuNodeType
+    var nodeType: MuMenuType
     var cornerAxis: CornerAxis
     let isVertical: Bool
     var count: CGFloat
@@ -34,6 +34,7 @@ public class MuPanelVm {
             case .seg  : aspect(1.0, 4.0)
             case .tap  : aspect(1.0, 1.0)
             case .peer : aspect(6.0, 4.0)
+            case .tree : aspect(1.0, 1.0)
         }
         func aspect(_ lo: CGFloat,_ hi: CGFloat) {
             aspectSz = isVertical
@@ -72,7 +73,7 @@ public class MuPanelVm {
 
         switch nodeType {
 
-            case .val, .seg, .tog, .tap, .peer:
+            case .val, .seg, .tog, .tap, .peer, .tree:
 
                 result = inner + (
                     isVertical

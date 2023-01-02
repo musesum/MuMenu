@@ -20,14 +20,15 @@ extension MuTouchVm {
     public func gotoRemoteItem(_ menuItem: TouchMenuItem) {
 
         guard let rootVm else { return }
-        let treePath = menuItem.treePath
-        let treeNow = menuItem.treeNow
-
+        
         for treeVm in rootVm.treeVms {
             if treeVm.cornerAxis.corner.str() == menuItem.cornerStr,
-               let foundNodeVm = treeVm.followHashPath(treePath, treeNow) {
+               let foundNodeVm = treeVm.followHashPath(menuItem) {
 
-                if let leafVm = foundNodeVm as? MuLeafVm {
+                if menuItem.type == MuMenuType.tree.rawValue {
+                    // updated by followHashPath
+                }
+                else if let leafVm = foundNodeVm as? MuLeafVm {
                     updateRemoteLeafVm(leafVm, menuItem)
                 } else {
                     updateRemoteNodeVm(foundNodeVm, menuItem)

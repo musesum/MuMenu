@@ -22,7 +22,7 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
     }
 
     public let node: MuNode /// each model MuNode maybe on several MuNodeVm's
-    public var nodeType: MuNodeType  /// node, val, vxy, seg, tog, tap
+    public var nodeType: MuMenuType  /// node, val, vxy, seg, tog, tap
 
     var panelVm: MuPanelVm    /// the panel that this node belongs to
     public var branchVm: MuBranchVm  /// branch that this node is on

@@ -6,7 +6,7 @@ import SwiftUI
 public class MuCornerNode: MuNode {
     
     public init(_ name: String,
-                type: MuNodeType = .node,
+                type: MuMenuType = .node,
                 parent: MuNode? = nil,
                 children: [MuCornerNode]? = nil) {
 

@@ -26,7 +26,7 @@ extension MuLeafVxyVm: MuLeafProtocol {
             if let v = any as? [Double], v.count == 2 {
                     thumb = [v[0],v[1]]
             } else {
-                print("⁉️ unknown upddate type")
+                print("⁉️ unknown update type")
             }
             editing = false
             updateSync(visitor)

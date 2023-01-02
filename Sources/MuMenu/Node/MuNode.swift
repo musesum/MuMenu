@@ -11,7 +11,7 @@ open class MuNode: Identifiable, Equatable {
     public var children = [MuNode]()
     public var menuSync: MuMenuSync?
     public var leafProtos = [MuLeafProtocol]()
-    public var nodeType = MuNodeType.node
+    public var nodeType = MuMenuType.node
 
     /// path and hash get updated through MuNodeDispatch::bindDispatch
     public lazy var path: String? = {

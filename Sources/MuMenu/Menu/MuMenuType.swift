@@ -2,7 +2,7 @@
 
 import SwiftUI
 
-public enum MuNodeType: String {
+public enum MuMenuType: String {
     case none // no defined thpe
     case node // either icon or text
     case val  // value control
@@ -11,7 +11,8 @@ public enum MuNodeType: String {
     case tap  // tap a button
     case seg  // segment control
     case peer // join a peer network
-    
+    case tree // status of menu tree
+
     public var description: String {
         switch self {
             case .none : return "none"
@@ -21,7 +22,8 @@ public enum MuNodeType: String {
             case .tog  : return "tog"
             case .seg  : return "seg"
             case .tap  : return "tap"
-            case .peer : return "join"
+            case .peer : return "peer"
+            case .tree : return "tree"
         }
     }
     public var name: String {
@@ -30,13 +32,14 @@ public enum MuNodeType: String {
     public var icon: String {
         switch self {
             case .none : return " ⃝"
-            case .node : return "ᛘ⃝"
+            case .node : return "●⃝"
             case .val  : return "≣⃝"
             case .vxy  : return "᛭⃣"
             case .tog  : return "◧⃝"
             case .seg  : return "◔⃝"
             case .tap  : return "◉⃝"
             case .peer : return "⇵⃝"
+            case .tree : return "ᛘ⃝"
         }
     }
 
@@ -51,7 +54,8 @@ public enum MuNodeType: String {
             case "tog"  : self = .tog
             case "seg"  : self = .seg
             case "tap"  : self = .tap
-            case "join" : self = .peer
+            case "peer" : self = .peer
+            case "tree" : self = .tree
             default     : self = .none
         }
     }

@@ -75,7 +75,6 @@ extension MuTreeVm { // + Shift
             case .uprY: goingInward = moved.y > 0
         }
         // log("\nshiftConstrain ", [ "shifted", treeShifted, "shifting", treeShifting, "moved", moved, "inward: ", goingInward ])
-
     }
 
     func shiftTree(_ touchState: MuTouchState) {
@@ -93,18 +92,63 @@ extension MuTreeVm { // + Shift
         } else {
             shiftConstrain(touchState.moved)
         }
-        updateBranches()
+        updateBranches(touchState)
     }
-    func shiftExpandLast() {
+    func shiftExpandLast(_ touchState: MuTouchState) {
         // print("*** shiftExpandLast")
         treeShifting = .zero
         treeShifted  = .zero
-        updateBranches()
+        updateBranches(touchState)
     }
 
-    func updateBranches() {
+    func shiftTree(to index: Int) {
+        if index < branchVms.count {
+           let startBranchVm = branchVms[index]
+            treeShifting = cornerAxis.outerLimit(of: startBranchVm.shiftRange)
+            treeShifted = treeShifting
+        }
+    }
+
+    func updateBranches(_ touchState: MuTouchState) {
+        var isHidden = true // tucked in from shifting inward
+        var index = 0
+        print("opacity ", terminator: "")
         for branchVm in branchVms {
-            branchVm.shiftBranch()
+            let opacity = branchVm.shiftBranch()
+            print(opacity.digits(0...2), terminator: " ")
+            if isHidden, opacity > 0.5 {
+                startIndex = index
+                isHidden = false
+            }
+            index += 1
+        }
+        print(" *** startIndex: \(startIndex)")
+        sendToPeers(touchState)
+    }
+
+    func sendToPeers(_ touchState: MuTouchState) {
+        
+        let peers = PeersController.shared
+        if peers.hasPeers {
+            do {
+                let menuKey = "tree".hash
+
+                let item = TouchMenuItem(
+                    menuKey   : menuKey,
+                    cornerStr : rootVm?.corner.str() ?? "",
+                    nodeType  : MuMenuType.tree,
+                    hashPath  : branchVms.last?.nodeSpotVm?.node.hashPath ?? [],
+                    hashNow   : branchSpotVm?.nodeSpotVm?.node.hash ?? 0,
+                    startIndex: startIndex,
+                    thumb     : [Double(startIndex)],
+                    phase     : touchState.phase)
+
+                let encoder = JSONEncoder()
+                let data = try encoder.encode(item)
+                peers.sendMessage(data, viaStream: true)
+            } catch {
+                print(error)
+            }
         }
     }
 
