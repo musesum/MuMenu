@@ -4,21 +4,7 @@ import Foundation
 
 extension MuTreeVm { // + Shift
 
-    func shiftExpandLast() {
-        print("*** shiftExpandLast")
-        treeShifting = .zero
-        treeShifted  = .zero
-    }
-
-    private func shiftContract(_ branchVm: MuBranchVm?) {
-        guard let branchVm else { return }
-
-        treeShifting = cornerAxis.outerLimit(of: branchVm.shiftRange)
-        log("shiftContract ", ["shifting", treeShifting, "inward: ", goingInward ])
-        goingInward = false
-    }
-
-    private func shiftNearest() {
+    private func shiftNearest() -> CGSize {
 
         var lowestDelta = CGFloat.infinity
         var w = CGFloat.zero
@@ -64,8 +50,8 @@ extension MuTreeVm { // + Shift
                     }
                 }
         }
-        treeShifting = CGSize(width: w, height: h)
-        log("shiftNearest ", ["shifting", treeShifting, "inward: ", goingInward ])
+        return CGSize(width: w, height: h)
+        //log("shiftNearest ", ["shifting", treeShifting, "inward: ", goingInward ])
     }
 
     /// constrain shifting only towards root's corner
@@ -88,36 +74,39 @@ extension MuTreeVm { // + Shift
             case .lowY: goingInward = moved.y < 0
             case .uprY: goingInward = moved.y > 0
         }
-
-        log("\nshiftConstrain ", [
-            "shifted", treeShifted,
-            "shifting", treeShifting,
-                                  "moved", moved,
-                                  "inward: ", goingInward
-                                 ])
+        // log("\nshiftConstrain ", [ "shifted", treeShifted, "shifting", treeShifting, "moved", moved, "inward: ", goingInward ])
 
     }
 
     func shiftTree(_ touchState: MuTouchState) {
+        guard let lastBranchVm = branchVms.last else { return }
 
         if touchState.phase == .ended {
-            if touchState.touchEndedCount > 0 {
-                if goingInward {
-                    shiftContract(branchVms.last)
-                } else {
-                    shiftExpandLast()
-                }
-            } else {
-                shiftNearest()
-            }
+            treeShifting = (touchState.touchEndedCount > 0
+                            ? (goingInward
+                                ? cornerAxis.outerLimit(of: lastBranchVm.shiftRange)
+                                : .zero) // .zero fully expands
+                            : shiftNearest())
+
+            goingInward = false
             treeShifted = treeShifting
         } else {
             shiftConstrain(touchState.moved)
         }
+        updateBranches()
+    }
+    func shiftExpandLast() {
+        // print("*** shiftExpandLast")
+        treeShifting = .zero
+        treeShifted  = .zero
+        updateBranches()
+    }
 
+    func updateBranches() {
         for branchVm in branchVms {
             branchVm.shiftBranch()
         }
     }
+
 
 }

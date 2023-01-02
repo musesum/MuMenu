@@ -264,9 +264,6 @@ public class MuRootVm: ObservableObject, Equatable {
                         let isShowing = viewElements.hasAny([.branch,.trunks])
                         if  isShowing { showTrunks() }
                         else          { showBranches() }
-                    } else if let treeSpotVm {
-                        treeSpotVm.shiftExpandLast()
-                        // log("🛸", terminator: "")
                     }
             }
             return true
