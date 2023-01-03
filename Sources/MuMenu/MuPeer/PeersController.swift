@@ -74,9 +74,10 @@ public class PeersController: NSObject {
     }
 
     func logPeer(_ body: PeerName) {
-        return
+        #if false
         let logTime = String(format: "%.2f", elapsedTime())
         print("⚡️ \(logTime) \(myName): \(body)")
+        #endif
     }
 }
 
@@ -86,7 +87,7 @@ extension PeersController {
     public func sendMessage(_ message: [String : Any],
                             viaStream: Bool) {
         if session.connectedPeers.isEmpty {
-            print("🚫", terminator: "")
+            //print("🚫", terminator: "")
             return
         }
         do {

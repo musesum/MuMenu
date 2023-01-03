@@ -4,7 +4,7 @@ import Foundation
 
 extension MuTreeVm { // + Peers
 
-    func followHashPath(_ menuItem: TouchMenuItem) -> MuNodeVm? {
+    func followHashPath(_ menuItem: MenuRemoteItem) -> MuNodeVm? {
 
         let menuType = MuMenuType(menuItem.type)
         let treePath = menuItem.hashPath
@@ -14,11 +14,11 @@ extension MuTreeVm { // + Peers
         var branchVm = branchVms.first
         var nodeNow: MuNodeVm?
 
-        log("followHashPath ", [
-            " type:", menuItem.type,
-            " startIndex:",startIndex,
-            " treeNow:", treeNow,
-            " treePath: ", treePath])
+//        log("followHashPath ", [
+//            " type:", menuItem.type,
+//            " startIndex:",startIndex,
+//            " treeNow:", treeNow,
+//            " treePath: ", treePath])
 
         for treeHash in treePath {
 

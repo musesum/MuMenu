@@ -18,8 +18,8 @@ public func log(_ title: String,
             case let v as CGSize  : text += String(format: "∘(\(format), \(format)) ", v.width, v.height)
             case let v as CGRect  : text += String(format: "▭(\(format),\(format); \(format),\(format)) ", v.origin.x, v.origin.y, v.size.width, v.size.height)
 
-            case let v as MuElement: text += "\(v.symbol)"
-            case let v as Set<MuElement>: text += "\(MuElement.symbols(v))"
+            case let v as MuTouchElement: text += "\(v.symbol)"
+            case let v as Set<MuTouchElement>: text += "\(MuTouchElement.symbols(v))"
             case let v as String: text += v
 
             case let v as Int     : text += " \(v)"

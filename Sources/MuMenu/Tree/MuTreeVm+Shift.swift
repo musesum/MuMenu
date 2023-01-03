@@ -112,17 +112,14 @@ extension MuTreeVm { // + Shift
     func updateBranches(_ touchState: MuTouchState) {
         var isHidden = true // tucked in from shifting inward
         var index = 0
-        print("opacity ", terminator: "")
         for branchVm in branchVms {
             let opacity = branchVm.shiftBranch()
-            print(opacity.digits(0...2), terminator: " ")
             if isHidden, opacity > 0.5 {
                 startIndex = index
                 isHidden = false
             }
             index += 1
         }
-        print(" *** startIndex: \(startIndex)")
         sendToPeers(touchState)
     }
 
@@ -131,11 +128,11 @@ extension MuTreeVm { // + Shift
         let peers = PeersController.shared
         if peers.hasPeers {
             do {
-                let menuKey = "tree".hash
 
-                let item = TouchMenuItem(
-                    menuKey   : menuKey,
-                    cornerStr : rootVm?.corner.str() ?? "",
+                let item = MenuRemoteItem(
+                    menuKey   : "tree".hash,
+                    corner    : cornerAxis.corner,
+                    axis      : cornerAxis.axis,
                     nodeType  : MuMenuType.tree,
                     hashPath  : branchVms.last?.nodeSpotVm?.node.hashPath ?? [],
                     hashNow   : branchSpotVm?.nodeSpotVm?.node.hash ?? 0,

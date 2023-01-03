@@ -10,11 +10,11 @@ public enum CornerBound {
 }
 
 public struct CornerAxis {
-    let corner: MuCorner
-    let axis: Axis
+    public let corner: MuCorner
+    public let axis: Axis
     let bound: CornerBound
 
-    init(_ corner: MuCorner, _ axis: Axis) {
+    public init(_ corner: MuCorner, _ axis: Axis) {
         self.corner = corner
         self.axis = axis
 
@@ -44,4 +44,5 @@ public struct CornerAxis {
         }
         return CGSize(width: x, height: y)
     }
+
 }

@@ -1,13 +1,13 @@
 //  Created by warren on 9/26/22.
 
-import UIKit
+import SwiftUI
 
-
-public struct TouchMenuItem: Codable {
+public struct MenuRemoteItem: Codable {
     
     public var time       : TimeInterval
     public var type       : String
-    public var cornerStr  : String
+    public var corner     : Int
+    public var axis       : Int8
     public var menuKey    : Int
     public var hashPath   : [Int] // last shown item on tree
     public var hashNow    : Int // hash of currently selected item
@@ -25,9 +25,9 @@ public struct TouchMenuItem: Codable {
                 phase == UITouch.Phase.cancelled.rawValue)
     }
 
-    // init with thumb
     public init(menuKey    : Int,
-                cornerStr  : String,
+                corner     : MuCorner,
+                axis       : Axis,
                 nodeType   : MuMenuType,
                 hashPath   : [Int],
                 hashNow    : Int,
@@ -36,7 +36,8 @@ public struct TouchMenuItem: Codable {
                 phase      : UITouch.Phase) {
         
         self.menuKey = menuKey
-        self.cornerStr = cornerStr
+        self.corner = corner.rawValue
+        self.axis = axis.rawValue
         self.type = nodeType.rawValue
         self.hashPath = hashPath
         self.hashNow = hashNow
@@ -45,14 +46,60 @@ public struct TouchMenuItem: Codable {
         self.thumb = thumb
         self.phase = phase.rawValue
     }
+
+    public init(nodeVm     : MuNodeVm,
+                startIndex : Int,
+                thumb      : [Double],
+                phase      : UITouch.Phase) {
+
+        self.menuKey  = (nodeVm.nodeType.isLeaf ? "leaf" : "node").hash
+        self.corner   = nodeVm.branchVm.treeVm.cornerAxis.corner.rawValue
+        self.axis     = nodeVm.branchVm.treeVm.cornerAxis.axis.rawValue
+        self.type     = nodeVm.nodeType.rawValue
+        self.hashPath = nodeVm.node.hashPath
+        self.hashNow  = nodeVm.node.hash
+
+        self.startIndex = startIndex
+        self.time = Date().timeIntervalSince1970
+        self.thumb = thumb
+        self.phase = phase.rawValue
+    }
+
+    // local for translating position XY
+    public init(nodeVm     : MuNodeVm,
+                touch      : UITouch) {
+
+        self.menuKey  = touch.hash
+        self.corner   = nodeVm.branchVm.treeVm.cornerAxis.corner.rawValue
+        self.axis     = nodeVm.branchVm.treeVm.cornerAxis.axis.rawValue
+        self.type     = nodeVm.nodeType.rawValue
+
+        self.hashPath = [] // ignored
+        self.hashNow  = 0   // ignored
+        self.startIndex = 0 // ignored
+        self.time = Date().timeIntervalSince1970
+
+
+        self.thumb = (touch.phase.isDone()
+                      ? [0,0]
+                      : touch.location(in: nil).doubles())
+        self.phase = touch.phase.rawValue
+    }
+
+
+
+
+
+
     enum CodingKeys: String, CodingKey {
-        case menuKey, cornerStr, type, time, hashPath, hashNow, startIndex, thumb, phase }
+        case menuKey, corner, axis, type, time, hashPath, hashNow, startIndex, thumb, phase }
     
     public init(from decoder: Decoder) throws {
         let container  = try decoder.container(keyedBy: CodingKeys.self)
         try menuKey    = container.decode(Int     .self, forKey: .menuKey   )
         try type       = container.decode(String  .self, forKey: .type      )
-        try cornerStr  = container.decode(String  .self, forKey: .cornerStr )
+        try corner     = container.decode(Int     .self, forKey: .corner    )
+        try axis       = container.decode(Int8    .self, forKey: .axis      )
         try time       = container.decode(Double  .self, forKey: .time      )
         try hashPath   = container.decode([Int]   .self, forKey: .hashPath  )
         try hashNow    = container.decode(Int     .self, forKey: .hashNow   )

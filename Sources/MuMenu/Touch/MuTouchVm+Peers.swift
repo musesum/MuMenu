@@ -17,12 +17,12 @@ extension MuTouchVm {
         return nil // does NOT hit menu
     }
 
-    public func gotoRemoteItem(_ menuItem: TouchMenuItem) {
+    public func gotoRemoteItem(_ menuItem: MenuRemoteItem) {
 
         guard let rootVm else { return }
-        
+
         for treeVm in rootVm.treeVms {
-            if treeVm.cornerAxis.corner.str() == menuItem.cornerStr,
+            if treeVm.cornerAxis.corner.rawValue == menuItem.corner,
                let foundNodeVm = treeVm.followHashPath(menuItem) {
 
                 if menuItem.type == MuMenuType.tree.rawValue {
@@ -39,7 +39,7 @@ extension MuTouchVm {
     }
 
     func updateRemoteLeafVm(_ leafVm: MuLeafVm,
-                            _ menuItem: TouchMenuItem) {
+                            _ menuItem: MenuRemoteItem) {
         
         DispatchQueue.main.async {
             if let leafProto = leafVm.leafProto {
@@ -49,7 +49,7 @@ extension MuTouchVm {
     }
     /// called either by SwiftUI MenuView DragGesture or UIKIt touchesUpdate
     public func updateRemoteNodeVm(_ nodeVm: MuNodeVm,
-                                   _ menuItem: TouchMenuItem) {
+                                   _ menuItem: MenuRemoteItem) {
 
         let xy = nodeVm.center
         let phase = UITouch.Phase(rawValue: menuItem.phase)

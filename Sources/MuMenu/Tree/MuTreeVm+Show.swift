@@ -13,7 +13,7 @@ extension MuTreeVm { // +Show
         if      depthShown < depthNext { expandBranches() }
         else if depthShown > depthNext { contractBranches() }
         logFinish()
-
+        
         func expandBranches() {
             var countUp = 0
             for branch in branchVms {

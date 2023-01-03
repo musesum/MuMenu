@@ -21,8 +21,10 @@ public class MuTouchVm: ObservableObject {
     private var spotNodeΔ = CGSize.zero /// offset between touch point and center in coord
     var dragNodeΔ: CGSize = .zero /// weird kludge to compsate for small right offset
 
-    public var corner: MuCorner?  {
-        rootVm?.corner
+    public var corner: MuCorner
+
+    init(_ corner: MuCorner) {
+        self.corner = corner
     }
 
     public func setRoot(_ rootVm: MuRootVm) {

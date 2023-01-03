@@ -35,6 +35,7 @@ public class MuPanelVm {
             case .tap  : aspect(1.0, 1.0)
             case .peer : aspect(6.0, 4.0)
             case .tree : aspect(1.0, 1.0)
+            case .local : aspect(1.0, 1.0)
         }
         func aspect(_ lo: CGFloat,_ hi: CGFloat) {
             aspectSz = isVertical
@@ -73,7 +74,7 @@ public class MuPanelVm {
 
         switch nodeType {
 
-            case .val, .seg, .tog, .tap, .peer, .tree:
+            case .val, .seg, .tog, .tap, .peer, .tree, .local:
 
                 result = inner + (
                     isVertical

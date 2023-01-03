@@ -21,9 +21,9 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
     var goingInward = false
     var startIndex = 0
     
-    public init(axis: Axis, corner: MuCorner) {
-        self.cornerAxis = CornerAxis(corner, axis)
-        self.isVertical = axis == .vertical
+    public init(_ cornerAxis: CornerAxis) {
+        self.cornerAxis = cornerAxis
+        self.isVertical = cornerAxis.axis == .vertical
     }
     
     public func addBranchVms(_ branchVms: [MuBranchVm]) {

@@ -12,6 +12,7 @@ public enum MuMenuType: String {
     case seg  // segment control
     case peer // join a peer network
     case tree // status of menu tree
+    case local // xy position and phase
 
     public var description: String {
         switch self {
@@ -24,6 +25,7 @@ public enum MuMenuType: String {
             case .tap  : return "tap"
             case .peer : return "peer"
             case .tree : return "tree"
+            case .local : return "tree"
         }
     }
     public var name: String {
@@ -40,6 +42,7 @@ public enum MuMenuType: String {
             case .tap  : return "◉⃝"
             case .peer : return "⇵⃝"
             case .tree : return "ᛘ⃝"
+            case .local : return "ᛘ⃝"
         }
     }
 
@@ -56,6 +59,7 @@ public enum MuMenuType: String {
             case "tap"  : self = .tap
             case "peer" : self = .peer
             case "tree" : self = .tree
+            case "local" : self = .local
             default     : self = .none
         }
     }

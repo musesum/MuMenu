@@ -216,6 +216,9 @@ extension CGPoint {
         x = size.width
         y = size.height
     }
+    public func doubles() -> [Double] {
+        return [Double(x), Double(y)]
+    }
 }
 
 extension CGSize {

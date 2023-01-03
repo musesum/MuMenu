@@ -9,19 +9,19 @@ public class MuRootVm: ObservableObject, Equatable {
     public static func == (lhs: MuRootVm, rhs: MuRootVm) -> Bool { return lhs.id == rhs.id }
     
     /// what is the finger touching
-    @Published var touchElement = MuElement.none
-    var beginTouchElement = MuElement.none
+    @Published var touchElement = MuTouchElement.none
+    var beginTouchElement = MuTouchElement.none
     
     /// captures touch events to dispatch to this root
-    public let touchVm = MuTouchVm()
+    public let touchVm: MuTouchVm
     
     /// which menu elements are shown on View
-    var viewElements: Set<MuElement> = [.root, .trunks]
+    var viewElements: Set<MuTouchElement> = [.root, .trunks]
     // { willSet { if viewElements != newValue { log(":", [beginViewElements,"⟶",newValue], terminator: " ") } } }
     
     /// `touchBegin` snapshot of viewElements.
     /// To prevent touchEnded from hiding elements that were shown during `touchBegin`
-    var beginViewElements: Set<MuElement> = []
+    var beginViewElements: Set<MuTouchElement> = []
     
     var corner: MuCorner        /// corner where root begins, ex: `[south,west]`
     var treeVms = [MuTreeVm]()  /// vertical or horizontal stack of branches
@@ -43,40 +43,11 @@ public class MuRootVm: ObservableObject, Equatable {
         }
     }
 
-    func sendToPeers(_ nodeVm: MuNodeVm,
-                     _ thumb: [Double]) {
-
-        if peers.hasPeers {
-            do {
-                let menuKey = (
-                    nodeVm.nodeType.isLeaf
-                    ? "leaf".hash
-                    : "node".hash)
-
-                let item = TouchMenuItem(
-                    menuKey   : menuKey,
-                    cornerStr : corner.str(),
-                    nodeType  : nodeVm.nodeType,
-                    hashPath  : nodeVm.node.hashPath,
-                    hashNow   : nodeVm.node.hash,
-                    startIndex: treeSpotVm?.startIndex ?? 0,
-                    thumb     : thumb,
-                    phase     : touchState?.phase ?? .began)
-
-                let encoder = JSONEncoder()
-                let data = try encoder.encode(item)
-                peers.sendMessage(data, viaStream: true)
-            } catch {
-                print(error)
-            }
-        }
-    }
-
-
     public init(_ corner: MuCorner, treeVms: [MuTreeVm]) {
         
         self.corner = corner
         self.treeVms = treeVms
+        self.touchVm = MuTouchVm(corner)
         treeSpotVm = treeVms.first
         touchVm.setRoot(self)
         updateTreeOffsets()
@@ -84,7 +55,6 @@ public class MuRootVm: ObservableObject, Equatable {
             treeVm.rootVm = self
         }
     }
-    
     
     /**
      Adjust MuTree offsets on iPhone and iPad. Needed to avoid false positives, now that springboard has added a corner hotspot for launching the notes app. Also, adjust pilot offsets for home node and for flying.

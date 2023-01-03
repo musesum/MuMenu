@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum MuElement: String  {
+enum MuTouchElement: String  {
     
     case none   /// starting point before touching
     case root   /// starting node hosting 1 or more trees
@@ -40,7 +40,7 @@ enum MuElement: String  {
             case .edge   : return "edge"
         }
     }
-    static public func symbols(_ set: Set<MuElement>) -> String {
+    static public func symbols(_ set: Set<MuTouchElement>) -> String {
         var result = "〈"
         for item in set {
             result += item.symbol
