@@ -31,7 +31,7 @@ public class MuTouchVm: ObservableObject {
         guard let treeVm = rootVm.treeSpotVm else { return }
         self.rootVm = rootVm
         
-        let cornerNode = MuCornerNode("⚫︎") //???
+        let cornerNode = MuCornerNode("⚫︎") //??
         let branchVm = MuBranchVm.cached(treeVm: treeVm)
         rootNodeVm = MuNodeVm(cornerNode, branchVm, nil)
         branchVm.addNodeVm(rootNodeVm)

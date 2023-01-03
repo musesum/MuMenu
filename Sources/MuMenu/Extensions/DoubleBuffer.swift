@@ -1,26 +1,35 @@
 //  Created by warren on 12/16/22.
 
-
 import Foundation
 
 public protocol BufferFlushDelegate {
     associatedtype Item
     mutating func flushItem<Item>(_ item: Item) -> Bool
 }
+
 public class DoubleBuffer<Item> {
 
     private var buf0 = [Item]()
     private var buf1 = [Item]()
     private var bufs: [[Item]]
     private var indexNow = 0
+    private var timer: Timer?
 
     public var flusher: (any BufferFlushDelegate)?
 
     public var isEmpty: Bool {
         bufs[indexNow].isEmpty
     }
-    public init() {
+
+    /// canvas manages loop from metal frame callback
+    public init(internalLoop: Bool) {
         self.bufs = [buf0,buf1]
+        if internalLoop {
+            self.bufferLoop()
+        }
+    }
+    deinit {
+        timer?.invalidate()
     }
 
     public func flush() -> Bool {
@@ -39,5 +48,15 @@ public class DoubleBuffer<Item> {
 
     public func append(_ item: Item) {
         bufs[indexNow].append(item)
+    }
+
+    func bufferLoop() {
+
+        timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { timer in
+            let isDone = self.flush()
+            if isDone {
+                timer.invalidate()
+            }
+        }
     }
 }

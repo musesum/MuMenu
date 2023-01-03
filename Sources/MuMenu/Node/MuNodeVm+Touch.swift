@@ -11,7 +11,7 @@ extension MuNodeVm { // + Touch
            let menuSync = leafVm.menuSync {
 
             menuSync.resetDefault()
-            leafVm.leafProto?.refreshValue() //??? 
+            leafVm.leafProto?.refreshValue() //??
             refreshView()
         }
     }

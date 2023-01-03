@@ -11,7 +11,7 @@ public class TouchMenuRemote {
     static var menuKey = [Int: TouchMenuRemote]()
     static var timerKey = [Int: Timer]()
 
-    private let buffer = DoubleBuffer<MenuRemoteItem>()
+    private let buffer = DoubleBuffer<MenuRemoteItem>(internalLoop: true)
     private let touchVm: MuTouchVm
     private let isRemote: Bool
     private let nodeVm: MuNodeVm?
@@ -24,19 +24,6 @@ public class TouchMenuRemote {
         self.nodeVm = nodeVm
         self.isRemote = isRemote
         buffer.flusher = self
-    }
-
-    static func bufferLoop(_ key: Int,
-                           _ touchMenu: TouchMenuRemote) {
-
-        timerKey[key] = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { timer in
-            let isDone = touchMenu.buffer.flush()
-            if isDone {
-                timer.invalidate()
-                self.timerKey.removeValue(forKey: key)
-                self.menuKey.removeValue(forKey: key)
-            }
-        }
     }
 }
 
@@ -74,7 +61,6 @@ extension TouchMenuRemote {
             let touchMenu = TouchMenuRemote(touchVm, nil, isRemote: true)
             menuKey[item.menuKey] = touchMenu
             touchMenu.buffer.append(item)
-            TouchMenuRemote.bufferLoop(item.menuKey, touchMenu)
         }
     }
 }
