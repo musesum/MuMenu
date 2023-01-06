@@ -31,7 +31,7 @@ public class MuLeafTogVm: MuLeafVm {
 
         if let menuSync, menuSync.setAny(named: nodeType.name, thumb[0], visitor) {
             
-            updatePeers(visitor)
+            updateLeafPeers(visitor)
         }
     }
 

@@ -2,6 +2,16 @@
 
 import SwiftUI
 
+
+struct Axii {
+    var h: Int
+    var v: Int
+    init(h: Int,v: Int) {
+        self.h = h
+        self.v = v
+    }
+}
+
 public enum CornerBound {
     case lowX // 1 in (1...2, 3...4)
     case uprX // 2 in (1...2, 3...4)
@@ -9,10 +19,16 @@ public enum CornerBound {
     case uprY // 4 in (1...2, 3...4)
 }
 
+enum AxiMove { case root, vert, hori, canvas }
+
 public struct CornerAxis {
+
     public let corner: MuCorner
     public let axis: Axis
     let bound: CornerBound
+
+    var depth = Axii(h:0, v:0)
+    var start = Axii(h:0, v:0)
 
     public init(_ corner: MuCorner, _ axis: Axis) {
         self.corner = corner

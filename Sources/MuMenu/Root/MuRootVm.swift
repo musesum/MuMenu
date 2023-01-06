@@ -15,7 +15,6 @@ public class MuRootVm: ObservableObject, Equatable {
     
     /// which menu elements are shown on View
     var viewElements: Set<MuTouchElement> = [.root, .trunks]
-    // { willSet { if viewElements != newValue { log(":", [beginViewElements,"⟶",newValue], terminator: " ") } } }
     
     /// `touchBegin` snapshot of viewElements.
     /// To prevent touchEnded from hiding elements that were shown during `touchBegin`
@@ -41,17 +40,16 @@ public class MuRootVm: ObservableObject, Equatable {
         }
     }
 
-    public init(_ corner: MuCorner, treeVms: [MuTreeVm]) {
+    public init(_ corner: MuCorner) {
         
         self.corner = corner
-        self.treeVms = treeVms
         self.touchVm = MuTouchVm(corner)
+    }
+    public func updateTreeVms(_ treeVms: [MuTreeVm]) {
+        self.treeVms.append(contentsOf: treeVms)
         treeSpotVm = treeVms.first
         touchVm.setRoot(self)
         updateTreeOffsets()
-        for treeVm in treeVms {
-            treeVm.rootVm = self
-        }
     }
     
     /**
@@ -91,17 +89,17 @@ public class MuRootVm: ObservableObject, Equatable {
         let margin = 2 * Layout.padding
         let x = (idiom == .pad ? margin : 0)
         let y = ((corner.contains(.upper) && idiom == .phone) ||
-                 (corner.contains(.lower) && idiom == .pad))  ? margin : 0
+                 (corner.contains(.lower) && idiom == .pad)) ? margin : 0
         let w = frame.size.width
         let h = frame.size.height
         let s = Layout.padding
         let r = Layout.diameter / 2
         
         switch corner {
-            case [.lower, .right]: return CGPoint(x: w - x - r - s, y: h - y - r - s)
-            case [.lower, .left ]: return CGPoint(x:     x + r + s, y: h - y - r - s)
-            case [.upper, .right]: return CGPoint(x: w - x - r - s, y:     y + r + s)
-            case [.upper, .left ]: return CGPoint(x:     x + r + s, y:     y + r + s)
+            case [.lower, .right]: return CGPoint(x: w-x-r-s, y: h-y-r-s)
+            case [.lower, .left ]: return CGPoint(x:   x+r+s, y: h-y-r-s)
+            case [.upper, .right]: return CGPoint(x: w-x-r-s, y:   y+r+s)
+            case [.upper, .left ]: return CGPoint(x:   x+r+s, y:   y+r+s)
             default: return .zero
         }
     }
@@ -217,10 +215,10 @@ public class MuRootVm: ObservableObject, Equatable {
                     touchElement = .none
                     let wasShown = beginViewElements.hasAny([.branch,.trunks])
                     if  wasShown { hideBranches() }
-                    else         { showBranches() }
+                    else         { spotBranches() }
                 case 2:
                     let wasShown = beginViewElements.hasAny([.branch,.trunks])
-                    if  wasShown { showBranches() }
+                    if  wasShown { spotBranches() }
                     nodeSpotVm?.touching(touchState)
                 case 3:
                     if let firstBranch = treeSpotVm?.branchVms.first,
@@ -232,7 +230,7 @@ public class MuRootVm: ObservableObject, Equatable {
                         touchElement = .root
                         let isShowing = viewElements.hasAny([.branch,.trunks])
                         if  isShowing { showTrunks() }
-                        else          { showBranches() }
+                        else          { spotBranches() }
                     }
             }
             return true
@@ -276,14 +274,12 @@ public class MuRootVm: ObservableObject, Equatable {
                     
                     for treeVm in treeVms {
                         if treeVm == treeSpotVm {
-                            treeVm.showBranches(depth: 999)
+                            treeVm.showTree(depth: 9, via: "alt+")
                         } else {
-                            treeVm.showBranches(depth: 0)
+                            treeVm.showTree(depth: 0, via: "alt-")
                         }
                     }
                     updateSpot(nearestNode, fromRemote)
-                    
-                    // log("≈", terminator: "")
                     viewElements = [.root,.branch]
                     touchElement = .branch
                     return true
@@ -293,7 +289,9 @@ public class MuRootVm: ObservableObject, Equatable {
         }
         func hoverSpace() {
             touchElement = .space
-            nodeSpotVm = nil
+            if let leafVm = nodeSpotVm as? MuLeafVm {
+                leafVm.branchVm.treeVm.showTree(start: 0, depth: 9, via: "space")
+            }
         }
         
         //  show/hide/stack -----------
@@ -320,36 +318,33 @@ public class MuRootVm: ObservableObject, Equatable {
             // hide status line
             MuStatusVm.statusLine(.off)
         }
-        
+
         func showTrunks() {
             if treeVms.count == 1 {
                 showSoloTree()
             } else {
                 for treeVm in treeVms {
-                    treeVm.showBranches(depth: 1)
+                    treeVm.showTree(depth: 1, via: "trunk")
                 }
                 treeSpotVm = nil
-                // log("+ᛘ", terminator: "")
                 viewElements = [.root, .trunks]
             }
         }
         func showSoloTree() {
             if let treeVm = treeVms.first {
                 treeSpotVm = treeVm
-                treeVm.showBranches(depth: 999)
-                // log("+𐂷", terminator: "")
+                treeVm.showTree(depth: 9, via: "solo")
                 viewElements = [.root,.branch]
             }
         }
-        func showBranches() {
+        func spotBranches() {
             if let treeSpotVm {
                 for treeVm in treeVms {
                     if treeVm == treeSpotVm {
-                        treeVm.showBranches(depth: 999)
+                        treeVm.showTree(depth: 9, via: "spot+")
                     } else {
-                        treeVm.showBranches(depth: 0)
+                        treeVm.showTree(depth: 0, via: "spot-")
                     }
-                    // log("+𐂷", terminator: "")
                     viewElements = [.root,.branch]
                 }
             } else {
@@ -359,10 +354,9 @@ public class MuRootVm: ObservableObject, Equatable {
     }
     public func hideBranches() {
         for treeVm in treeVms {
-            treeVm.showBranches(depth: 0)
+            treeVm.showTree(depth: 0, via: "hide")
         }
         treeSpotVm = nil
-        // log("-𐂷", terminator: "")
         viewElements = [.root]
     }
 }

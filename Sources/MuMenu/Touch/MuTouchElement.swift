@@ -12,7 +12,7 @@ enum MuTouchElement: String  {
     case shift  /// shifting branches by dragging header for leaf
     case edit   /// editing area inside a leaf
     case space  /// hovering over canvas while on menu
-    case edge   /// unsafe area to expand accordian
+    case edge   /// unsafe area to expand tree branches
     
     public var symbol: String {
         switch self {

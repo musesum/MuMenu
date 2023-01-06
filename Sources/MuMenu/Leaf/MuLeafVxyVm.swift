@@ -136,7 +136,7 @@ public class MuLeafVxyVm: MuLeafVm {
         let y = expand(named: "y", thumb[1])
 
         if let menuSync, menuSync.setAnys([("x", x),("y", y)], visitor) {
-            updatePeers(visitor)
+            updateLeafPeers(visitor)
         }
     }
     

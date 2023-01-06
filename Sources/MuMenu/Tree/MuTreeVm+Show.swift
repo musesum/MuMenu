@@ -5,47 +5,44 @@ import Foundation
 
 extension MuTreeVm { // +Show
 
-    func showBranches(depth depthNext: Int) {
+    func showTree(start: Int? = nil,
+                  depth: Int,
+                  via: String) {
 
-        var newBranches = [MuBranchVm]()
+        let nextIndex = start ?? startIndex
 
-        logStart()
-        if      depthShown < depthNext { expandBranches() }
-        else if depthShown > depthNext { contractBranches() }
-        logFinish()
-        
-        func expandBranches() {
-            var countUp = 0
-            for branch in branchVms {
-                if countUp < depthNext {
-                    newBranches.append(branch)
-                    branch.show = true
-                } else {
-                    branch.show = false
+        print("\(via.pad(7))\(isVertical ? "V" : "H") (s \(nextIndex) d \(depth)) ", terminator: " ")
+
+        var newBranchVms = [MuBranchVm]()
+        var index = 0
+        var depthNow = 0
+
+        for branch in branchVms {
+
+            if depthNow < depth {
+                newBranchVms.append(branch)
+                branch.show = true
+                if index >= nextIndex {
+                    depthNow += 1
                 }
-                countUp += 1
+            } else {
+                branch.show = false
             }
-            depthShown = min(countUp, depthNext)
+            index += 1
+
+            print("\(branch.title):\(branch.show ? 1 : 0)", terminator: " ")
         }
-        func contractBranches() {
-            var countDown = branchVms.count
-            for branch in branchVms.reversed() {
-                if countDown > depthNext,
-                   branch.show == true {
-                    branch.show = false
-                }
-                countDown -= 1
+
+        startIndex = nextIndex
+        depthShown = depthNow
+
+        if depthShown > 0 {
+            for branch in newBranchVms {
+                branch.updateShiftRange()
             }
-            depthShown = depthNext
         }
-        func logStart() {
-            let symbol = (isVertical) ? "V⃝" : "H⃝"
-            print ("\(symbol) \(depthShown)⇨\(depthNext)", terminator: "=")
-        }
-        func logFinish() {
-            print (depthShown, terminator: " ")
-        }
+        branchVms = newBranchVms
+
+        print("=== (s \(startIndex) d \(depthShown))  shift: \(treeShifted)")
     }
-
-
 }

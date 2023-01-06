@@ -159,7 +159,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
     var limit: CGFloat = 0
 
     func updateShiftRange() {
-        guard let touchVm = treeVm.rootVm?.touchVm else { return }
+        let touchVm = treeVm.rootVm.touchVm 
         boundStart = boundsNow - CGPoint(treeVm.treeShifting)
         let boundsPriorSize = branchPrev?.boundsPrior ?? .zero
         let boundsPrevSize = branchPrev?.boundStart.size ?? .zero
@@ -180,7 +180,6 @@ public class MuBranchVm: Identifiable, ObservableObject {
             case .lowY: shiftRange = (0...0, min(0,ry-ph)...0)
             case .uprY: shiftRange = (0...0, 0...max(0, ph))
         }
-
         shiftBranch()
         logBounds()
     }

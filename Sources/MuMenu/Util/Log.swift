@@ -68,8 +68,8 @@ public func log(_ title: String,
 
 }
 
-func log(time: TimeInterval,
+func logTouch(_ time: TimeInterval,
          _ symbol: String) {
 
-    print(String(format: "\n%.2f \(symbol)", time), terminator: " ")
+    print(String(format: "\n%.2f \(symbol)", time))
 }

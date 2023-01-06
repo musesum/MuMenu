@@ -39,7 +39,7 @@ public class MuTouchState {
         pointBegin = pointNow
         pointPrev = pointNow
 
-        log(time: 0, "🟢")
+        logTouch(0, "🟢 ")
         updateTouchBeginCount()
     }
 
@@ -55,7 +55,7 @@ public class MuTouchState {
         phase = .ended
         updateTimePoint(pointNow)
         updateTouchEndCount()
-        log(time: timeBeginΔ, "🛑")
+        logTouch(timeBeginΔ, "🛑")
     }
 
     private func updateTimePoint(_ point: CGPoint) {
@@ -83,7 +83,7 @@ public class MuTouchState {
 
         if timeBeginΔ < tapThreshold {
             touchBeginCount += 1
-            log("⇂⃝" + superScript(touchBeginCount), format: "%.2f", [timeBeginΔ], terminator: " ")
+            //log("⇂⃝" + superScript(touchBeginCount), format: "%.2f", [timeBeginΔ], terminator: " ")
         } else {
             touchBeginCount = 0
             touchEndedCount = 0
@@ -96,7 +96,7 @@ public class MuTouchState {
 
         if timeEndedΔ < tapThreshold {
             touchEndedCount += 1
-            log("↾⃝" + superScript(touchBeginCount), format: "%.2f", [timeEndedΔ], terminator: " ")
+            //log("↾⃝" + superScript(touchBeginCount), format: "%.2f", [timeEndedΔ], terminator: " ")
         } else {
             touchEndedCount = 0
         }

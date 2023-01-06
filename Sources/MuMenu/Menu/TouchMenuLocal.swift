@@ -25,7 +25,7 @@ public class TouchMenuLocal {
     public static func beginTouch(_ touch: UITouch) -> Bool {
         
         let nextXY = touch.preciseLocation(in: nil)
-        
+
         for touchVm in TouchMenu.touchVms {
             if let nodeVm = touchVm.hitTest(nextXY) {
                 

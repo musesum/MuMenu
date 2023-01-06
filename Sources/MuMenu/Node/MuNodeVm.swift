@@ -31,18 +31,15 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
     
     var myTouchBeginTime = TimeInterval(0)
     var myTouchBeginCount = 0
-    lazy var rootVm: MuRootVm = { branchVm.treeVm.rootVm! } ()
+    lazy var rootVm: MuRootVm = { branchVm.treeVm.rootVm } ()
 
     public var center = CGPoint.zero /// current position
 
     /// path and hash get updated through MuNodeDispatch::bindDispatch
     lazy var path: String? = {
         var path = ""
-        if let corner = branchVm.treeVm.rootVm?.corner {
-            path = corner.str() + "."
-        } else {
-            print("⁉️ MuNodeVm rootVm corner")
-        }
+        let corner = branchVm.treeVm.rootVm.corner 
+
         if let nodePath = node.path {
             path += nodePath
         }else {
@@ -110,7 +107,7 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
         
         superSpotlight()
         branchVm.expandBranch()
-        branchVm.treeVm.refreshTree(branchVm)
+        branchVm.treeVm.refreshTree()
     }
     
     func refreshStatus() {

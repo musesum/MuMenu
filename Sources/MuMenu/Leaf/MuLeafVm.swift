@@ -14,7 +14,7 @@ public class MuLeafVm: MuNodeVm {
     /// normalized to 0...1
     var thumb = [Double](repeatElement(0, count: 2))
     
-    func updatePeers(_ visitor: Visitor) {
+    func updateLeafPeers(_ visitor: Visitor) {
         if visitor.isLocal() {
             rootVm.sendToPeers(self, thumb)
         }

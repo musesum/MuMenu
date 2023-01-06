@@ -102,7 +102,7 @@ extension MuTreeVm { // + Shift
     }
 
     func shiftTree(to index: Int) {
-        if index < branchVms.count {
+        if index < branchVms.count, index >= 0 {
            let startBranchVm = branchVms[index]
             treeShifting = cornerAxis.outerLimit(of: startBranchVm.shiftRange)
             treeShifted = treeShifting

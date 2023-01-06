@@ -121,7 +121,7 @@ public class MuLeafSegVm: MuLeafVm {
 
         if let menuSync, menuSync.setAny(named: nodeType.name, expanded, visitor) {
 
-            updatePeers(visitor)
+            updateLeafPeers(visitor)
         }
     }
 

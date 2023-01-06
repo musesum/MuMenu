@@ -43,6 +43,6 @@ extension MuNodeVm { // + Touch
             case 2,3: tapAllDescendants()
             default: return
         }
-        print("(\(touchState.touchBeginCount),\(myTouchBeginCount))", terminator: "  ")
+        //print("(\(touchState.touchBeginCount),\(myTouchBeginCount))", terminator: "  ")
     }
 }

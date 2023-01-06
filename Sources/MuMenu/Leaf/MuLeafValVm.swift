@@ -81,7 +81,7 @@ public class MuLeafValVm: MuLeafVm {
 
         if let menuSync, menuSync.setAny(named: nodeType.name, expanded, visitor) {
 
-            updatePeers(visitor)
+            updateLeafPeers(visitor)
         }
     }
 }
