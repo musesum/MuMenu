@@ -16,6 +16,7 @@ extension MuBranchVm {
         var nextHash: Int {
             var hasher = Hasher()
             hasher.combine(prevNodeVm?.hashValue ?? 0)
+            hasher.combine(treeVm.cornerAxis.corner.rawValue)
             hasher.combine(treeVm.cornerAxis.axis.rawValue)
             hasher.combine(MuBranchVm.titleForNodes(nodes))
             let hash = hasher.finalize()
@@ -24,7 +25,7 @@ extension MuBranchVm {
 
         // let nextHash = nextHash()
         if let oldBranch = BranchCache[nextHash] {
-            // print("🧺", terminator: " ")
+             //print("🧺", terminator: " ")
             return oldBranch
         }
         let newBranch = MuBranchVm(nodes: nodes,

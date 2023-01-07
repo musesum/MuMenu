@@ -6,43 +6,51 @@ import Foundation
 extension MuTreeVm { // +Show
 
     func showTree(start: Int? = nil,
-                  depth: Int,
-                  via: String) {
-
+                  depth: Int? = nil,
+                  via: String = "refresh") {
+        
         let nextIndex = start ?? startIndex
-
-        print("\(via.pad(7))\(isVertical ? "V" : "H") (s \(nextIndex) d \(depth)) ", terminator: " ")
-
-        var newBranchVms = [MuBranchVm]()
+        let nextDepth = depth ?? 9
+        var newBranches = [MuBranchVm]()
         var index = 0
         var depthNow = 0
-
-        for branch in branchVms {
-
-            if depthNow < depth {
-                newBranchVms.append(branch)
-                branch.show = true
+        
+        var branch: MuBranchVm! = branchVms.first
+        while branch != nil {
+            if depthNow < nextDepth {
+                branch.willShow = true
                 if index >= nextIndex {
                     depthNow += 1
                 }
             } else {
-                branch.show = false
+                branch.willShow = false
             }
             index += 1
+            
+            newBranches.append(branch)
+            branch = branch.nodeSpotVm?.nextBranchVm ?? nil
+        }
+        branchVms = newBranches
 
-            print("\(branch.title):\(branch.show ? 1 : 0)", terminator: " ")
+
+        for branch in newBranches {
+            branch.updateShiftRange()
+            branch.show = branch.willShow
         }
 
         startIndex = nextIndex
         depthShown = depthNow
-
-        if depthShown > 0 {
-            for branch in newBranchVms {
-                branch.updateShiftRange()
+        shiftTree(to: startIndex)
+        logShowTree()
+        
+        func logShowTree() {
+            
+            print("\(via.pad(7))\(cornerAxis.corner.indicator())\(isVertical ? "V" : "H") (s \(nextIndex) d \(nextDepth)) ", terminator: " ")
+            
+            for branch in branchVms {
+                print("\(branch.title.pad(7)):\(branch.show ? 1 : 0)", terminator: " ")
             }
+            print("=== (s \(startIndex) d \(depthShown))  shift: \(treeShifted)")
         }
-        branchVms = newBranchVms
-
-        print("=== (s \(startIndex) d \(depthShown))  shift: \(treeShifted)")
     }
 }

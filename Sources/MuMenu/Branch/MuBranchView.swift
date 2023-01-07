@@ -9,6 +9,7 @@ struct MuBranchView: View {
 
     var panelVm: MuPanelVm { branchVm.panelVm }
     var spotlight: Bool
+    var opacity: CGFloat  { branchVm.show ? branchVm.branchOpacity : 0 }
 
     var body: some View {
         GeometryReader { geo in
@@ -28,14 +29,14 @@ struct MuBranchView: View {
                     }
                 }
             }
-            .onAppear { branchVm.updateBranchBounds(geo.frame(in: .global)) }
-            .onChange(of: geo.frame(in: .global)) { branchVm.updateBranchBounds($0) }
+            .onAppear { branchVm.updateOnAppear( geo.frame(in: .global)) }
+            .onChange(of: geo.frame(in: .global)) { branchVm.updateOnChange($0) }
         }
         .frame(width: panelVm.outer.width, height: panelVm.outer.height)
         .offset(branchVm.branchShift)
-        .opacity(branchVm.viewOpacity)
-        .animation(.easeInOut(duration: branchVm.duration), value: branchVm.viewOpacity)
-        .animation(.easeInOut(duration: branchVm.duration), value: branchVm.branchShift )
+        .opacity(opacity)
+        .animation(.easeInOut(duration: Layout.animate), value: opacity)
+        .animation(.easeInOut(duration: branchVm.branchAnimate), value: branchVm.branchShift )
         //.onTapGesture { } // allow scrolling
     }
 }

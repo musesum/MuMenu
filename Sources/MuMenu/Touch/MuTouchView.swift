@@ -5,7 +5,7 @@ import SwiftUI
 struct MuTouchView: View {
 
     @ObservedObject var touchVm: MuTouchVm
-
+    let offset = CGSize(width: Layout.padding * 2, height: -Layout.padding * 2)
     var body: some View {
 
         GeometryReader() { geo  in
@@ -16,9 +16,10 @@ struct MuTouchView: View {
                     .frame(width: Layout.diameter, height: Layout.diameter)
                     .onAppear { touchVm.updateRootIcon(geo.frame(in: .global)) }
                     .onChange(of: geo.frame(in: .global)) { touchVm.updateRootIcon($0) }
-                    .padding(Layout.padding)
+                    .padding(Layout.padding * 2)
                     .opacity(touchVm.parkIconAlpha + 0.1)
                     .position(touchVm.parkIconXY)
+                    .offset(touchVm.rootVm?.rootOffset ?? .zero)
             }
 
             // drag icon, follows touch

@@ -45,7 +45,7 @@ public class MuLeafSegVm: MuLeafVm {
 
         branchVm.panelVm.aspectSz = size
         panelVm.aspectSz = size
-        branchVm.show = true // refresh view
+        //??? branchVm.show = true // refresh view
     }
 
     var nearestTick: Double { return round(thumb[0]*count)/count }

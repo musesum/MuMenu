@@ -34,48 +34,7 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
         for branchVm in branchVms {
             branchVm.updateTree(self)
         }
-        showTree(depth: 0, via: "add")
+        showTree(depth: 0, via: "add") //???
     }
 
-    func refreshTree() {
-        print("refresh\(isVertical ? "V" : "H") (s \(startIndex) d \(depthShown)) ", terminator: " ")
-
-        var branchVm = branchVms.first
-        var newBranches = [MuBranchVm]()
-
-        while branchVm != nil {
-            if let b = branchVm {
-                b.show = true
-                newBranches.append(b)
-                branchVm = b.nodeSpotVm?.nextBranchVm
-            }
-        }
-        for branch in newBranches {
-            branch.updateShiftRange()
-        }
-        branchVms = newBranches
-    }
-
-//    func refreshTree(_ depthNext: Int) {
-//
-//        var indexNow = 0
-//        var depthNow = 0
-//
-//        var branchVm = branchVms.first
-//        var newBranches = [MuBranchVm]()
-//
-//        while depthNow >= depthNext,  branchVm != nil {
-//            if let b = branchVm {
-//                b.show = true
-//                newBranches.append(b)
-//                branchVm = b.nodeSpotVm?.nextBranchVm
-//            }
-//        }
-//        for newBranch in newBranches {
-//            newBranch.updateShiftRange()
-//        }
-//        branchVms = newBranches
-//    }
-
-  
 }

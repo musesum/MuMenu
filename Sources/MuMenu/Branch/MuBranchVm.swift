@@ -7,22 +7,21 @@ public class MuBranchVm: Identifiable, ObservableObject {
     static func == (lhs: MuBranchVm, rhs: MuBranchVm) -> Bool { lhs.id == rhs.id }
     static func == (lhs: MuBranchVm, rhs: MuBranchVm?) -> Bool { lhs.id == (rhs?.id ?? -1) }
 
-    @Published var show = true
-    var duration: CGFloat { Layout.animate  }
-    var branchOpacity: CGFloat = 1 // branch may be partially occluded
-    var viewOpacity: CGFloat { show ? branchOpacity : 0 }
+    @Published var show: Bool = false
+    var willShow = false
 
     public var treeVm: MuTreeVm       /// my tree; which unfolds a hierarchy of branches
     var nodeVms: [MuNodeVm]    /// all the node View Models on this branch
     var nodeSpotVm: MuNodeVm?  /// current node, nodeSpotVm.branchVm is next branch
     var panelVm: MuPanelVm     /// background + stroke model for BranchView
-
     var branchPrev: MuBranchVm?
+    
     var boundsPrior: CGSize = .zero
     var boundsNow: CGRect = .zero /// current bounds after shifting
     var boundsPad: CGRect = .zero /// extended bounds for capturing finger drag
+    var branchOpacity: CGFloat = 1 // branch may be partially occluded
+    var branchAnimate: CGFloat = 0
     var zindex: CGFloat = 0       /// zIndex within sub/super branches
-
     var title: String {
         let nameFirst = nodeVms.first?.node.title ?? ""
         let nameLast  = nodeVms.last?.node.title ?? ""
@@ -141,16 +140,30 @@ public class MuBranchVm: Identifiable, ObservableObject {
         return nil
     }
 
+    func updateOnAppear(_ fromBounds: CGRect) {
+        //branchOpacity = 0
+        branchAnimate = 0
+        log("updateOnAppear ", [fromBounds])
+        updateBranchBounds(fromBounds)
+        show = true
+
+    }
+    func updateOnChange(_ fromBounds: CGRect) {
+        branchOpacity = 1
+        branchAnimate = Layout.animate
+
+        log("updateOnChange ", [fromBounds])
+        updateBranchBounds(fromBounds)
+    }
+
     /// update from MuBranchView
     func updateBranchBounds(_ fromBounds: CGRect) {
-        if boundsNow != fromBounds {
+
+        //if boundsNow != fromBounds { //???
             boundsNow = panelVm.updatePanelBounds(fromBounds)
             boundsPad = boundsNow.pad(Layout.padding)
             updateShiftRange()
-        }
-        if boundStart == .zero {
-            updateShiftRange()
-        }
+        //}
     }
     private var boundStart: CGRect = .zero
     @Published var branchShift: CGSize = .zero
@@ -181,7 +194,6 @@ public class MuBranchVm: Identifiable, ObservableObject {
             case .uprY: shiftRange = (0...0, 0...max(0, ph))
         }
         shiftBranch()
-        logBounds()
     }
 
     @discardableResult
@@ -199,18 +211,8 @@ public class MuBranchVm: Identifiable, ObservableObject {
             let hh = abs(clampDelta.height) / boundStart.height
             branchOpacity = min(1-ww,1-hh)
         }
+        //??? log(title.pad(17), [shiftRange, " branchShift", branchShift, " bounds", boundsNow])
         return branchOpacity
-    }
-
-    func logBounds() {
-        #if false
-        log(title.pad(17), [shiftRange], length: 30)
-        log("shift", [branchShift], length: 15)
-        log("now", [boundsNow], length: 22)
-        log("prior", [boundsPrior], length: 17)
-        log("opacity",format: "%.2f", [branchOpacity])
-        //log("outer", [panelVm.outer], length: 16)
-        #endif
     }
 
 }

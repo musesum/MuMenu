@@ -23,6 +23,7 @@ public class MuRootVm: ObservableObject, Equatable {
     var corner: MuCorner        /// corner where root begins, ex: `[south,west]`
     var treeVms = [MuTreeVm]()  /// vertical or horizontal stack of branches
     var treeSpotVm: MuTreeVm?   /// most recently used tree
+    var rootOffset: CGSize = .zero
     public var nodeSpotVm: MuNodeVm?   /// current last touched or hovered node
 
     let peers = PeersController.shared
@@ -52,34 +53,36 @@ public class MuRootVm: ObservableObject, Equatable {
         updateTreeOffsets()
     }
     
-    /**
-     Adjust MuTree offsets on iPhone and iPad. Needed to avoid false positives, now that springboard has added a corner hotspot for launching the notes app. Also, adjust pilot offsets for home node and for flying.
-     */
+
     func updateTreeOffsets() {
-        
-        let idiom = UIDevice.current.userInterfaceIdiom
-        let margin = 2 * Layout.padding
-        let x = (idiom == .pad ? margin : 0)
-        let y = ( (corner.contains(.upper) && idiom == .phone) ||
-                  (corner.contains(.lower) && idiom == .pad)) ? margin : 0
-        let xx = x + Layout.diameter + margin
-        let yy = y + Layout.diameter + margin
-        
-        var vOfs = CGSize.zero // vertical offset
-        var hOfs = CGSize.zero // horizontal offset
-        func vert(_ w: CGFloat, _ h: CGFloat) { vOfs = CGSize(width: w, height: h) }
-        func hori(_ w: CGFloat, _ h: CGFloat) { hOfs = CGSize(width: w, height: h) }
-        
+
+        // xy top left to bottom right cornders
+        let x0 = Layout.padding * 2
+        let y0 = Layout.padding * 2
+        let x1 = x0 + Layout.diameter + Layout.padding * 3
+        let y1 = y0 + Layout.diameter + Layout.padding * 3
+
+        // setup vertical, horizontal, and root offsets
+        var vs = CGSize.zero // vertical offset
+        var hs = CGSize.zero // horizontal offset
+        var rs = CGSize.zero // root icon offset
+        func v(_ w: CGFloat, _ h: CGFloat) { vs = CGSize(width: w, height: h) }
+        func h(_ w: CGFloat, _ h: CGFloat) { hs = CGSize(width: w, height: h) }
+        func r(_ w: CGFloat, _ h: CGFloat) { rs = CGSize(width: w, height: h) }
+
+        // corner offsets are different for ipad
+        let pad = UIDevice.current.userInterfaceIdiom == .pad
+
         switch corner {
-            case [.lower, .right]: vert(-x,-yy); hori(-xx,-y)
-            case [.lower, .left ]: vert( x,-yy); hori( xx,-y)
-            case [.upper, .right]: vert(-x, yy); hori(-xx, y)
-            case [.upper, .left ]: vert( x, yy); hori( xx, y)
+            case [.lower, .right]: v(-x0,-y1); h(-x1,-y0); pad ? r(0, 0) : r(-x0,-y0)
+            case [.lower, .left ]: v( x0,-y1); h( x1,-y0); pad ? r(0, 0) : r( x0,-y0)
+            case [.upper, .right]: v(-x0, y1); h(-x1, y0); pad ? r(0,y0) : r(-x0,  0)
+            case [.upper, .left ]: v( x0, y1); h( x1, y0); pad ? r(0,y0) : r( x0,  0)
             default: break
         }
-        
+        rootOffset = rs
         for treeVm in treeVms {
-            treeVm.treeOffset = (treeVm.isVertical ? vOfs : hOfs)
+            treeVm.treeOffset = (treeVm.isVertical ? vs : hs)
         }
     }
     
