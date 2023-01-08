@@ -59,8 +59,7 @@ extension TouchMenuLocal: BufferFlushDelegate {
         let point = CGPoint(x: CGFloat(item.xy[0]),
                             y: CGFloat(item.xy[1]))
         touchVm.updateTouchXY(point, item.phase)
-        let phase = UITouch.Phase(rawValue: item.phase)
-        return phase?.isDone() ?? true
+        return item.isDone
     }
 }
 

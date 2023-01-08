@@ -32,7 +32,6 @@ extension MuTreeVm { // +Show
         }
         branchVms = newBranches
 
-
         for branch in newBranches {
             branch.updateShiftRange()
             branch.show = branch.willShow

@@ -19,8 +19,8 @@ public class MuBranchVm: Identifiable, ObservableObject {
     var boundsPrior: CGSize = .zero
     var boundsNow: CGRect = .zero /// current bounds after shifting
     var boundsPad: CGRect = .zero /// extended bounds for capturing finger drag
-    var branchOpacity: CGFloat = 1 // branch may be partially occluded
-    var branchAnimate: CGFloat = 0
+    var branchOpacity: CGFloat = 1 /// branch may be partially occluded
+    var branchAnimate: CGFloat = 0 /// defer animation until after onAppear
     var zindex: CGFloat = 0       /// zIndex within sub/super branches
     var title: String {
         let nameFirst = nodeVms.first?.node.title ?? ""
@@ -58,7 +58,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
 
         for node in nodes {
 
-            let nodeVm = MuNodeVm.cached(node.nodeType, node, self, prevNodeVm)
+            let nodeVm = MuNodeVm.cached(node, self, prevNodeVm)
             nodeVms.append(nodeVm)
             if nodeVm.spotlight || node.nodeType.isLeaf {
                 nodeSpotVm = nodeVm
@@ -125,12 +125,12 @@ public class MuBranchVm: Identifiable, ObservableObject {
 
         // is hovering over same node as before
         if let leafVm = nodeSpotVm as? MuLeafVm,
-           leafVm.branchVm.boundsNow.contains(touchNow) {
+           leafVm.branchVm.boundsPad.contains(touchNow) {
             return leafVm
         }
         for nodeVm in nodeVms {
             if let leafVm = nodeVm as? MuLeafVm,
-               leafVm.branchVm.boundsNow.contains(touchNow) {
+               leafVm.branchVm.boundsPad.contains(touchNow) {
                 nodeSpotVm = leafVm
                 nodeSpotVm?.spot(on: true)
                 leafVm.superSpotlight()
@@ -140,30 +140,42 @@ public class MuBranchVm: Identifiable, ObservableObject {
         return nil
     }
 
+    /// Branch .onAppear is first hidden until .onChange
+    ///
+    ///  - note: Position is assumed to be for a fully extended tree,
+    /// which may have been shifted by user. So, hide branch until
+    /// updateBranchBound and shift position immediatly before
+    /// fading in the view
+    ///
     func updateOnAppear(_ fromBounds: CGRect) {
-        //branchOpacity = 0
-        branchAnimate = 0
+        //branchOpacity = 0 // hide the branch
+        branchAnimate = 0 // immediatly change position
         log("updateOnAppear ", [fromBounds])
         updateBranchBounds(fromBounds)
         show = true
-
     }
+    /// Branch .onChange to correct position
+    ///
+    ///  - note: see note for updateOnAppear.
+    ///  Now that branch is in correct position,
+    ///  fade in and animate user shift gestures
+    ///
     func updateOnChange(_ fromBounds: CGRect) {
-        branchOpacity = 1
-        branchAnimate = Layout.animate
-
+        branchOpacity = 1 // fades in via Layout.Animate
+        branchAnimate = Layout.animate // now animate position
         log("updateOnChange ", [fromBounds])
         updateBranchBounds(fromBounds)
+        //show = show
     }
 
     /// update from MuBranchView
     func updateBranchBounds(_ fromBounds: CGRect) {
 
-        //if boundsNow != fromBounds { //???
+        if boundsNow != fromBounds {
             boundsNow = panelVm.updatePanelBounds(fromBounds)
             boundsPad = boundsNow.pad(Layout.padding)
             updateShiftRange()
-        //}
+        }
     }
     private var boundStart: CGRect = .zero
     @Published var branchShift: CGSize = .zero
@@ -211,7 +223,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
             let hh = abs(clampDelta.height) / boundStart.height
             branchOpacity = min(1-ww,1-hh)
         }
-        //??? log(title.pad(17), [shiftRange, " branchShift", branchShift, " bounds", boundsNow])
+        log(title.pad(17), [shiftRange, " branchShift", branchShift, " bounds", boundsNow, " branchOpacity ", branchOpacity])
         return branchOpacity
     }
 

@@ -23,22 +23,23 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
 
     public let node: MuNode /// each model MuNode maybe on several MuNodeVm's
     public var nodeType: MuMenuType  /// node, val, vxy, seg, tog, tap
-
-    var panelVm: MuPanelVm    /// the panel that this node belongs to
     public var branchVm: MuBranchVm  /// branch that this node is on
+                                     ///
     var nextBranchVm: MuBranchVm? /// branch this node generates
+                                  ///
+    var panelVm: MuPanelVm    /// the panel that this node belongs to
     var prevNodeVm: MuNodeVm?     /// parent nodeVm in hierarchy
     
     var myTouchBeginTime = TimeInterval(0)
     var myTouchBeginCount = 0
-    lazy var rootVm: MuRootVm = { branchVm.treeVm.rootVm } ()
+    var rootVm: MuRootVm
 
     public var center = CGPoint.zero /// current position
 
     /// path and hash get updated through MuNodeDispatch::bindDispatch
     lazy var path: String? = {
         var path = ""
-        let corner = branchVm.treeVm.rootVm.corner 
+        let corner = rootVm.corner
 
         if let nodePath = node.path {
             path += nodePath
@@ -67,6 +68,7 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
                  _ prevVm: MuNodeVm?) {
         
         self.node = node
+        self.rootVm = branchVm.treeVm.rootVm
         self.nodeType = node.nodeType
         self.branchVm = branchVm
         self.prevNodeVm = prevVm
@@ -83,6 +85,7 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
     
     /// spotlight self, parent, grand, etc. in branch
     func superSpotlight() {
+
         if branchVm.nodeSpotVm != self {
             
             branchVm.nodeSpotVm?.spotlight = false

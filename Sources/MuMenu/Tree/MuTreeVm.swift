@@ -2,7 +2,6 @@
 import SwiftUI
 
 
-
 public class MuTreeVm: Identifiable, Equatable, ObservableObject {
     
     public let id = MuNodeIdentity.getId()
@@ -34,7 +33,6 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
         for branchVm in branchVms {
             branchVm.updateTree(self)
         }
-        showTree(depth: 0, via: "add") //???
     }
 
 }

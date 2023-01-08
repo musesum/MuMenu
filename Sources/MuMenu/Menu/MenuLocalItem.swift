@@ -26,5 +26,9 @@ public struct MenuLocalItem: Codable {
         try xy      = container.decode([Double].self, forKey: .xy     )
         try phase   = container.decode(Int     .self, forKey: .phase  )
     }
+
+    var isDone: Bool {
+        UITouch.Phase(rawValue: phase)?.isDone() ?? true
+    }
 }
 

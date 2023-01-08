@@ -133,7 +133,7 @@ public class MuPanelVm {
         }
     }
 
-    func updatePanelBounds(_ bounds: CGRect) -> CGRect { //???
+    func updatePanelBounds(_ bounds: CGRect) -> CGRect {
         var result = bounds
         if isVertical {
             if bounds.minY < 0 {

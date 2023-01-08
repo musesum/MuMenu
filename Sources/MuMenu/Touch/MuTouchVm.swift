@@ -28,10 +28,13 @@ public class MuTouchVm: ObservableObject {
     }
 
     public func setRoot(_ rootVm: MuRootVm) {
-        guard let treeVm = rootVm.treeSpotVm else { return }
+
+        // choose an arbirary tree to allow for branc
+        guard let treeVm = rootVm.treeVms.first else { return }
         self.rootVm = rootVm
-        
-        let cornerNode = MuCornerNode("⚫︎") //??
+        let cornerNode = MuNode(name: rootVm.corner.indicator(),
+                                icon: MuIcon(.cursor, named: Layout.hoverRing))
+
         let branchVm = MuBranchVm.cached(treeVm: treeVm)
         rootNodeVm = MuNodeVm(cornerNode, branchVm, nil)
         branchVm.addNodeVm(rootNodeVm)
@@ -75,10 +78,10 @@ public class MuTouchVm: ObservableObject {
         
         if let rootVm {
             
-            if touchState.isFast,
-               // has a child branch to skip
+            if touchState.isFast, //may child branch to skip
                rootVm.nodeSpotVm?.nextBranchVm?.nodeSpotVm != nil {
-                // log("🏁", terminator: " ")
+
+                log("🏁", terminator: " ")
             } else {
                 rootVm.touchMoved(touchState, fromRemote)
             }
@@ -112,9 +115,9 @@ public class MuTouchVm: ObservableObject {
             // park the dragIcon
             dragIconXY = parkIconXY
 
-        } else if let nodeSpot = rootVm.nodeSpotVm {
+        } else if let spotCenter = rootVm.nodeSpotVm?.center {
 
-            dragIconXY = nodeSpot.center - bounds.origin
+            dragIconXY = spotCenter - bounds.origin
 
         } else {
 
