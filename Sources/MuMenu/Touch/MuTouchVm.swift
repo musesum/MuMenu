@@ -10,7 +10,8 @@ public class MuTouchVm: ObservableObject {
 
     /// hide park icon while hovering elsewhere
     var parkIconAlpha: CGFloat {
-        (dragIconXY == parkIconXY) || (dragIconXY == .zero) ? 1 : 0
+        (dragIconXY == parkIconXY) ||
+        (dragIconXY == .zero) ? 1 : 0
     }
     var rootVm: MuRootVm?
     var rootNodeVm: MuNodeVm?  /// fixed root node in corner in which to drag from

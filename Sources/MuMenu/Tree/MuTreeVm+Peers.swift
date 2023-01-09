@@ -4,53 +4,38 @@ import Foundation
 
 extension MuTreeVm { // + Peers
 
-    func followHashPath(_ menuItem: MenuRemoteItem) -> MuNodeVm? {
+    func followHashPath(_ menuItem: MenuNodeItem) -> MuNodeVm? {
 
-        let menuType = MuMenuType(menuItem.type)
-        let treePath = menuItem.hashPath
-        let treeNow = menuItem.hashNow
-        let startIndex = menuItem.startIndex
-
+        let hashPath = menuItem.hashPath
+        let hashNow = menuItem.hashNow
         var branchVm = branchVms.first
         var nodeNow: MuNodeVm?
 
-//        log("followHashPath ", [
-//            " type:", menuItem.type,
-//            " startIndex:",startIndex,
-//            " treeNow:", treeNow,
-//            " treePath: ", treePath])
+        for hashi in hashPath {
 
-        for treeHash in treePath {
-
-            if let stepNodeVm = findNode(treeHash) {
-                if stepNodeVm.node.hash == treeNow {
+            if let stepNodeVm = findNode(hashi) {
+                if stepNodeVm.node.hash == hashNow {
                     // nodeNow may be in middle of shown treePath
                     nodeNow = stepNodeVm
                 }
                 if !stepNodeVm.nodeType.isLeaf {
                     stepNodeVm.refreshBranch()
+                    showTree("hash", /*fromRemote*/ true)
                 }
                 branchVm = stepNodeVm.nextBranchVm
-
                 if branchVm == nil {
-                    return finalize(nodeNow ?? stepNodeVm)
+                    return nodeNow ?? stepNodeVm
                 }
             }
         }
         return nil
 
-        func finalize(_ nodeVm: MuNodeVm) -> MuNodeVm? {
-            if menuType == .tree {
-                shiftTree(to: startIndex)
-            }
-            return nodeVm
-        }
 
-        func findNode(_ treeHash: Int) -> MuNodeVm? {
+        func findNode(_ hashi: Int) -> MuNodeVm? {
 
             if let nodeVms = branchVm?.nodeVms {
                 for nodeVm in nodeVms {
-                    if nodeVm.node.hash == treeHash {
+                    if nodeVm.node.hash == hashi {
                         return nodeVm
                     }
                 }

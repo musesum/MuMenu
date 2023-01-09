@@ -110,7 +110,6 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
         
         superSpotlight()
         branchVm.expandBranch()
-        branchVm.treeVm.showTree(via: "branch")
     }
     
     func refreshStatus() {

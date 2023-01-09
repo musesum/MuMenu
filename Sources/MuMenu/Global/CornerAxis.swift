@@ -25,6 +25,10 @@ public struct CornerAxis {
 
     public let corner: MuCorner
     public let axis: Axis
+    public let key: Int
+    static func Key(_ corner: Int, _ axis: Int8) -> Int {
+        (corner + 1) * (Int(axis) + 1)
+    }
     let bound: CornerBound
 
     var depth = Axii(h:0, v:0)
@@ -33,6 +37,7 @@ public struct CornerAxis {
     public init(_ corner: MuCorner, _ axis: Axis) {
         self.corner = corner
         self.axis = axis
+        self.key = CornerAxis.Key(corner.rawValue, axis.rawValue)
 
         self.bound =
         (axis == .vertical

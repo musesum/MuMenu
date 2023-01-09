@@ -7,7 +7,8 @@ extension MuTreeVm { // +Show
 
     func showTree(start: Int? = nil,
                   depth: Int? = nil,
-                  via: String = "refresh") {
+                  _ via: String,
+                  _ fromRemote: Bool) {
         
         let nextIndex = start ?? startIndex
         let nextDepth = depth ?? 9

@@ -5,9 +5,8 @@ import UIKit
 public class TouchMenuLocal {
     
     static var menuKey = [Int: TouchMenuLocal]()
-    static var timerKey = [Int: Timer]()
-    
-    private let buffer = DoubleBuffer<MenuLocalItem>(internalLoop: true)
+
+    private let buffer = DoubleBuffer<MenuItem>(internalLoop: true)
     private let touchVm: MuTouchVm
     private let isRemote: Bool
     private let nodeVm: MuNodeVm?
@@ -26,12 +25,12 @@ public class TouchMenuLocal {
         
         let nextXY = touch.preciseLocation(in: nil)
 
-        for touchVm in TouchMenu.touchVms {
+        for touchVm in CornerTouchVm.values {
             if let nodeVm = touchVm.hitTest(nextXY) {
-                
+
                 let touchMenu = TouchMenuLocal(touchVm, nodeVm, isRemote: false)
-                let menuLocalItem = MenuLocalItem(touch)
-                touchMenu.buffer.append(menuLocalItem)
+                let menuItem = MenuItem(touch, touchVm.corner)
+                touchMenu.buffer.append(menuItem)
                 let key = touch.hash
                 menuKey[key] = touchMenu
                 return true
@@ -43,7 +42,8 @@ public class TouchMenuLocal {
     public static func updateTouch(_ touch: UITouch) -> Bool {
         
         if let touchMenu = menuKey[touch.hash] {
-            touchMenu.buffer.append(MenuLocalItem(touch))
+            let corner = touchMenu.touchVm.corner
+            touchMenu.buffer.append(MenuItem(touch, corner))
             return true
         }
         return false
@@ -52,13 +52,15 @@ public class TouchMenuLocal {
 
 extension TouchMenuLocal: BufferFlushDelegate {
 
-    public typealias Item = MenuLocalItem
+    public typealias Item = MenuItem
 
     public func flushItem<Item>(_ item: Item) -> Bool {
-        let item = item as! MenuLocalItem
-        let point = CGPoint(x: CGFloat(item.xy[0]),
-                            y: CGFloat(item.xy[1]))
-        touchVm.updateTouchXY(point, item.phase)
+        let item = item as! MenuItem
+        if let touch = item.touch,
+           let touchVm = CornerTouchVm[item.corner] {
+
+            touchVm.updateTouchXY(touch.cgPoint, item.phase)
+        }
         return item.isDone
     }
 }

@@ -2,11 +2,14 @@
 import SwiftUI
 
 
+public var CornerAxisTreeVm = [Int: MuTreeVm]()
+
 public class MuTreeVm: Identifiable, Equatable, ObservableObject {
     
     public let id = MuNodeIdentity.getId()
     public static func == (lhs: MuTreeVm, rhs: MuTreeVm) -> Bool { return lhs.id == rhs.id }
-    
+
+
     @Published var branchVms = [MuBranchVm]()
     @Published var treeShifting = CGSize.zero /// offset after shifting (by dragging leaf)
     var treeShifted = CGSize.zero
@@ -26,6 +29,9 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
         self.rootVm = rootVm
         self.cornerAxis = cornerAxis
         self.isVertical = cornerAxis.axis == .vertical
+        let key = CornerAxis.Key(cornerAxis.corner.rawValue,
+                                 cornerAxis.axis.rawValue)
+        CornerAxisTreeVm[key] = self
     }
     
     public func addBranchVms(_ branchVms: [MuBranchVm]) {

@@ -77,7 +77,9 @@ extension MuTreeVm { // + Shift
         // log("\nshiftConstrain ", [ "shifted", treeShifted, "shifting", treeShifting, "moved", moved, "inward: ", goingInward ])
     }
 
-    func shiftTree(_ touchState: MuTouchState) {
+    func shiftTree(_ touchState: MuTouchState,
+                   _ fromRemote: Bool) {
+
         guard let lastBranchVm = branchVms.last else { return }
 
         if touchState.phase == .ended {
@@ -92,16 +94,19 @@ extension MuTreeVm { // + Shift
         } else {
             shiftConstrain(touchState.moved)
         }
-        updateBranches(touchState)
+        updateBranches(touchState, fromRemote)
     }
-    func shiftExpandLast(_ touchState: MuTouchState) {
+    func shiftExpandLast(_ touchState: MuTouchState,
+                         _ fromRemote: Bool) {
+
         // print("*** shiftExpandLast")
         treeShifting = .zero
         treeShifted  = .zero
-        updateBranches(touchState)
+        updateBranches(touchState, fromRemote)
     }
 
     func shiftTree(to index: Int) {
+
         if index < branchVms.count, index >= 0 {
            let startBranchVm = branchVms[index]
             treeShifting = cornerAxis.outerLimit(of: startBranchVm.shiftRange)
@@ -109,7 +114,9 @@ extension MuTreeVm { // + Shift
         }
     }
 
-    func updateBranches(_ touchState: MuTouchState) {
+    func updateBranches(_ touchState: MuTouchState,
+                        _ fromRemote: Bool) {
+
         var isHidden = true // tucked in from shifting inward
         var index = 0
         for branchVm in branchVms {
@@ -120,26 +127,17 @@ extension MuTreeVm { // + Shift
             }
             index += 1
         }
-        sendToPeers(touchState)
+        sendToPeers(touchState, fromRemote)
     }
 
-    func sendToPeers(_ touchState: MuTouchState) {
+    func sendToPeers(_ touchState: MuTouchState,
+                     _ fromRemote: Bool) {
         
+        if fromRemote { return }
         let peers = PeersController.shared
         if peers.hasPeers {
             do {
-
-                let item = MenuRemoteItem(
-                    menuKey   : "tree".hash,
-                    corner    : cornerAxis.corner,
-                    axis      : cornerAxis.axis,
-                    nodeType  : MuMenuType.tree,
-                    hashPath  : branchVms.last?.nodeSpotVm?.node.hashPath ?? [],
-                    hashNow   : branchSpotVm?.nodeSpotVm?.node.hash ?? 0,
-                    startIndex: startIndex,
-                    thumb     : [Double(startIndex)],
-                    phase     : touchState.phase)
-
+                let item = MenuItem(rootVm)
                 let encoder = JSONEncoder()
                 let data = try encoder.encode(item)
                 peers.sendMessage(data, viaStream: true)

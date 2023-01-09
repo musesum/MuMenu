@@ -34,9 +34,10 @@ public class MuRootVm: ObservableObject, Equatable {
 
         self.nodeSpotVm = newSpotVm
         newSpotVm.refreshBranch()
+        newSpotVm.branchVm.treeVm.showTree("branch", fromRemote)
         newSpotVm.refreshStatus()
         if !fromRemote {
-            sendToPeers(newSpotVm, [0,0])
+            sendNodeToPeers(newSpotVm, touchState.phase)
         }
     }
 
@@ -115,8 +116,7 @@ public class MuRootVm: ObservableObject, Equatable {
         }
         return nil
     }
-    var touchState: MuTouchState?
-
+    var touchState: MuTouchState!
     func touchBegin(_ touchState: MuTouchState,
                     _ fromRemote: Bool) {
 
@@ -152,15 +152,15 @@ public class MuRootVm: ObservableObject, Equatable {
         MuStatusVm.statusLine(.off)
         if !fromRemote, let nodeSpotVm {
             if let leafVm = nodeSpotVm as? MuLeafVm {
-                sendToPeers(nodeSpotVm, leafVm.thumb)
+                sendLeafToPeers(leafVm, leafVm.thumb, touchState.phase)
             } else {
-                sendToPeers(nodeSpotVm, [0,0])
+                sendNodeToPeers(nodeSpotVm, touchState.phase) 
             }
         }
     }
     
     private func updateRoot(_ fromRemote: Bool) {
-        guard let touchState else { return }
+
         let touchNow = touchState.pointNow
         
         // stay exclusively on .leaf or .edit mode
@@ -210,7 +210,7 @@ public class MuRootVm: ObservableObject, Equatable {
             if !touchingRoot {
                 if beginTouchElement == .root {
                     // when dragging root over branches, expand tree
-                    treeSpotVm?.shiftExpandLast(touchState) 
+                    treeSpotVm?.shiftExpandLast(touchState, fromRemote)
                     // do this only once
                     beginTouchElement = .none
                 }
@@ -281,9 +281,9 @@ public class MuRootVm: ObservableObject, Equatable {
                     
                     for treeVm in treeVms {
                         if treeVm == treeSpotVm {
-                            treeVm.showTree(depth: 9, via: "alt+")
+                            treeVm.showTree(depth: 9, "alt+", fromRemote)
                         } else {
-                            treeVm.showTree(depth: 0, via: "alt-")
+                            treeVm.showTree(depth: 0, "alt-", fromRemote)
                         }
                     }
                     updateSpot(nearestNode, fromRemote)
@@ -300,7 +300,7 @@ public class MuRootVm: ObservableObject, Equatable {
         func hoverSpace() {
             touchElement = .space
             if let leafVm = nodeSpotVm as? MuLeafVm {
-                leafVm.branchVm.treeVm.showTree(start: 0, depth: 9, via: "space")
+                leafVm.branchVm.treeVm.showTree(start: 0, depth: 9, "space", fromRemote)
             }
         }
 
@@ -310,7 +310,7 @@ public class MuRootVm: ObservableObject, Equatable {
             touchElement = .shift
             leafVm.spot(.off)
             leafVm.branchSpot(.on)
-            treeSpotVm?.shiftTree(touchState)
+            treeSpotVm?.shiftTree(touchState, fromRemote)
         }
         
         func editLeaf(_ nodeVm: MuNodeVm?) {
@@ -332,7 +332,7 @@ public class MuRootVm: ObservableObject, Equatable {
                 showSoloTree()
             } else {
                 for treeVm in treeVms {
-                    treeVm.showTree(depth: 1, via: "trunk")
+                    treeVm.showTree(depth: 1, "trunk", fromRemote)
                 }
                 treeSpotVm = nil
                 nodeSpotVm = nil
@@ -342,7 +342,7 @@ public class MuRootVm: ObservableObject, Equatable {
         func showSoloTree() {
             if let treeVm = treeVms.first {
                 treeSpotVm = treeVm
-                treeVm.showTree(depth: 9, via: "solo")
+                treeVm.showTree(depth: 9, "solo", fromRemote)
                 viewElements = [.root,.branch]
             }
         }
@@ -350,9 +350,9 @@ public class MuRootVm: ObservableObject, Equatable {
             if let treeSpotVm {
                 for treeVm in treeVms {
                     if treeVm == treeSpotVm {
-                        treeVm.showTree(depth: 9, via: "spot+")
+                        treeVm.showTree(depth: 9, "spot+", fromRemote)
                     } else {
-                        treeVm.showTree(depth: 0, via: "spot-")
+                        treeVm.showTree(depth: 0, "spot-", fromRemote)
                     }
                     viewElements = [.root,.branch]
                 }
@@ -360,13 +360,13 @@ public class MuRootVm: ObservableObject, Equatable {
                 showTrunks()
             }
         }
-    }
-    public func hideBranches() {
-        for treeVm in treeVms {
-            treeVm.showTree(depth: 0, via: "hide")
+        func hideBranches() {
+            for treeVm in treeVms {
+                treeVm.showTree(depth: 0, "hide", fromRemote)
+            }
+            treeSpotVm = nil
+            nodeSpotVm = nil
+            viewElements = [.root]
         }
-        treeSpotVm = nil
-        nodeSpotVm = nil 
-        viewElements = [.root]
     }
 }

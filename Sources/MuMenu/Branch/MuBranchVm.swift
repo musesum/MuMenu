@@ -150,7 +150,6 @@ public class MuBranchVm: Identifiable, ObservableObject {
     func updateOnAppear(_ fromBounds: CGRect) {
         //branchOpacity = 0 // hide the branch
         branchAnimate = 0 // immediatly change position
-        log("updateOnAppear ", [fromBounds])
         updateBranchBounds(fromBounds)
         show = true
     }
@@ -163,9 +162,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
     func updateOnChange(_ fromBounds: CGRect) {
         branchOpacity = 1 // fades in via Layout.Animate
         branchAnimate = Layout.animate // now animate position
-        log("updateOnChange ", [fromBounds])
         updateBranchBounds(fromBounds)
-        //show = show
     }
 
     /// update from MuBranchView

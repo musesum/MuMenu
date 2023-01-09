@@ -17,48 +17,44 @@ extension MuTouchVm {
         return nil // does NOT hit menu
     }
 
-    public func gotoRemoteItem(_ menuItem: MenuRemoteItem) {
+    public func gotoNodeItem(_ item: MenuItem) {
+        if let node = item.node,
+           let foundNodeVm = node.treeVm?.followHashPath(node) {
 
-        guard let rootVm else { return }
-
-        for treeVm in rootVm.treeVms {
-            if treeVm.cornerAxis.corner.rawValue == menuItem.corner,
-               let foundNodeVm = treeVm.followHashPath(menuItem) {
-
-                if menuItem.type == MuMenuType.tree.rawValue {
-                    // updated by followHashPath
-                }
-                else if let leafVm = foundNodeVm as? MuLeafVm {
-                    updateRemoteLeafVm(leafVm, menuItem)
-                } else {
-                    updateRemoteNodeVm(foundNodeVm, menuItem)
-                }
-                break
+            if let leafVm = foundNodeVm as? MuLeafVm {
+                updateRemoteLeafVm(leafVm, node)
+            } else {
+                updateRemoteNodeVm(foundNodeVm, item)
             }
         }
     }
 
     func updateRemoteLeafVm(_ leafVm: MuLeafVm,
-                            _ menuItem: MenuRemoteItem) {
+                            _ nodeItem: MenuNodeItem) {
         
         DispatchQueue.main.async {
+
             if let leafProto = leafVm.leafProto {
-                leafProto.updateLeaf(menuItem.thumb, Visitor(fromRemote: true))
+                log("remoteLeaf", [nodeItem.thumb])
+                leafProto.updateLeaf(nodeItem.thumb, Visitor(fromRemote: true))
             }
         }
     }
     /// called either by SwiftUI MenuView DragGesture or UIKIt touchesUpdate
     public func updateRemoteNodeVm(_ nodeVm: MuNodeVm,
-                                   _ menuItem: MenuRemoteItem) {
+                                   _ menuItem: MenuItem) {
 
-        let xy = nodeVm.center
-        let phase = UITouch.Phase(rawValue: menuItem.phase)
+        DispatchQueue.main.async {
 
-        switch phase {
-            case .began: begin(xy, fromRemote: true)
-            case .moved: moved(xy, fromRemote: true)
-            default:     ended(xy, fromRemote: true)
+            let xy = nodeVm.center
+            let phase = UITouch.Phase(rawValue: menuItem.phase)
+            log("remoteNode", [xy, "phase: ", menuItem.phase])
+            switch phase {
+                case .began: self.begin(xy, fromRemote: true)
+                case .moved: self.moved(xy, fromRemote: true)
+                default:     self.ended(xy, fromRemote: true)
+            }
+            self.alignCursor(xy)
         }
-        alignCursor(xy)
     }
 }

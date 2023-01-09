@@ -16,7 +16,7 @@ public class MuLeafVm: MuNodeVm {
     
     func updateLeafPeers(_ visitor: Visitor) {
         if visitor.isLocal() {
-            rootVm.sendToPeers(self, thumb)
+            rootVm.sendLeafToPeers(self, thumb, .moved)
         }
     }
 
