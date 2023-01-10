@@ -37,7 +37,7 @@ public class MuRootVm: ObservableObject, Equatable {
         newSpotVm.branchVm.treeVm.showTree("branch", fromRemote)
         newSpotVm.refreshStatus()
         if !fromRemote {
-            sendNodeToPeers(newSpotVm, touchState.phase)
+            sendNodeToPeers(newSpotVm, touchState?.phase ?? .began)
         }
     }
 
@@ -116,7 +116,7 @@ public class MuRootVm: ObservableObject, Equatable {
         }
         return nil
     }
-    var touchState: MuTouchState!
+    var touchState: MuTouchState?
     func touchBegin(_ touchState: MuTouchState,
                     _ fromRemote: Bool) {
 
@@ -161,7 +161,7 @@ public class MuRootVm: ObservableObject, Equatable {
     
     private func updateRoot(_ fromRemote: Bool) {
 
-        let touchNow = touchState.pointNow
+        let touchNow = touchState?.pointNow ?? .zero
         
         // stay exclusively on .leaf or .edit mode
         switch touchElement {
@@ -179,7 +179,7 @@ public class MuRootVm: ObservableObject, Equatable {
         // log(touchElement.symbol, terminator: "")
         
         func touchLeafNode() -> Bool {
-            if touchState.phase == .began,
+            if touchState?.phase ?? .began == .began,
                let leafVm = nodeSpotVm as? MuLeafVm {
                 
                 if leafVm.runwayBounds.contains(touchNow) {
@@ -205,12 +205,12 @@ public class MuRootVm: ObservableObject, Equatable {
             return false
         }
         func hoverRootNode() -> Bool {
-            
+            guard let touchState else { print("*** nil touchState");  return false }
             let touchingRoot = touchVm.rootNodeVm?.containsPoint(touchNow) ?? false
             if !touchingRoot {
                 if beginTouchElement == .root {
                     // when dragging root over branches, expand tree
-                    treeSpotVm?.shiftExpandLast(touchState, fromRemote)
+                    treeSpotVm?.shiftExpandLast(fromRemote)
                     // do this only once
                     beginTouchElement = .none
                 }
@@ -260,7 +260,7 @@ public class MuRootVm: ObservableObject, Equatable {
                     
                 } else if let nearestLeafVm = nearestBranch.findNearestLeaf(touchNow) {
                     // special case where not touching on leaf runway but is touching headline
-                    if touchState.phase == .began {
+                    if touchState?.phase ?? .ended == .began {
 
                         updateSpot(nearestLeafVm, fromRemote)
                         touchElement = .shift
@@ -317,11 +317,13 @@ public class MuRootVm: ObservableObject, Equatable {
             guard let leafVm = nodeSpotVm as? MuLeafVm else { return }
             if touchElement != .edit {
                 touchElement = .edit
-                let touchDone = touchState.phase.isDone()
+                let touchDone = touchState?.phase.isDone() ?? true
                 leafVm.spot(touchDone ? .off : .on)
                 leafVm.branchSpot(.off)
             }
-            leafVm.touchLeaf(touchState)
+            if let touchState {
+                leafVm.touchLeaf(touchState)
+            }
 
             // hide status line
             MuStatusVm.statusLine(.off)

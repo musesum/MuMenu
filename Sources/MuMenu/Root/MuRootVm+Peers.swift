@@ -11,7 +11,7 @@ extension MuRootVm {
         
         if peers.hasPeers {
             do {
-                let phase = touchState.phase
+                let phase = phase
                 let item = MenuItem(leafVm, thumb, phase)
                 let encoder = JSONEncoder()
                 let data = try encoder.encode(item)

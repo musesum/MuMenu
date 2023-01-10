@@ -30,7 +30,7 @@ extension MuLeafSegVm: MuLeafProtocol {
         }
     }
 
-    public func valueText() -> String {
+    public func leafTitle() -> String {
         if editing {
             return range.upperBound > 1
             ? String(format: "%.f", scale(thumb[0], from: 0...1, to: range))

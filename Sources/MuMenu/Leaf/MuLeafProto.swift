@@ -10,7 +10,7 @@ public protocol MuLeafProtocol {
     func updateLeaf(_ any: Any, _ visitor: Visitor)
 
     /// title for control value
-    func valueText() -> String
+    func leafTitle() -> String
 
     /// position of thumb in control
     func thumbOffset() -> CGSize

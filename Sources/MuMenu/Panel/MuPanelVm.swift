@@ -94,12 +94,12 @@ public class MuPanelVm {
         return result
     }
     var titleSize: CGSize {
-        if count == 1, nodes.first?.nodeType == .vxy {
+        if nodes.last?.nodeType == .vxy {
             // title is always on top
-            return CGSize(width:  inner.width,
+            return CGSize(width:  outer.width - 8,
                           height: Layout.diameter - 8)
         } else {
-            return CGSize(width:  Layout.diameter - 8,
+            return CGSize(width:  Layout.diameter ,
                           height: Layout.diameter - 8)
         }
     }

@@ -24,7 +24,7 @@ extension MuLeafValVm: MuLeafProtocol {
         }
     }
 
-    public func valueText() -> String {
+    public func leafTitle() -> String {
         if editing {
             return String(format: "%.2f", expanded)
         } else {

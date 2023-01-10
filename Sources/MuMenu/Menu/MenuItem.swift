@@ -83,7 +83,7 @@ public struct MenuItem: Codable {
         self.time = Date().timeIntervalSince1970
         self.corner = root.corner.rawValue
         self.root = MenuRootItem(root)
-        self.phase = root.touchState.phase.rawValue
+        self.phase = (root.touchState?.phase ?? .began).rawValue
         // log("MenuRootItem", [self.phase])
     }
 

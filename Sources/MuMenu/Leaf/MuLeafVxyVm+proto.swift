@@ -33,7 +33,7 @@ extension MuLeafVxyVm: MuLeafProtocol {
         }
     }
 
-    public func valueText() -> String {
+    public func leafTitle() -> String {
         if editing {
             return String(format: "x %.2f y %.2f",
                    expand(named: "x", thumb[0]),

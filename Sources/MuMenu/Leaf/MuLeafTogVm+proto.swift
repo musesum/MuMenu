@@ -25,7 +25,7 @@ extension MuLeafTogVm: MuLeafProtocol {
         }
     }
 
-    public func valueText() -> String {
+    public func leafTitle() -> String {
         if editing {
             return thumb[0] == 1.0 ? "1" : "0"
         } else {

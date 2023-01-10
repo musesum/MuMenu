@@ -28,7 +28,7 @@ extension MuLeafTapVm: MuLeafProtocol {
     }
 
 
-    public func valueText() -> String {
+    public func leafTitle() -> String {
         if editing {
             return editing ? "1" :  "0"
         } else {

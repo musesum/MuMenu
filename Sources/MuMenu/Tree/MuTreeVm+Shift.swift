@@ -77,12 +77,12 @@ extension MuTreeVm { // + Shift
         // log("\nshiftConstrain ", [ "shifted", treeShifted, "shifting", treeShifting, "moved", moved, "inward: ", goingInward ])
     }
 
-    func shiftTree(_ touchState: MuTouchState,
+    func shiftTree(_ touchState: MuTouchState?,
                    _ fromRemote: Bool) {
 
         guard let lastBranchVm = branchVms.last else { return }
 
-        if touchState.phase == .ended {
+        if let touchState, touchState.phase == .ended {
             treeShifting = (touchState.touchEndedCount > 0
                             ? (goingInward
                                 ? cornerAxis.outerLimit(of: lastBranchVm.shiftRange)
@@ -92,17 +92,16 @@ extension MuTreeVm { // + Shift
             goingInward = false
             treeShifted = treeShifting
         } else {
-            shiftConstrain(touchState.moved)
+            shiftConstrain(touchState?.moved ?? .zero)
         }
-        updateBranches(touchState, fromRemote)
+        updateBranches(fromRemote)
     }
-    func shiftExpandLast(_ touchState: MuTouchState,
-                         _ fromRemote: Bool) {
+    func shiftExpandLast(_ fromRemote: Bool) {
 
         // print("*** shiftExpandLast")
         treeShifting = .zero
         treeShifted  = .zero
-        updateBranches(touchState, fromRemote)
+        updateBranches(fromRemote)
     }
 
     func shiftTree(to index: Int) {
@@ -114,8 +113,7 @@ extension MuTreeVm { // + Shift
         }
     }
 
-    func updateBranches(_ touchState: MuTouchState,
-                        _ fromRemote: Bool) {
+    func updateBranches(_ fromRemote: Bool) {
 
         var isHidden = true // tucked in from shifting inward
         var index = 0

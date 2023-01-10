@@ -4,11 +4,12 @@ import SwiftUI
 
 /// Generic layout of title and control based on axis
 struct MuLeafView<Content: View>: View {
+
     let leafVm: MuLeafVm
     let content: () -> Content
     var panelVm: MuPanelVm { leafVm.panelVm }
 
-    init(_ leafVm: MuLeafVm, @ViewBuilder content: @escaping () -> Content) {
+    init(_ leafVm: MuLeafVm, @ViewBuilder content: @escaping ()->Content) {
         self.leafVm = leafVm
         self.content = content
     }
@@ -44,16 +45,17 @@ struct MuLeafTitleView: View {
 
     @ObservedObject var leafVm: MuLeafVm
     var panelVm: MuPanelVm { leafVm.panelVm }
-    var valueText: String { leafVm.leafProto?.valueText() ?? "??"}
+    var leafTitle: String { leafVm.leafProto?.leafTitle() ?? "??"}
 
     init(_ leafVm: MuLeafVm) {
         self.leafVm = leafVm
     }
     var body: some View {
-        Text(valueText)
+        Text(leafTitle)
             .scaledToFit()
             .minimumScaleFactor(0.01)
             .foregroundColor(Color.white)
+            .shadow(color: .black, radius: 1.0)
             .frame(width:  panelVm.titleSize.width,
                    height: panelVm.titleSize.height)
     }
