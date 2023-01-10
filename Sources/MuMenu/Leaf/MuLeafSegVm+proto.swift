@@ -31,9 +31,13 @@ extension MuLeafSegVm: MuLeafProtocol {
     }
 
     public func valueText() -> String {
-        range.upperBound > 1
-        ? String(format: "%.f", scale(thumb[0], from: 0...1, to: range))
-        : String(format: "%.1f", thumb[0])
+        if editing {
+            return range.upperBound > 1
+            ? String(format: "%.f", scale(thumb[0], from: 0...1, to: range))
+            : String(format: "%.1f", thumb[0])
+        } else {
+            return node.title
+        }
     }
 
     public func thumbOffset() -> CGSize {

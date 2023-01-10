@@ -26,7 +26,11 @@ extension MuLeafTogVm: MuLeafProtocol {
     }
 
     public func valueText() -> String {
-        thumb[0] == 1.0 ? "1" : "0"
+        if editing {
+            return thumb[0] == 1.0 ? "1" : "0"
+        } else {
+            return node.title
+        }
     }
 
     public func thumbOffset() -> CGSize {

@@ -34,9 +34,13 @@ extension MuLeafVxyVm: MuLeafProtocol {
     }
 
     public func valueText() -> String {
-        String(format: "x %.2f y %.2f",
-               expand(named: "x", thumb[0]),
-               expand(named: "y", thumb[1]))
+        if editing {
+            return String(format: "x %.2f y %.2f",
+                   expand(named: "x", thumb[0]),
+                   expand(named: "y", thumb[1]))
+        } else {
+           return node.title
+        }
     }
 
     public func thumbOffset() -> CGSize {

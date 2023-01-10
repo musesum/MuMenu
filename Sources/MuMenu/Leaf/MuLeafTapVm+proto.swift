@@ -29,7 +29,11 @@ extension MuLeafTapVm: MuLeafProtocol {
 
 
     public func valueText() -> String {
-        editing ? "1" :  "0"
+        if editing {
+            return editing ? "1" :  "0"
+        } else {
+            return node.title
+        }
     }
     public func thumbOffset() -> CGSize {
         CGSize(width: 0, height:  panelVm.runway)

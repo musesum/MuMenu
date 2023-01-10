@@ -25,7 +25,11 @@ extension MuLeafValVm: MuLeafProtocol {
     }
 
     public func valueText() -> String {
-        String(format: "%.2f", expanded)
+        if editing {
+            return String(format: "%.2f", expanded)
+        } else {
+            return node.title
+        }
     }
     public func thumbOffset() -> CGSize {
         panelVm.isVertical

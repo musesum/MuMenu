@@ -6,7 +6,7 @@ extension MuLeafPeerVm: MuLeafProtocol {
 
     public func refreshValue() {}
     public func updateLeaf(_ any: Any, _ visitor: Visitor) {}
-    public func valueText() -> String { "" }
+    public func valueText() -> String { node.title }
     public func thumbOffset() -> CGSize {
         CGSize(width: 0, height:  panelVm.runway)
     }
