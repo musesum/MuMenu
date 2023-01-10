@@ -41,7 +41,7 @@ extension MuTreeVm { // +Show
         startIndex = nextIndex
         depthShown = depthNow
         shiftTree(to: startIndex)
-        logShowTree()
+        // logShowTree()
         sendToPeers(fromRemote)
         
         func logShowTree() {

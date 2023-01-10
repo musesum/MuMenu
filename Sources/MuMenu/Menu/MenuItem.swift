@@ -1,15 +1,7 @@
 //  Created by warren on 1/8/23.
 
 import SwiftUI
-extension Int {
-    func uiPhase() -> UITouch.Phase {
-        switch self {
-            case 0: return .began
-            case 1,2: return .moved
-            default: return .ended
-        }
-    }
-}
+
 public struct MenuTreeItem: Codable {
     
     public var corner : Int
