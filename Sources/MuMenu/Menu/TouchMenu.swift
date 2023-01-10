@@ -29,13 +29,13 @@ extension TouchMenu: BufferFlushDelegate {
                 item.touchVm?.gotoNodeItem(item)
             } else if let root = item.root {
                 for tree in root.trees {
-                    tree.showTree()
+                    tree.showTree(isRemote)
                 }
             }
         } else if let touch = item.touch {
             item.touchVm?.updateTouchXY(touch.cgPoint, item.phase)
         }
-        return false //??? never invalidate internal timer // item.isDone
+        return false // never invalidate internal timer
     }
 }
 

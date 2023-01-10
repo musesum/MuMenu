@@ -19,7 +19,7 @@ extension MuTouchVm {
 
     public func gotoNodeItem(_ item: MenuItem) {
         if let node = item.node,
-           let foundNodeVm = node.treeVm?.followHashPath(node) {
+           let foundNodeVm = node.treeVm?.gotoNodeItem(node) {
 
             if let leafVm = foundNodeVm as? MuLeafVm {
                 updateRemoteLeafVm(leafVm, node)
@@ -35,7 +35,7 @@ extension MuTouchVm {
         DispatchQueue.main.async {
 
             if let leafProto = leafVm.leafProto {
-                log("remoteLeaf", [nodeItem.thumb])
+                // log("remoteLeaf", [nodeItem.thumb])
                 leafProto.updateLeaf(nodeItem.thumb, Visitor(fromRemote: true))
             }
         }
@@ -47,9 +47,8 @@ extension MuTouchVm {
         DispatchQueue.main.async {
 
             let xy = nodeVm.center
-            let phase = UITouch.Phase(rawValue: menuItem.phase)
             log("remoteNode", [xy, "phase: ", menuItem.phase])
-            switch phase {
+            switch menuItem.phase.uiPhase() {
                 case .began: self.begin(xy, fromRemote: true)
                 case .moved: self.moved(xy, fromRemote: true)
                 default:     self.ended(xy, fromRemote: true)

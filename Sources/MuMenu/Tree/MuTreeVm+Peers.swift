@@ -4,10 +4,14 @@ import Foundation
 
 extension MuTreeVm { // + Peers
 
-    func followHashPath(_ menuItem: MenuNodeItem) -> MuNodeVm? {
+    func gotoNodeItem(_ nodeItem: MenuNodeItem) -> MuNodeVm? {
+        let hashPath = nodeItem.hashPath
+        let hashNow = nodeItem.hashNow
+        return followHashPath(hashPath,hashNow)
+    }
+    func followHashPath(_ hashPath: [Int],
+                        _ hashNow: Int) -> MuNodeVm? {
 
-        let hashPath = menuItem.hashPath
-        let hashNow = menuItem.hashNow
         var branchVm = branchVms.first
         var nodeNow: MuNodeVm?
 
@@ -20,10 +24,10 @@ extension MuTreeVm { // + Peers
                 }
                 if !stepNodeVm.nodeType.isLeaf {
                     stepNodeVm.refreshBranch()
-                    showTree("hash", /*fromRemote*/ true)
                 }
                 branchVm = stepNodeVm.nextBranchVm
                 if branchVm == nil {
+                    showTree("hash", /*fromRemote*/ true)
                     return nodeNow ?? stepNodeVm
                 }
             }

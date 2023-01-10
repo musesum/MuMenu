@@ -59,8 +59,7 @@ public class MuTouchVm: ObservableObject {
     public func updateTouchXY(_ touchXY: CGPoint,
                               _ phase: Int) {
 
-        let phase = UITouch.Phase(rawValue: phase)
-        switch phase {
+        switch phase.uiPhase() {
             case .began: begin(touchXY, fromRemote: false)
             case .moved: moved(touchXY, fromRemote: false)
             default:     ended(touchXY, fromRemote: false)

@@ -1,7 +1,15 @@
 //  Created by warren on 1/8/23.
 
 import SwiftUI
-
+extension Int {
+    func uiPhase() -> UITouch.Phase {
+        switch self {
+            case 0: return .began
+            case 1,2: return .moved
+            default: return .ended
+        }
+    }
+}
 public struct MenuTreeItem: Codable {
     
     public var corner : Int
@@ -31,10 +39,11 @@ public struct MenuTreeItem: Codable {
         let key = CornerAxis.Key(corner, axis)
         return CornerAxisTreeVm[key]
     }
-    func showTree() {
+    func showTree(_ fromRemote: Bool) {
+        // log("remote showTree", [start, depth])
         treeVm?.showTree(start: start,
                          depth: depth,
-                         "item", true)
+                         "item",fromRemote)
     }
 
 }
@@ -75,7 +84,7 @@ public struct MenuItem: Codable {
         self.corner = root.corner.rawValue
         self.root = MenuRootItem(root)
         self.phase = root.touchState.phase.rawValue
-        log("MenuRootItem", [self.phase])
+        // log("MenuRootItem", [self.phase])
     }
 
     public init(_ nodeVm : MuNodeVm,
@@ -87,7 +96,7 @@ public struct MenuItem: Codable {
         self.corner = nodeVm.rootVm.corner.rawValue
         self.node  = MenuNodeItem(nodeVm,thumb)
         self.phase = phase.rawValue
-        log("MenuNodeItem", [self.phase])
+        // log("MenuNodeItem", [self.phase])
     }
 
     public init(_ touch: UITouch,
@@ -98,7 +107,7 @@ public struct MenuItem: Codable {
         self.touch = MenuTouchItem(touch)
         self.corner = corner.rawValue
         self.phase = touch.phase.rawValue
-        log("MenuTouchItem", [self.phase])
+        // log("MenuTouchItem", [self.phase])
     }
 
     enum CodingKeys: String, CodingKey {

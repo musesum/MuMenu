@@ -127,11 +127,10 @@ extension MuTreeVm { // + Shift
             }
             index += 1
         }
-        sendToPeers(touchState, fromRemote)
+        sendToPeers(fromRemote)
     }
 
-    func sendToPeers(_ touchState: MuTouchState,
-                     _ fromRemote: Bool) {
+    func sendToPeers(_ fromRemote: Bool) {
         
         if fromRemote { return }
         let peers = PeersController.shared
