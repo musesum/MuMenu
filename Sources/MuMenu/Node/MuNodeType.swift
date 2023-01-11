@@ -2,7 +2,7 @@
 
 import SwiftUI
 
-public enum MuMenuType: String {
+public enum MuNodeType: String {
     case none // no defined thpe
     case node // either icon or text
     case val  // value control

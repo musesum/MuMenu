@@ -125,24 +125,11 @@ extension MuTreeVm { // + Shift
             }
             index += 1
         }
-        sendToPeers(fromRemote)
-    }
-
-    func sendToPeers(_ fromRemote: Bool) {
-        
-        if fromRemote { return }
-        let peers = PeersController.shared
-        if peers.hasPeers {
-            do {
-                let item = MenuItem(rootVm)
-                let encoder = JSONEncoder()
-                let data = try encoder.encode(item)
-                peers.sendMessage(data, viaStream: true)
-            } catch {
-                print(error)
-            }
+        if !fromRemote {
+            let rootItem = MenuRootItem(rootVm)
+            let menuItem = MenuItem(root: rootItem)
+            rootVm.sendItemToPeers(menuItem)
         }
     }
-
-
+    
 }

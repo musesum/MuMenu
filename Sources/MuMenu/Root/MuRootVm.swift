@@ -37,7 +37,16 @@ public class MuRootVm: ObservableObject, Equatable {
         newSpotVm.branchVm.treeVm.showTree("branch", fromRemote)
         newSpotVm.refreshStatus()
         if !fromRemote {
-            sendNodeToPeers(newSpotVm, touchState?.phase ?? .began)
+            let phase = touchState?.phase ?? .began
+            if let leafVm = newSpotVm as? MuLeafVm {
+                let leafItem = MenuLeafItem(leafVm, leafVm.thumb)
+                let menuItem = MenuItem(leaf: leafItem, phase)
+                sendItemToPeers(menuItem)
+            } else {
+                let nodeItem = MenuNodeItem(newSpotVm)
+                let menuItem = MenuItem(node: nodeItem, phase)
+                sendItemToPeers(menuItem)
+            }
         }
     }
 
@@ -152,9 +161,13 @@ public class MuRootVm: ObservableObject, Equatable {
         MuStatusVm.statusLine(.off)
         if !fromRemote, let nodeSpotVm {
             if let leafVm = nodeSpotVm as? MuLeafVm {
-                sendLeafToPeers(leafVm, leafVm.thumb, touchState.phase)
+                let leafItem = MenuLeafItem(leafVm, leafVm.thumb)
+                let menuItem = MenuItem(leaf: leafItem, touchState.phase)
+                sendItemToPeers(menuItem)
             } else {
-                sendNodeToPeers(nodeSpotVm, touchState.phase) 
+                let nodeItem = MenuNodeItem(nodeSpotVm)
+                let menuItem = MenuItem(node: nodeItem, touchState.phase)
+                sendItemToPeers(menuItem)
             }
         }
     }

@@ -25,14 +25,19 @@ extension TouchMenu: BufferFlushDelegate {
         let item = item as! MenuItem
 
         if isRemote {
-            if let _ = item.node {
-                item.touchVm?.gotoNodeItem(item)
-            } else if let root = item.root {
-                for tree in root.trees {
-                    tree.showTree(isRemote)
-                }
+            switch item.type {
+                case .node, .leaf:
+                    item.touchVm?.gotoMenuItem(item)
+                case .root:
+                    if let root = item.item as? MenuRootItem {
+                        for tree in root.trees {
+                            tree.showTree(isRemote)
+                        }
+                    }
+                default: break
             }
-        } else if let touch = item.touch {
+
+        } else if let touch = item.item as? MenuTouchItem {
             item.touchVm?.updateTouchXY(touch.cgPoint, item.phase)
         }
         return false // never invalidate internal timer

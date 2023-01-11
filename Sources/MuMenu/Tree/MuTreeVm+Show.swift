@@ -42,8 +42,11 @@ extension MuTreeVm { // +Show
         depthShown = depthNow
         shiftTree(to: startIndex)
         // logShowTree()
-        sendToPeers(fromRemote)
-        
+        if !fromRemote {
+            let rootItem = MenuRootItem(rootVm)
+            let menuItem = MenuItem(root: rootItem)
+            rootVm.sendItemToPeers(menuItem)
+        }
         func logShowTree() {
             
             print("\(via.pad(7))\(cornerAxis.corner.indicator())\(isVertical ? "V" : "H") (s \(nextIndex) d \(nextDepth)) ", terminator: " ")

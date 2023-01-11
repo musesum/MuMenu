@@ -5,7 +5,7 @@ import SwiftUI
 public class MuPanelVm {
  
     var nodes: [MuNode]
-    var nodeType: MuMenuType
+    var nodeType: MuNodeType
     var cornerAxis: CornerAxis
     let isVertical: Bool
     var count: CGFloat

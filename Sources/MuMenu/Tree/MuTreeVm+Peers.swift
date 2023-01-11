@@ -9,6 +9,15 @@ extension MuTreeVm { // + Peers
         let hashNow = nodeItem.hashNow
         return followHashPath(hashPath,hashNow)
     }
+    func gotoLeafItem(_ leafItem: MenuLeafItem) -> MuLeafVm? {
+        let hashPath = leafItem.hashPath
+        let hashNow = leafItem.hashNow
+        if let nodeVm = followHashPath(hashPath,hashNow),
+           let leafVm = nodeVm as? MuLeafVm {
+            return leafVm
+        }
+        return nil 
+    }
     func followHashPath(_ hashPath: [Int],
                         _ hashNow: Int) -> MuNodeVm? {
 

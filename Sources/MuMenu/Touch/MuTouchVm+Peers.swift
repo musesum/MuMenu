@@ -17,38 +17,46 @@ extension MuTouchVm {
         return nil // does NOT hit menu
     }
 
-    public func gotoNodeItem(_ item: MenuItem) {
-        if let node = item.node,
-           let foundNodeVm = node.treeVm?.gotoNodeItem(node) {
+    public func gotoMenuItem(_ item: MenuItem) {
+        switch item.type {
+            case .node:
 
-            if let leafVm = foundNodeVm as? MuLeafVm {
-                updateRemoteLeafVm(leafVm, node)
-            } else {
-                updateRemoteNodeVm(foundNodeVm, item)
-            }
+                if let nodeItem = item.item as? MenuNodeItem,
+                   let nodeVm = nodeItem.treeVm?.gotoNodeItem(nodeItem) {
+
+                    updateRemoteNodeVm(nodeVm, item.phase)
+                }
+
+            case .leaf:
+
+                if let leafItem = item.item as? MenuLeafItem,
+                   let leafVm = leafItem.treeVm?.gotoLeafItem(leafItem) {
+
+                    updateRemoteLeafVm(leafVm, leafItem.thumb)
+                }
+
+            default: break
         }
     }
 
     func updateRemoteLeafVm(_ leafVm: MuLeafVm,
-                            _ nodeItem: MenuNodeItem) {
+                            _ thumb: [Double]) {
         
         DispatchQueue.main.async {
 
             if let leafProto = leafVm.leafProto {
-                // log("remoteLeaf", [nodeItem.thumb])
-                leafProto.updateLeaf(nodeItem.thumb, Visitor(fromRemote: true))
+                leafProto.updateLeaf(thumb, Visitor(fromRemote: true))
             }
         }
     }
     /// called either by SwiftUI MenuView DragGesture or UIKIt touchesUpdate
     public func updateRemoteNodeVm(_ nodeVm: MuNodeVm,
-                                   _ menuItem: MenuItem) {
+                                   _ phase: Int) {
 
         DispatchQueue.main.async {
 
             let xy = nodeVm.center
-            log("remoteNode", [xy, "phase: ", menuItem.phase])
-            switch menuItem.phase.uiPhase() {
+            switch phase.uiPhase() {
                 case .began: self.begin(xy, fromRemote: true)
                 case .moved: self.moved(xy, fromRemote: true)
                 default:     self.ended(xy, fromRemote: true)

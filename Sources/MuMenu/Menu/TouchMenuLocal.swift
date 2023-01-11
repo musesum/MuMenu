@@ -56,7 +56,7 @@ extension TouchMenuLocal: BufferFlushDelegate {
 
     public func flushItem<Item>(_ item: Item) -> Bool {
         let item = item as! MenuItem
-        if let touch = item.touch,
+        if let touch = item.item as? MenuTouchItem,
            let touchVm = CornerTouchVm[item.corner] {
 
             touchVm.updateTouchXY(touch.cgPoint, item.phase)
