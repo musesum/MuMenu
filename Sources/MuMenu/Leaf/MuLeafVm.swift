@@ -19,7 +19,6 @@ public class MuLeafVm: MuNodeVm {
             let leafItem = MenuLeafItem(self, thumb)
             let menuItem = MenuItem(leaf: leafItem, .moved)
             rootVm.sendItemToPeers(menuItem)
-            _ = branchVm.treeVm.followHashPath(node.hashPath, node.hash) //???
         }
 
     }

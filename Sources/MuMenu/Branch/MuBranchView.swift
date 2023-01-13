@@ -42,15 +42,18 @@ struct MuBranchView: View {
 
 /// title showing position of control
 struct MuBranchTitleView: View {
+    
     @EnvironmentObject var rootVm: MuRootVm
     @ObservedObject var branchVm: MuBranchVm
+
     var panelVm: MuPanelVm { branchVm.panelVm }
     var nodeSpotVm: MuNodeVm? { branchVm.nodeSpotVm }
     var branchTitle: String {nodeSpotVm?.node.title  ?? "??" }
     var opacity: CGFloat {
+        branchVm.treeVm.depthShown == 0 ? 0 :
         nodeSpotVm?.nodeType.isLeaf ?? true ? 0 :
         rootVm.touchState?.phase.isDone() ?? true ? 0 :
-        branchVm.show ? branchVm.branchOpacity : 0 }
+        branchVm.show ? branchVm.opacity : 0 }
 
     init(_ branchVm: MuBranchVm) {
         self.branchVm = branchVm
@@ -58,15 +61,18 @@ struct MuBranchTitleView: View {
     var body: some View {
         Text(branchTitle)
             .scaledToFit()
+            .allowsTightening(true)
+            .font(Font.system(size: 14, design: .default))
             .minimumScaleFactor(0.01)
             .foregroundColor(Color.white)
             .shadow(color: .black, radius: 1.0)
-            .frame(width:  panelVm.titleSize.width,
-                   height: panelVm.titleSize.height)
-            .offset(branchVm.branchShift)
+            .frame(width:  Layout.labelSize.width,
+                   height: Layout.labelSize.height,
+                   alignment: .center)
+            .offset(branchVm.shift)
             .opacity(opacity)
             .animation(.easeInOut(duration: Layout.animate), value: opacity)
-            .animation(.easeInOut(duration: branchVm.branchAnimate), value: branchVm.branchShift )
+            .animation(.easeInOut(duration: Layout.animate), value: branchVm.shift )
     }
 }
 
@@ -82,7 +88,9 @@ struct MuBranchBodyView: View {
     var rootVm: MuRootVm { branchVm.treeVm.rootVm }
     var panelVm: MuPanelVm { branchVm.panelVm }
     let spotlight: Bool
-    var opacity: CGFloat { branchVm.show ? branchVm.branchOpacity : 0 }
+    var opacity: CGFloat {
+        branchVm.treeVm.depthShown == 0 ? 0 :
+        branchVm.show ? branchVm.opacity : 0 }
 
     init(_ branchVm: MuBranchVm,
          _ spotlight: Bool) {
@@ -93,34 +101,29 @@ struct MuBranchBodyView: View {
 
     var body: some View {
         GeometryReader { geo in
-
             ZStack {
                 MuBranchPanelView(panelVm: panelVm,
                                   spotlight: spotlight)
-
-                let reverse = (panelVm.isVertical
-                               ? rootVm.corner.contains(.lower) ? true : false
-                               : rootVm.corner.contains(.right) ? true : false )
                 VStack {
 
                     MuPanelAxisView(panelVm) {
-                        ForEach(reverse
+
+                        ForEach(branchVm.treeVm.reversed()
                                 ? branchVm.nodeVms.reversed()
                                 : branchVm.nodeVms) {
                             MuNodeView(nodeVm: $0)
                         }
                     }
-
                 }
             }
-            .onAppear { branchVm.updateOnAppear( geo.frame(in: .global)) }
-            .onChange(of: geo.frame(in: .global)) { branchVm.updateOnChange($0) }
+            .onAppear { branchVm.updateBounds(geo.frame(in: .global)) }
+            .onChange(of: geo.frame(in: .global)) { branchVm.updateBounds($0) }
         }
         .frame(width: panelVm.outer.width, height: panelVm.outer.height)
-        .offset(branchVm.branchShift)
+        .offset(branchVm.shift)
         .opacity(opacity)
         .animation(.easeInOut(duration: Layout.animate), value: opacity)
-        .animation(.easeInOut(duration: branchVm.branchAnimate), value: branchVm.branchShift )
+        .animation(.easeInOut(duration: Layout.animate), value: branchVm.shift )
         //.onTapGesture { } // allow scrolling
     }
 }

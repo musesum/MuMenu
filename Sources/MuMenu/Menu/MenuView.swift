@@ -48,8 +48,7 @@ public struct MenuTouchView: View {
     public var body: some View {
         ZStack {
             GeometryReader { geo in
-                MuStatusView()
-                    .frame(width: geo.size.width, height: 18, alignment: .top)
+                // MuStatusView().frame(width: geo.size.width, height: 18, alignment: .top)
                 MuRootView()
                     .environmentObject(menuVm.rootVm)
                     .onAppear() { menuVm.rootVm.touchVm.updateBounds(geo.frame(in: .global)) }

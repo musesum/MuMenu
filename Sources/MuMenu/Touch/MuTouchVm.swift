@@ -129,4 +129,12 @@ public class MuTouchVm: ObservableObject {
         self.bounds = bounds
         // log("RootVm",[bounds])
     }
+
+    func touchingRoot(_ touchNow: CGPoint) -> Bool {
+        if let rootNodeVm,
+           rootNodeVm.containsPoint(touchNow) {
+            return true
+        }
+        return false
+    }
 }

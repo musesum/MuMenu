@@ -124,6 +124,19 @@ extension CGRect {
         return s
     }
 
+    public func shift (_ shift: CGPoint) -> CGRect {
+        let xx = origin.x + shift.x
+        let yy = origin.y + shift.y
+        let s = CGRect(x: xx, y: yy, width: width, height: height)
+        return s
+    }
+    public func shift (_ shift: CGSize) -> CGRect {
+        let xx = origin.x + shift.width
+        let yy = origin.y + shift.height
+        let s = CGRect(x: xx, y: yy, width: width, height: height)
+        return s
+    }
+
     public static func + (lhs: CGRect, rhs: CGPoint) -> CGRect {
         let xx = lhs.origin.x + rhs.x
         let yy = lhs.origin.y + rhs.y

@@ -53,11 +53,14 @@ struct MuLeafTitleView: View {
     var body: some View {
         Text(leafTitle)
             .scaledToFit()
+            .allowsTightening(true)
+            .font(Font.system(size: 14, design: .default))
             .minimumScaleFactor(0.01)
             .foregroundColor(Color.white)
             .shadow(color: .black, radius: 1.0)
             .frame(width:  panelVm.titleSize.width,
-                   height: panelVm.titleSize.height)
+                   height: panelVm.titleSize.height,
+                   alignment: .center)
     }
 }
 

@@ -5,29 +5,33 @@ import Foundation
 extension MuTreeVm {
 
     func nearestTrunk(_ touchNow: CGPoint) -> MuBranchVm? {
-        if let firstBranch = branchVms.first,
-           firstBranch.show,
-           firstBranch.boundsPad.contains(touchNow) {
-            return firstBranch
+        let trunkIndex = startIndex + depthShown - 1
+        if depthShown > 0,
+           trunkIndex < branchVms.count {
+           let branchVm = branchVms[trunkIndex]
+            if branchVm.contains(touchNow) {
+                return branchVm
+            }
         }
         return nil
     }
     func nearestBranch(_ touchNow: CGPoint) -> MuBranchVm? {
 
+        guard depthShown > 0 else { return nil }
         let opacityThreshold = 0.6
 
-        if let branchSpot = branchSpotVm,
-           branchSpot.boundsPad.contains(touchNow),
-           branchSpot.branchOpacity > opacityThreshold,
-           branchSpot.show {
+        if let branchSpotVm,
+           branchSpotVm.contains(touchNow),
+           branchSpotVm.opacity > opacityThreshold,
+           branchSpotVm.show {
 
-            return branchSpot
+            return branchSpotVm
         }
 
         for branchVm in branchVms {
             if branchVm.show == true,
-               branchVm.branchOpacity > opacityThreshold,
-               branchVm.boundsPad.contains(touchNow) {
+               branchVm.opacity > opacityThreshold,
+               branchVm.contains(touchNow) {
                 branchSpotVm = branchVm
                 return branchVm
             }

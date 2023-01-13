@@ -15,9 +15,7 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
 
     func spot(on: Bool) {
         if on == spotlight { return }
-        if on == true {
-            node.touch()
-        }
+        if on == true { node.touch() }
         spotlight = on
     }
 

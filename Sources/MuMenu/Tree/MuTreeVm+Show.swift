@@ -19,12 +19,12 @@ extension MuTreeVm { // +Show
         var branch: MuBranchVm! = branchVms.first
         while branch != nil {
             if depthNow < nextDepth {
-                branch.willShow = true
+                branch.show = true
                 if index >= nextIndex {
                     depthNow += 1
                 }
             } else {
-                branch.willShow = false
+                branch.show = false
             }
             index += 1
             
@@ -33,15 +33,15 @@ extension MuTreeVm { // +Show
         }
         branchVms = newBranches
 
-        for branch in newBranches {
-            branch.updateShiftRange()
-            branch.show = branch.willShow
+        for branchVm in branchVms {
+            branchVm.updateShiftRange()
         }
 
         startIndex = nextIndex
         depthShown = depthNow
         shiftTree(to: startIndex)
-        // logShowTree()
+        logShowTree() //???
+
         if !fromRemote {
             let rootItem = MenuRootItem(rootVm)
             let menuItem = MenuItem(root: rootItem)
@@ -56,5 +56,20 @@ extension MuTreeVm { // +Show
             }
             print("=== (s \(startIndex) d \(depthShown))  shift: \(treeShifted)")
         }
+    }
+    func lastShown() -> MuBranchVm? {
+        let lastIndex = startIndex + depthShown - 1
+        if depthShown > 0,
+           lastIndex < branchVms.count {
+
+            return branchVms[lastIndex]
+        } else {
+            return nil
+        }
+    }
+    func reversed() ->  Bool {
+        self.isVertical
+        ? rootVm.corner.contains(.lower) ? true : false
+        : rootVm.corner.contains(.right) ? true : false
     }
 }

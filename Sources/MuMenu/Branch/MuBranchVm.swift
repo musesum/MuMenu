@@ -8,9 +8,10 @@ public class MuBranchVm: Identifiable, ObservableObject {
     static func == (lhs: MuBranchVm, rhs: MuBranchVm?) -> Bool { lhs.id == (rhs?.id ?? -1) }
 
     @Published var show: Bool = false
-    var willShow = false
+    @Published var opacity: CGFloat = 1 /// branch may be partially occluded
+    var shift: CGSize { treeVm.treeShifting.clamped(to: shiftRange) }
 
-    public var treeVm: MuTreeVm       /// my tree; which unfolds a hierarchy of branches
+    public var treeVm: MuTreeVm /// my tree; which unfolds a hierarchy of branches
     var nodeVms: [MuNodeVm]    /// all the node View Models on this branch
     var nodeSpotVm: MuNodeVm?  /// current node, nodeSpotVm.branchVm is next branch
     var panelVm: MuPanelVm     /// background + stroke model for BranchView
@@ -19,8 +20,8 @@ public class MuBranchVm: Identifiable, ObservableObject {
     var boundsPrior: CGSize = .zero
     var boundsNow: CGRect = .zero /// current bounds after shifting
     var boundsPad: CGRect = .zero /// extended bounds for capturing finger drag
-    var branchOpacity: CGFloat = 1 /// branch may be partially occluded
-    var branchAnimate: CGFloat = 0 /// defer animation until after onAppear
+
+
     var zindex: CGFloat = 0       /// zIndex within sub/super branches
     var title: String {
         let nameFirst = nodeVms.first?.node.title ?? ""
@@ -95,7 +96,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
         nodeVms.append(nodeVm)
     }
 
-    func findNearestNode(_ touchNow: CGPoint) -> MuNodeVm? {
+    func nearestNode(_ touchNow: CGPoint) -> MuNodeVm? {
 
         if let nodeSpotVm {
             if nodeSpotVm.containsPoint(touchNow) ||
@@ -125,12 +126,12 @@ public class MuBranchVm: Identifiable, ObservableObject {
 
         // is hovering over same node as before
         if let leafVm = nodeSpotVm as? MuLeafVm,
-           leafVm.branchVm.boundsPad.contains(touchNow) {
+           leafVm.branchVm.contains(touchNow) {
             return leafVm
         }
         for nodeVm in nodeVms {
             if let leafVm = nodeVm as? MuLeafVm,
-               leafVm.branchVm.boundsPad.contains(touchNow) {
+               leafVm.branchVm.contains(touchNow) {
                 nodeSpotVm = leafVm
                 nodeSpotVm?.spot(on: true)
                 leafVm.superSpotlight()
@@ -140,33 +141,8 @@ public class MuBranchVm: Identifiable, ObservableObject {
         return nil
     }
 
-    /// Branch .onAppear is first hidden until .onChange
-    ///
-    ///  - note: Position is assumed to be for a fully extended tree,
-    /// which may have been shifted by user. So, hide branch until
-    /// updateBranchBound and shift position immediatly before
-    /// fading in the view
-    ///
-    func updateOnAppear(_ fromBounds: CGRect) {
-        //branchOpacity = 0 // hide the branch
-        branchAnimate = 0 // immediatly change position
-        updateBranchBounds(fromBounds)
-        show = true
-    }
-    /// Branch .onChange to correct position
-    ///
-    ///  - note: see note for updateOnAppear.
-    ///  Now that branch is in correct position,
-    ///  fade in and animate user shift gestures
-    ///
-    func updateOnChange(_ fromBounds: CGRect) {
-        branchOpacity = 1 // fades in via Layout.Animate
-        branchAnimate = Layout.animate // now animate position
-        updateBranchBounds(fromBounds)
-    }
-
     /// update from MuBranchView
-    func updateBranchBounds(_ fromBounds: CGRect) {
+    func updateBounds(_ fromBounds: CGRect) {
 
         if boundsNow != fromBounds {
             boundsNow = panelVm.updatePanelBounds(fromBounds)
@@ -175,7 +151,6 @@ public class MuBranchVm: Identifiable, ObservableObject {
         }
     }
     private var boundStart: CGRect = .zero
-    @Published var branchShift: CGSize = .zero
 
     var shiftRange: RangeXY = (0...1, 0...1)
     var limit: CGFloat = 0
@@ -210,18 +185,21 @@ public class MuBranchVm: Identifiable, ObservableObject {
 
         let treeShifting = treeVm.treeShifting
         if boundsNow == .zero { return 0 }
-        branchShift = treeShifting.clamped(to: shiftRange)
-        let clampDelta = branchShift-treeShifting
+        let clampDelta = shift-treeShifting
 
         if nodeVms.first?.nodeType.isLeaf ?? false {
-            branchOpacity = 1 // always show leaves
+            opacity = 1 // always show leaves
         } else {
             let ww = abs(clampDelta.width) / boundStart.width
             let hh = abs(clampDelta.height) / boundStart.height
-            branchOpacity = min(1-ww,1-hh)
+            opacity = min(1-ww,1-hh) //??? 
         }
-        //log(title.pad(17), [shiftRange, " branchShift", branchShift, " bounds", boundsNow, " branchOpacity ", branchOpacity])
-        return branchOpacity
+        //log(title.pad(17), [shiftRange, " branchShift", branchShift, " bounds", boundsNow, " opacity ", opacity])
+        return opacity
+    }
+
+    func contains(_ point: CGPoint) -> Bool {
+        return boundsPad.contains(point)
     }
 
 }

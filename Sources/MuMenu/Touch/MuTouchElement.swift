@@ -12,7 +12,6 @@ enum MuTouchElement: String  {
     case shift  /// shifting branches by dragging header for leaf
     case edit   /// editing area inside a leaf
     case space  /// hovering over canvas while on menu
-    case edge   /// unsafe area to expand tree branches
     
     public var symbol: String {
         switch self {
@@ -24,7 +23,6 @@ enum MuTouchElement: String  {
             case .shift  : return "⊪"
             case .edit   : return "✎"
             case .space  : return "◌"
-            case .edge   : return "⫼"
         }
     }
     public var description: String {
@@ -37,7 +35,6 @@ enum MuTouchElement: String  {
             case .shift  : return "shift"
             case .edit   : return "edit"
             case .space  : return "space"
-            case .edge   : return "edge"
         }
     }
     static public func symbols(_ set: Set<MuTouchElement>) -> String {

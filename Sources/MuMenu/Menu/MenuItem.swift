@@ -45,14 +45,14 @@ public struct MenuRootItem: Codable {
     public var corner : Int
     public var phase  : Int // UITouch.Phase
 
-    public init(_ root: MuRootVm) {
+    public init(_ rootVm: MuRootVm) {
         var trees = [MenuTreeItem]()
-        for treeVm in root.treeVms {
+        for treeVm in rootVm.treeVms {
             trees.append(MenuTreeItem(treeVm))
         }
         self.trees = trees
-        self.corner = root.corner.rawValue
-        self.phase = (root.touchState?.phase ?? .began).rawValue
+        self.corner = rootVm.corner.rawValue
+        self.phase = (rootVm.touchState?.phase ?? .began).rawValue
     }
 
     enum CodingKeys: String, CodingKey { case trees, corner, phase }

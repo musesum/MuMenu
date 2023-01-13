@@ -9,18 +9,35 @@ struct MuLeafVxyView: View {
     
     var body: some View {
         VStack {
-            MuLeafTitleView(leafVm)
-            MuLeafBodyView(leafVm) {
-                ZStack {
-                    // tick marks
-                    ForEach(leafVm.ticks, id: \.self) {
-                        Capsule()
-                            .fill(.gray)
-                            .frame(width: 4, height: 4)
-                            .offset(CGSize(width: $0.width, height: $0.height))
-                            .allowsHitTesting(false)
+            if panelVm.cornerAxis.corner.contains(.upper) {
+                MuLeafBodyView(leafVm) {
+                    ZStack {
+                        // tick marks
+                        ForEach(leafVm.ticks, id: \.self) {
+                            Capsule()
+                                .fill(.gray)
+                                .frame(width: 4, height: 4)
+                                .offset(CGSize(width: $0.width, height: $0.height))
+                                .allowsHitTesting(false)
+                        }
+                        MuLeafThumbSlideView(leafVm: leafVm)
                     }
-                    MuLeafThumbSlideView(leafVm: leafVm)
+                }
+                MuLeafTitleView(leafVm)
+            } else {
+                MuLeafTitleView(leafVm)
+                MuLeafBodyView(leafVm) {
+                    ZStack {
+                        // tick marks
+                        ForEach(leafVm.ticks, id: \.self) {
+                            Capsule()
+                                .fill(.gray)
+                                .frame(width: 4, height: 4)
+                                .offset(CGSize(width: $0.width, height: $0.height))
+                                .allowsHitTesting(false)
+                        }
+                        MuLeafThumbSlideView(leafVm: leafVm)
+                    }
                 }
             }
         }
