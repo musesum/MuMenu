@@ -2,14 +2,27 @@
 
 import SwiftUI
 
+import SwiftUI
+
 struct MuLeafPeerView: View {
 
     @ObservedObject var leafVm: MuLeafPeerVm
+    var panelVm: MuPanelVm { leafVm.panelVm }
 
     var body: some View {
-
-        MuLeafView(leafVm) {
-            PeersView(peersVm: leafVm.peersVm)
+        VStack {
+            if panelVm.cornerAxis.corner.contains(.upper) {
+                
+                MuLeafBodyView(leafVm) {
+                    PeersView(peersVm: leafVm.peersVm)
+                }
+                MuLeafTitleView(leafVm)
+            } else {
+                MuLeafTitleView(leafVm)
+                MuLeafBodyView(leafVm) {
+                    PeersView(peersVm: leafVm.peersVm)
+                }
+            }
         }
     }
 }

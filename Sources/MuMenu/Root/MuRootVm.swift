@@ -37,17 +37,12 @@ public class MuRootVm: ObservableObject, Equatable {
         newSpotVm.refreshBranch()
         newSpotVm.branchVm.treeVm.showTree("branch", fromRemote)
         newSpotVm.refreshStatus()
+
         if !fromRemote {
             let phase = touchState?.phase ?? .began
-            if let leafVm = newSpotVm as? MuLeafVm {
-                let leafItem = MenuLeafItem(leafVm, leafVm.thumb)
-                let menuItem = MenuItem(leaf: leafItem, phase)
-                sendItemToPeers(menuItem)
-            } else {
-                let nodeItem = MenuNodeItem(newSpotVm)
-                let menuItem = MenuItem(node: nodeItem, phase)
-                sendItemToPeers(menuItem)
-            }
+            let nodeItem = MenuNodeItem(newSpotVm)
+            let menuItem = MenuItem(node: nodeItem, phase)
+            sendItemToPeers(menuItem)
         }
     }
 
@@ -160,16 +155,11 @@ public class MuRootVm: ObservableObject, Equatable {
         treeSpotVm?.branchSpotVm = nil
         touchElement = .none
         MuStatusVm.statusLine(.off)
+
         if !fromRemote, let nodeSpotVm {
-            if let leafVm = nodeSpotVm as? MuLeafVm {
-                let leafItem = MenuLeafItem(leafVm, leafVm.thumb)
-                let menuItem = MenuItem(leaf: leafItem, touchState.phase)
-                sendItemToPeers(menuItem)
-            } else {
-                let nodeItem = MenuNodeItem(nodeSpotVm)
-                let menuItem = MenuItem(node: nodeItem, touchState.phase)
-                sendItemToPeers(menuItem)
-            }
+            let nodeItem = MenuNodeItem(nodeSpotVm)
+            let menuItem = MenuItem(node: nodeItem, touchState.phase)
+            sendItemToPeers(menuItem)
         }
     }
     
@@ -408,8 +398,6 @@ public class MuRootVm: ObservableObject, Equatable {
             for treeVm in treeVms {
                 treeVm.showTree(depth: 0, "hide", fromRemote)
             }
-            //???            treeSpotVm = nil
-            //            nodeSpotVm = nil
             viewElements = [.root]
         }
     }

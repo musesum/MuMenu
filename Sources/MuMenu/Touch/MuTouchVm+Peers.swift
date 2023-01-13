@@ -21,10 +21,9 @@ extension MuTouchVm {
         switch item.type {
             case .node:
 
-                if let nodeItem = item.item as? MenuNodeItem,
-                   let nodeVm = nodeItem.treeVm?.gotoNodeItem(nodeItem) {
+                if let nodeItem = item.item as? MenuNodeItem {
 
-                    updateRemoteNodeVm(nodeVm, item.phase)
+                    _  = nodeItem.treeVm?.gotoNodeItem(nodeItem)
                 }
 
             case .leaf:
@@ -33,6 +32,12 @@ extension MuTouchVm {
                    let leafVm = leafItem.treeVm?.gotoLeafItem(leafItem) {
 
                     updateRemoteLeafVm(leafVm, leafItem.thumb)
+                }
+            case .touch:
+
+                if let touchItem = item.item as? MenuTouchItem {
+
+                    updateRemoteTouch(touchItem, item.phase)
                 }
 
             default: break
@@ -49,13 +54,14 @@ extension MuTouchVm {
             }
         }
     }
-    /// called either by SwiftUI MenuView DragGesture or UIKIt touchesUpdate
-    public func updateRemoteNodeVm(_ nodeVm: MuNodeVm,
-                                   _ phase: Int) {
+    /// current not called, useful for shared screen where teacher controls the students root cursor
+    public func updateRemoteTouch(_ touchItem: MenuTouchItem,
+                                  _ phase: Int) {
 
         DispatchQueue.main.async {
 
-            let xy = nodeVm.center
+            let xy = touchItem.cgPoint
+
             switch phase.uiPhase() {
                 case .began: self.begin(xy, fromRemote: true)
                 case .moved: self.moved(xy, fromRemote: true)

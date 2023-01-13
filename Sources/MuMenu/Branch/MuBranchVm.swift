@@ -192,7 +192,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
         } else {
             let ww = abs(clampDelta.width) / boundStart.width
             let hh = abs(clampDelta.height) / boundStart.height
-            opacity = min(1-ww,1-hh) //??? 
+            opacity = min(1-ww,1-hh)
         }
         //log(title.pad(17), [shiftRange, " branchShift", branchShift, " bounds", boundsNow, " opacity ", opacity])
         return opacity

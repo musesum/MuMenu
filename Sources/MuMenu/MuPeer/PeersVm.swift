@@ -9,7 +9,7 @@ class PeersVm: ObservableObject {
     public static let shared = PeersVm()
 
     /// myName and one second counter
-    @Published var peersTitle = ""
+    @Published var peersTitle = "Bonjour"
 
     /// list of connected peers and their counter
     @Published var peersList = ""

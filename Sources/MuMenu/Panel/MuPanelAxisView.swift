@@ -20,7 +20,8 @@ struct MuPanelAxisView<Content: View>: View {
         // so, perhaps there is a phantom space for indicators?
         
         if (panelVm.isVertical  ||
-            panelVm.nodeType == .vxy)
+            panelVm.nodeType == .vxy ||
+            panelVm.nodeType == .peer)
             {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading,

@@ -33,10 +33,10 @@ public class MuPanelVm {
             case .tog  : aspect(1.0, 1.5)
             case .seg  : aspect(1.0, 4.0)
             case .tap  : aspect(1.0, 1.0)
-            case .peer : aspect(6.0, 4.0)
+            case .peer : aspect(6.0, 3.0)
         }
         func aspect(_ lo: CGFloat,_ hi: CGFloat) {
-            aspectSz = isVertical
+            aspectSz = isVertical || nodeType == .peer
             ? CGSize(width: lo, height: hi)
             : CGSize(width: hi, height: lo)
         }
@@ -72,14 +72,14 @@ public class MuPanelVm {
 
         switch nodeType {
 
-            case .val, .seg, .tog, .tap, .peer:
+            case .val, .seg, .tog, .tap:
 
                 result = inner + (
                     isVertical
                     ? CGSize(width: padpad, height: outerDiameter)
                     : CGSize(width: outerDiameter, height: padpad))
 
-            case .vxy: // header is always on top
+            case .vxy, .peer: // header is always on top
 
                 result = inner + CGSize(width: padpad, height: outerDiameter)
 
@@ -93,13 +93,18 @@ public class MuPanelVm {
         }
         return result
     }
+
     var titleSize: CGSize {
-        if nodes.last?.nodeType == .vxy {
+        if isVertical ||
+            (nodes.count == 1 &&
+             (nodes.first?.nodeType == .vxy ||
+              nodes.first?.nodeType == .peer)) {
+
             // title is always on top
-            return CGSize(width:  outer.width - 8,
+            return CGSize(width:  inner.width,
                           height: Layout.diameter - 8)
         } else {
-            return CGSize(width:  Layout.diameter ,
+            return CGSize(width:  Layout.diameter - 8,
                           height: Layout.diameter - 8)
         }
     }
