@@ -43,7 +43,6 @@ public class MuPanelVm {
     }
 
     // changed by type
-    lazy var cornerRadius  : CGFloat = { (Layout.radius + Layout.padding) }()
     lazy var thumbRadius   : CGFloat = { Layout.radius - 1 }()
     lazy var thumbDiameter : CGFloat = { thumbRadius * 2 }()
 

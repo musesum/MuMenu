@@ -12,7 +12,6 @@ public struct MuRootView: View {
             case [.upper, .left ]: UpperLeftView()
             default:               LowerRightView()
         }
-
     }
 }
 
@@ -31,12 +30,11 @@ private struct ForestView: View {
 private struct LowerRightView: View {
     @EnvironmentObject var rootVm: MuRootVm
     var body: some View {
-            HStack(alignment: .bottom) {
-                Spacer()
-                ZStack(alignment: .bottomTrailing) {
-                    ForestView()
-                }
-
+        HStack(alignment: .bottom) {
+            Spacer()
+            ZStack(alignment: .bottomTrailing) {
+                ForestView()
+            }
         }
     }
 }

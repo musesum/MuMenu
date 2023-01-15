@@ -54,45 +54,16 @@ extension MuTreeVm { // + Shift
         //log("shiftNearest ", ["shifting", treeShifting, "inward: ", goingInward ])
     }
 
-    /// constrain shifting only towards root's corner
-    private func shiftConstrain(_ moved: CGPoint) {
-        guard branchVms.count > 0 else { return }
-
-        var outerBranch: MuBranchVm
-        switch cornerAxis.bound {
-
-            case .lowX: outerBranch = branchVms.last!
-            case .uprX: outerBranch = branchVms.last!
-            case .lowY: outerBranch = branchVms.last!
-            case .uprY: outerBranch = branchVms.last!
-        }
-        treeShifting = (treeShifted + moved).clamped(to: outerBranch.shiftRange)
-        switch cornerAxis.bound {
-                
-            case .lowX: goingInward = moved.x < 0
-            case .uprX: goingInward = moved.x > 0
-            case .lowY: goingInward = moved.y < 0
-            case .uprY: goingInward = moved.y > 0
-        }
-        // log("\nshiftConstrain ", [ "shifted", treeShifted, "shifting", treeShifting, "moved", moved, "inward: ", goingInward ])
-    }
-
     func shiftTree(_ touchState: MuTouchState?,
                    _ fromRemote: Bool) {
 
-        guard let lastBranchVm = branchVms.last else { return }
-
         if let touchState, touchState.phase == .ended {
-            treeShifting = (touchState.touchEndedCount > 0
-                            ? (goingInward
-                                ? cornerAxis.outerLimit(of: lastBranchVm.shiftRange)
-                                : .zero) // .zero fully expands
-                            : shiftNearest())
-
-            goingInward = false
+            treeShifting = shiftNearest()
             treeShifted = treeShifting
-        } else {
-            shiftConstrain(touchState?.moved ?? .zero)
+        } else if let shiftRange = branchVms.last?.shiftRange {
+            /// constrain shifting only towards root's corner
+            let moved = touchState?.moved ?? .zero
+            treeShifting = (treeShifted + moved).clamped(to: shiftRange)
         }
         updateBranches(fromRemote)
     }

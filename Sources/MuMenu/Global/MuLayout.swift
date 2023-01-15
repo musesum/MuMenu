@@ -6,8 +6,8 @@ struct Layout {
 
     static let diameter: CGFloat = 40
     static let radius: CGFloat = 20
-    /// padding between nodes and branches
     static let padding: CGFloat = 4
+    static var cornerRadius: CGFloat { radius + padding }
     static let labelSize = CGSize(width: diameter+8, height: diameter-8)
 
     /// distance from center while inside node

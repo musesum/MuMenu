@@ -20,8 +20,21 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
     let isVertical: Bool
     var treeOffset = CGSize.zero // offset of menu tree from corner
     var depthShown = 0 // levels of branches shown
-    var goingInward = false
     var startIndex = 0
+
+    var treeBounds: CGRect {
+        var rect = CGRect.zero
+        if depthShown == 0 { return .zero }
+
+        for branchVm in branchVms {
+            if branchVm.show == false { continue }
+            // print(branchVm.title.pad(10) + (isVertical ? " V" : " H"), terminator: " ")
+            let bounds = branchVm.boundsNow
+
+            rect = rect.extend(bounds)
+        }
+        return rect
+    }
     
     public init(_ rootVm: MuRootVm,
                 _ cornerAxis: CornerAxis) {

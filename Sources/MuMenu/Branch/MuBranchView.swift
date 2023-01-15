@@ -102,8 +102,7 @@ struct MuBranchBodyView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                MuBranchPanelView(panelVm: panelVm,
-                                  spotlight: spotlight)
+                MuBranchPanelView(spotlight: spotlight)
                 VStack {
 
                     MuPanelAxisView(panelVm) {

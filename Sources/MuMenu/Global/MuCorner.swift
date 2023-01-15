@@ -1,11 +1,15 @@
 //  Created by warren on 11/4/21.
 
-import Foundation
+import SwiftUI
 
 public struct MuCorner: OptionSet {
 
     public let rawValue: Int
 
+    var hAlign: HorizontalAlignment { self.contains(.left) ? .leading : .trailing }
+    var vAlign: VerticalAlignment { self.contains(.upper) ? .top : .bottom }
+    var alignment: Alignment { Alignment(horizontal: hAlign, vertical: vAlign) }
+    
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }
@@ -58,6 +62,5 @@ public struct MuCorner: OptionSet {
             default:       return "??"
         }
     }
-
 }
 

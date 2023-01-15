@@ -202,7 +202,7 @@ public class MuRootVm: ObservableObject, Equatable {
                     editLeaf(leafVm) // inside runway
                     return true
                 } else if touchElement != .node,
-                          touchElement != .space, //??? 
+                          touchElement != .space, 
                           leafVm.branchVm.contains(touchNow) {
                     updateTreeSpot(leafVm.branchVm.treeVm, leafVm, "shift")
                     shiftBranches() // inside branch containing runway

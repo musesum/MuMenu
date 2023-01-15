@@ -122,7 +122,7 @@ public struct MenuItem: Codable {
         self.item   = MenuTouchItem(touch)
 
         self.time   = Date().timeIntervalSince1970
-        self.corner = corner.rawValue //??? ambiguous
+        self.corner = corner.rawValue
         self.phase  = touch.phase.rawValue
     }
 

@@ -22,13 +22,22 @@ public func log(_ title: String,
             case let v as Set<MuTouchElement>: text += "\(MuTouchElement.symbols(v))"
             case let v as String: text += v
 
-            case let v as Int     : text += " \(v)"
+            case let v as Int: text += " \(v)"
 
             case let v as [Int]:
                 var delim = ""
                 text += " ["
                 for vv in v {
                     text += (delim + "\(vv)")
+                    delim = ","
+                }
+                text += "] "
+
+            case let v as [CGFloat]:
+                var delim = ""
+                text += " ["
+                for vv in v {
+                    text += (delim + "\(Int(vv))")
                     delim = ","
                 }
                 text += "] "

@@ -94,7 +94,6 @@ extension CGRect {
         return d
     }
 
-
     /// before and after are two finger pinch bounding rectangle.
     /// while pinching, rescale the current rect
     /// while shifting center shift rootd on direction of pinch
@@ -152,6 +151,39 @@ extension CGRect {
         let hh = lhs.height
         let s = CGRect(x: xx, y: yy, width: ww, height: hh)
         return s
+    }
+    public func extend(_ from: CGRect) -> CGRect {
+        if self == .zero {
+            //log("from", [from])
+            return from
+        }
+        if from == .zero {
+            // log("self", [self])
+            return self
+        }
+
+        let sx0 = self.origin.x
+        let sy0 = self.origin.y
+        let sx1 = self.origin.x + self.size.width
+        let sy1 = self.origin.y + self.size.height
+
+        let fx0 = from.origin.x
+        let fy0 = from.origin.y
+        let fx1 = from.origin.x + from.size.width
+        let fy1 = from.origin.y + from.size.height
+
+        let rx0 = min(sx0, fx0)
+        let ry0 = min(sy0, fy0)
+        let rx1 = max(sx1, fx1)
+        let ry1 = max(sy1, fy1)
+
+        let result = CGRect(x: rx0, y: ry0, width: rx1-rx0, height: ry1-ry0)
+
+//        log("extend",["self", [sx0,sx1,sy0,sy1],
+//                      "from", [fx0,fx1,fy0,fy1],
+//                      "equal", [rx0,rx1,ry0,ry1],
+//                      " result ", result.size])
+        return result
     }
 }
 

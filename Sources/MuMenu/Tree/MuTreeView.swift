@@ -4,38 +4,61 @@ import SwiftUI
 /// hierarchical menu of horizontal or vertical branches
 struct MuTreeView: View {
 
-    @EnvironmentObject var rootVm: MuRootVm
     @ObservedObject var treeVm: MuTreeVm
-    
+
+    var corner: MuCorner { treeVm.rootVm.corner }
+    var treeSize: CGSize { treeVm.treeBounds.size }
+
     var body: some View {
 
-        if treeVm.isVertical {
-            HStack(alignment: rootVm.corner.contains(.upper) ? .top : .bottom) {
+        ZStack(alignment: corner.alignment) {
+            if treeVm.isVertical {
 
-                ForEach(rootVm.corner.contains(.right)
-                        ? treeVm.branchVms.reversed()
-                        : treeVm.branchVms) {
+                HStack(alignment: corner.vAlign)  {
+                    ForEach(corner.contains(.right)
+                            ? treeVm.branchVms.reversed()
+                            : treeVm.branchVms) {
 
-                    MuBranchView(branchVm: $0,
-                                 spotlight: $0 == treeVm.branchSpotVm)
-                    .zIndex($0.zindex)
+                        MuBranchView(branchVm: $0,
+                                     spotlight: $0 == treeVm.branchSpotVm)
+                        .zIndex($0.zindex)
+                    }
+                }
+
+            } else {
+                VStack(alignment: corner.hAlign) {
+                    ForEach(corner.contains(.lower)
+                            ? treeVm.branchVms.reversed()
+                            : treeVm.branchVms) {
+
+                        MuBranchView(branchVm: $0,
+                                     spotlight: $0 == treeVm.branchSpotVm)
+                        .zIndex($0.zindex)
+                    }
                 }
             }
-            .offset(treeVm.treeOffset)
-
-        } else {
-            VStack(alignment: rootVm.corner.contains(.left) ? .leading : .trailing) {
-
-                ForEach(rootVm.corner.contains(.lower)
-                        ? treeVm.branchVms.reversed()
-                        : treeVm.branchVms) {
-
-                    MuBranchView(branchVm: $0,
-                                 spotlight: $0 == treeVm.branchSpotVm)
-                    .zIndex($0.zindex)
-                }
-            }
-            .offset(treeVm.treeOffset)
+            MuTreeCanopyView(treeVm: treeVm)
         }
+        .offset(treeVm.treeOffset)
     }
 }
+
+/// hierarchical menu of horizontal or vertical branches
+struct MuTreeCanopyView: View {
+
+    @ObservedObject var treeVm: MuTreeVm
+
+    let cornerRadius = Layout.radius + Layout.padding
+    var treeSize: CGSize { treeVm.treeBounds.size }
+
+    var body: some View {
+
+        Rectangle()
+            .background(.red)
+            .cornerRadius(cornerRadius)
+            .opacity(0.2)
+            .frame(width: treeSize.width, height: treeSize.height)
+            .zIndex(0)
+    }
+}
+

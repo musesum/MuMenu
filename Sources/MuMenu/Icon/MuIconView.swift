@@ -10,13 +10,12 @@ struct MuIconView: View {
     var color: Color { nodeVm.spotlight ? .white : .gray }
     var fill: Color { icon.iconType == .cursor ? .clear : .black }
     var width: CGFloat { nodeVm.spotlight ? 2.0 : 0.5 }
-    var cornerRadius: CGFloat { nodeVm.panelVm.cornerRadius }
 
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: cornerRadius)
+            RoundedRectangle(cornerRadius: Layout.cornerRadius)
                 .fill(fill)
-                .overlay(RoundedRectangle(cornerRadius: cornerRadius)
+                .overlay(RoundedRectangle(cornerRadius:  Layout.cornerRadius)
                     .stroke(color, lineWidth: width)
                     .background(Color.clear))
 

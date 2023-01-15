@@ -21,8 +21,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
     var boundsNow: CGRect = .zero /// current bounds after shifting
     var boundsPad: CGRect = .zero /// extended bounds for capturing finger drag
 
-
-    var zindex: CGFloat = 0       /// zIndex within sub/super branches
+    var zindex: CGFloat = 1       /// zIndex within sub/super branches
     var title: String {
         let nameFirst = nodeVms.first?.node.title ?? ""
         let nameLast  = nodeVms.last?.node.title ?? ""
@@ -156,25 +155,20 @@ public class MuBranchVm: Identifiable, ObservableObject {
     var limit: CGFloat = 0
 
     func updateShiftRange() {
-        let touchVm = treeVm.rootVm.touchVm 
+
         boundStart = boundsNow - CGPoint(treeVm.treeShifting)
         let boundsPriorSize = branchPrev?.boundsPrior ?? .zero
         let boundsPrevSize = branchPrev?.boundStart.size ?? .zero
         let priorPadding = branchPrev == nil ? 0 : Layout.padding * 2
 
         boundsPrior = boundsPriorSize + boundsPrevSize + priorPadding
-
-        let rxy = touchVm.parkIconXY
-        let rx = rxy.x - Layout.radius - Layout.padding
-        let ry = rxy.y - Layout.radius - Layout.padding
-
         let pw = boundsPrior.width
         let ph = boundsPrior.height
 
         switch treeVm.cornerAxis.bound {
-            case .lowX: shiftRange = (min(0, rx-pw)...0, 0...0)
+            case .lowX: shiftRange = (min(0, -pw)...0, 0...0)
             case .uprX: shiftRange = (0...max(0, pw), 0...0)
-            case .lowY: shiftRange = (0...0, min(0,ry-ph)...0)
+            case .lowY: shiftRange = (0...0, min(0, -ph)...0)
             case .uprY: shiftRange = (0...0, 0...max(0, ph))
         }
         shiftBranch()
@@ -183,18 +177,13 @@ public class MuBranchVm: Identifiable, ObservableObject {
     @discardableResult
     func shiftBranch() -> CGFloat {
 
-        let treeShifting = treeVm.treeShifting
         if boundsNow == .zero { return 0 }
-        let clampDelta = shift-treeShifting
-
-        if nodeVms.first?.nodeType.isLeaf ?? false {
-            opacity = 1 // always show leaves
-        } else {
-            let ww = abs(clampDelta.width) / boundStart.width
-            let hh = abs(clampDelta.height) / boundStart.height
-            opacity = min(1-ww,1-hh)
-        }
-        //log(title.pad(17), [shiftRange, " branchShift", branchShift, " bounds", boundsNow, " opacity ", opacity])
+        let clampDelta = shift - treeVm.treeShifting
+        let ww = abs(clampDelta.width) / boundStart.width
+        let hh = abs(clampDelta.height) / boundStart.height
+        opacity = min(1-ww,1-hh)
+        //???  refresh MuTreeView with updated treeBounds
+        treeVm.treeShifting = treeVm.treeShifting
         return opacity
     }
 
