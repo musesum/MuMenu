@@ -21,8 +21,8 @@ struct MuPanelAxisView<Content: View>: View {
         
         if (panelVm.isVertical  ||
             panelVm.nodeType == .vxy ||
-            panelVm.nodeType == .peer)
-            {
+            panelVm.nodeType == .peer) {
+
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading,
                        spacing: panelVm.spacing,

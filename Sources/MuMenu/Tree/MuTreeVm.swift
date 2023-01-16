@@ -11,7 +11,7 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
 
 
     @Published var branchVms = [MuBranchVm]()
-    @Published var treeShifting = CGSize.zero /// offset after shifting (by dragging leaf)
+    @Published var treeShift = CGSize.zero /// offset after shifting (by dragging leaf)
     var treeShifted = CGSize.zero
     
     var rootVm: MuRootVm
@@ -27,11 +27,12 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
         if depthShown == 0 { return .zero }
 
         for branchVm in branchVms {
-            if branchVm.show == false { continue }
-            // print(branchVm.title.pad(10) + (isVertical ? " V" : " H"), terminator: " ")
-            let bounds = branchVm.boundsNow
-
-            rect = rect.extend(bounds)
+            if (branchVm.opacity < 0.1 ||
+                branchVm.show == false) {
+                continue
+            }
+            // print(branchVm.title.pad(10) + (isVertical?" V":" H"), terminator: " ")
+            rect = rect.extend(branchVm.boundsNow)
         }
         return rect
     }
@@ -42,9 +43,7 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
         self.rootVm = rootVm
         self.cornerAxis = cornerAxis
         self.isVertical = cornerAxis.axis == .vertical
-        let key = CornerAxis.Key(cornerAxis.corner.rawValue,
-                                 cornerAxis.axis.rawValue)
-        CornerAxisTreeVm[key] = self
+        CornerAxisTreeVm[cornerAxis.cornax.rawValue] = self
     }
     
     public func addBranchVms(_ branchVms: [MuBranchVm]) {

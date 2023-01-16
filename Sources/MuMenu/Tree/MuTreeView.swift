@@ -7,37 +7,34 @@ struct MuTreeView: View {
     @ObservedObject var treeVm: MuTreeVm
 
     var corner: MuCorner { treeVm.rootVm.corner }
-    var treeSize: CGSize { treeVm.treeBounds.size }
 
     var body: some View {
 
         ZStack(alignment: corner.alignment) {
-            if treeVm.isVertical {
 
+            MuTreeCanopyView(treeVm: treeVm)
+
+            if treeVm.isVertical {
                 HStack(alignment: corner.vAlign)  {
                     ForEach(corner.contains(.right)
                             ? treeVm.branchVms.reversed()
                             : treeVm.branchVms) {
 
-                        MuBranchView(branchVm: $0,
-                                     spotlight: $0 == treeVm.branchSpotVm)
+                        MuBranchView(branchVm: $0)
                         .zIndex($0.zindex)
                     }
                 }
-
             } else {
                 VStack(alignment: corner.hAlign) {
                     ForEach(corner.contains(.lower)
                             ? treeVm.branchVms.reversed()
                             : treeVm.branchVms) {
 
-                        MuBranchView(branchVm: $0,
-                                     spotlight: $0 == treeVm.branchSpotVm)
+                        MuBranchView(branchVm: $0)
                         .zIndex($0.zindex)
                     }
                 }
             }
-            MuTreeCanopyView(treeVm: treeVm)
         }
         .offset(treeVm.treeOffset)
     }
@@ -54,11 +51,10 @@ struct MuTreeCanopyView: View {
     var body: some View {
 
         Rectangle()
-            .background(.red)
+            .background(.thinMaterial)
             .cornerRadius(cornerRadius)
-            .opacity(0.2)
+            .opacity(0.5)
             .frame(width: treeSize.width, height: treeSize.height)
-            .zIndex(0)
     }
 }
 

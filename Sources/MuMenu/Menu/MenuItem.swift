@@ -4,32 +4,28 @@ import SwiftUI
 
 public struct MenuTreeItem: Codable {
     
-    public var corner : Int
-    public var axis   : Int8
+    public var cornax : Int // corner axis
     public var depth  : Int
     public var start  : Int
 
     public init(_ treeVm: MuTreeVm) {
-        self.corner = treeVm.cornerAxis.corner.rawValue
-        self.axis   = treeVm.cornerAxis.axis.rawValue
+        self.cornax = treeVm.cornerAxis.cornax.rawValue
         self.depth  = treeVm.depthShown
         self.start  = treeVm.startIndex
     }
 
     enum CodingKeys: String, CodingKey {
-        case corner, axis, depth, start
+        case cornax, depth, start
     }
 
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        try corner = c.decode(Int .self, forKey: .corner)
-        try axis   = c.decode(Int8.self, forKey: .axis  )
-        try depth  = c.decode(Int .self, forKey: .depth )
-        try start  = c.decode(Int .self, forKey: .start )
+        try cornax = c.decode(Int.self, forKey: .cornax)
+        try depth  = c.decode(Int.self, forKey: .depth )
+        try start  = c.decode(Int.self, forKey: .start )
     }
     var treeVm: MuTreeVm? {
-        let key = CornerAxis.Key(corner, axis)
-        return CornerAxisTreeVm[key]
+        return CornerAxisTreeVm[cornax]
     }
     func showTree(_ fromRemote: Bool) {
         treeVm?.showTree(start: start,
@@ -90,26 +86,28 @@ public struct MenuItem: Codable {
     }
 
     public init(node: MenuNodeItem,
+                _ corner: MuCorner,
                 _ phase : UITouch.Phase) {
 
         self.type   = .node
         self.item   = node
 
         self.time   = Date().timeIntervalSince1970
-        self.corner = node.corner
+        self.corner = corner.rawValue
         self.phase  = phase.rawValue
 
         // log("MenuNodeItem", [self.phase])
     }
 
     public init(leaf: MenuLeafItem,
+                _ corner: MuCorner,
                 _ phase : UITouch.Phase) {
 
         self.type   = .leaf
         self.item   = leaf
 
         self.time   = Date().timeIntervalSince1970
-        self.corner = leaf.corner
+        self.corner = corner.rawValue
         self.phase  = phase.rawValue
 
         // log("MenuNodeItem", [self.phase])

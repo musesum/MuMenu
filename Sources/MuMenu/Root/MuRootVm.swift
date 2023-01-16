@@ -41,7 +41,7 @@ public class MuRootVm: ObservableObject, Equatable {
         if !fromRemote {
             let phase = touchState?.phase ?? .began
             let nodeItem = MenuNodeItem(newSpotVm)
-            let menuItem = MenuItem(node: nodeItem, phase)
+            let menuItem = MenuItem(node: nodeItem, corner, phase)
             sendItemToPeers(menuItem)
         }
     }
@@ -158,7 +158,7 @@ public class MuRootVm: ObservableObject, Equatable {
 
         if !fromRemote, let nodeSpotVm {
             let nodeItem = MenuNodeItem(nodeSpotVm)
-            let menuItem = MenuItem(node: nodeItem, touchState.phase)
+            let menuItem = MenuItem(node: nodeItem, corner, touchState.phase)
             sendItemToPeers(menuItem)
         }
     }

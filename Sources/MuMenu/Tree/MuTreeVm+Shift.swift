@@ -14,7 +14,7 @@ extension MuTreeVm { // + Shift
             case .lowX:
                 for branchVm in branchVms {
                     let lowX = branchVm.shiftRange.0.lowerBound
-                    let delta = abs(lowX - treeShifting.width)
+                    let delta = abs(lowX - treeShift.width)
 
                     if lowestDelta > delta {
                         lowestDelta = delta
@@ -24,7 +24,7 @@ extension MuTreeVm { // + Shift
             case .uprX:
                 for branchVm in branchVms {
                     let uprX = branchVm.shiftRange.0.upperBound
-                    let delta =  abs(uprX - treeShifting.width)
+                    let delta =  abs(uprX - treeShift.width)
                     if lowestDelta > delta {
                         lowestDelta = delta
                         w = uprX
@@ -33,7 +33,7 @@ extension MuTreeVm { // + Shift
             case .lowY:
                 for branchVm in branchVms {
                     let lowY = branchVm.shiftRange.1.lowerBound
-                    let delta =  abs(lowY - treeShifting.height)
+                    let delta =  abs(lowY - treeShift.height)
                     if lowestDelta > delta {
                         lowestDelta = delta
                         h = lowY
@@ -43,7 +43,7 @@ extension MuTreeVm { // + Shift
             case .uprY:
                 for branchVm in branchVms {
                     let uprY = branchVm.shiftRange.1.upperBound
-                    let delta =  abs(uprY - treeShifting.height)
+                    let delta =  abs(uprY - treeShift.height)
                     if lowestDelta > delta {
                         lowestDelta = delta
                         h = uprY
@@ -51,26 +51,26 @@ extension MuTreeVm { // + Shift
                 }
         }
         return CGSize(width: w, height: h)
-        //log("shiftNearest ", ["shifting", treeShifting, "inward: ", goingInward ])
+        //log("shiftNearest ", ["shifting", treeShift, "inward: ", goingInward ])
     }
 
     func shiftTree(_ touchState: MuTouchState?,
                    _ fromRemote: Bool) {
 
         if let touchState, touchState.phase == .ended {
-            treeShifting = shiftNearest()
-            treeShifted = treeShifting
+            treeShift = shiftNearest()
+            treeShifted = treeShift
         } else if let shiftRange = branchVms.last?.shiftRange {
             /// constrain shifting only towards root's corner
             let moved = touchState?.moved ?? .zero
-            treeShifting = (treeShifted + moved).clamped(to: shiftRange)
+            treeShift = (treeShifted + moved).clamped(to: shiftRange)
         }
         updateBranches(fromRemote)
     }
     func shiftExpandLast(_ fromRemote: Bool) {
 
         // print("*** shiftExpandLast")
-        treeShifting = .zero
+        treeShift = .zero
         treeShifted  = .zero
         updateBranches(fromRemote)
     }
@@ -79,8 +79,8 @@ extension MuTreeVm { // + Shift
 
         if index < branchVms.count, index >= 0 {
            let startBranchVm = branchVms[index]
-            treeShifting = cornerAxis.outerLimit(of: startBranchVm.shiftRange)
-            treeShifted = treeShifting
+            treeShift = cornerAxis.outerLimit(of: startBranchVm.shiftRange)
+            treeShifted = treeShift
         }
     }
 

@@ -9,19 +9,23 @@ public class MuBranchVm: Identifiable, ObservableObject {
 
     @Published var show: Bool = false
     @Published var opacity: CGFloat = 1 /// branch may be partially occluded
-    var shift: CGSize { treeVm.treeShifting.clamped(to: shiftRange) }
+
+    var branchShift: CGSize { treeVm.treeShift.clamped(to: shiftRange) }
+    var shiftRange: RangeXY = (0...1, 0...1)
+    var titleShift: CGSize = .zero
 
     public var treeVm: MuTreeVm /// my tree; which unfolds a hierarchy of branches
-    var nodeVms: [MuNodeVm]    /// all the node View Models on this branch
-    var nodeSpotVm: MuNodeVm?  /// current node, nodeSpotVm.branchVm is next branch
-    var panelVm: MuPanelVm     /// background + stroke model for BranchView
-    var branchPrev: MuBranchVm?
-    
-    var boundsPrior: CGSize = .zero
-    var boundsNow: CGRect = .zero /// current bounds after shifting
-    var boundsPad: CGRect = .zero /// extended bounds for capturing finger drag
+    var nodeVms: [MuNodeVm]   /// all the node View Models on this branch
+    var nodeSpotVm: MuNodeVm? /// current node, nodeSpotVm.branchVm is next branch
+    var panelVm: MuPanelVm    /// background + stroke model for BranchView
+    private var branchPrev: MuBranchVm?
 
-    var zindex: CGFloat = 1       /// zIndex within sub/super branches
+    public var boundsNow: CGRect = .zero /// current bounds after shifting
+    private var boundsPrior: CGSize = .zero
+    private var boundsPad: CGRect = .zero /// extended bounds for detecting touch
+    private var boundStart: CGRect = .zero
+    var zindex: CGFloat = 0       /// zIndex within sub/super branches
+
     var title: String {
         let nameFirst = nodeVms.first?.node.title ?? ""
         let nameLast  = nodeVms.last?.node.title ?? ""
@@ -149,14 +153,11 @@ public class MuBranchVm: Identifiable, ObservableObject {
             updateShiftRange()
         }
     }
-    private var boundStart: CGRect = .zero
 
-    var shiftRange: RangeXY = (0...1, 0...1)
-    var limit: CGFloat = 0
 
     func updateShiftRange() {
 
-        boundStart = boundsNow - CGPoint(treeVm.treeShifting)
+        boundStart = boundsNow - CGPoint(treeVm.treeShift)
         let boundsPriorSize = branchPrev?.boundsPrior ?? .zero
         let boundsPrevSize = branchPrev?.boundStart.size ?? .zero
         let priorPadding = branchPrev == nil ? 0 : Layout.padding * 2
@@ -166,24 +167,35 @@ public class MuBranchVm: Identifiable, ObservableObject {
         let ph = boundsPrior.height
 
         switch treeVm.cornerAxis.bound {
-            case .lowX: shiftRange = (min(0, -pw)...0, 0...0)
+            case .lowX: shiftRange = (min(0,-pw)...0, 0...0)
             case .uprX: shiftRange = (0...max(0, pw), 0...0)
-            case .lowY: shiftRange = (0...0, min(0, -ph)...0)
+            case .lowY: shiftRange = (0...0, min(0,-ph)...0)
             case .uprY: shiftRange = (0...0, 0...max(0, ph))
         }
         shiftBranch()
+
+        let boundsDelta = treeVm.treeBounds.size - boundsNow.size
+        let dw = boundsDelta.width
+        let dh = boundsDelta.height
+
+        switch treeVm.cornerAxis.cornax {
+            case .LLH,.ULH: titleShift = CGSize(width: dw, height:  0)
+            case .LLV,.LRV: titleShift = CGSize(width:  0, height:-dh)
+            case .LRH,.URH: titleShift = CGSize(width:-dw, height:  0)
+            case .ULV,.URV: titleShift = CGSize(width:  0, height: dh)
+        }
     }
 
     @discardableResult
     func shiftBranch() -> CGFloat {
 
         if boundsNow == .zero { return 0 }
-        let clampDelta = shift - treeVm.treeShifting
+        let clampDelta = branchShift - treeVm.treeShift
         let ww = abs(clampDelta.width) / boundStart.width
         let hh = abs(clampDelta.height) / boundStart.height
         opacity = min(1-ww,1-hh)
-        //???  refresh MuTreeView with updated treeBounds
-        treeVm.treeShifting = treeVm.treeShifting
+        // refresh MuTreeView with updated treeBounds
+        treeVm.treeShift = treeVm.treeShift
         return opacity
     }
 

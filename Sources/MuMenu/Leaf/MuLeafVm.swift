@@ -17,7 +17,7 @@ public class MuLeafVm: MuNodeVm {
     func updateLeafPeers(_ visitor: Visitor) {
         if visitor.isLocal() {
             let leafItem = MenuLeafItem(self, thumb)
-            let menuItem = MenuItem(leaf: leafItem, .moved)
+            let menuItem = MenuItem(leaf: leafItem, rootVm.corner, .moved)
             rootVm.sendItemToPeers(menuItem)
         }
 
