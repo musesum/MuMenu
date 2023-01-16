@@ -35,6 +35,9 @@ extension MuLeafTapVm: MuLeafProtocol {
             return node.title
         }
     }
+    public func treeTitle() -> String {
+        node.title
+    }
     public func thumbOffset() -> CGSize {
         CGSize(width: 0, height:  panelVm.runway)
     }

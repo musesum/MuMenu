@@ -22,7 +22,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
 
     public var boundsNow: CGRect = .zero /// current bounds after shifting
     private var boundsPrior: CGSize = .zero
-    private var boundsPad: CGRect = .zero /// extended bounds for detecting touch
+    public var boundsPad: CGRect = .zero /// extended bounds for detecting touch
     private var boundStart: CGRect = .zero
     var zindex: CGFloat = 0       /// zIndex within sub/super branches
 
@@ -177,12 +177,13 @@ public class MuBranchVm: Identifiable, ObservableObject {
         let boundsDelta = treeVm.treeBounds.size - boundsNow.size
         let dw = boundsDelta.width
         let dh = boundsDelta.height
+        let p = Layout.padding * 4
 
         switch treeVm.cornerAxis.cornax {
-            case .LLH,.ULH: titleShift = CGSize(width: dw, height:  0)
-            case .LLV,.LRV: titleShift = CGSize(width:  0, height:-dh)
-            case .LRH,.URH: titleShift = CGSize(width:-dw, height:  0)
-            case .ULV,.URV: titleShift = CGSize(width:  0, height: dh)
+            case .LLH,.ULH: titleShift = CGSize(width: dw+p, height:  0)
+            case .LLV,.LRV: titleShift = CGSize(width:    0, height:-dh)
+            case .LRH,.URH: titleShift = CGSize(width:-dw-p, height:  0)
+            case .ULV,.URV: titleShift = CGSize(width:    0, height: dh)
         }
     }
 

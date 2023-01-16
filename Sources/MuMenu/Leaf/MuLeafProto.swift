@@ -12,6 +12,9 @@ public protocol MuLeafProtocol {
     /// title for control value
     func leafTitle() -> String
 
+    /// title for control value
+    func treeTitle() -> String
+
     /// position of thumb in control
     func thumbOffset() -> CGSize
 

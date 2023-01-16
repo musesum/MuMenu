@@ -5,9 +5,6 @@ import Par
 
 extension MuLeafVxyVm: MuLeafProtocol {
 
-
-    // MARK: - Value
-
     public func refreshValue() {
         if let nameRanges = menuSync?.getRanges(named: ["x","y"]) {
             for (name,range) in nameRanges {
@@ -35,13 +32,18 @@ extension MuLeafVxyVm: MuLeafProtocol {
 
     public func leafTitle() -> String {
         if editing {
-            return String(format: "x %.2f y %.2f",
-                   expand(named: "x", thumb[0]),
-                   expand(named: "y", thumb[1]))
+            return treeTitle()
         } else {
-           return node.title
+            return node.title
         }
+
     }
+    public func treeTitle() -> String {
+        String(format: "x %.2f, y %.2f",
+               expand(named: "x", thumb[0]),
+               expand(named: "y", thumb[1]))
+    }
+
 
     public func thumbOffset() -> CGSize {
         CGSize(width:     thumb[0]  * panelVm.runway,

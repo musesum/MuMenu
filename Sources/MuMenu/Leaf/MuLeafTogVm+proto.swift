@@ -26,13 +26,11 @@ extension MuLeafTogVm: MuLeafProtocol {
     }
 
     public func leafTitle() -> String {
-        if editing {
-            return thumb[0] == 1.0 ? "1" : "0"
-        } else {
-            return node.title
-        }
+        return thumb[0] == 1.0 ? "1" : "0"
     }
-
+    public func treeTitle() -> String {
+        node.title
+    }
     public func thumbOffset() -> CGSize {
         panelVm.isVertical
         ? CGSize(width: 1, height: (1-thumb[0]) * panelVm.runway)

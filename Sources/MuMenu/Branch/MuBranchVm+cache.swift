@@ -23,7 +23,6 @@ extension MuBranchVm {
             return hash
         }
 
-        // let nextHash = nextHash()
         if let oldBranch = BranchCache[nextHash] {
             // print("🧺", terminator: " ")
             return oldBranch
