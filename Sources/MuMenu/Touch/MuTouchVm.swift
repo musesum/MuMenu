@@ -109,11 +109,10 @@ public class MuTouchVm: ObservableObject {
             return dragIconXY = touchXY - bounds.origin
         }
         if !touchState.touching ||
-            rootVm.touchElement == .root ||
+            rootVm.touchElement.isIn([.root, .canopy]) ||
             rootVm.nodeSpotVm?.nodeType.isLeaf ?? false {
 
-            // park the dragIcon
-            dragIconXY = parkIconXY
+            dragIconXY = parkIconXY  // park the dragIcon
 
         } else if let spotCenter = rootVm.nodeSpotVm?.center {
 

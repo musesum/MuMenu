@@ -37,9 +37,12 @@ fileprivate struct titleV: View {
         : CGSize(width: Layout.diameter, height: Layout.radius) }
 
     var angle: Angle {
-        treeVm.isVertical
-        ? Angle(degrees:0)
-        : Angle(degrees: 270)
+
+        switch treeVm.cornerAxis.cornax {
+            case .LLV, .LRV, .ULV, .URV: return  Angle(degrees:0)
+            case .URH, .ULH: return  Angle(degrees:270) //TODO: 90 later, tricky
+            case .LLH, .LRH: return  Angle(degrees:270)
+        }
     }
 
     var anchor: UnitPoint {
@@ -49,6 +52,17 @@ fileprivate struct titleV: View {
             case .URH, .LRH: return .topTrailing
         }
     }
+
+    var frameAlign: Alignment {
+        switch treeVm.cornerAxis.cornax {
+            case .LLV, .LRV, .ULV, .URV: return .center
+            case .LLH: return .bottomLeading
+            case .ULH: return .bottomLeading
+            case .URH: return .topTrailing
+            case .LRH: return .topTrailing
+        }
+    }
+
 
     var opacity: CGFloat {
         branchVm.treeVm.depthShown <= 1 ? 0 :
@@ -63,7 +77,7 @@ fileprivate struct titleV: View {
         Text(title)
             .scaledToFit()
             .allowsTightening(true)
-            .font(Font.system(size: 14, design: .default).leading(.tight))
+            .font(Font.system(size: 12, design: .default).leading(.tight))
             .minimumScaleFactor(0.01)
             .foregroundColor(Color.white)
             .shadow(color: .black, radius: 1.0)

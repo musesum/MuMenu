@@ -162,25 +162,27 @@ public class MuRootVm: ObservableObject, Equatable {
             sendItemToPeers(menuItem)
         }
     }
-    func p(_ s: String) { print(touchElement.symbol+s, terminator: "") }
+    func logRoot(_ s: String) {
+        //print(touchElement.symbol+s, terminator: "")
+    }
     private func updateRoot(_ fromRemote: Bool) {
 
         let touchNow = touchState?.pointNow ?? .zero
         
         // stay exclusively on .leaf or .edit mode
         switch touchElement {
-            case .canopy: p("c"); return shiftCanopy()
-            case .shift:  p("/"); return shiftBranches()
-            case .edit:   p("e"); return editLeaf(nodeSpotVm)
+            case .canopy: logRoot("c"); return shiftCanopy()
+            case .shift:  logRoot("/"); return shiftBranches()
+            case .edit:   logRoot("e"); return editLeaf(nodeSpotVm)
             default: break
         }
 
-        if      hoverLeafNode() { p("L") }// editing leaf or shifting branch
-        else if hoverNodeSpot() { p("N") } // is over the same branch node
-        else if hoverRootNode() { p("R") } // over the root (home) node
-        else if hoverTreeNow()  { p("T") } // new node on same tree
-        else if hoverTreeAlts() { p("A") } // alternate tree
-        else {  hoverSpace()    ; p("S") }  // hovering over canvas
+        if      hoverLeafNode() { logRoot("L") }// editing leaf or shifting branch
+        else if hoverNodeSpot() { logRoot("N") } // is over the same branch node
+        else if hoverRootNode() { logRoot("R") } // over the root (home) node
+        else if hoverTreeNow()  { logRoot("T") } // new node on same tree
+        else if hoverTreeAlts() { logRoot("A") } // alternate tree
+        else {  hoverSpace()    ; logRoot("S") }  // hovering over canvas
         
         // log(touchElement.symbol, terminator: "")
         
@@ -344,13 +346,17 @@ public class MuRootVm: ObservableObject, Equatable {
                 touchElement = .root
                 return
             }
-            guard let leafVm = nodeSpotVm as? MuLeafVm else { return }
-            
-            // begin touch on title section to possibly stack branches
-            touchElement = .shift
-            leafVm.spot(.off)
-            leafVm.branchSpot(.on)
-            treeSpotVm?.shiftTree(touchState, fromRemote)
+            if let leafVm = nodeSpotVm as? MuLeafVm  {
+
+                // begin touch on title section to possibly stack branches
+                touchElement = .shift
+                leafVm.spot(.off)
+                leafVm.branchSpot(.on)
+                treeSpotVm?.shiftTree(touchState, fromRemote)
+            } else {
+                touchState?.beginPoint(touchNow)
+                touchElement = .root
+            }
         }
 
         func shiftCanopy() {
@@ -358,14 +364,14 @@ public class MuRootVm: ObservableObject, Equatable {
             if touchState?.phase.isDone() ?? true {
                 _ = treeSpotVm?.shiftNearest()
                 touchElement = .root
-            }
-            if touchVm.touchingRoot(touchNow) {
+            } else if touchVm.touchingRoot(touchNow) {
                 showTrunks()
+                touchState?.beginPoint(touchNow)
                 touchElement = .root
-                return
+            } else {
+                touchElement = .canopy
+                treeSpotVm?.shiftTree(touchState, fromRemote)
             }
-            touchElement = .canopy
-            treeSpotVm?.shiftTree(touchState, fromRemote)
         }
 
         func editLeaf(_ nodeVm: MuNodeVm?) {

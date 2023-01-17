@@ -39,7 +39,7 @@ extension MuLeafVxyVm: MuLeafProtocol {
 
     }
     public func treeTitle() -> String {
-        String(format: "x %.2f, y %.2f",
+        String(format: "x:%.2f  y:%.2f",
                expand(named: "x", thumb[0]),
                expand(named: "y", thumb[1]))
     }

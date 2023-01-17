@@ -48,5 +48,13 @@ enum MuTouchElement: String  {
         result += "〉"
         return result
     }
+    func isIn(_ elements: [MuTouchElement]) -> Bool {
+        for element in elements {
+            if element == self {
+                return true
+            }
+        }
+        return false
+    }
 }
 
