@@ -40,8 +40,7 @@ extension MuTreeVm { // +Show
         startIndex = nextIndex
         depthShown = depthNow
         shiftTree(to: startIndex)
-        logShowTree()
-        
+        // logShowTree()
 
         if !fromRemote {
             let rootItem = MenuRootItem(rootVm)

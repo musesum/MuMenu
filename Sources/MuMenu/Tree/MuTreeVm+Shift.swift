@@ -4,7 +4,7 @@ import Foundation
 
 extension MuTreeVm { // + Shift
 
-    private func shiftNearest() -> CGSize {
+    public func shiftNearest() -> CGSize {
 
         var lowestDelta = CGFloat.infinity
         var w = CGFloat.zero

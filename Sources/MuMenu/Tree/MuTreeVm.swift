@@ -9,7 +9,6 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
     public let id = MuNodeIdentity.getId()
     public static func == (lhs: MuTreeVm, rhs: MuTreeVm) -> Bool { return lhs.id == rhs.id }
 
-
     @Published var branchVms = [MuBranchVm]()
     @Published var treeShift = CGSize.zero /// offset after shifting (by dragging leaf)
     var treeShifted = CGSize.zero

@@ -26,10 +26,10 @@ extension MuLeafTogVm: MuLeafProtocol {
     }
 
     public func leafTitle() -> String {
-        return thumb[0] == 1.0 ? "1" : "0"
+        node.title
     }
     public func treeTitle() -> String {
-        node.title
+        return thumb[0] == 1.0 ? "on" : "off"
     }
     public func thumbOffset() -> CGSize {
         panelVm.isVertical

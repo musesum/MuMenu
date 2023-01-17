@@ -83,6 +83,7 @@ public class MuLeafValVm: MuLeafVm {
 
             updateLeafPeers(visitor)
         }
+        branchVm.show = branchVm.show
     }
 }
 

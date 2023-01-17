@@ -9,6 +9,7 @@ enum MuTouchElement: String  {
     case branch /// branches expanded for one tree
     case trunks /// only first branch of multiple trees
     case node   /// hovering over a specific node
+    case canopy /// shift tree from whole canopy
     case shift  /// shifting branches by dragging header for leaf
     case edit   /// editing area inside a leaf
     case space  /// hovering over canvas while on menu
@@ -20,6 +21,7 @@ enum MuTouchElement: String  {
             case .trunks : return "ᛘ"
             case .branch : return "𐂷"
             case .node   : return "ⓝ"
+            case .canopy : return "⧻"
             case .shift  : return "⊪"
             case .edit   : return "✎"
             case .space  : return "◌"
@@ -32,6 +34,7 @@ enum MuTouchElement: String  {
             case .trunks : return "trunks"
             case .branch : return "branch"
             case .node   : return "node"
+            case .canopy : return "canopy"
             case .shift  : return "shift"
             case .edit   : return "edit"
             case .space  : return "space"

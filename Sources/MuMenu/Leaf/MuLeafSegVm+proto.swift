@@ -31,12 +31,12 @@ extension MuLeafSegVm: MuLeafProtocol {
     }
 
     public func leafTitle() -> String {
+        treeTitle()
+    }
+    public func treeTitle() -> String {
         range.upperBound > 1
         ? String(format: "%.f", scale(thumb[0], from: 0...1, to: range))
         : String(format: "%.1f", thumb[0])
-    }
-    public func treeTitle() -> String {
-        node.title
     }
     public func thumbOffset() -> CGSize {
         panelVm.isVertical

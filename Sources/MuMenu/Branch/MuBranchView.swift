@@ -71,8 +71,8 @@ fileprivate struct titleV: View {
             .rotationEffect(angle, anchor: anchor)
             .offset(offset)
             .opacity(opacity)
-            .animation(.easeInOut(duration: Layout.animate), value: opacity)
-            .animation(.easeInOut(duration: Layout.animate), value: offset)
+            .animation(.easeInOut(duration: Layout.animate*2), value: opacity)
+            //??? .animation(.easeInOut(duration: 0), value: offset)
 
     }
 }

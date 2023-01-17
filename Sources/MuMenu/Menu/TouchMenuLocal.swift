@@ -23,11 +23,21 @@ public class TouchMenuLocal {
     
     public static func beginTouch(_ touch: UITouch) -> Bool {
         
-        let nextXY = touch.preciseLocation(in: nil)
+        let touchXY = touch.preciseLocation(in: nil)
 
         for touchVm in CornerTouchVm.values {
-            if let nodeVm = touchVm.hitTest(nextXY) {
 
+            if let nodeVm = touchVm.hitTest(touchXY) {
+
+                return addMenu(nodeVm)
+            } else {
+                for treeVm in touchVm.rootVm?.treeVms ?? [] {
+                    if treeVm.treeBounds.contains(touchXY) {
+                        return addMenu()
+                    }
+                }
+            }
+            func addMenu(_ nodeVm: MuNodeVm? = nil) -> Bool {
                 let touchMenu = TouchMenuLocal(touchVm, nodeVm, isRemote: false)
                 let menuItem = MenuItem(touch, touchVm.corner)
                 touchMenu.buffer.append(menuItem)
@@ -37,6 +47,8 @@ public class TouchMenuLocal {
             }
         }
         return false
+
+
     }
     
     public static func updateTouch(_ touch: UITouch) -> Bool {

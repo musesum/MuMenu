@@ -134,10 +134,10 @@ public class MuLeafVxyVm: MuLeafVm {
 
         let x = expand(named: "x", thumb[0])
         let y = expand(named: "y", thumb[1])
-
         if let menuSync, menuSync.setAnys([("x", x),("y", y)], visitor) {
             updateLeafPeers(visitor)
         }
+        branchVm.show = branchVm.show
     }
     
 }

@@ -33,6 +33,7 @@ public class MuLeafTapVm: MuLeafVm {
 
             updateLeafPeers(visitor)
         }
+        branchVm.show = branchVm.show
     }
 }
 

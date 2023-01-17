@@ -122,6 +122,7 @@ public class MuLeafSegVm: MuLeafVm {
 
             updateLeafPeers(visitor)
         }
+        branchVm.show = branchVm.show
     }
 
 }
