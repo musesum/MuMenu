@@ -4,7 +4,7 @@ import Foundation
 
 extension MuTreeVm { // + Shift
 
-    public func shiftNearest() -> CGSize {
+    public func shiftNearest() {
 
         var lowestDelta = CGFloat.infinity
         var w = CGFloat.zero
@@ -50,7 +50,8 @@ extension MuTreeVm { // + Shift
                     }
                 }
         }
-        return CGSize(width: w, height: h)
+        treeShift = CGSize(width: w, height: h)
+        treeShifted = treeShift
         //log("shiftNearest ", ["shifting", treeShift, "inward: ", goingInward ])
     }
 
@@ -58,8 +59,7 @@ extension MuTreeVm { // + Shift
                    _ fromRemote: Bool) {
 
         if let touchState, touchState.phase == .ended {
-            treeShift = shiftNearest()
-            treeShifted = treeShift
+            shiftNearest()
         } else if let shiftRange = branchVms.last?.shiftRange {
             /// constrain shifting only towards root's corner
             let moved = touchState?.moved ?? .zero

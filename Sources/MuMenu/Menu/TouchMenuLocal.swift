@@ -26,13 +26,11 @@ public class TouchMenuLocal {
         let touchXY = touch.preciseLocation(in: nil)
 
         for touchVm in CornerTouchVm.values {
-
             if let nodeVm = touchVm.hitTest(touchXY) {
-
                 return addMenu(nodeVm)
             } else {
                 for treeVm in touchVm.rootVm?.treeVms ?? [] {
-                    if treeVm.treeBounds.contains(touchXY) {
+                    if treeVm.treeBoundsPad.contains(touchXY) {
                         return addMenu()
                     }
                 }

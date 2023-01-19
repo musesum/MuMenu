@@ -41,6 +41,7 @@ extension MuTreeVm { // +Show
         depthShown = depthNow
         shiftTree(to: startIndex)
         // logShowTree()
+        print(cornerAxis.corner.indicator()+(isVertical ? "|" : "_"), terminator: "") //???
 
         if !fromRemote {
             let rootItem = MenuRootItem(rootVm)

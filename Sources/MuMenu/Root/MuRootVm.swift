@@ -113,9 +113,16 @@ public class MuRootVm: ObservableObject, Equatable {
     
     func hitTest(_ point: CGPoint) -> MuNodeVm? {
         for treeVm in treeVms {
-            for branchVm in treeVm.branchVms {
-                if branchVm.show, branchVm.contains(point) {
-                    return branchVm.nearestNode(point)
+            if treeVm.treeBoundsPad.contains(point) {
+                for branchVm in treeVm.branchVms {
+                    if branchVm.show, branchVm.contains(point) {
+                        if let nodeVm =  branchVm.nearestNode(point) {
+                            return nodeVm
+                        }
+                    }
+                }
+                if let nodeVm = treeVm.branchSpotVm?.nodeSpotVm {
+                    return nodeVm
                 }
             }
         }
@@ -163,7 +170,7 @@ public class MuRootVm: ObservableObject, Equatable {
         }
     }
     func logRoot(_ s: String) {
-        //print(touchElement.symbol+s, terminator: "")
+        print(touchElement.symbol+s, terminator: "")
     }
     private func updateRoot(_ fromRemote: Bool) {
 
@@ -177,12 +184,12 @@ public class MuRootVm: ObservableObject, Equatable {
             default: break
         }
 
-        if      hoverLeafNode() { logRoot("L") }// editing leaf or shifting branch
+        if      hoverLeafNode() { logRoot("L") } // editing leaf or shifting branch
         else if hoverNodeSpot() { logRoot("N") } // is over the same branch node
         else if hoverRootNode() { logRoot("R") } // over the root (home) node
         else if hoverTreeNow()  { logRoot("T") } // new node on same tree
         else if hoverTreeAlts() { logRoot("A") } // alternate tree
-        else {  hoverSpace()    ; logRoot("S") }  // hovering over canvas
+        else {  hoverSpace()    ; logRoot("S") } // hovering over canvas
         
         // log(touchElement.symbol, terminator: "")
         
@@ -288,7 +295,7 @@ public class MuRootVm: ObservableObject, Equatable {
             }
             if touchState?.phase == .began {
                 for treeVm in treeVms {
-                    if treeVm.treeBounds.contains(touchNow) {
+                    if treeVm.treeBoundsPad.contains(touchNow) {
                         nodeSpotVm = nil
                         treeSpotVm = treeVm
                         shiftCanopy()
@@ -340,7 +347,6 @@ public class MuRootVm: ObservableObject, Equatable {
         }
         
         func shiftBranches() {
-            
             if touchVm.touchingRoot(touchNow) {
                 showTrunks()
                 touchElement = .root
@@ -360,9 +366,8 @@ public class MuRootVm: ObservableObject, Equatable {
         }
 
         func shiftCanopy() {
-
             if touchState?.phase.isDone() ?? true {
-                _ = treeSpotVm?.shiftNearest()
+                treeSpotVm?.shiftNearest()
                 touchElement = .root
             } else if touchVm.touchingRoot(touchNow) {
                 showTrunks()
