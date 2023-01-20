@@ -16,7 +16,7 @@ public class MuLeafValVm: MuLeafVm {
         super.init(node, branchVm, prevVm)
         super.leafProto = self
         node.leafProtos.append(self) // MuLeaf delegate for setting value
-        refreshValue()
+        refreshValue(tapped: false)
     }
 
     func normalizeNamed(_ name: String) -> CGFloat {
@@ -26,7 +26,7 @@ public class MuLeafValVm: MuLeafVm {
     }
     /// scale up normalized to defined range
     var expanded: Double {
-        scale(thumb[0], from: 0...1, to: range)
+        scale(thumbNext[0], from: 0...1, to: range)
     }
     func normalizeTouch(_ point: CGPoint) -> CGFloat {
         let v = panelVm.isVertical ? point.y : point.x
@@ -57,8 +57,18 @@ public class MuLeafValVm: MuLeafVm {
         } else {
             editing = false
         }
-        updateSync(visitor)
+        animateThumb()
+        updateLeafPeers(visitor)
 
+
+        func touchThumbBegin() {
+            let thumbPrev = thumbNext[0]
+            let touchDelta = touchState.pointNow - runwayBounds.origin
+            let thumbDelta = normalizeTouch(touchDelta)
+            let touchedInsideThumb = abs(thumbDelta.distance(to: thumbPrev)) < thumbRadius
+            thumbBeginΔ = touchedInsideThumb ? thumbPrev - thumbDelta : .zero
+            thumbNext[0] = thumbDelta + thumbBeginΔ
+        }
         /// user touched control, translate to normalized thumb (0...1)
         func touchThumbNext() {
             if !runwayBounds.contains(touchState.pointNow) {
@@ -66,25 +76,12 @@ public class MuLeafValVm: MuLeafVm {
                 thumbBeginΔ = thumbBeginΔ * 0.85
             }
             let touchDelta = touchState.pointNow - runwayBounds.origin
-            thumb[0] = normalizeTouch(touchDelta) + thumbBeginΔ
-        }
-        func touchThumbBegin() {
-            let thumbPrev = thumb[0]
-            let touchDelta = touchState.pointNow - runwayBounds.origin
-            let thumbNext = normalizeTouch(touchDelta)
-            let touchedInsideThumb = abs(thumbNext.distance(to: thumbPrev)) < thumbRadius
-            thumbBeginΔ = touchedInsideThumb ? thumbPrev - thumbNext : .zero
-            thumb[0] = thumbNext + thumbBeginΔ
+            thumbNext[0] = normalizeTouch(touchDelta) + thumbBeginΔ
+            animateThumb()
+            updateLeafPeers(visitor) //???
         }
     }
-    func updateSync(_ visitor: Visitor) {
-
-        if let menuSync, menuSync.setAny(named: nodeType.name, expanded, visitor) {
-
-            updateLeafPeers(visitor)
-        }
-        branchVm.show = branchVm.show
-    }
+    
 }
 
 

@@ -12,10 +12,12 @@ public protocol MuMenuSync {
 
     /// set single named value
     /// return false if already visit (may happen when Vm shared same node
+    @discardableResult
     func setAny(named: String,_ any: Any, _ visitor: Visitor) -> Bool
 
     /// set multiple named values
     /// // return false if already visit (may happen when Vm shared same node
+    @discardableResult
     func setAnys(_ anys: [(String, Any)], _ visitor: Visitor) -> Bool
 
     /// reset node to default value

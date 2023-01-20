@@ -1,6 +1,7 @@
 //  Created by warren on 9/26/22.
 
 import SwiftUI
+public typealias Thumb = [Double]
 
 public struct MenuNodeItem: Codable {
 
@@ -39,16 +40,16 @@ public struct MenuLeafItem: Codable {
     public var cornax   : Int
     public var hashPath : [Int] // last shown item on tree
     public var hashNow  : Int // hash of currently selected item
-    public let thumb    : [Double]
+    public let thumb    : Thumb
 
     public init(_ leafVm : MuLeafVm,
                 _ thumb  : [Double]) {
 
-        self.type     = leafVm.nodeType.rawValue
-        self.cornax   = leafVm.branchVm.treeVm.cornerAxis.cornax.rawValue
-        self.hashPath = leafVm.node.hashPath
-        self.hashNow  = leafVm.node.hash
-        self.thumb    = thumb
+        self.type      = leafVm.nodeType.rawValue
+        self.cornax    = leafVm.branchVm.treeVm.cornerAxis.cornax.rawValue
+        self.hashPath  = leafVm.node.hashPath
+        self.hashNow   = leafVm.node.hash
+        self.thumb     = thumb
     }
 
     enum CodingKeys: String, CodingKey {
@@ -60,7 +61,7 @@ public struct MenuLeafItem: Codable {
         try cornax   = container.decode(Int     .self, forKey: .cornax   )
         try hashPath = container.decode([Int]   .self, forKey: .hashPath )
         try hashNow  = container.decode(Int     .self, forKey: .hashNow  )
-        try thumb    = container.decode([Double].self, forKey: .thumb    )
+        try thumb    = container.decode([Double].self, forKey: .thumb   )
     }
     public var nextXY: CGPoint {
         CGPoint(x: CGFloat(thumb[0]),

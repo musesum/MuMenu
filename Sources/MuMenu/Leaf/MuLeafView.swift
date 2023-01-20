@@ -83,12 +83,10 @@ struct MuLeafBodyView<Content: View>: View {
         GeometryReader { geo in
             MuPanelView(leafVm: leafVm)
             content() // custom control thumb is here
-                .onAppear { leafVm.updateRunwayBounds(geo.frame(in: .global)) }
-                .onChange(of: geo.frame(in: .global)) { leafVm.updateRunwayBounds($0) }
+                .onAppear { leafVm.updateRunway(geo.frame(in: .global)) }
+                .onChange(of: geo.frame(in: .global)) { leafVm.updateRunway($0) }
         }
-        .frame(width: panelVm.inner.width,
-               height: panelVm.inner.height)
-
+        .frame(width: panelVm.inner.width, height: panelVm.inner.height)
     }
 }
 

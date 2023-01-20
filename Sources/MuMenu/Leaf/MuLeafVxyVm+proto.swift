@@ -5,7 +5,7 @@ import Par
 
 extension MuLeafVxyVm: MuLeafProtocol {
 
-    public func refreshValue() {
+    public func refreshValue(tapped: Bool) {
         if let nameRanges = menuSync?.getRanges(named: ["x","y"]) {
             for (name,range) in nameRanges {
                 ranges[name] = range
@@ -13,7 +13,15 @@ extension MuLeafVxyVm: MuLeafProtocol {
         }
         let xx = normalizeNamed("x",ranges["x"])
         let yy = normalizeNamed("y",ranges["y"])
-        thumb = [xx,yy]
+        thumbNext = [xx,yy]
+
+        let visitor = Visitor(hash)
+        if tapped {
+            animateThumb()
+            updateLeafPeers(visitor)
+        } else {
+            //??? syncNext(visitor)
+        }
     }
 
     /// update from model - not touch
@@ -21,12 +29,13 @@ extension MuLeafVxyVm: MuLeafProtocol {
         if visitor.newVisit(hash) {
             editing = true
             if let v = any as? [Double], v.count == 2 {
-                    thumb = [v[0],v[1]]
+                thumbNext = [v[0],v[1]]
             } else {
                 print("⁉️ unknown update type")
             }
             editing = false
-            updateSync(visitor)
+            animateThumb()
+            updateLeafPeers(visitor)
         }
     }
 
@@ -36,18 +45,36 @@ extension MuLeafVxyVm: MuLeafProtocol {
         } else {
             return node.title
         }
-
     }
+
     public func treeTitle() -> String {
         String(format: "x:%.2f  y:%.2f",
-               expand(named: "x", thumb[0]),
-               expand(named: "y", thumb[1]))
+               expand(named: "x", thumbNext[0]),
+               expand(named: "y", thumbNext[1]))
     }
 
 
     public func thumbOffset() -> CGSize {
-        CGSize(width:     thumb[0]  * panelVm.runway,
-               height: (1-thumb[1]) * panelVm.runway)
+        CGSize(width:     thumbNext[0]  * panelVm.runway,
+               height: (1-thumbNext[1]) * panelVm.runway)
+    }
+    /// called via user touch or via model update
+    public func syncNow(_ visitor: Visitor) {
+
+        let x = expand(named: "x", thumbNow[0])
+        let y = expand(named: "y", thumbNow[1])
+        menuSync?.setAnys([("x", x),("y", y)], visitor)
+        refreshView()
+    }
+
+    /// called via user touch or via model update
+    public func syncNext(_ visitor: Visitor) {
+
+        let x = expand(named: "x", thumbNext[0])
+        let y = expand(named: "y", thumbNext[1])
+        menuSync?.setAnys([("x", x),("y", y)], visitor)
+        thumbNow = thumbNext
+        refreshView()
     }
 
 }

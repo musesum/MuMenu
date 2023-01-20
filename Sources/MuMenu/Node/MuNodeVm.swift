@@ -132,11 +132,11 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
     
     func refreshView() {
         editing = editing
+        branchVm.show = branchVm.show
     }
 
     func lastShownNodeVm() -> MuNodeVm? {
         return branchVm.treeVm.branchVms.last?.nodeSpotVm
     }
-
 }
 

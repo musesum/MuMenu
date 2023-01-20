@@ -32,7 +32,7 @@ public class DoubleBuffer<Item> {
         timer?.invalidate()
     }
 
-    public func flush() -> Bool {
+    public func flushBuf() -> Bool {
         guard var flusher else { return false }
         if bufs[indexNow].count == 0 { return false }
 
@@ -53,7 +53,7 @@ public class DoubleBuffer<Item> {
     func bufferLoop() {
 
         timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { timer in
-            let isDone = self.flush()
+            let isDone = self.flushBuf()
             if isDone {
                 timer.invalidate()
             }

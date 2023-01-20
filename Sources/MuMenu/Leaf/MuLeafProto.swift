@@ -19,8 +19,14 @@ public protocol MuLeafProtocol {
     func thumbOffset() -> CGSize
 
     /// get value of thumb
-    func refreshValue()
+    func refreshValue(tapped: Bool)
 
+    /// animated upddate
+    func syncNow(_ visitor: Visitor)
+
+    /// final upddate
+    func syncNext(_ visitor: Visitor)
+    
 }
 
 

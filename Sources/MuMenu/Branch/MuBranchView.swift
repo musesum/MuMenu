@@ -14,7 +14,7 @@ struct MuBranchView: View {
         switch treeVm.cornerAxis.cornax {
             case .LLV, .LRV: VStack { titleV(branchVm); bodyV(branchVm)  }
             case .ULV, .URV: VStack { bodyV(branchVm) ; titleV(branchVm) }
-            case .LLH, .ULH: HStack(alignment: .bottom) { bodyV(branchVm) ; titleV(branchVm) }
+            case .LLH, .ULH: HStack(alignment: .bottom) { bodyV(branchVm); titleV(branchVm) }
             case .URH, .LRH: HStack(alignment: .top) { titleV(branchVm); bodyV(branchVm)  }
         }
     }

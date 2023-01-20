@@ -15,7 +15,7 @@ public class MuLeafVxyVm: MuLeafVm {
         super.init(node, branchVm, prevVm)
         super.leafProto = self
         node.leafProtos.append(self)  //MuLeafProtocol for exchanging value
-        refreshValue()
+        refreshValue(tapped: false)
     }
     func normalizeNamed(_ name: String,
                         _ range: ClosedRange<Double>?) -> Double {
@@ -35,8 +35,8 @@ public class MuLeafVxyVm: MuLeafVm {
     /// shown at center, corner, and sides.
     /// So: NW, N, NE, E, SE, S, SW, W, Center
     var nearestTick: CGPoint {
-        CGPoint(x: round(thumb[0] * 2) / 2,
-                y: round(thumb[1] * 2) / 2)
+        CGPoint(x: round(thumbNext[0] * 2) / 2,
+                y: round(thumbNext[1] * 2) / 2)
     }
 
     /// ticks above and below nearest tick,
@@ -86,30 +86,30 @@ public class MuLeafVxyVm: MuLeafVm {
             } else {
                 editing = false
             }
-            updateSync(visitor)
+            animateThumb()
+            updateLeafPeers(visitor)
         }
 
         func tapThumb() {
             let touchDelta = touchState.pointNow - runwayBounds.origin
             let thumbPrior = panelVm.normalizeTouch(xy: touchDelta)
-            thumb = quantizeThumb(thumbPrior)
+            thumbNext = quantizeThumb(thumbPrior)
 
-            let x = thumb[0] - thumbPrior[0]
-            let y = thumb[1] - thumbPrior[1]
+            let x = thumbNext[0] - thumbPrior[0]
+            let y = thumbNext[1] - thumbPrior[1]
             thumbBeginΔ = [x, y]
         }
 
         func touchThumbBegin() {
-            let thumbPrev = thumb
+            let thumbPrev = thumbNow
             let touchDelta = touchState.pointNow - runwayBounds.origin
-            let thumbNext = panelVm.normalizeTouch(xy: touchDelta)
-            let distance = thumbNext.distance(thumbPrev)
+            let thumbDelta = panelVm.normalizeTouch(xy: touchDelta)
+            let distance = thumbDelta.distance(thumbPrev)
             let touchedInsideThumb = distance < thumbRadius
             thumbBeginΔ = (touchedInsideThumb
-                           ? (thumbPrev - thumbNext)
+                           ? (thumbPrev - thumbDelta)
                            : [0,0])
-
-            thumb = thumbNext + thumbBeginΔ
+            thumbNext = thumbDelta + thumbBeginΔ
         }
 
         /// user touched control, translate to normalized thumb (0...1)
@@ -119,7 +119,7 @@ public class MuLeafVxyVm: MuLeafVm {
                 thumbBeginΔ = thumbBeginΔ * 0.85
             }
             let touchDelta = touchState.pointNow - runwayBounds.origin
-            thumb = panelVm.normalizeTouch(xy: touchDelta) + thumbBeginΔ
+            thumbNext = panelVm.normalizeTouch(xy: touchDelta) + thumbBeginΔ
         }
         /// double touch will align thumb to center, corners or sides.
         func quantizeThumb(_ point: [Double]) -> [Double] {
@@ -128,16 +128,6 @@ public class MuLeafVxyVm: MuLeafVm {
             let y = round(point[1] * 2) / 2
             return [x,y]
         }
-    }
-    /// called via user touch or via model update
-    func updateSync(_ visitor: Visitor) {
-
-        let x = expand(named: "x", thumb[0])
-        let y = expand(named: "y", thumb[1])
-        if let menuSync, menuSync.setAnys([("x", x),("y", y)], visitor) {
-            updateLeafPeers(visitor)
-        }
-        branchVm.show = branchVm.show
     }
     
 }

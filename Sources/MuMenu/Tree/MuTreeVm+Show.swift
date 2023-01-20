@@ -40,8 +40,7 @@ extension MuTreeVm { // +Show
         startIndex = nextIndex
         depthShown = depthNow
         shiftTree(to: startIndex)
-        // logShowTree()
-        print(cornerAxis.corner.indicator()+(isVertical ? "|" : "_"), terminator: "") //???
+        logShowTree()
 
         if !fromRemote {
             let rootItem = MenuRootItem(rootVm)
@@ -49,13 +48,16 @@ extension MuTreeVm { // +Show
             rootVm.sendItemToPeers(menuItem)
         }
         func logShowTree() {
-            
+            #if true
+            print(cornerAxis.corner.indicator()+(isVertical ? "|" : "━"), terminator: "")
+            #elseif true
             print("\(via.pad(7))\(cornerAxis.corner.indicator())\(isVertical ? "V" : "H") (s \(nextIndex) d \(nextDepth)) ", terminator: " ")
             
             for branch in branchVms {
                 print("\(branch.title.pad(7)):\(branch.show ? 1 : 0)", terminator: " ")
             }
             print("=== (s \(startIndex) d \(depthShown))  shift: \(treeShifted)")
+            #endif
         }
     }
     func lastShown() -> MuBranchVm? {

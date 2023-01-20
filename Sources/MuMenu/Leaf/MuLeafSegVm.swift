@@ -17,7 +17,7 @@ public class MuLeafSegVm: MuLeafVm {
         super.leafProto = self
         node.leafProtos.append(self) // MuLeaf delegate for setting value
         
-        refreshValue()
+        refreshValue(tapped: false)
         updatePanelSizes()
     }
 
@@ -47,7 +47,7 @@ public class MuLeafSegVm: MuLeafVm {
         panelVm.aspectSz = size
     }
 
-    var nearestTick: Double { return round(thumb[0]*count)/count }
+    var nearestTick: Double { return round(thumbNext[0]*count)/count }
 
     /// ticks above and below nearest tick,
     /// but never on panel border or thumb border
@@ -95,15 +95,16 @@ public class MuLeafSegVm: MuLeafVm {
         } else {
             editing = false
         }
-        updateSync(visitor)
+        syncNext(visitor)
+        updateLeafPeers(visitor)
 
         func touchThumbBegin() {
-            let thumbPrev = thumb[0]
+            let thumbPrev = thumbNow[0]
             let touchDelta = touchState.pointNow - runwayBounds.origin
-            let thumbNext = normalizeTouch(touchDelta)
-            let touchedInsideThumb = abs(thumbNext.distance(to: thumbPrev)) < thumbRadius
-            thumbBeginΔ = touchedInsideThumb ? thumbPrev - thumbNext : .zero
-            thumb[0] = thumbNext + thumbBeginΔ
+            let thumbDelta = normalizeTouch(touchDelta)
+            let touchedInsideThumb = abs(thumbDelta.distance(to: thumbPrev)) < thumbRadius
+            thumbBeginΔ = touchedInsideThumb ? thumbPrev - thumbDelta : .zero
+            thumbNext[0] = thumbDelta + thumbBeginΔ
         }
         /// user touched control, translate to normalized thumb (0...1)
         func touchThumbNext() {
@@ -112,18 +113,8 @@ public class MuLeafSegVm: MuLeafVm {
                 thumbBeginΔ = thumbBeginΔ * 0.85
             }
             let touchDelta = touchState.pointNow - runwayBounds.origin
-            thumb[0] = normalizeTouch(touchDelta) + thumbBeginΔ
+            thumbNext[0] = normalizeTouch(touchDelta) + thumbBeginΔ
         }
     }
-
-    func updateSync(_ visitor: Visitor) {
-
-        if let menuSync, menuSync.setAny(named: nodeType.name, expanded, visitor) {
-
-            updateLeafPeers(visitor)
-        }
-        branchVm.show = branchVm.show
-    }
-
 }
 
