@@ -13,7 +13,7 @@ public class MuLeafTapVm: MuLeafVm {
         super.init(node, branchVm, prevVm)
         super.leafProto = self
         node.leafProtos.append(self) // MuLeaf delegate for setting value
-        refreshValue(tapped: false)
+        refreshValue(Visitor(.model))
     }
     override public func touchLeaf(_ touchState: MuTouchState,
                                    visitor: Visitor = Visitor()) {

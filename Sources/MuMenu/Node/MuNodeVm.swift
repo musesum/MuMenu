@@ -127,7 +127,6 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
         }
         deepBefore(self)
         deepAfter(self)
-        MuStatusVm.shared.update(before: before, after: after)
     }
     
     func refreshView() {

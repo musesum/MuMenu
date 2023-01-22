@@ -9,13 +9,12 @@ import Par
 
 extension MuLeafTapVm: MuLeafProtocol {
 
-    public func refreshValue(tapped: Bool) {
-        let visitor = Visitor(hash)
-        if tapped {
+    public func refreshValue(_ visitor: Visitor) {
+        visitor.nowHere(self.hash)
+        if visitor.from.user {
             updateLeafPeers(visitor)
             syncNext(visitor)
         }
-
     }
 
     public func updateLeaf(_ any: Any, _ visitor: Visitor) {

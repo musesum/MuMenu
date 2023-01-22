@@ -50,7 +50,7 @@ extension MuTouchVm {
         DispatchQueue.main.async {
 
             if let leafProto = leafVm.leafProto {
-                leafProto.updateLeaf(thumb, Visitor(fromRemote: true))
+                leafProto.updateLeaf(thumb, Visitor(.remote))
             }
         }
     }

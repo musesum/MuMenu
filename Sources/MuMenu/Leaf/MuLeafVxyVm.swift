@@ -15,7 +15,7 @@ public class MuLeafVxyVm: MuLeafVm {
         super.init(node, branchVm, prevVm)
         super.leafProto = self
         node.leafProtos.append(self)  //MuLeafProtocol for exchanging value
-        refreshValue(tapped: false)
+        refreshValue(Visitor(.model))
     }
     func normalizeNamed(_ name: String,
                         _ range: ClosedRange<Double>?) -> Double {

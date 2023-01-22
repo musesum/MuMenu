@@ -5,7 +5,7 @@ import Par
 
 extension MuLeafSegVm: MuLeafProtocol {
 
-    public func refreshValue(tapped: Bool) {
+    public func refreshValue(_ visitor: Visitor) {
         if let menuSync {
             range = menuSync.getRange(named: nodeType.name)
             if let val = menuSync.getAny(named: nodeType.name) as? Double {
@@ -14,13 +14,10 @@ extension MuLeafSegVm: MuLeafProtocol {
                 print("⁉️ refreshValue is not Double")
                 thumbNext[0] = 0
             }
-
-            let visitor = Visitor(hash)
-            if tapped {
+            visitor.nowHere(self.hash)
+            if visitor.from.user {
                 animateThumb()
                 updateLeafPeers(visitor)
-            } else {
-                //??? syncNext(visitor)
             }
         }
     }

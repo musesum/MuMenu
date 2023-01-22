@@ -61,8 +61,8 @@ public class MuRootVm: ObservableObject, Equatable {
     func updateTreeOffsets() {
 
         // xy top left to bottom right cornders
-        let x0 = Layout.padding * 2
-        let y0 = Layout.padding * 2
+        let x0 = Layout.padding2
+        let y0 = Layout.padding2
         let x1 = x0 + Layout.diameter + Layout.padding * 3
         let y1 = y0 + Layout.diameter + Layout.padding * 3
 
@@ -70,9 +70,9 @@ public class MuRootVm: ObservableObject, Equatable {
         var vs = CGSize.zero // vertical offset
         var hs = CGSize.zero // horizontal offset
         var rs = CGSize.zero // root icon offset
-        func v(_ w: CGFloat, _ h: CGFloat) { vs = CGSize(width: w, height: h) }
-        func h(_ w: CGFloat, _ h: CGFloat) { hs = CGSize(width: w, height: h) }
-        func r(_ w: CGFloat, _ h: CGFloat) { rs = CGSize(width: w, height: h) }
+        func v(_ w:CGFloat,_ h:CGFloat) { vs = CGSize(width:w,height:h) }
+        func h(_ w:CGFloat,_ h:CGFloat) { hs = CGSize(width:w,height:h) }
+        func r(_ w:CGFloat,_ h:CGFloat) { rs = CGSize(width:w,height:h) }
 
         // corner offsets are different for ipad
         let pad = UIDevice.current.userInterfaceIdiom == .pad
@@ -139,7 +139,6 @@ public class MuRootVm: ObservableObject, Equatable {
             nodeSpotVm.touching(touchState)
             updateSpot(nodeSpotVm, fromRemote)
         }
-        MuStatusVm.statusLine(touchElement == .edit ? .on : .off)
         beginTouchElement = touchElement
     }
     
@@ -161,7 +160,6 @@ public class MuRootVm: ObservableObject, Equatable {
         }
         treeSpotVm?.branchSpotVm = nil
         touchElement = .none
-        MuStatusVm.statusLine(.off)
 
         if !fromRemote, let nodeSpotVm {
             let nodeItem = MenuNodeItem(nodeSpotVm)
@@ -390,9 +388,6 @@ public class MuRootVm: ObservableObject, Equatable {
             if let touchState {
                 leafVm.touchLeaf(touchState)
             }
-            
-            // hide status line
-            MuStatusVm.statusLine(.off)
         }
         
         func showTrunks() {

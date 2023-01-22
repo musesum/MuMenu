@@ -5,7 +5,8 @@ import Par
 
 extension MuLeafVxyVm: MuLeafProtocol {
 
-    public func refreshValue(tapped: Bool) {
+    public func refreshValue(_ visitor: Visitor) {
+
         if let nameRanges = menuSync?.getRanges(named: ["x","y"]) {
             for (name,range) in nameRanges {
                 ranges[name] = range
@@ -13,14 +14,13 @@ extension MuLeafVxyVm: MuLeafProtocol {
         }
         let xx = normalizeNamed("x",ranges["x"])
         let yy = normalizeNamed("y",ranges["y"])
+        
         thumbNext = [xx,yy]
 
-        let visitor = Visitor(hash)
-        if tapped {
+        visitor.nowHere(self.hash)
+        if visitor.from.user {
             animateThumb()
             updateLeafPeers(visitor)
-        } else {
-            //??? syncNext(visitor)
         }
     }
 

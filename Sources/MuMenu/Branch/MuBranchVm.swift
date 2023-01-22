@@ -160,7 +160,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
         boundStart = boundsNow - CGPoint(treeVm.treeShift)
         let boundsPriorSize = branchPrev?.boundsPrior ?? .zero
         let boundsPrevSize = branchPrev?.boundStart.size ?? .zero
-        let priorPadding = branchPrev == nil ? 0 : Layout.padding * 2
+        let priorPadding = branchPrev == nil ? 0 : Layout.padding2
 
         boundsPrior = boundsPriorSize + boundsPrevSize + priorPadding
         let pw = boundsPrior.width

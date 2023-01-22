@@ -1,6 +1,7 @@
 //  Created by warren on 12/12/22.
 
 import Foundation
+import Par // Visitor
 
 extension MuNodeVm { // + Touch
 
@@ -11,8 +12,7 @@ extension MuNodeVm { // + Touch
            let menuSync = leafVm.menuSync {
 
             menuSync.resetDefault()
-            leafVm.leafProto?.refreshValue(tapped: true) //??
-            refreshView()
+            leafVm.leafProto?.refreshValue(Visitor(.user))
         }
     }
     /// update all descendants

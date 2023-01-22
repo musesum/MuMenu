@@ -85,9 +85,7 @@ fileprivate struct titleV: View {
             .rotationEffect(angle, anchor: anchor)
             .offset(offset)
             .opacity(opacity)
-            .animation(.easeInOut(duration: Layout.animate*2), value: opacity)
-            //??? .animation(.easeInOut(duration: 0), value: offset)
-
+            .animation(Layout.animateSlow, value: opacity)
     }
 }
 
@@ -134,8 +132,8 @@ fileprivate struct bodyV: View {
         .frame(width: panelVm.outer.width, height: panelVm.outer.height)
         .offset(branchVm.branchShift)
         .opacity(opacity)
-        .animation(.easeInOut(duration: Layout.animate), value: opacity)
-        .animation(.easeInOut(duration: Layout.animate), value: branchVm.branchShift )
+        .animation(Layout.animateFast, value: opacity)
+        .animation(Layout.animateFast, value: branchVm.branchShift )
         //.onTapGesture { } // allow scrolling
     }
 }

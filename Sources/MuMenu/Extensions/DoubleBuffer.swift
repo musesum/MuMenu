@@ -40,7 +40,7 @@ public class DoubleBuffer<Item> {
         indexNow = indexNow ^ 1   // flip double buffer
         var isDone = false
         for item in bufs[indexFlush] {
-            isDone = flusher.flushItem(item)
+            isDone = isDone || flusher.flushItem(item) // isDone || 
         }
         bufs[indexFlush].removeAll()
         return isDone

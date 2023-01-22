@@ -10,14 +10,13 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
     public static func == (lhs: MuTreeVm, rhs: MuTreeVm) -> Bool { return lhs.id == rhs.id }
 
     @Published var branchVms = [MuBranchVm]()
-    @Published var treeShift = CGSize.zero {
-        didSet { updateTreeBounds() } }
+
+    @Published var treeShift = CGSize.zero { didSet { updateTreeBounds() } }
+    var treeShifted = CGSize.zero
+
     @Published var treeBounds: CGRect = .zero
     var treeBoundsPad: CGRect = .zero
-    var treeBoundsGhost: CGRect = .zero //??? 
-    
-    var treeShifted = CGSize.zero
-    
+
     var rootVm: MuRootVm
     var branchSpotVm: MuBranchVm?
     var cornerAxis: CornerAxis
@@ -26,6 +25,10 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
     var depthShown = 0 // levels of branches shown
     var startIndex = 0
 
+    /// convex hull around all branches of tree
+    ///
+    ///  - note: used for separating touches out from Canvas
+    ///  
     func updateTreeBounds() {
         var rect = CGRect.zero
         if depthShown == 0 {
@@ -41,8 +44,7 @@ public class MuTreeVm: Identifiable, Equatable, ObservableObject {
             rect = rect.extend(branchVm.boundsNow)
         }
         treeBounds = rect
-        treeBoundsPad = treeBounds.pad(Layout.padding * 2)
-        treeBoundsGhost = treeBoundsGhost.extend(treeBoundsPad)
+        treeBoundsPad = treeBounds.pad(Layout.padding2)
     }
     
     public init(_ rootVm: MuRootVm,

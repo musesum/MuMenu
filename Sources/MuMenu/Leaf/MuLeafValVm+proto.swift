@@ -6,18 +6,19 @@ import Par
 
 extension MuLeafValVm: MuLeafProtocol {
 
-    public func refreshValue(tapped: Bool) {
+    public func refreshValue(_ visitor: Visitor) {
+
         thumbNext[0] = normalizeNamed(nodeType.name)
         range = menuSync?.getRange(named: nodeType.name) ?? 0...1
-        let visitor = Visitor(hash)
-        if tapped {
+
+        visitor.nowHere(self.hash)
+        if visitor.from.user {
             animateThumb()
             updateLeafPeers(visitor)
-        } else {
-            //??? syncNext(visitor)
         }
     }
 
+    /// update from model - not touch
     public func updateLeaf(_ any: Any,_ visitor: Visitor) {
         if visitor.newVisit(hash) {
             editing = true

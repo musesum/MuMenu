@@ -16,7 +16,7 @@ public class MuLeafValVm: MuLeafVm {
         super.init(node, branchVm, prevVm)
         super.leafProto = self
         node.leafProtos.append(self) // MuLeaf delegate for setting value
-        refreshValue(tapped: false)
+        refreshValue(Visitor(.model))
     }
 
     func normalizeNamed(_ name: String) -> CGFloat {
@@ -77,8 +77,6 @@ public class MuLeafValVm: MuLeafVm {
             }
             let touchDelta = touchState.pointNow - runwayBounds.origin
             thumbNext[0] = normalizeTouch(touchDelta) + thumbBeginΔ
-            animateThumb()
-            updateLeafPeers(visitor) //???
         }
     }
     

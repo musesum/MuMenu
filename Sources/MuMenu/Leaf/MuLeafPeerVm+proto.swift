@@ -4,7 +4,7 @@ import SwiftUI
 import Par // Visitor
 extension MuLeafPeerVm: MuLeafProtocol {
 
-    public func refreshValue(tapped: Bool) {}
+    public func refreshValue(_ visitor: Visitor) {}
     public func updateLeaf(_ any: Any, _ visitor: Visitor) {}
     public func leafTitle() -> String { "Bonjour" }
     public func treeTitle() -> String { "Bonjour" }

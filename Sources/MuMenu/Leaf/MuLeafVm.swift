@@ -79,11 +79,11 @@ extension MuLeafVm: DisplayLinkDelegate {
             let now = thumbNow[i]
             let next = thumbNext[i]
             let delta = (next - now)
-            let increment = delta / max(animSteps + 1, 1)
+            let increment = animSteps <= 1 ? delta : delta / animSteps
             thumbNow[i] = (now + increment)
         }
-        if animSteps >= 1 {
-            animSteps = max(0, animSteps - 1)
+        animSteps = max(0, animSteps - 1)
+        if animSteps > 1 {
             DispatchQueue.main.async {
                 self.leafProto?.syncNow(Visitor(self.hash))
             }

@@ -66,8 +66,6 @@ public class MuPanelVm {
     var outer: CGSize {
 
         let result: CGSize
-        let padpad = Layout.padding * 2
-        let outerDiameter = Layout.diameter + padpad
 
         switch nodeType {
 
@@ -75,18 +73,21 @@ public class MuPanelVm {
 
                 result = inner + (
                     isVertical
-                    ? CGSize(width: padpad, height: outerDiameter)
-                    : CGSize(width: outerDiameter, height: padpad))
+                    ? CGSize(width: Layout.padding2,
+                             height: Layout.diameter2)
+                    : CGSize(width: Layout.diameter2,
+                             height: Layout.padding2))
 
             case .vxy, .peer: // header is always on top
 
-                result = inner + CGSize(width: padpad, height: outerDiameter)
+                result = inner + CGSize(width: Layout.padding2,
+                                        height: Layout.diameter2)
 
             case .none, .node:
 
-                let longer = (outerDiameter + spacing) * count
-                let width  = (isVertical ? outerDiameter : longer)
-                let height = (isVertical ? longer : outerDiameter)
+                let longer = (Layout.diameter2 + spacing) * count
+                let width  = (isVertical ? Layout.diameter2 : longer)
+                let height = (isVertical ? longer : Layout.diameter2)
 
                 result = CGSize(width: width, height: height)
         }

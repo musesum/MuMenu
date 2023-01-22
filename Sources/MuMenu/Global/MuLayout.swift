@@ -5,15 +5,18 @@ import SwiftUI
 struct Layout {
 
     static let diameter: CGFloat = 40
+    static let diameter2: CGFloat = 48 // always diameter + padding2
     static let radius: CGFloat = 20
     static let padding: CGFloat = 4
+    static let padding2: CGFloat = 8 // always padding * 2
     static var cornerRadius: CGFloat { radius + padding }
     static let labelSize = CGSize(width: diameter+8, height: diameter-8)
 
     /// distance from center while inside node
     static let insideNode: CGFloat = 24
 
-    static let animate = CGFloat(0.25)
+    static let animateFast = Animation.easeInOut(duration: 0.25)
+    static let animateSlow = Animation.easeInOut(duration: 0.50)
     static let hoverRing = "icon.ring.roygbiv"
     static let lagStep = TimeInterval(1.0/32.0) // sixteenth of a second
     static let panelFill = Color(white: 0.01, opacity: 0.5)

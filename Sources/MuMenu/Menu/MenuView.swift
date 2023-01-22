@@ -9,7 +9,6 @@ public struct MenuDragView: View {
 
     @GestureState private var touchXY: CGPoint = .zero
     let menuVm: MenuVm
-    let statusVm = MuStatusVm.shared
 
     public init(menuVm: MenuVm) {
         self.menuVm = menuVm
@@ -40,7 +39,6 @@ public struct MenuDragView: View {
 public struct MenuTouchView: View {
 
     let menuVm: MenuVm
-    let statusVm = MuStatusVm.shared
 
     public init(menuVm: MenuVm) {
         self.menuVm = menuVm
