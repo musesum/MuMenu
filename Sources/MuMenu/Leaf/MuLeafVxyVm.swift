@@ -69,7 +69,7 @@ public class MuLeafVxyVm: MuLeafVm {
 
     /// user touch gesture inside runway
     override public func touchLeaf(_ touchState: MuTouchState,
-                                   visitor: Visitor = Visitor()) {
+                                   _ visitor: Visitor) {
 
         if visitor.newVisit(hash) {
             if touchState.phase == .began {

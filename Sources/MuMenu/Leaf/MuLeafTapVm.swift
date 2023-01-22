@@ -15,8 +15,9 @@ public class MuLeafTapVm: MuLeafVm {
         node.leafProtos.append(self) // MuLeaf delegate for setting value
         refreshValue(Visitor(.model))
     }
+    /// user touch gesture inside runway
     override public func touchLeaf(_ touchState: MuTouchState,
-                                   visitor: Visitor = Visitor()) {
+                                   _ visitor: Visitor) {
         if touchState.phase == .began {
             thumbNext[0] = 1
             editing = true

@@ -21,10 +21,10 @@ enum MuTouchElement: String  {
             case .trunks : return "ᛘ"
             case .branch : return "𐂷"
             case .node   : return "ⓝ"
-            case .canopy : return "⧻"
-            case .shift  : return "⊪"
-            case .edit   : return "✎"
-            case .space  : return "◌"
+            case .canopy : return "􁝯"
+            case .shift  : return "􀄭"
+            case .edit   : return "􀤹"
+            case .space  : return "􁁺"
         }
     }
     public var description: String {

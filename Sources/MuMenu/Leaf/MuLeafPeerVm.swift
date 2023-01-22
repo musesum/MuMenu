@@ -18,7 +18,7 @@ public class MuLeafPeerVm: MuLeafVm {
         node.leafProtos.append(self)
     }
     override public func touchLeaf(_ : MuTouchState,
-                                   visitor: Visitor) {}
+                                   _ : Visitor) {}
     func updateSync(_ visitor: Visitor) {}
     
 }

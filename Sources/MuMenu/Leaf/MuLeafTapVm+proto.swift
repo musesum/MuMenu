@@ -14,6 +14,8 @@ extension MuLeafTapVm: MuLeafProtocol {
         if visitor.from.user {
             updateLeafPeers(visitor)
             syncNext(visitor)
+        } else {
+            thumbNow = thumbNext
         }
     }
 
@@ -51,7 +53,7 @@ extension MuLeafTapVm: MuLeafProtocol {
     }
 
     public func syncNow(_ visitor: Visitor) {
-        print("syncNow animation not used for discreet values")
+        syncNext(visitor)
     }
     public func syncNext(_ visitor: Visitor) {
         menuSync?.setAny(named: nodeType.name, thumbNext[0], visitor)

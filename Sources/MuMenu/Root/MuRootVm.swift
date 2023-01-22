@@ -1,6 +1,7 @@
 // Created by warren 10/13/21.
 
 import SwiftUI
+import Par // Visitor
 
 public class MuRootVm: ObservableObject, Equatable {
     let id = MuNodeIdentity.getId()
@@ -168,7 +169,7 @@ public class MuRootVm: ObservableObject, Equatable {
         }
     }
     func logRoot(_ s: String) {
-        print(touchElement.symbol+s, terminator: "")
+        // print(touchElement.symbol+s, terminator: "")
     }
     private func updateRoot(_ fromRemote: Bool) {
 
@@ -386,7 +387,7 @@ public class MuRootVm: ObservableObject, Equatable {
                 leafVm.branchSpot(.off)
             }
             if let touchState {
-                leafVm.touchLeaf(touchState)
+                leafVm.touchLeaf(touchState, Visitor(.user))
             }
         }
         

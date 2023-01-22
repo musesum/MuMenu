@@ -68,8 +68,6 @@ extension MuTreeVm { // + Shift
         updateBranches(fromRemote)
     }
     func shiftExpandLast(_ fromRemote: Bool) {
-
-        // print("*** shiftExpandLast")
         treeShift = .zero
         treeShifted  = .zero
         updateBranches(fromRemote)

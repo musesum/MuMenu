@@ -48,7 +48,7 @@ public class MuLeafVm: MuNodeVm {
         return contained
     }
     public func touchLeaf(_ touchState: MuTouchState,
-                          visitor: Visitor = Visitor()) {
+                          _ visitor: Visitor) {
         print("*** MuLeafVm::touchLeaf override me")
     }
     
@@ -85,11 +85,11 @@ extension MuLeafVm: DisplayLinkDelegate {
         animSteps = max(0, animSteps - 1)
         if animSteps > 1 {
             DispatchQueue.main.async {
-                self.leafProto?.syncNow(Visitor(self.hash))
+                self.leafProto?.syncNow(Visitor(self.hash, from: .animate))
             }
         } else {
             DispatchQueue.main.async {
-                self.leafProto?.syncNext(Visitor(self.hash))
+                self.leafProto?.syncNext(Visitor(self.hash, from: .animate))
             }
         }
         return animSteps >= 1

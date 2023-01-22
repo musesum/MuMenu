@@ -17,7 +17,7 @@ public class MuLeafTogVm: MuLeafVm {
         refreshValue(Visitor(.model))
     }
     override public func touchLeaf(_ touchState: MuTouchState,
-                                   visitor: Visitor = Visitor()) {
+                                   _ visitor: Visitor) {
         if !editing, touchState.phase == .began  {
             thumbNext[0] = (thumbNext[0]==1.0 ? 0 : 1)
             editing = true

@@ -51,7 +51,7 @@ extension MuLeafSegVm: MuLeafProtocol {
         : CGSize(width: thumbNext[0] * panelVm.runway, height: 1)
     }
     public func syncNow(_ visitor: Visitor) {
-        print("syncNow animation not used for discreet values")
+       syncNext(visitor)
     }
     public func syncNext(_ visitor: Visitor) {
 

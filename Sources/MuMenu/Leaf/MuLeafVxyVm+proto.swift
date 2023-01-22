@@ -21,6 +21,8 @@ extension MuLeafVxyVm: MuLeafProtocol {
         if visitor.from.user {
             animateThumb()
             updateLeafPeers(visitor)
+        } else {
+            thumbNow = thumbNext
         }
     }
 
