@@ -22,7 +22,7 @@ struct MuIconView: View {
             switch icon.iconType {
 
                 case .none:  MuIconTextView(text: nodeVm.node.title, color: color)
-                case .abbrv: MuIconTextView(text: nodeVm.node.icon.named, color: color)
+                case .text: MuIconTextView(text: nodeVm.node.icon.named, color: color)
 
                 case .cursor:
 

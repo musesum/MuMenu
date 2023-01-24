@@ -69,10 +69,10 @@ public class MuLeafVm: MuNodeVm {
     
     func animateThumb() {
         animSteps = animateLeaf * 60 // DisplayLink.shared.fps
-        DisplayLink.shared.delegates[self.hash] = self
+        NextFrame.shared.addFrameDelegate(self.hash, self)
     }
 }
-extension MuLeafVm: DisplayLinkDelegate {
+extension MuLeafVm: NextFrameDelegate {
 
     public func nextFrame() -> Bool {
         for i in 0..<thumbNext.count {

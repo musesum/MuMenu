@@ -11,7 +11,7 @@ extension MuLeafValVm: MuLeafProtocol {
         thumbNext[0] = normalizeNamed(nodeType.name)
         range = menuSync?.getRange(named: nodeType.name) ?? 0...1
 
-        if visitor.from.user {
+        if !visitor.from.animate {
             visitor.nowHere(self.hash)
             animateThumb()
             updateLeafPeers(visitor)

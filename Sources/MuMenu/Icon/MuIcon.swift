@@ -3,7 +3,7 @@
 import Foundation
 import UIKit
 
-public enum MuIconType { case none, cursor, image, symbol, abbrv }
+public enum MuIconType { case none, cursor, image, symbol, text }
 
 public class MuIcon {
     public static var altBundle: Bundle?
