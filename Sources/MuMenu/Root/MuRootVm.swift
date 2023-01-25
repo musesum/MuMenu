@@ -96,8 +96,8 @@ public class MuRootVm: ObservableObject, Equatable {
         let idiom = UIDevice.current.userInterfaceIdiom
         let margin = 2 * Layout.padding
         let x = (idiom == .pad ? margin : 0)
-        let y = ((corner.contains(.upper) && idiom == .phone) ||
-                 (corner.contains(.lower) && idiom == .pad)) ? margin : 0
+        let y = ((corner.upper && idiom == .phone) ||
+                 (corner.lower && idiom == .pad)) ? margin : 0
         let w = frame.size.width
         let h = frame.size.height
         let s = Layout.padding

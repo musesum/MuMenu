@@ -20,7 +20,8 @@ extension MuLeafTapVm: MuLeafProtocol {
     }
 
     public func updateLeaf(_ any: Any, _ visitor: Visitor) {
-        if visitor.newVisit(hash) {
+        if !visitor.from.animate,
+            visitor.newVisit(hash) {
             editing = true
             switch any {
                 case let v as Double:   thumbNext[0] = v

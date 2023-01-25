@@ -60,7 +60,6 @@ public class MuLeafValVm: MuLeafVm {
         animateThumb()
         updateLeafPeers(visitor)
 
-
         func touchThumbBegin() {
             let thumbPrev = thumbNext[0]
             let touchDelta = touchState.pointNow - runwayBounds.origin

@@ -40,6 +40,17 @@ enum MuTouchElement: String  {
             case .space  : return "space"
         }
     }
+
+    var none   : Bool { self == .none   }
+    var root   : Bool { self == .root   }
+    var branch : Bool { self == .branch }
+    var trunks : Bool { self == .trunks }
+    var node   : Bool { self == .node   }
+    var canopy : Bool { self == .canopy }
+    var shift  : Bool { self == .shift  }
+    var edit   : Bool { self == .edit   }
+    var space  : Bool { self == .space  }
+
     static public func symbols(_ set: Set<MuTouchElement>) -> String {
         var result = "〈"
         for item in set {

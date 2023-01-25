@@ -6,8 +6,8 @@ public struct MuCorner: OptionSet {
 
     public let rawValue: Int
 
-    var hAlign: HorizontalAlignment { self.contains(.left) ? .leading : .trailing }
-    var vAlign: VerticalAlignment { self.contains(.upper) ? .top : .bottom }
+    var hAlign: HorizontalAlignment { self.left ? .leading : .trailing }
+    var vAlign: VerticalAlignment { self.upper ? .top : .bottom }
     var alignment: Alignment { Alignment(horizontal: hAlign, vertical: vAlign) }
     
     public init(rawValue: Int) {
@@ -18,6 +18,11 @@ public struct MuCorner: OptionSet {
     public static let lower = MuCorner(rawValue: 1 << 1) // 2
     public static let left  = MuCorner(rawValue: 1 << 2) // 4
     public static let right = MuCorner(rawValue: 1 << 3) // 8
+
+    var upper : Bool { contains(.upper)}
+    var lower : Bool { contains(.lower)}
+    var left  : Bool { contains(.left )}
+    var right : Bool { contains(.right)}
 
     static public var description: [(Self, String)] = [
         (.upper , "upper"),

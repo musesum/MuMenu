@@ -67,8 +67,8 @@ public struct CornerAxis {
 
         self.bound =
         (axis == .vertical
-         ? (corner.contains(.left)  ? .lowX : .uprX)
-         : (corner.contains(.upper) ? .lowY : .uprY))
+         ? (corner.left  ? .lowX : .uprX)
+         : (corner.upper ? .lowY : .uprY))
         let cornax = Cornax(corner, axis)
         self.cornax = cornax
         self.key = cornax.rawValue

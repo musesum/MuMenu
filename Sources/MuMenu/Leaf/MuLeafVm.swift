@@ -3,6 +3,7 @@
 import Foundation
 import SwiftUI
 import Par
+import MuTime // NextFrame
 
 public enum Toggle { case on, off }
 
@@ -68,7 +69,7 @@ public class MuLeafVm: MuNodeVm {
     var animSteps = TimeInterval.zero
     
     func animateThumb() {
-        animSteps = animateLeaf * 60 // DisplayLink.shared.fps
+        animSteps = 1 //??? NextFrame.shared.fps * animateLeaf // DisplayLink.shared.fps
         NextFrame.shared.addFrameDelegate(self.hash, self)
     }
 }
@@ -83,6 +84,7 @@ extension MuLeafVm: NextFrameDelegate {
             thumbNow[i] = (now + increment)
         }
         animSteps = max(0, animSteps - 1)
+
         if animSteps > 1 {
             DispatchQueue.main.async {
                 self.leafProto?.syncNow(Visitor(self.hash, from: .animate))

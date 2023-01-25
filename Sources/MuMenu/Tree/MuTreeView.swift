@@ -16,7 +16,7 @@ struct MuTreeView: View {
 
             if treeVm.isVertical {
                 HStack(alignment: corner.vAlign)  {
-                    ForEach(corner.contains(.right)
+                    ForEach(corner.right
                             ? treeVm.branchVms.reversed()
                             : treeVm.branchVms) {
 
@@ -26,7 +26,7 @@ struct MuTreeView: View {
                 }
             } else {
                 VStack(alignment: corner.hAlign) {
-                    ForEach(corner.contains(.lower)
+                    ForEach(corner.lower
                             ? treeVm.branchVms.reversed()
                             : treeVm.branchVms) {
 

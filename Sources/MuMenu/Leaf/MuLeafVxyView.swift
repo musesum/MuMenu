@@ -9,7 +9,7 @@ struct MuLeafVxyView: View {
     
     var body: some View {
         VStack {
-            if panelVm.cornerAxis.corner.contains(.upper) {
+            if panelVm.cornerAxis.corner.upper {
                 MuLeafBodyView(leafVm) {
                     ZStack {
                         // tick marks

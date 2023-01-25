@@ -41,7 +41,7 @@ public class MuTouchVm: ObservableObject {
         branchVm.addNodeVm(rootNodeVm)
 
         dragNodeVm = rootNodeVm?.copy()
-        if rootVm.corner.contains(.right) {
+        if rootVm.corner.right {
             let rightOffset: CGFloat = -(2 * Layout.padding)
             dragNodeΔ = CGSize(width: rightOffset, height: 0)
         }

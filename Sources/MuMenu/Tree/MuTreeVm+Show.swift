@@ -72,7 +72,7 @@ extension MuTreeVm { // +Show
     }
     func reversed() ->  Bool {
         self.isVertical
-        ? rootVm.corner.contains(.lower) ? true : false
-        : rootVm.corner.contains(.right) ? true : false
+        ? rootVm.corner.lower ? true : false
+        : rootVm.corner.right ? true : false
     }
 }
