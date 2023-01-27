@@ -1,14 +1,14 @@
 //  Created by warren on 9/10/22.
 
 import SwiftUI
-import Par
+import MuPar
 
 extension MuLeafSegVm: MuLeafProtocol {
 
     public func refreshValue(_ visitor: Visitor) {
         if let menuSync {
-            range = menuSync.getRange(named: nodeType.name)
-            if let val = menuSync.getAny(named: nodeType.name) as? Double {
+            range = menuSync.getMenuRange(named: nodeType.name)
+            if let val = menuSync.getMenuAny(named: nodeType.name) as? Double {
                 thumbNext[0] = scale(val, from: range, to: 0...1)
             } else {
                 print("⁉️ refreshValue is not Double")
@@ -56,7 +56,7 @@ extension MuLeafSegVm: MuLeafProtocol {
     }
     public func syncNext(_ visitor: Visitor) {
 
-        menuSync?.setAny(named: nodeType.name, expanded, visitor)
+        menuSync?.setMenuAny(named: nodeType.name, expanded, visitor)
         thumbNow = thumbNext
         refreshView()
     }

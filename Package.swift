@@ -12,17 +12,17 @@ let package = Package(
             targets: ["MuMenu"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/musesum/Par.git", from: "0.2.0"),
-        .package(url: "https://github.com/musesum/Tr3.git", from: "0.2.0"),
-        .package(url: "https://github.com/musesum/MuTime.git", from: "0.3.0"),
+        .package(url: "https://github.com/musesum/MuPar.git", from: "0.23.0"),
+        .package(url: "https://github.com/musesum/MuFlo.git", from: "0.23.0"),
+        .package(url: "https://github.com/musesum/MuTime.git", from: "0.23.0"),
     ],
     targets: [
         .target(
             name: "MuMenu",
             dependencies: [
-                .product(name: "Par", package: "Par"),
-                .product(name: "MuTime", package: "MuTime"),
-                .product(name: "Tr3", package: "Tr3")]),
+                .product(name: "MuPar", package: "MuPar"),
+                .product(name: "MuFlo", package: "MuFlo"),
+                .product(name: "MuTime", package: "MuTime")]),
         .testTarget(
             name: "MuMenuTests",
             dependencies: ["MuMenu"]),

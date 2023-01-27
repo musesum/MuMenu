@@ -1,7 +1,7 @@
 //  Created by warren on 12/10/21.
 
 import SwiftUI
-import Par // Visitor
+import MuPar // Visitor
 
 /// segmented control
 public class MuLeafSegVm: MuLeafVm {

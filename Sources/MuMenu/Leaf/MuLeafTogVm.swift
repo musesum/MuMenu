@@ -1,7 +1,7 @@
 //  Created by warren on 5/10/22.
 
 import SwiftUI
-import Par
+import MuPar
 
 /// toggle control
 public class MuLeafTogVm: MuLeafVm {

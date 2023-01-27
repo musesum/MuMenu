@@ -1,12 +1,39 @@
 {
   "pins" : [
     {
-      "identity" : "muskytr3",
+      "identity" : "muflo",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/musesum/MuSkyTr3.git",
+      "location" : "https://github.com/musesum/MuFlo.git",
       "state" : {
-        "revision" : "bb57b2a1ccf546d9bb114c59e9b54bed1929c5cf",
-        "version" : "0.3.230103"
+        "revision" : "0e69c8237e8a11515acfc463b2d9d5a05a488f7b",
+        "version" : "0.23.127"
+      }
+    },
+    {
+      "identity" : "mupar",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/musesum/MuPar.git",
+      "state" : {
+        "revision" : "9d9860026fa5d21256814edb7ebeabb8347a7d6e",
+        "version" : "0.23.127"
+      }
+    },
+    {
+      "identity" : "muskyflo",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/musesum/MuSkyFlo.git",
+      "state" : {
+        "revision" : "78b717c6f34f4ecf9c294f946a8edd6f999dbce6",
+        "version" : "0.23.127"
+      }
+    },
+    {
+      "identity" : "mutime",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/musesum/MuTime.git",
+      "state" : {
+        "revision" : "38d57f280b615f0efb7c744c180ef3ee29a0d9f4",
+        "version" : "0.23.127"
       }
     },
     {
@@ -14,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/musesum/Par.git",
       "state" : {
-        "revision" : "539f17842a60d55c223c996049fd24a0923d24ac",
-        "version" : "0.3.230103"
+        "revision" : "1f8b01bc5b5164cb11e3e0b2f66bb021f21ffce6",
+        "version" : "0.3.230122"
       }
     },
     {
@@ -25,15 +52,6 @@
       "state" : {
         "revision" : "937e904258d22af6e447a0b72c0bc67583ef64a2",
         "version" : "1.0.4"
-      }
-    },
-    {
-      "identity" : "tr3",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/musesum/Tr3.git",
-      "state" : {
-        "revision" : "9938d90de2487373d71bb167c0711576c6910c9f",
-        "version" : "0.3.230108"
       }
     }
   ],

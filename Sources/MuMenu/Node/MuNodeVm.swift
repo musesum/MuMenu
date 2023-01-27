@@ -1,7 +1,7 @@
 // Created by warren on 10/17/21.
 
 import SwiftUI
-import Par // strHash
+import MuPar // strHash
 
 public class MuNodeVm: Identifiable, Equatable, ObservableObject {
 

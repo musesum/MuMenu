@@ -2,14 +2,14 @@
 
 
 import Foundation
-import Par
+import MuPar
 
 extension MuLeafValVm: MuLeafProtocol {
 
     public func refreshValue(_ visitor: Visitor) {
 
         thumbNext[0] = normalizeNamed(nodeType.name)
-        range = menuSync?.getRange(named: nodeType.name) ?? 0...1
+        range = menuSync?.getMenuRange(named: nodeType.name) ?? 0...1
 
         if !visitor.from.animate {
             visitor.nowHere(self.hash)
@@ -50,12 +50,12 @@ extension MuLeafValVm: MuLeafProtocol {
     }
     public func syncNow(_ visitor: Visitor) {
         let expanded = scale(thumbNow[0], from: 0...1, to: range)
-        menuSync?.setAny(named: nodeType.name, expanded, visitor)
+        menuSync?.setMenuAny(named: nodeType.name, expanded, visitor)
         refreshView()
     }
     public func syncNext(_ visitor: Visitor) {
         let expanded = scale(thumbNext[0], from: 0...1, to: range)
-        menuSync?.setAny(named: nodeType.name, expanded, visitor)
+        menuSync?.setMenuAny(named: nodeType.name, expanded, visitor)
         thumbNow = thumbNext
         refreshView()
     }

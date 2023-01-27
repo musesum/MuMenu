@@ -5,7 +5,7 @@
 //  Created by warren on 9/10/22.
 
 import SwiftUI
-import Par
+import MuPar
 
 extension MuLeafTapVm: MuLeafProtocol {
 
@@ -57,7 +57,7 @@ extension MuLeafTapVm: MuLeafProtocol {
         syncNext(visitor)
     }
     public func syncNext(_ visitor: Visitor) {
-        menuSync?.setAny(named: nodeType.name, thumbNext[0], visitor)
+        menuSync?.setMenuAny(named: nodeType.name, thumbNext[0], visitor)
         refreshView()
     }
 }

@@ -1,7 +1,7 @@
 //  Created by warren on 5/10/22.
 
 import SwiftUI
-import Par
+import MuPar
 
 /// 2d XY control
 public class MuLeafVxyVm: MuLeafVm {
@@ -20,7 +20,7 @@ public class MuLeafVxyVm: MuLeafVm {
     func normalizeNamed(_ name: String,
                         _ range: ClosedRange<Double>?) -> Double {
         
-        let val = (menuSync?.getAny(named: name) as? Double) ?? .zero
+        let val = (menuSync?.getMenuAny(named: name) as? Double) ?? .zero
         let norm = scale(val, from: range ?? 0...1, to: 0...1)
         return norm
     }

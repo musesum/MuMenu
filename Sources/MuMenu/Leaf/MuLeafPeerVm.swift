@@ -2,7 +2,7 @@
 
 
 import SwiftUI
-import Par
+import MuPar
 
 public class MuLeafPeerVm: MuLeafVm {
 

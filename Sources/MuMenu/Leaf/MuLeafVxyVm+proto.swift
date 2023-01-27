@@ -1,13 +1,14 @@
 //  Created by warren on 9/10/22.
 
 import SwiftUI
-import Par
+import MuPar
 
 extension MuLeafVxyVm: MuLeafProtocol {
 
     public func refreshValue(_ visitor: Visitor) {
+        print("r", terminator: "⃝")
 
-        if let nameRanges = menuSync?.getRanges(named: ["x","y"]) {
+        if let nameRanges = menuSync?.getMenuRanges(named: ["x","y"]) {
             for (name,range) in nameRanges {
                 ranges[name] = range
             }
@@ -30,6 +31,7 @@ extension MuLeafVxyVm: MuLeafProtocol {
     public func updateLeaf(_ any: Any, _ visitor: Visitor) {
         if !visitor.from.animate,
            visitor.newVisit(hash) {
+            print("u", terminator: "⃝")
             editing = true
             if let v = any as? [Double], v.count == 2 {
                 thumbNext = [v[0],v[1]]
@@ -63,19 +65,19 @@ extension MuLeafVxyVm: MuLeafProtocol {
     }
     /// called via user touch or via model update
     public func syncNow(_ visitor: Visitor) {
-
+        print("n", terminator: "⃝")
         let x = expand(named: "x", thumbNow[0])
         let y = expand(named: "y", thumbNow[1])
-        menuSync?.setAnys([("x", x),("y", y)], visitor)
+        menuSync?.setMenuAnys([("x", x),("y", y)], visitor)
         refreshView()
     }
 
     /// called via user touch or via model update
     public func syncNext(_ visitor: Visitor) {
-
+        print("x", terminator: "⃝")
         let x = expand(named: "x", thumbNext[0])
         let y = expand(named: "y", thumbNext[1])
-        menuSync?.setAnys([("x", x),("y", y)], visitor)
+        menuSync?.setMenuAnys([("x", x),("y", y)], visitor)
         thumbNow = thumbNext
         refreshView()
     }

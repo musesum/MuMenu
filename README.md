@@ -9,7 +9,7 @@
 #### Naming convention for components
 DeepMenu follows a MVVM pattern (Model, View, View Model) 
 
-+ MuNode* - proxy for Model, such as MuNodeTr3
++ MuNode* - proxy for Model, such as MuNodeFlo
 + Mu*View - SwiftUI View for [root,tree,branch,panel,node,leaf] 
 + Mu*Vm   - View Model for [root,tree,branch,panel,node,leaf] 
 
@@ -29,7 +29,7 @@ DeepMenu follows a MVVM pattern (Model, View, View Model)
         
 ##### MuNode* - A persistent model of items (shared by many Mu*Vms) 
 + MuNode - a generic node, may be shared my many NodeVm's (and views)
-+ MuNodeTr3 - a node proxy for Tr3 items 
++ MuNodeFlo - a node proxy for Flo items 
 + MuNodeVm - a view model for a View, may share a Node from another Vm
 + MuNodeView - a SwiftUI view, has a companion MuNodeVm
 + MuNodeIconView - a subview of MuNodeView for icons

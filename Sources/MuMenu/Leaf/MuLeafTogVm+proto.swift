@@ -2,13 +2,13 @@
 
 
 import Foundation
-import Par
+import MuPar
 
 extension MuLeafTogVm: MuLeafProtocol {
 
     public func refreshValue(_ visitor: Visitor) {
 
-        thumbNext[0] = menuSync?.getAny(named: nodeType.name) as? Double ?? 0
+        thumbNext[0] = menuSync?.getMenuAny(named: nodeType.name) as? Double ?? 0
         visitor.nowHere(self.hash)
         if visitor.from.user {
             updateLeafPeers(visitor)
@@ -50,7 +50,7 @@ extension MuLeafTogVm: MuLeafProtocol {
         syncNext(visitor)
     }
     public func syncNext(_ visitor: Visitor) {
-        menuSync?.setAny(named: nodeType.name, thumbNext[0], visitor)
+        menuSync?.setMenuAny(named: nodeType.name, thumbNext[0], visitor)
         thumbNow = thumbNext
         refreshView()
     }

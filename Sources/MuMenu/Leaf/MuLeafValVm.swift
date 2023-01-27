@@ -1,7 +1,7 @@
 //  Created by warren on 12/10/21.
 
 import SwiftUI
-import Par
+import MuPar
 
 /// 1d slider control
 public class MuLeafValVm: MuLeafVm {
@@ -20,7 +20,7 @@ public class MuLeafValVm: MuLeafVm {
     }
 
     func normalizeNamed(_ name: String) -> CGFloat {
-        let val = (menuSync?.getAny(named: name) as? Double) ?? .zero
+        let val = (menuSync?.getMenuAny(named: name) as? Double) ?? .zero
         let norm = scale(val, from: range, to: 0...1)
         return CGFloat(norm)
     }

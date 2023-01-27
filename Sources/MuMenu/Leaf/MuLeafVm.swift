@@ -2,7 +2,7 @@
 
 import Foundation
 import SwiftUI
-import Par
+import MuPar
 import MuTime // NextFrame
 
 public enum Toggle { case on, off }
