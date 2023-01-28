@@ -69,9 +69,9 @@ public class MuLeafVxyVm: MuLeafVm {
 
     /// user touch gesture inside runway
     override public func touchLeaf(_ touchState: MuTouchState,
-                                   _ visitor: Visitor) {
+                                   _ visit: Visitor) {
 
-        if visitor.newVisit(hash) {
+        if visit.newVisit(hash) {
             if touchState.phase == .began {
                 if touchState.touchBeginCount == 1 {
                     tapThumb()
@@ -87,7 +87,7 @@ public class MuLeafVxyVm: MuLeafVm {
                 editing = false
             }
             animateThumb()
-            updateLeafPeers(visitor)
+            updateLeafPeers(visit)
         }
 
         func tapThumb() {

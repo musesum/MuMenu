@@ -19,7 +19,7 @@ public class MuLeafPeerVm: MuLeafVm {
     }
     override public func touchLeaf(_ : MuTouchState,
                                    _ : Visitor) {}
-    func updateSync(_ visitor: Visitor) {}
+    func updateSync(_ visit: Visitor) {}
     
 }
 

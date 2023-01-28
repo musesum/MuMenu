@@ -6,22 +6,22 @@ import MuPar
 
 extension MuLeafTogVm: MuLeafProtocol {
 
-    public func refreshValue(_ visitor: Visitor) {
+    public func refreshValue(_ visit: Visitor) {
 
         thumbNext[0] = menuSync?.getMenuAny(named: nodeType.name) as? Double ?? 0
-        visitor.nowHere(self.hash)
-        if visitor.from.user {
-            updateLeafPeers(visitor)
-            syncNext(visitor)
+        visit.nowHere(self.hash)
+        if visit.from.user {
+            updateLeafPeers(visit)
+            syncNext(visit)
         } else {
             thumbNow = thumbNext
         }
 
     }
     
-    public func updateLeaf(_ any: Any,_ visitor: Visitor) {
-        if !visitor.from.animate,
-            visitor.newVisit(hash) {
+    public func updateLeaf(_ any: Any,_ visit: Visitor) {
+        if !visit.from.animate,
+            visit.newVisit(hash) {
             editing = true
             switch any {
                 case let v as Double:   thumbNext[0] = (v    < 1.0 ? 0 : 1)
@@ -30,8 +30,8 @@ extension MuLeafTogVm: MuLeafProtocol {
             }
             editing = false
             thumbNow = thumbNext
-            syncNext(visitor)
-            updateLeafPeers(visitor)
+            syncNext(visit)
+            updateLeafPeers(visit)
         }
     }
 
@@ -46,11 +46,11 @@ extension MuLeafTogVm: MuLeafProtocol {
         ? CGSize(width: 1, height: (1-thumbNext[0]) * panelVm.runway)
         : CGSize(width: thumbNext[0] * panelVm.runway, height: 1)
     }
-    public func syncNow(_ visitor: Visitor) {
-        syncNext(visitor)
+    public func syncNow(_ visit: Visitor) {
+        syncNext(visit)
     }
-    public func syncNext(_ visitor: Visitor) {
-        menuSync?.setMenuAny(named: nodeType.name, thumbNext[0], visitor)
+    public func syncNext(_ visit: Visitor) {
+        menuSync?.setMenuAny(named: nodeType.name, thumbNext[0], visit)
         thumbNow = thumbNext
         refreshView()
     }

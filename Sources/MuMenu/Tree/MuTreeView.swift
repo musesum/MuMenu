@@ -6,7 +6,7 @@ struct MuTreeView: View {
 
     @ObservedObject var treeVm: MuTreeVm
 
-    var corner: MuCorner { treeVm.rootVm.corner }
+    var corner: CornerOps { treeVm.rootVm.corner }
 
     var body: some View {
 

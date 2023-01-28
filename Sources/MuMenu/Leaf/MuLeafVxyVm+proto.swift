@@ -5,7 +5,7 @@ import MuPar
 
 extension MuLeafVxyVm: MuLeafProtocol {
 
-    public func refreshValue(_ visitor: Visitor) {
+    public func refreshValue(_ visit: Visitor) {
         print("r", terminator: "⃝")
 
         if let nameRanges = menuSync?.getMenuRanges(named: ["x","y"]) {
@@ -18,19 +18,19 @@ extension MuLeafVxyVm: MuLeafProtocol {
         
         thumbNext = [xx,yy]
 
-        visitor.nowHere(self.hash)
-        if visitor.from.user {
+        visit.nowHere(self.hash)
+        if visit.from.user {
             animateThumb()
-            updateLeafPeers(visitor)
+            updateLeafPeers(visit)
         } else {
             thumbNow = thumbNext
         }
     }
 
     /// update from model - not touch
-    public func updateLeaf(_ any: Any, _ visitor: Visitor) {
-        if !visitor.from.animate,
-           visitor.newVisit(hash) {
+    public func updateLeaf(_ any: Any, _ visit: Visitor) {
+        if !visit.from.animate,
+           visit.newVisit(hash) {
             print("u", terminator: "⃝")
             editing = true
             if let v = any as? [Double], v.count == 2 {
@@ -40,7 +40,7 @@ extension MuLeafVxyVm: MuLeafProtocol {
             }
             editing = false
             animateThumb()
-            updateLeafPeers(visitor)
+            updateLeafPeers(visit)
         }
     }
 
@@ -64,20 +64,20 @@ extension MuLeafVxyVm: MuLeafProtocol {
                height: (1-thumbNext[1]) * panelVm.runway)
     }
     /// called via user touch or via model update
-    public func syncNow(_ visitor: Visitor) {
+    public func syncNow(_ visit: Visitor) {
         print("n", terminator: "⃝")
         let x = expand(named: "x", thumbNow[0])
         let y = expand(named: "y", thumbNow[1])
-        menuSync?.setMenuAnys([("x", x),("y", y)], visitor)
+        menuSync?.setMenuAnys([("x", x),("y", y)], visit)
         refreshView()
     }
 
     /// called via user touch or via model update
-    public func syncNext(_ visitor: Visitor) {
+    public func syncNext(_ visit: Visitor) {
         print("x", terminator: "⃝")
         let x = expand(named: "x", thumbNext[0])
         let y = expand(named: "y", thumbNext[1])
-        menuSync?.setMenuAnys([("x", x),("y", y)], visitor)
+        menuSync?.setMenuAnys([("x", x),("y", y)], visit)
         thumbNow = thumbNext
         refreshView()
     }

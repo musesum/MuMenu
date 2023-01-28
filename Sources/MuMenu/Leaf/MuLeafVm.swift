@@ -19,8 +19,8 @@ public class MuLeafVm: MuNodeVm {
     var thumbNext = Thumb(repeatElement(0, count: 2))
     var timer: Timer?
     
-    func updateLeafPeers(_ visitor: Visitor) {
-        if visitor.isLocal() {
+    func updateLeafPeers(_ visit: Visitor) {
+        if visit.isLocal() {
             let leafItem = MenuLeafItem(self, thumbNext)
             let menuItem = MenuItem(leaf: leafItem, rootVm.corner, .moved)
             rootVm.sendItemToPeers(menuItem)
@@ -49,7 +49,7 @@ public class MuLeafVm: MuNodeVm {
         return contained
     }
     public func touchLeaf(_ touchState: MuTouchState,
-                          _ visitor: Visitor) {
+                          _ visit: Visitor) {
         print("*** MuLeafVm::touchLeaf override me")
     }
     

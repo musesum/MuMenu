@@ -2,7 +2,7 @@
 
 import SwiftUI
 
-public struct MuCorner: OptionSet {
+public struct CornerOps: OptionSet {
 
     public let rawValue: Int
 
@@ -14,10 +14,10 @@ public struct MuCorner: OptionSet {
         self.rawValue = rawValue
     }
 
-    public static let upper = MuCorner(rawValue: 1 << 0) // 1
-    public static let lower = MuCorner(rawValue: 1 << 1) // 2
-    public static let left  = MuCorner(rawValue: 1 << 2) // 4
-    public static let right = MuCorner(rawValue: 1 << 3) // 8
+    public static let upper = CornerOps(rawValue: 1 << 0) // 1
+    public static let lower = CornerOps(rawValue: 1 << 1) // 2
+    public static let left  = CornerOps(rawValue: 1 << 2) // 4
+    public static let right = CornerOps(rawValue: 1 << 3) // 8
 
     var upper : Bool { contains(.upper)}
     var lower : Bool { contains(.lower)}

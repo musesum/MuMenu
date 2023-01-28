@@ -9,12 +9,3 @@ struct MuNodeIdentity {
         return id
     }
 }
-
-public struct MuTouchNumber {
-    static var number = 1_000_000
-    public static func getNext() -> Int {
-        number += 1
-        return number
-    }
-}
-

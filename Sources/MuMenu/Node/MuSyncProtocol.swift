@@ -13,12 +13,12 @@ public protocol MuMenuSync {
     /// set single named value
     /// return false if already visit (may happen when Vm shared same node
     @discardableResult
-    func setMenuAny(named: String,_ any: Any, _ visitor: Visitor) -> Bool
+    func setMenuAny(named: String,_ any: Any, _ visit: Visitor) -> Bool
 
     /// set multiple named values
     /// // return false if already visit (may happen when Vm shared same node
     @discardableResult
-    func setMenuAnys(_ anys: [(String, Any)], _ visitor: Visitor) -> Bool
+    func setMenuAnys(_ anys: [(String, Any)], _ visit: Visitor) -> Bool
 
     /// reset node to default value
     func resetDefault()
@@ -36,5 +36,5 @@ public protocol MuMenuSync {
     func getMenuRanges(named: [String]) -> [(String, ClosedRange<Double>)]
 
     /// callback from model to update leaf with new model values
-    func syncMenuModel(_ any: Any, _ visitor: Visitor)
+    func syncMenuModel(_ any: Any, _ visit: Visitor)
 }

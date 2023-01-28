@@ -7,7 +7,7 @@ import MuPar // Visitor
 public protocol MuLeafProtocol {
 
     /// update from model normalized range of 0...1, not touch gesture
-    func updateLeaf(_ any: Any, _ visitor: Visitor)
+    func updateLeaf(_ any: Any, _ visit: Visitor)
 
     /// title for control value
     func leafTitle() -> String
@@ -19,13 +19,13 @@ public protocol MuLeafProtocol {
     func thumbOffset() -> CGSize
 
     /// get value of thumb
-    func refreshValue(_ visitor: Visitor)
+    func refreshValue(_ visit: Visitor)
 
     /// animated upddate
-    func syncNow(_ visitor: Visitor)
+    func syncNow(_ visit: Visitor)
 
     /// final upddate
-    func syncNext(_ visitor: Visitor)
+    func syncNext(_ visit: Visitor)
     
 }
 

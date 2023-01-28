@@ -21,7 +21,7 @@ public class MuRootVm: ObservableObject, Equatable {
     /// To prevent touchEnded from hiding elements that were shown during `touchBegin`
     var beginViewElements: Set<MuTouchElement> = []
     
-    var corner: MuCorner        /// corner where root begins, ex: `[south,west]`
+    var corner: CornerOps        /// corner where root begins, ex: `[south,west]`
     var treeVms = [MuTreeVm]()  /// vertical or horizontal stack of branches
     var treeSpotVm: MuTreeVm?   /// most recently used tree
     var rootOffset: CGSize = .zero
@@ -47,7 +47,7 @@ public class MuRootVm: ObservableObject, Equatable {
         }
     }
 
-    public init(_ corner: MuCorner) {
+    public init(_ corner: CornerOps) {
         
         self.corner = corner
         self.touchVm = MuTouchVm(corner)

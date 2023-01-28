@@ -86,7 +86,7 @@ public struct MenuItem: Codable {
     }
 
     public init(node: MenuNodeItem,
-                _ corner: MuCorner,
+                _ corner: CornerOps,
                 _ phase : UITouch.Phase) {
 
         self.type   = .node
@@ -100,7 +100,7 @@ public struct MenuItem: Codable {
     }
 
     public init(leaf: MenuLeafItem,
-                _ corner: MuCorner,
+                _ corner: CornerOps,
                 _ phase : UITouch.Phase) {
 
         self.type   = .leaf
@@ -114,7 +114,7 @@ public struct MenuItem: Codable {
     }
 
     public init(_ touch: UITouch,
-                _ corner: MuCorner) {
+                _ corner: CornerOps) {
         
         self.type   = .touch
         self.item   = MenuTouchItem(touch)

@@ -17,7 +17,7 @@ public class MuLeafTapVm: MuLeafVm {
     }
     /// user touch gesture inside runway
     override public func touchLeaf(_ touchState: MuTouchState,
-                                   _ visitor: Visitor) {
+                                   _ visit: Visitor) {
         if touchState.phase == .began {
             thumbNext[0] = 1
             editing = true
@@ -26,8 +26,8 @@ public class MuLeafTapVm: MuLeafVm {
             editing = false
         }
         thumbNow = thumbNext
-        syncNext(visitor)
-        updateLeafPeers(visitor)
+        syncNext(visit)
+        updateLeafPeers(visit)
     }
 
 }

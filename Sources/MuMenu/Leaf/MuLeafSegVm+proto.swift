@@ -5,7 +5,7 @@ import MuPar
 
 extension MuLeafSegVm: MuLeafProtocol {
 
-    public func refreshValue(_ visitor: Visitor) {
+    public func refreshValue(_ visit: Visitor) {
         if let menuSync {
             range = menuSync.getMenuRange(named: nodeType.name)
             if let val = menuSync.getMenuAny(named: nodeType.name) as? Double {
@@ -14,17 +14,17 @@ extension MuLeafSegVm: MuLeafProtocol {
                 print("⁉️ refreshValue is not Double")
                 thumbNext[0] = 0
             }
-            visitor.nowHere(self.hash)
-            if visitor.from.user {
+            visit.nowHere(self.hash)
+            if visit.from.user {
                 animateThumb()
-                updateLeafPeers(visitor)
+                updateLeafPeers(visit)
             }
         }
     }
     
-    public func updateLeaf(_ any: Any, _ visitor: Visitor) {
-        if !visitor.from.animate,
-            visitor.newVisit(hash) {
+    public func updateLeaf(_ any: Any, _ visit: Visitor) {
+        if !visit.from.animate,
+            visit.newVisit(hash) {
             editing = true
             switch any {
                 case let v as Double:   thumbNext[0] = v
@@ -33,8 +33,8 @@ extension MuLeafSegVm: MuLeafProtocol {
             }
             editing = false
             thumbNow = thumbNext
-            syncNext(visitor)
-            updateLeafPeers(visitor)
+            syncNext(visit)
+            updateLeafPeers(visit)
         }
     }
 
@@ -51,12 +51,12 @@ extension MuLeafSegVm: MuLeafProtocol {
         ? CGSize(width: 1, height: (1-thumbNext[0]) * panelVm.runway)
         : CGSize(width: thumbNext[0] * panelVm.runway, height: 1)
     }
-    public func syncNow(_ visitor: Visitor) {
-       syncNext(visitor)
+    public func syncNow(_ visit: Visitor) {
+       syncNext(visit)
     }
-    public func syncNext(_ visitor: Visitor) {
+    public func syncNext(_ visit: Visitor) {
 
-        menuSync?.setMenuAny(named: nodeType.name, expanded, visitor)
+        menuSync?.setMenuAny(named: nodeType.name, expanded, visit)
         thumbNow = thumbNext
         refreshView()
     }

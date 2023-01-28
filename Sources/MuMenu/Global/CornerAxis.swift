@@ -24,7 +24,7 @@ enum AxiMove { case root, vert, hori, canvas }
 public enum Cornax: Int {
     case LLH,LLV,ULH,ULV,LRH,LRV,URH,URV
 
-    init(_ corner: MuCorner,_ axis: Axis) {
+    init(_ corner: CornerOps,_ axis: Axis) {
         switch (corner, axis) {
             case ([.lower, .left], .horizontal): self = Cornax.LLH
             case ([.lower, .left], .vertical  ): self = Cornax.LLV
@@ -37,7 +37,7 @@ public enum Cornax: Int {
             default: self = .LLV
         }
     }
-    var corner: MuCorner {
+    var corner: CornerOps {
         switch self {
             case .LLH: return [.lower, .left]
             case .LLV: return [.lower, .left]
@@ -52,7 +52,7 @@ public enum Cornax: Int {
 }
 public struct CornerAxis {
 
-    public let corner: MuCorner
+    public let corner: CornerOps
     public let axis: Axis
     public let key: Int
 
@@ -61,7 +61,7 @@ public struct CornerAxis {
     var start = Axii(h:0, v:0)
     var cornax: Cornax = .LLV
 
-    public init(_ corner: MuCorner, _ axis: Axis) {
+    public init(_ corner: CornerOps, _ axis: Axis) {
         self.corner = corner
         self.axis = axis
 
