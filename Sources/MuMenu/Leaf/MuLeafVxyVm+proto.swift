@@ -29,8 +29,10 @@ extension MuLeafVxyVm: MuLeafProtocol {
 
     /// update from model - not touch
     public func updateLeaf(_ any: Any, _ visit: Visitor) {
-        if !visit.from.animate,
+
+        if !visit.from.tween,
            visit.newVisit(hash) {
+
             print("u", terminator: "⃝")
             editing = true
             if let v = any as? [Double], v.count == 2 {

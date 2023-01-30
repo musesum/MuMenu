@@ -11,7 +11,8 @@ extension MuLeafValVm: MuLeafProtocol {
         thumbNext[0] = normalizeNamed(nodeType.name)
         range = menuSync?.getMenuRange(named: nodeType.name) ?? 0...1
 
-        if !visit.from.animate {
+        if !visit.from.tween {
+            
             visit.nowHere(self.hash)
             animateThumb()
             updateLeafPeers(visit)
@@ -23,8 +24,9 @@ extension MuLeafValVm: MuLeafProtocol {
     /// update from model - not touch
     public func updateLeaf(_ any: Any,_ visit: Visitor) {
 
-        if !visit.from.animate,
+        if !visit.from.tween,
             visit.newVisit(hash) {
+            
             editing = true
             switch any {
                 case let v as Double:   thumbNext[0] = v

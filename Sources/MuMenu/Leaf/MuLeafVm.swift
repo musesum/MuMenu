@@ -87,11 +87,11 @@ extension MuLeafVm: NextFrameDelegate {
 
         if animSteps > 1 {
             DispatchQueue.main.async {
-                self.leafProto?.syncNow(Visitor(self.hash, from: .animate))
+                self.leafProto?.syncNow(Visitor(self.hash))  //??? .tween
             }
         } else {
             DispatchQueue.main.async {
-                self.leafProto?.syncNext(Visitor(self.hash, from: .animate))
+                self.leafProto?.syncNext(Visitor(self.hash)) //??? .tween
             }
         }
         return animSteps >= 1

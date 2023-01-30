@@ -23,8 +23,10 @@ extension MuLeafSegVm: MuLeafProtocol {
     }
     
     public func updateLeaf(_ any: Any, _ visit: Visitor) {
-        if !visit.from.animate,
+
+        if !visit.from.tween,
             visit.newVisit(hash) {
+
             editing = true
             switch any {
                 case let v as Double:   thumbNext[0] = v
