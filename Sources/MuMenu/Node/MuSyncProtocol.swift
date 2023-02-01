@@ -21,7 +21,7 @@ public protocol MuMenuSync {
     func setMenuAnys(_ anys: [(String, Double)], _ visit: Visitor) -> Bool
 
     /// reset node to default value
-    func resetDefault()
+    func resetDefault(_ visit: Visitor)
 
     /// get single named value
     func getMenuAny(named: String) -> Any?

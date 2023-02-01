@@ -10,9 +10,10 @@ extension MuNodeVm { // + Touch
         if nodeType.isLeaf,
            let leafVm = self as? MuLeafVm,
            let menuSync = leafVm.menuSync {
-
-            menuSync.resetDefault()
-            leafVm.leafProto?.refreshValue(Visitor(.user))
+            
+            let visit = Visitor(.user)
+            menuSync.resetDefault(visit)
+            leafVm.leafProto?.refreshValue(visit)
         }
     }
     /// update all descendants

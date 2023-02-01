@@ -6,7 +6,7 @@ import MuPar
 extension MuLeafVxyVm: MuLeafProtocol {
 
     public func refreshValue(_ visit: Visitor) {
-        print("r", terminator: "⃝")
+        //?? print("r", terminator: "⃝")
 
         if let nameRanges = menuSync?.getMenuRanges(named: ["x","y"]) {
             for (name,range) in nameRanges {
@@ -33,7 +33,7 @@ extension MuLeafVxyVm: MuLeafProtocol {
         if !visit.from.tween,
            visit.newVisit(hash) {
 
-            print("u", terminator: "⃝")
+            //?? print("u", terminator: "⃝")
             editing = true
             if let v = any as? [Double], v.count == 2 {
                 thumbNext = [v[0],v[1]]
@@ -67,7 +67,7 @@ extension MuLeafVxyVm: MuLeafProtocol {
     }
     /// called via user touch or via model update
     public func syncNow(_ visit: Visitor) {
-        print("n", terminator: "⃝")
+        //?? print("n", terminator: "⃝")
         let x = expand(named: "x", thumbNow[0])
         let y = expand(named: "y", thumbNow[1])
         menuSync?.setMenuAnys([("x", x),("y", y)], visit)
@@ -76,7 +76,7 @@ extension MuLeafVxyVm: MuLeafProtocol {
 
     /// called via user touch or via model update
     public func syncNext(_ visit: Visitor) {
-        print("x", terminator: "⃝")
+        //?? print("x", terminator: "⃝")
         let x = expand(named: "x", thumbNext[0])
         let y = expand(named: "y", thumbNext[1])
         menuSync?.setMenuAnys([("x", x),("y", y)], visit)
