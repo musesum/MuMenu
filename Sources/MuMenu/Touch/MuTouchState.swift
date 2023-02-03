@@ -83,7 +83,7 @@ public class MuTouchState {
 
         if timeBeginΔ < tapThreshold {
             touchBeginCount += 1
-            //log("⇂⃝" + superScript(touchBeginCount), format: "%.2f", [timeBeginΔ], terminator: " ")
+            log("⇂⃝" + superScript(touchBeginCount), format: "%.2f", [timeBeginΔ], terminator: " ")
         } else {
             touchBeginCount = 0
             touchEndedCount = 0

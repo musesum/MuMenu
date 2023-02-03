@@ -64,69 +64,61 @@ public class MuLeafVxyVm: MuLeafVm {
         Layout.diameter / max(runwayBounds.height,runwayBounds.width) / 2
     }()
 
-    /// `touchBegin` inside thumb will probably be off-center.
-    /// To avoid a sudden jump, thumbBeginΔ adds an offset.
-    var thumbBeginΔ = [Double](repeatElement(0, count: 2))
-
     /// user touch gesture inside runway
     override public func touchLeaf(_ touchState: MuTouchState,
                                    _ visit: Visitor) {
 
-        if visit.newVisit(hash) {
-            if touchState.phase == .began {
-                if touchState.touchBeginCount == 1 {
-                    tapThumb()
-                    editing = true
-                } else {
-                    touchThumbBegin()
-                    editing = true
-                }
-            } else if !touchState.phase.isDone() {
-                touchThumbNext()
+        if touchState.phase == .began {
+            if touchState.touchBeginCount > 0 {
+                tapThumb()
                 editing = true
             } else {
-                editing = false
+                touchThumbBegin()
+                editing = true
             }
-            animateThumb()
-            updateLeafPeers(visit)
+        } else if !touchState.phase.isDone() {
+            touchThumbNext()
+            editing = true
+        } else {
+            editing = false
         }
+        syncNext(visit)
+        updateLeafPeers(visit)
 
         func tapThumb() {
-            let touchDelta = touchState.pointNow - runwayBounds.origin
-            let thumbPrior = panelVm.normalizeTouch(xy: touchDelta)
+            let touchOffset = touchState.pointNow - runwayBounds.origin
+            let thumbPrior = panelVm.normalizeTouch(xy: touchOffset)
             thumbNext = quantizeThumb(thumbPrior)
-
-            let x = thumbNext[0] - thumbPrior[0]
-            let y = thumbNext[1] - thumbPrior[1]
-            thumbBeginΔ = [x, y]
+            thumbDelta = touchOffset - thumbCenter()
         }
 
         func touchThumbBegin() {
-            let thumbPrev = thumbNow
-            let touchDelta = touchState.pointNow - runwayBounds.origin
-            let thumbDelta = panelVm.normalizeTouch(xy: touchDelta)
-            let distance = thumbDelta.distance(thumbPrev)
-            let touchedInsideThumb = distance < thumbRadius
-            thumbBeginΔ = (touchedInsideThumb
-                           ? (thumbPrev - thumbDelta)
-                           : [0,0])
-            thumbNext = thumbDelta + thumbBeginΔ
+
+            let touchOffset = touchState.pointNow - runwayBounds.origin
+            let deltaOffset = touchOffset - thumbCenter()
+            let insideThumb = deltaOffset.distance(.zero) < panelVm.thumbRadius
+
+            thumbDelta = insideThumb ? deltaOffset : .zero
+            touchThumbNext()
         }
 
         /// user touched control, translate to normalized thumb (0...1)
         func touchThumbNext() {
             if !runwayBounds.contains(touchState.pointNow) {
-                // slowly erode thumbBegin∆ when out of bounds
-                thumbBeginΔ = thumbBeginΔ * 0.85
+                // slowly erode delta when out of bounds
+                thumbDelta =  thumbDelta * 0.88
             }
-            let touchDelta = touchState.pointNow - runwayBounds.origin
-            thumbNext = panelVm.normalizeTouch(xy: touchDelta) + thumbBeginΔ
+            let touchOffset = touchState.pointNow - runwayBounds.origin
+            let nextThumb = touchOffset - thumbDelta
+            let normThumb = panelVm.normalizeTouch(xy: nextThumb)
+            thumbNext = [normThumb[0].clamped(to: 0...1),
+                         normThumb[1].clamped(to: 0...1)]
         }
         /// double touch will align thumb to center, corners or sides.
         func quantizeThumb(_ point: [Double]) -> [Double] {
 
-            let x = round(point[0] * 2) / 2
-            let y = round(point[1] * 2) / 2
+            let x = round(point[0] * 4) / 4
+            let y = round(point[1] * 4) / 4
             return [x,y]
         }
     }

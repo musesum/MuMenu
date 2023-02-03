@@ -99,7 +99,7 @@ public class MuLeafSegVm: MuLeafVm {
         updateLeafPeers(visit)
 
         func touchThumbBegin() {
-            let thumbPrev = thumbNow[0]
+            let thumbPrev = thumbNext[0]
             let touchDelta = touchState.pointNow - runwayBounds.origin
             let thumbDelta = normalizeTouch(touchDelta)
             let touchedInsideThumb = abs(thumbDelta.distance(to: thumbPrev)) < thumbRadius

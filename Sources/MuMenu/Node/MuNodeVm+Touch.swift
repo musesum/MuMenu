@@ -12,7 +12,7 @@ extension MuNodeVm { // + Touch
            let menuSync = leafVm.menuSync {
             
             let visit = Visitor(.user)
-            menuSync.resetDefault(visit)
+            menuSync.setMenuDefault(visit)
             leafVm.leafProto?.refreshValue(visit)
         }
     }
@@ -39,8 +39,8 @@ extension MuNodeVm { // + Touch
         }
         myTouchBeginTime = touchState.timeBegin
         switch myTouchBeginCount {
-            case 0: break
-            case 1: tapSpotlights()
+            case 0:   break
+            case 1:   tapSpotlights()
             case 2,3: tapAllDescendants()
             default: return
         }

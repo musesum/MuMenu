@@ -2,7 +2,8 @@
 
 import Foundation
 
-enum MuTouchElement: String  {
+// touch option
+enum MuTouchOp  {
     
     case none   /// starting point before touching
     case root   /// starting node hosting 1 or more trees
@@ -51,7 +52,7 @@ enum MuTouchElement: String  {
     var edit   : Bool { self == .edit   }
     var space  : Bool { self == .space  }
 
-    static public func symbols(_ set: Set<MuTouchElement>) -> String {
+    static public func symbols(_ set: Set<MuTouchOp>) -> String {
         var result = "〈"
         for item in set {
             result += item.symbol
@@ -59,7 +60,7 @@ enum MuTouchElement: String  {
         result += "〉"
         return result
     }
-    func isIn(_ elements: [MuTouchElement]) -> Bool {
+    func isIn(_ elements: [MuTouchOp]) -> Bool {
         for element in elements {
             if element == self {
                 return true

@@ -11,6 +11,7 @@ public func log(_ title: String,
     
     var text = title
     for item in items {
+        var delim = ""
         switch item {
             case let v as CGFloat : text += String(format: "(\(format)) ", v)
             case let v as Float   : text += String(format: "(\(format)) ", v)
@@ -18,14 +19,13 @@ public func log(_ title: String,
             case let v as CGSize  : text += String(format: "∘(\(format), \(format)) ", v.width, v.height)
             case let v as CGRect  : text += String(format: "▭(\(format),\(format); \(format),\(format)) ", v.origin.x, v.origin.y, v.size.width, v.size.height)
 
-            case let v as MuTouchElement: text += "\(v.symbol)"
-            case let v as Set<MuTouchElement>: text += "\(MuTouchElement.symbols(v))"
+            case let v as MuTouchOp: text += "\(v.symbol)"
+            case let v as Set<MuTouchOp>: text += "\(MuTouchOp.symbols(v))"
             case let v as String: text += v
 
             case let v as Int: text += " \(v)"
 
             case let v as [Int]:
-                var delim = ""
                 text += " ["
                 for vv in v {
                     text += (delim + "\(vv)")
@@ -34,7 +34,6 @@ public func log(_ title: String,
                 text += "] "
 
             case let v as [CGFloat]:
-                var delim = ""
                 text += " ["
                 for vv in v {
                     text += (delim + "\(Int(vv))")
@@ -44,13 +43,13 @@ public func log(_ title: String,
 
             case let v as Double:
 
-                text += v.digits(0...1) + " "
+                text += v.digits(1...3) + " "
 
             case let v as [Double]:
-                var delim = ""
+                
                 text += " ["
                 for vv in v {
-                    text += (delim + "\(vv.digits(0...1))")
+                    text += (delim + "\(vv.digits(1...3))")
                     delim = ","
                 }
                 text += "] "

@@ -57,7 +57,7 @@ public class MuLeafValVm: MuLeafVm {
         } else {
             editing = false
         }
-        animateThumb()
+        syncNext(visit)
         updateLeafPeers(visit)
 
         func touchThumbBegin() {

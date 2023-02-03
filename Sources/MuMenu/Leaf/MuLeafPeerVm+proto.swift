@@ -9,7 +9,6 @@ extension MuLeafPeerVm: MuLeafProtocol {
     public func leafTitle() -> String { "Bonjour" }
     public func treeTitle() -> String { "Bonjour" }
     public func thumbOffset() -> CGSize {  CGSize(width: 0, height:  panelVm.runway) }
-    public func syncNow(_ visit: Visitor) {}
     public func syncNext(_ visit: Visitor) {}
 
 

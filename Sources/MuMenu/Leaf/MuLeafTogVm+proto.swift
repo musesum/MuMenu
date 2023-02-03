@@ -13,28 +13,20 @@ extension MuLeafTogVm: MuLeafProtocol {
         if visit.from.user {
             updateLeafPeers(visit)
             syncNext(visit)
-        } else {
-            thumbNow = thumbNext
         }
-
     }
     
     public func updateLeaf(_ any: Any,_ visit: Visitor) {
-
-        if !visit.from.tween,
-            visit.newVisit(hash) {
-
-            editing = true
-            switch any {
-                case let v as Double:   thumbNext[0] = (v    < 1.0 ? 0 : 1)
-                case let v as [Double]: thumbNext[0] = (v[0] < 1.0 ? 0 : 1)
-                default: break
-            }
-            editing = false
-            thumbNow = thumbNext
-            syncNext(visit)
-            updateLeafPeers(visit)
+        visit.nowHere(hash)
+        editing = true
+        switch any {
+            case let v as Double:   thumbNext[0] = (v    < 1.0 ? 0 : 1)
+            case let v as [Double]: thumbNext[0] = (v[0] < 1.0 ? 0 : 1)
+            default: break
         }
+        editing = false
+        syncNext(visit)
+        updateLeafPeers(visit)
     }
 
     public func leafTitle() -> String {
@@ -48,12 +40,8 @@ extension MuLeafTogVm: MuLeafProtocol {
         ? CGSize(width: 1, height: (1-thumbNext[0]) * panelVm.runway)
         : CGSize(width: thumbNext[0] * panelVm.runway, height: 1)
     }
-    public func syncNow(_ visit: Visitor) {
-        syncNext(visit)
-    }
     public func syncNext(_ visit: Visitor) {
         menuSync?.setMenuAny(named: nodeType.name, thumbNext[0], visit)
-        thumbNow = thumbNext
         refreshView()
     }
     

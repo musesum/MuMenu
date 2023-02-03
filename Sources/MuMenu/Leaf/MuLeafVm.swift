@@ -12,11 +12,10 @@ public class MuLeafVm: MuNodeVm {
     
     var menuSync: MuMenuSync?
     var leafProto: MuLeafProtocol?
-    var animateLeaf: TimeInterval = 1 //???
     
     /// normalized to 0...1
-    var thumbNow  = Thumb(repeatElement(0, count: 2))
-    var thumbNext = Thumb(repeatElement(0, count: 2))
+    var thumbNext  = Thumb(repeatElement(0, count: 2))
+    var thumbDelta = CGPoint.zero
     var timer: Timer?
     
     func updateLeafPeers(_ visit: Visitor) {
@@ -64,36 +63,5 @@ public class MuLeafVm: MuNodeVm {
             case .on:  branchVm.treeVm.branchSpotVm = branchVm
             case .off: branchVm.treeVm.branchSpotVm = nil
         }
-    }
-
-    var animSteps = TimeInterval.zero
-    
-    func animateThumb() {
-        animSteps = 1 //??? NextFrame.shared.fps * animateLeaf // DisplayLink.shared.fps
-        NextFrame.shared.addFrameDelegate(self.hash, self)
-    }
-}
-extension MuLeafVm: NextFrameDelegate {
-
-    public func nextFrame() -> Bool {
-        for i in 0..<thumbNext.count {
-            let now = thumbNow[i]
-            let next = thumbNext[i]
-            let delta = (next - now)
-            let increment = animSteps <= 1 ? delta : delta / animSteps
-            thumbNow[i] = (now + increment)
-        }
-        animSteps = max(0, animSteps - 1)
-
-        if animSteps > 1 {
-            DispatchQueue.main.async {
-                self.leafProto?.syncNow(Visitor(self.hash))  //??? .tween
-            }
-        } else {
-            DispatchQueue.main.async {
-                self.leafProto?.syncNext(Visitor(self.hash)) //??? .tween
-            }
-        }
-        return animSteps >= 1
     }
 }

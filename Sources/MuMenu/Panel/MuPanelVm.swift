@@ -45,6 +45,7 @@ public class MuPanelVm {
     // changed by type
     lazy var thumbRadius   : CGFloat = { Layout.radius - 1 }()
     lazy var thumbDiameter : CGFloat = { thumbRadius * 2 }()
+    lazy var thumbSize     : CGSize = { CGSize(width: thumbRadius, height: thumbRadius) }()
 
     var runway: CGFloat {
         let result = isVertical

@@ -49,9 +49,9 @@ extension MuTreeVm { // +Show
         }
         func logShowTree() {
             #if true
-            print(cornerAxis.corner.indicator()+(isVertical ? "|" : "━"), terminator: "")
+            //print(cornerAxis.corner.indicator()+(isVertical ? "|" : "━"), terminator: "")
             #elseif true
-            print("\(via.pad(7))\(cornerAxis.corner.indicator())\(isVertical ? "V" : "H") (s \(nextIndex) d \(nextDepth)) ", terminator: " ")
+            //print("\(via.pad(7))\(cornerAxis.corner.indicator())\(isVertical ? "V" : "H") (s \(nextIndex) d \(nextDepth)) ", terminator: " ")
             
             for branch in branchVms {
                 print("\(branch.title.pad(7)):\(branch.show ? 1 : 0)", terminator: " ")

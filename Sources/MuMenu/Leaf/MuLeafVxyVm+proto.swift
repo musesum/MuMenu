@@ -6,7 +6,6 @@ import MuPar
 extension MuLeafVxyVm: MuLeafProtocol {
 
     public func refreshValue(_ visit: Visitor) {
-        //?? print("r", terminator: "⃝")
 
         if let nameRanges = menuSync?.getMenuRanges(named: ["x","y"]) {
             for (name,range) in nameRanges {
@@ -20,30 +19,23 @@ extension MuLeafVxyVm: MuLeafProtocol {
 
         visit.nowHere(self.hash)
         if visit.from.user {
-            animateThumb()
+            syncNext(Visitor(self.hash))
             updateLeafPeers(visit)
-        } else {
-            thumbNow = thumbNext
         }
     }
 
     /// update from model - not touch
     public func updateLeaf(_ any: Any, _ visit: Visitor) {
-
-        if !visit.from.tween,
-           visit.newVisit(hash) {
-
-            //?? print("u", terminator: "⃝")
-            editing = true
-            if let v = any as? [Double], v.count == 2 {
-                thumbNext = [v[0],v[1]]
-            } else {
-                print("⁉️ unknown update type")
-            }
-            editing = false
-            animateThumb()
-            updateLeafPeers(visit)
+        visit.nowHere(hash)
+        editing = true
+        if let v = any as? [Double], v.count == 2 {
+            thumbNext = [v[0],v[1]]
+        } else {
+            print("⁉️ unknown update type")
         }
+        editing = false
+        syncNext(visit)
+        updateLeafPeers(visit)
     }
 
     public func leafTitle() -> String {
@@ -62,25 +54,19 @@ extension MuLeafVxyVm: MuLeafProtocol {
 
 
     public func thumbOffset() -> CGSize {
-        CGSize(width:     thumbNext[0]  * panelVm.runway,
-               height: (1-thumbNext[1]) * panelVm.runway)
+        return CGSize(width:     thumbNext[0]  * panelVm.runway,
+                      height: (1-thumbNext[1]) * panelVm.runway)
     }
-    /// called via user touch or via model update
-    public func syncNow(_ visit: Visitor) {
-        //?? print("n", terminator: "⃝")
-        let x = expand(named: "x", thumbNow[0])
-        let y = expand(named: "y", thumbNow[1])
-        menuSync?.setMenuAnys([("x", x),("y", y)], visit)
-        refreshView()
+    public func thumbCenter() -> CGPoint {
+        CGPoint(x:     thumbNext[0]  * panelVm.runway + panelVm.thumbRadius,
+                y:  (1-thumbNext[1]) * panelVm.runway + panelVm.thumbRadius)
     }
 
     /// called via user touch or via model update
     public func syncNext(_ visit: Visitor) {
-        //?? print("x", terminator: "⃝")
         let x = expand(named: "x", thumbNext[0])
         let y = expand(named: "y", thumbNext[1])
         menuSync?.setMenuAnys([("x", x),("y", y)], visit)
-        thumbNow = thumbNext
         refreshView()
     }
 

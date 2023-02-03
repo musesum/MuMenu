@@ -19,15 +19,17 @@ public class MuLeafTapVm: MuLeafVm {
     override public func touchLeaf(_ touchState: MuTouchState,
                                    _ visit: Visitor) {
         if touchState.phase == .began {
-            thumbNext[0] = 1
             editing = true
+            thumbNext[0] = 1
+            syncNext(visit)
+            updateLeafPeers(visit)
         } else if touchState.phase.isDone() {
             thumbNext[0] = 0
+            syncNext(visit)
+            updateLeafPeers(visit)
             editing = false
         }
-        thumbNow = thumbNext
-        syncNext(visit)
-        updateLeafPeers(visit)
+
     }
 
 }

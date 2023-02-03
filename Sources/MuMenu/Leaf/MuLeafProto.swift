@@ -20,10 +20,7 @@ public protocol MuLeafProtocol {
 
     /// get value of thumb
     func refreshValue(_ visit: Visitor)
-
-    /// animated upddate
-    func syncNow(_ visit: Visitor)
-
+    
     /// final upddate
     func syncNext(_ visit: Visitor)
     
