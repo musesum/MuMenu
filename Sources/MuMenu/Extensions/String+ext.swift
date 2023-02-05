@@ -10,6 +10,11 @@ extension String {
     public func pad(_ len: Int) -> String {
         padding(toLength: len, withPad: " ", startingAt: 0)
     }
+    public static func pointer(_ object: AnyObject?) -> String {
+        guard let object = object else { return "nil" }
+        let opaque: UnsafeMutableRawPointer = Unmanaged.passUnretained(object).toOpaque()
+        return String(describing: opaque)
+    }
 }
 public func superScript(_ num: Int) -> String {
     var s = ""
