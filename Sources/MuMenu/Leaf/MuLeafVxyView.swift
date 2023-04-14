@@ -17,7 +17,8 @@ struct MuLeafVxyView: View {
                             Capsule()
                                 .fill(.gray)
                                 .frame(width: 4, height: 4)
-                                .offset(CGSize(width: $0.width, height: $0.height))
+                                .offset(CGSize(width: $0.width,
+                                               height: $0.height))
                                 .allowsHitTesting(false)
                         }
                         MuLeafThumbSlideView(leafVm: leafVm)
@@ -33,7 +34,8 @@ struct MuLeafVxyView: View {
                             Capsule()
                                 .fill(.gray)
                                 .frame(width: 4, height: 4)
-                                .offset(CGSize(width: $0.width, height: $0.height))
+                                .offset(CGSize(width: $0.width,
+                                               height: $0.height))
                                 .allowsHitTesting(false)
                         }
                         MuLeafThumbSlideView(leafVm: leafVm)

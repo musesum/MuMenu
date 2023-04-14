@@ -28,8 +28,8 @@ public class MuLeafTapVm: MuLeafVm {
             syncNext(visit)
             updateLeafPeers(visit)
             editing = false
+            syncNext(visit)
         }
-
     }
 
 }

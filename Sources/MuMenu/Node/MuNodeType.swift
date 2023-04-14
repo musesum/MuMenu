@@ -3,7 +3,7 @@
 import SwiftUI
 
 public enum MuNodeType: String {
-    case none // no defined thpe
+    case none // no defined type
     case node // either icon or text
     case val  // value control
     case vxy  // value XY control
@@ -61,7 +61,18 @@ public enum MuNodeType: String {
             default: return true
         }
     }
-
+    public var isControl: Bool {
+        switch self {
+            case .node, .none, .tap, .tog: return false
+            default: return true
+        }
+    }
+    public var isTog: Bool {
+        switch self {
+            case .tog, .tap: return true
+            default: return false
+        }
+    }
 }
 
 public let MuNodeLeafNames = ["val", "vxy", "tog", "seg", "tap", "peer", "x", "y"]

@@ -33,8 +33,8 @@ public class MuTouchVm: ObservableObject {
         // choose an arbirary tree to allow for branc
         guard let treeVm = rootVm.treeVms.first else { return }
         self.rootVm = rootVm
-        let cornerNode = MuNode(name: rootVm.corner.indicator(),
-                                icon: MuIcon(.cursor, named: Layout.hoverRing))
+        let icon = MuIcon(.cursor, Layout.hoverRing)
+        let cornerNode = MuNode(name: rootVm.corner.indicator(), icon: icon)
 
         let branchVm = MuBranchVm.cached(treeVm: treeVm)
         rootNodeVm = MuNodeVm(cornerNode, branchVm, nil)
@@ -109,8 +109,8 @@ public class MuTouchVm: ObservableObject {
             return dragIconXY = touchXY - bounds.origin
         }
         if !touchState.touching ||
-            rootVm.touchOp.isIn([.root, .canopy]) ||
-            rootVm.nodeSpotVm?.nodeType.isLeaf ?? false {
+            rootVm.touchType.isIn([.root, .canopy]) ||
+            rootVm.nodeSpotVm?.nodeType.isControl ?? false {
 
             dragIconXY = parkIconXY  // park the dragIcon
 

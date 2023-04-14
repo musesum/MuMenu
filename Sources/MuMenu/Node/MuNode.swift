@@ -6,7 +6,7 @@ open class MuNode: Identifiable, Equatable {
     public let id = MuNodeIdentity.getId()
 
     public var title: String
-    public var icon: MuIcon
+    public var icon: MuIcon!
     public var parent: MuNode?
     public var children = [MuNode]()
     public var menuSync: MuMenuSync?
@@ -25,7 +25,7 @@ open class MuNode: Identifiable, Equatable {
 
     public lazy var hash: Int = {
         if let path {
-            if nodeType.isLeaf {
+            if nodeType.isControl {
                 return Int(title.strHash()) + 1
             } else {
                 return Int(title.strHash())
@@ -47,7 +47,7 @@ open class MuNode: Identifiable, Equatable {
     }
 
     public init(name: String,
-                icon: MuIcon,
+                icon: MuIcon? = nil,
                 parent: MuNode? = nil) {
 
         self.title = name

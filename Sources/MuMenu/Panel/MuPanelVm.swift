@@ -28,11 +28,12 @@ public class MuPanelVm {
         switch nodeType {
             case .none : aspect(1.0, 1.0)
             case .node : aspect(1.0, 1.0)
+            case .tog  : aspect(1.0, 1.0)
+            case .tap  : aspect(1.0, 1.0)
+
             case .val  : aspect(1.0, 4.0)
             case .vxy  : aspect(3.0, 3.0)
-            case .tog  : aspect(1.0, 1.5)
             case .seg  : aspect(1.0, 4.0)
-            case .tap  : aspect(1.0, 1.0)
             case .peer : aspect(6.0, 3.0)
         }
         func aspect(_ lo: CGFloat,_ hi: CGFloat) {
@@ -70,7 +71,7 @@ public class MuPanelVm {
 
         switch nodeType {
 
-            case .val, .seg, .tog, .tap:
+            case .val, .seg:
 
                 result = inner + (
                     isVertical
@@ -84,7 +85,7 @@ public class MuPanelVm {
                 result = inner + CGSize(width: Layout.padding2,
                                         height: Layout.diameter2)
 
-            case .none, .node:
+            case .none, .node, .tog, .tap:
 
                 let longer = (Layout.diameter2 + spacing) * count
                 let width  = (isVertical ? Layout.diameter2 : longer)

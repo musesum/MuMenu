@@ -1,7 +1,3 @@
-//
-//  File.swift
-//  
-//
 //  Created by warren on 9/10/22.
 
 import SwiftUI
@@ -34,18 +30,12 @@ extension MuLeafTapVm: MuLeafProtocol {
 
 
     public func leafTitle() -> String {
-        if editing {
-            return editing ? "1" :  "0"
-        } else {
-            return node.title
-        }
+        node.title
     }
     public func treeTitle() -> String {
-        if editing {
-            return editing ? "1" :  "0"
-        } else {
-            return node.title
-        }
+        editing
+        ? thumbNext[0] == 1.0 ? "on" : "off"
+        : node.title
     }
     public func thumbOffset() -> CGSize {
         CGSize(width: 0, height:  panelVm.runway)

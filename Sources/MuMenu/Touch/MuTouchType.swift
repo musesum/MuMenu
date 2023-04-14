@@ -3,16 +3,18 @@
 import Foundation
 
 // touch option
-enum MuTouchOp  {
+enum MuTouchType  {
     
     case none   /// starting point before touching
     case root   /// starting node hosting 1 or more trees
     case branch /// branches expanded for one tree
     case trunks /// only first branch of multiple trees
     case node   /// hovering over a specific node
+    case tog    /// toggle/tap an embedded leaf
+    case leaf   /// editing area inside a leaf
     case canopy /// shift tree from whole canopy
     case shift  /// shifting branches by dragging header for leaf
-    case edit   /// editing area inside a leaf
+
     case space  /// hovering over canvas while on menu
     
     public var symbol: String {
@@ -22,9 +24,11 @@ enum MuTouchOp  {
             case .trunks : return "ᛘ"
             case .branch : return "𐂷"
             case .node   : return "ⓝ"
+            case .tog    : return "􀤹"
+            case .leaf   : return "􀤹"
             case .canopy : return "􁝯"
             case .shift  : return "􀄭"
-            case .edit   : return "􀤹"
+
             case .space  : return "􁁺"
         }
     }
@@ -35,9 +39,11 @@ enum MuTouchOp  {
             case .trunks : return "trunks"
             case .branch : return "branch"
             case .node   : return "node"
+            case .tog    : return "tog"
+            case .leaf   : return "edit"
             case .canopy : return "canopy"
             case .shift  : return "shift"
-            case .edit   : return "edit"
+
             case .space  : return "space"
         }
     }
@@ -47,12 +53,14 @@ enum MuTouchOp  {
     var branch : Bool { self == .branch }
     var trunks : Bool { self == .trunks }
     var node   : Bool { self == .node   }
+    var tog    : Bool { self == .tog    }
+    var leaf   : Bool { self == .leaf   }
     var canopy : Bool { self == .canopy }
     var shift  : Bool { self == .shift  }
-    var edit   : Bool { self == .edit   }
+
     var space  : Bool { self == .space  }
 
-    static public func symbols(_ set: Set<MuTouchOp>) -> String {
+    static public func symbols(_ set: Set<MuTouchType>) -> String {
         var result = "〈"
         for item in set {
             result += item.symbol
@@ -60,7 +68,7 @@ enum MuTouchOp  {
         result += "〉"
         return result
     }
-    func isIn(_ elements: [MuTouchOp]) -> Bool {
+    func isIn(_ elements: [MuTouchType]) -> Bool {
         for element in elements {
             if element == self {
                 return true

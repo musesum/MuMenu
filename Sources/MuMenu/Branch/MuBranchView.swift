@@ -66,8 +66,6 @@ fileprivate struct titleV: View {
 
     var opacity: CGFloat {
         branchVm.treeVm.depthShown <= 1 ? 0 :
-        //nodeSpotVm?.nodeType.isLeaf ?? true ? 0 :
-        //treeVm.rootVm.touchState?.phase.isDone() ?? true ? 0 :
         branchVm.show ? branchVm.opacity : 0 }
 
     init(_ branchVm: MuBranchVm) {

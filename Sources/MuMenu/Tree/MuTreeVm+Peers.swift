@@ -31,7 +31,7 @@ extension MuTreeVm { // + Peers
                     // nodeNow may be in middle of shown treePath
                     nodeNow = stepNodeVm
                 }
-                if !stepNodeVm.nodeType.isLeaf {
+                if !stepNodeVm.nodeType.isControl {
                     stepNodeVm.refreshBranch()
                 }
                 branchVm = stepNodeVm.nextBranchVm

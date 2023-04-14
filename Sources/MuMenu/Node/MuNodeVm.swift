@@ -39,7 +39,7 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
 
         if let nodePath = node.path {
             path += nodePath
-        }else {
+        } else {
             print("⁉️ MuNodeVm.node.path == nil")
         }
         return path

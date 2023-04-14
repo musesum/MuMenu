@@ -14,16 +14,17 @@ public class MuBranchVm: Identifiable, ObservableObject {
     var shiftRange: RangeXY = (0...1, 0...1)
     var titleShift: CGSize = .zero
 
-    public var treeVm: MuTreeVm /// my tree; which unfolds a hierarchy of branches
+    var treeVm: MuTreeVm /// my tree; which unfolds a hierarchy of branches
     var nodeVms: [MuNodeVm]   /// all the node View Models on this branch
     var nodeSpotVm: MuNodeVm? /// current node, nodeSpotVm.branchVm is next branch
     var panelVm: MuPanelVm    /// background + stroke model for BranchView
-    private var branchPrev: MuBranchVm?
 
-    public var boundsNow: CGRect = .zero /// current bounds after shifting
-    private var boundsPrior: CGSize = .zero
-    public var boundsPad: CGRect = .zero /// extended bounds for detecting touch
+    private var branchPrev: MuBranchVm?
     private var boundStart: CGRect = .zero
+    private var boundsPrior: CGSize = .zero
+
+    var boundsNow: CGRect = .zero /// current bounds after shifting
+    var boundsPad: CGRect = .zero /// extended bounds for detecting touch
     var zindex: CGFloat = 0       /// zIndex within sub/super branches
 
     var title: String {
@@ -64,7 +65,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
 
             let nodeVm = MuNodeVm.cached(node, self, prevNodeVm)
             nodeVms.append(nodeVm)
-            if nodeVm.spotlight || node.nodeType.isLeaf {
+            if nodeVm.spotlight || node.nodeType.isControl {
                 nodeSpotVm = nodeVm
             }
         }
@@ -77,12 +78,13 @@ public class MuBranchVm: Identifiable, ObservableObject {
 
         if nodeSpotVm.node.children.count > 0 {
             
-            MuBranchVm.cached(nodes: nodeSpotVm.node.children,
-                              treeVm: treeVm,
-                              branchPrev: self,
-                              prevNodeVm: nodeSpotVm,
-                              zindex: zindex+1)
-            .expandBranch()
+            MuBranchVm
+                .cached(nodes: nodeSpotVm.node.children,
+                        treeVm: treeVm,
+                        branchPrev: self,
+                        prevNodeVm: nodeSpotVm,
+                        zindex: zindex+1)
+                .expandBranch()
         }
     }
 
@@ -103,7 +105,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
 
         if let nodeSpotVm {
             if nodeSpotVm.containsPoint(touchNow) ||
-                nodeSpotVm.nodeType.isLeaf {
+                nodeSpotVm.nodeType.isControl {
                 return nodeSpotVm
             }
         }
@@ -174,16 +176,12 @@ public class MuBranchVm: Identifiable, ObservableObject {
         }
         shiftBranch()
 
-        let boundsDelta = treeVm.treeBounds.size - boundsNow.size
-        let dw = boundsDelta.width
-        let dh = boundsDelta.height
-        let p = Layout.padding * 4
-
+        let rad = Layout.radius
         switch treeVm.cornerAxis.cornax {
-            case .LLH,.ULH: titleShift = CGSize(width: dw+p, height:  0)
-            case .LLV,.LRV: titleShift = CGSize(width:    0, height:-dh)
-            case .LRH,.URH: titleShift = CGSize(width:-dw-p, height:  0)
-            case .ULV,.URV: titleShift = CGSize(width:    0, height: dh)
+            case .LLH,.ULH: titleShift = CGSize(width:  rad, height: 0)
+            case .LRH,.URH: titleShift = CGSize(width: -rad, height: 0)
+            case .LLV,.LRV: titleShift = .zero
+            case .ULV,.URV: titleShift = .zero
         }
     }
 

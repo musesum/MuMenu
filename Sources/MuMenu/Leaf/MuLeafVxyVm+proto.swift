@@ -39,17 +39,13 @@ extension MuLeafVxyVm: MuLeafProtocol {
     }
 
     public func leafTitle() -> String {
-        if editing {
-            return treeTitle()
-        } else {
-            return node.title
-        }
-    }
-
-    public func treeTitle() -> String {
         String(format: "x:%.2f  y:%.2f",
                expand(named: "x", thumbNext[0]),
                expand(named: "y", thumbNext[1]))
+    }
+
+    public func treeTitle() -> String {
+        node.title
     }
 
 

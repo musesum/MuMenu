@@ -7,7 +7,7 @@ extension MuRootVm {
 
     func sendItemToPeers(_ item: MenuItem) {
 
-        if peers.hasPeers {
+        if let peers, peers.hasPeers {
             do {
                 let encoder = JSONEncoder()
                 let data = try encoder.encode(item)

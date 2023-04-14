@@ -10,7 +10,7 @@ struct MuIconView: View {
     var color: Color { nodeVm.spotlight ? .white : .gray }
     var fill: Color { icon.iconType == .cursor ? .clear : .black }
     var width: CGFloat { nodeVm.spotlight ? 2.0 : 0.5 }
-
+    
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: Layout.cornerRadius)
@@ -21,9 +21,11 @@ struct MuIconView: View {
 
             switch icon.iconType {
 
-                case .none:  MuIconTextView(text: nodeVm.node.title, color: color)
-                case .text: MuIconTextView(text: nodeVm.node.icon.named, color: color)
-
+                case .none: MuIconTextView(text: nodeVm.node.title,
+                                           color: color)
+                    
+                case .text: MuIconTextView(text: nodeVm.node.icon.named,
+                                           color: color)
                 case .cursor:
 
                     if let uiImage = UIImage(named: nodeVm.node.icon.named) {
@@ -38,7 +40,21 @@ struct MuIconView: View {
                                 .padding(geo.size.width * 0.1)
                         }
                     } else {
-                        MuIconTextView(text: nodeVm.node.title, color: color)
+                        MuIconTextView(text: nodeVm.node.title,
+                                       color: color)
+                    }
+                case .svg:
+
+                    if let image = icon.image {
+                        GeometryReader { geo in
+                            Image(uiImage: image)
+                                .resizable()
+                                .padding(geo.size.width * 0.15)
+                                .colorInvert()
+                        }
+                    } else {
+                        MuIconTextView(text: nodeVm.node.title,
+                                       color: color)
                     }
                 case .symbol:
 
@@ -53,6 +69,7 @@ struct MuIconView: View {
                             .padding(1)
                     }
             }
+            
         }
     }
 }

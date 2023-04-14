@@ -38,7 +38,7 @@ extension MuLeafValVm: MuLeafProtocol {
         String(format: "%.2f", expanded)
     }
     public func treeTitle() -> String {
-        String(format: "%.2f", expanded)
+        node.title
     }
     public func thumbOffset() -> CGSize {
         panelVm.isVertical

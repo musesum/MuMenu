@@ -19,8 +19,8 @@ public func log(_ title: String,
             case let v as CGSize  : text += String(format: "∘(\(format), \(format)) ", v.width, v.height)
             case let v as CGRect  : text += String(format: "▭(\(format),\(format); \(format),\(format)) ", v.origin.x, v.origin.y, v.size.width, v.size.height)
 
-            case let v as MuTouchOp: text += "\(v.symbol)"
-            case let v as Set<MuTouchOp>: text += "\(MuTouchOp.symbols(v))"
+            case let v as MuTouchType: text += "\(v.symbol)"
+            case let v as Set<MuTouchType>: text += "\(MuTouchType.symbols(v))"
             case let v as String: text += v
 
             case let v as Int: text += " \(v)"

@@ -53,7 +53,7 @@ struct MuTreeCanopyView: View {
         Rectangle()
             .background(.thinMaterial)
             .cornerRadius(cornerRadius)
-            .opacity(0.5)
+            .opacity(0.01)
             .frame(width: treeSize.width, height: treeSize.height)
     }
 }

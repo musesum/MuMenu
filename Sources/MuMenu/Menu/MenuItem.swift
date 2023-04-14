@@ -49,7 +49,7 @@ public struct MenuRootItem: Codable {
         }
         self.trees = trees
         self.corner = rootVm.corner.rawValue
-        self.phase = (rootVm.touchState?.phase ?? .began).rawValue
+        self.phase = rootVm.touchState.phase.rawValue
     }
 
     enum CodingKeys: String, CodingKey { case trees, corner, phase }
@@ -147,10 +147,10 @@ public struct MenuItem: Codable {
         try corner = c.decode(Int   .self, forKey: .corner)
         try phase  = c.decode(Int   .self, forKey: .phase )
         switch type {
-            case .root:  try item  = c.decode(MenuRootItem .self, forKey: .item)
-            case .node:  try item  = c.decode(MenuNodeItem .self, forKey: .item)
-            case .leaf:  try item  = c.decode(MenuLeafItem .self, forKey: .item)
-            case .touch: try item  = c.decode(MenuTouchItem.self, forKey: .item)
+            case .root : try item = c.decode(MenuRootItem .self, forKey: .item)
+            case .node : try item = c.decode(MenuNodeItem .self, forKey: .item)
+            case .leaf : try item = c.decode(MenuLeafItem .self, forKey: .item)
+            case .touch: try item = c.decode(MenuTouchItem.self, forKey: .item)
         } 
     }
 

@@ -16,14 +16,17 @@ struct MuLeafView<Content: View>: View {
 
     var body: some View {
 
-        if panelVm.isVertical {
+        if leafVm.nodeType.isTog {
+
+            MuTogBodyView(leafVm, content)
+            
+        } else if panelVm.isVertical {
             VStack {
                 // vertical title is always on top
                 // so that hand doesn't occlude value text
                 MuLeafTitleView(leafVm)
                 MuLeafBodyView(leafVm, content)
             }
-
         } else {
             HStack {
                 // horizontal title is farthest away from root
@@ -82,6 +85,27 @@ struct MuLeafBodyView<Content: View>: View {
     var body: some View {
         GeometryReader { geo in
             MuPanelView(leafVm: leafVm)
+            content() // custom control thumb is here
+                .onAppear { leafVm.updateRunway(geo.frame(in: .global)) }
+                .onChange(of: geo.frame(in: .global)) { leafVm.updateRunway($0) }
+        }
+        .frame(width: panelVm.inner.width, height: panelVm.inner.height)
+    }
+}
+
+struct MuTogBodyView<Content: View>: View {
+
+    @ObservedObject var leafVm: MuLeafVm
+    let content: () -> Content
+    var panelVm: MuPanelVm { leafVm.panelVm }
+
+    init(_ leafVm: MuLeafVm,_  content: @escaping ()->Content) {
+        self.leafVm = leafVm
+        self.content = content
+    }
+    var body: some View {
+        GeometryReader { geo in
+
             content() // custom control thumb is here
                 .onAppear { leafVm.updateRunway(geo.frame(in: .global)) }
                 .onChange(of: geo.frame(in: .global)) { leafVm.updateRunway($0) }

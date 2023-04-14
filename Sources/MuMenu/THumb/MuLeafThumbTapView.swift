@@ -8,7 +8,7 @@ struct MuLeafThumbTapView: View {
     var panelVm: MuPanelVm { leafVm.panelVm }
     var color: Color { leafVm.spotlight ? .white : .gray }
     var thumbOffset: CGSize { leafVm.leafProto?.thumbOffset() ?? .zero }
-
+    var togColor: Color { Layout.togColor(leafVm.thumbNext[0] > 0) }
     var body: some View {
         ZStack {
             Capsule()
@@ -22,6 +22,20 @@ struct MuLeafThumbTapView: View {
                 .frame(width:  panelVm.thumbDiameter,
                        height: panelVm.thumbDiameter)
                 .offset(thumbOffset)
+
+            Capsule()
+                .fill(.black)
+                .frame(width: 8, height: 8)
+                .offset(CGSize(width: Layout.radius-5,
+                               height: Layout.radius-5))
+                .allowsHitTesting(false)
+
+            Capsule()
+                .fill(togColor)
+                .frame(width: 7, height: 7)
+                .offset(CGSize(width: Layout.radius-5,
+                               height: Layout.radius-5))
+                .allowsHitTesting(false)
         }
     }
 }

@@ -33,12 +33,13 @@ extension MuLeafTogVm: MuLeafProtocol {
         node.title
     }
     public func treeTitle() -> String {
-        return thumbNext[0] == 1.0 ? "on" : "off"
+        editing
+        ? thumbNext[0] == 1.0 ? "on" : "off"
+        : node.title
     }
+    
     public func thumbOffset() -> CGSize {
-        panelVm.isVertical
-        ? CGSize(width: 1, height: (1-thumbNext[0]) * panelVm.runway)
-        : CGSize(width: thumbNext[0] * panelVm.runway, height: 1)
+        CGSize(width: 1, height: 1)
     }
     public func syncNext(_ visit: Visitor) {
         menuSync?.setMenuAny(named: nodeType.name, thumbNext[0], visit)
