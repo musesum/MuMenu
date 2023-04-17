@@ -80,7 +80,6 @@ public class MuTouchVm: ObservableObject {
             
             if touchState.isFast, //may child branch to skip
                rootVm.nodeSpotVm?.nextBranchVm?.nodeSpotVm != nil {
-
                 log("🏁", terminator: " ")
             } else {
                 rootVm.touchMoved(touchState, fromRemote)

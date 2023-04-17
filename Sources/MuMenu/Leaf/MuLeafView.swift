@@ -59,7 +59,7 @@ struct MuLeafTitleView: View {
             .allowsTightening(true)
             .font(Font.system(size: 14, design: .default))
             .minimumScaleFactor(0.01)
-            .foregroundColor(Color.white)
+            .foregroundColor(.white)
             .shadow(color: .black, radius: 1.0)
             .frame(width:  panelVm.titleSize.width,
                    height: panelVm.titleSize.height,

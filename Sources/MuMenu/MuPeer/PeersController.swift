@@ -94,7 +94,7 @@ extension PeersController {
             let data = try JSONSerialization.data(withJSONObject: message, options: .prettyPrinted)
             sendMessage(data, viaStream: viaStream)
         } catch {
-            logPeer("sendMessage error: \(error.localizedDescription)")
+            logPeer("\(#function) error: \(error.localizedDescription)")
             return
         }
     }
@@ -122,7 +122,7 @@ extension PeersController {
                 logPeer("⚡️send toPeers")
             }
         } catch {
-            logPeer("sendMessage error: \(error.localizedDescription)")
+            logPeer("\(#function) error: \(error.localizedDescription)")
         }
     }
 

@@ -28,6 +28,8 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
     
     var myTouchBeginTime = TimeInterval(0)
     var myTouchBeginCount = 0
+    var myTouchEndedTime = TimeInterval(0)
+    var myTouchEndedCount = 0
     var rootVm: MuRootVm
 
     public var center = CGPoint.zero /// current position

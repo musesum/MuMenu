@@ -17,12 +17,11 @@ public class MuTouchState {
     var touching: Bool { return timeBegin > timeEnded }
 
     var timeBegin  = TimeInterval(0) /// starting time for tap candidate
+    var timeEnded  = TimeInterval(0) /// ending time for tap candidate
     var moved: CGPoint { pointNow - pointBegin }/// pointNow - pointBegin
                                    ///
     private var timePrev   = TimeInterval(0) /// previous time of touch
-    private var timeEnded  = TimeInterval(0) /// ending time for tap candidate
     private var timeBeginΔ = TimeInterval(0) /// time elapsed since beginning
-
     private var pointBegin  = CGPoint.zero /// where touch started
     private var pointPrev   = CGPoint.zero /// last reported touch while moving
     private var touchSpeed  = CGFloat.zero /// speed of movement
@@ -39,7 +38,7 @@ public class MuTouchState {
         pointBegin = pointNow
         pointPrev = pointNow
 
-        logTouch(0, "🟢 ")
+        logTouch(0, "🟢")
         updateTouchBeginCount()
     }
 
@@ -96,7 +95,7 @@ public class MuTouchState {
 
         if timeEndedΔ < tapThreshold {
             touchEndedCount += 1
-            //log("↾⃝" + superScript(touchBeginCount), format: "%.2f", [timeEndedΔ], terminator: " ")
+            log("↾⃝" + superScript(touchEndedCount), format: "%.2f", [timeEndedΔ], terminator: " ")
         } else {
             touchEndedCount = 0
         }

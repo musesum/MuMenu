@@ -24,8 +24,8 @@ enum MuTouchType  {
             case .trunks : return "ᛘ"
             case .branch : return "𐂷"
             case .node   : return "ⓝ"
-            case .tog    : return "􀤹"
-            case .leaf   : return "􀤹"
+            case .tog    : return "􁏮"
+            case .leaf   : return "􀥲"
             case .canopy : return "􁝯"
             case .shift  : return "􀄭"
 

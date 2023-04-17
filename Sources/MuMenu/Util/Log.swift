@@ -79,5 +79,5 @@ public func log(_ title: String,
 func logTouch(_ time: TimeInterval,
          _ symbol: String) {
 
-    print(String(format: "\n%.2f \(symbol)", time))
+    print(String(format: "\n%.2f \(symbol)", time), terminator: " ")
 }

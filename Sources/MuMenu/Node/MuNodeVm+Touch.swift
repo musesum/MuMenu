@@ -29,7 +29,7 @@ extension MuNodeVm { // + Touch
         nextBranchVm?.nodeSpotVm?.tapSpotlights()
     }
     /// handle repeated touchBegin counts on self
-    func touching(_ touchState: MuTouchState) {
+    func touchBegin(_ touchState: MuTouchState) {
 
         let timeDelta = touchState.timeBegin - myTouchBeginTime
         if timeDelta < touchState.tapThreshold {
@@ -40,8 +40,27 @@ extension MuNodeVm { // + Touch
         myTouchBeginTime = touchState.timeBegin
         switch myTouchBeginCount {
             case 0:   break
-            case 1:   tapSpotlights()
+            //case 1:   tapSpotlights()
             case 2,3: tapAllDescendants()
+            default: return
+        }
+        //print("(\(touchState.touchBeginCount),\(myTouchBeginCount))", terminator: "  ")
+    }
+
+    /// handle repeated touchBegin counts on self
+    func touchEnded(_ touchState: MuTouchState) {
+
+        let timeDelta = touchState.timeEnded - myTouchEndedTime
+        if timeDelta < touchState.tapThreshold {
+            myTouchEndedCount += 1
+        } else {
+            myTouchEndedCount = 0
+        }
+        myTouchEndedTime = touchState.timeBegin
+        switch myTouchEndedCount {
+            case 0:   break
+            case 1:   tapSpotlights()
+            //case 2,3: tapAllDescendants()
             default: return
         }
         //print("(\(touchState.touchBeginCount),\(myTouchBeginCount))", terminator: "  ")

@@ -17,14 +17,12 @@ extension PeersController: MCSessionDelegate {
             hasPeers = true
         } else {
             // test if no longer connected
-            var hasPeersNow = false
             for state in peerState.values {
                 if state == .connected {
-                    hasPeersNow = true
+                    hasPeers = true
                     break
                 }
             }
-            hasPeers = hasPeersNow
         }
 
         DispatchQueue.main.async {

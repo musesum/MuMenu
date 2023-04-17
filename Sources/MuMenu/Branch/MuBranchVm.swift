@@ -124,8 +124,8 @@ public class MuBranchVm: Identifiable, ObservableObject {
     
     /** check touch point is inside a leaf's branch
 
-        - note: already checked inclide a leaf's runway
-        so expand check to inlude the title area
+        - note: already checked inside a leaf's runway
+        so expand check to include the title area
      */
     func findNearestLeaf(_ touchNow: CGPoint) -> MuLeafVm? {
 

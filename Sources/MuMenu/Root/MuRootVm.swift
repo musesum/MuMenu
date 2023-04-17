@@ -28,7 +28,7 @@ public class MuRootVm: ObservableObject, Equatable {
     public var nodeSpotVm: MuNodeVm?   /// current last touched or hovered node
 
     var peers: PeersController?
-    var lastShownBranchVms = [MuBranchVm]()
+    var lastShownBranchVms = [MuBranchVm]() 
 
     /// update tree from new spot
     func updateSpot(_ newSpotVm: MuNodeVm,
@@ -51,7 +51,7 @@ public class MuRootVm: ObservableObject, Equatable {
         
         self.corner = corner
         self.touchVm = MuTouchVm(corner)
-        //??? self.peers = PeersController.shared
+        self.peers = PeersController.shared
     }
     public func updateTreeVms(_ treeVms: [MuTreeVm]) {
         self.treeVms.append(contentsOf: treeVms)
@@ -139,7 +139,7 @@ public class MuRootVm: ObservableObject, Equatable {
         beginViewOps = viewOps
         updateRoot(fromRemote)
         if let nodeSpotVm {
-            nodeSpotVm.touching(touchState)
+            nodeSpotVm.touchBegin(touchState)
             updateSpot(nodeSpotVm, fromRemote)
         }
         touchTypeBegin = touchType
@@ -170,64 +170,65 @@ public class MuRootVm: ObservableObject, Equatable {
             sendItemToPeers(menuItem)
         }
     }
-    func logRoot(_ s: String) {
+    func logRoot(_ s: String = "") {
         print(touchType.symbol+s, terminator: "")
     }
     private func updateRoot(_ fromRemote: Bool) {
 
         let touchNow = touchState.pointNow
-        
+        logRoot("")
+
         // stay exclusively on .leaf or .edit mode
         switch touchType {
-            case .canopy: logRoot("c"); return shiftCanopy()
-            case .shift:  logRoot("/"); return shiftBranches()
-            case .leaf:   logRoot("e"); return editLeaf(nodeSpotVm)
+            case .canopy : logRoot("􀝰 "); return shiftCanopy()
+            case .shift  : logRoot("􀝰 "); return shiftBranches()
+            case .leaf   : logRoot("􀝰 "); return editLeaf(nodeSpotVm)
+            case .tog    : logRoot("􀝰 "); return editTog(nodeSpotVm)
             default: break
         }
 
-        if      hoverLeafNode() { logRoot("L") } // editing leaf or shifting branch
-        else if hoverNodeSpot() { logRoot("N") } // is over the same branch node
-        else if hoverRootNode() { logRoot("R") } // over the root (home) node
-        else if hoverTreeNow()  { logRoot("T") } // new node on same tree
-        else if hoverTreeAlts() { logRoot("A") } // alternate tree
-        else {  hoverSpace()    ; logRoot("S") } // hovering over canvas
+
+        if      hoverNodeSpot() { logRoot("N ") } // is over the same branch node
+        else if hoverRootNode() { logRoot("R ") } // over the root (home) node
+        else if hoverTreeNow()  { logRoot("T ") } // new node on same tree
+        else if hoverTreeAlts() { logRoot("A ") } // alternate tree
+        else {  hoverSpace()    ; logRoot("S ") } // hovering over canvas
         
         // log(touchType.symbol, terminator: "")
-        
+
+        // ⓝL
         func hoverLeafNode() -> Bool {
 
             if let leafVm = nodeSpotVm as? MuLeafVm {
-
-                return shiftOrEdit(leafVm)
-
-            } else {
-                for lastShown in lastShownBranchVms {
-                    if let leafVm = lastShown.nodeSpotVm as? MuLeafVm,
-                       lastShown.contains(touchNow) {
-
-                        return shiftOrEdit(leafVm)
-                    }
-                }
-            }
-            func shiftOrEdit(_ leafVm: MuLeafVm) -> Bool {
 
                 if touchState.phase == .began,
                    leafVm.runwayBounds.contains(touchNow) {
 
                     updateTreeSpot(leafVm.branchVm.treeVm, leafVm, "edit")
-                    editLeaf(leafVm) // inside runway
+                    if leafVm.nodeType.isControl { editLeaf(leafVm) }
+                    else if leafVm.nodeType.isTog { editTog(leafVm) }
                     return true
 
-                } else if touchType != .node,
-                          touchType != .space,
-                          leafVm.nodeType.isControl,
-                          leafVm.branchVm.contains(touchNow) {
+                }
+                if leafVm.nodeType.isControl,
+                   ![.node, .space].contains(touchType),
+                   leafVm.branchVm.contains(touchNow) {
 
                     updateTreeSpot(leafVm.branchVm.treeVm, leafVm, "shift")
                     shiftBranches() // inside branch containing runway
                     return true
                 }
-                return false
+                if leafVm.nodeType.isTog {
+                    if leafVm.containsPoint(touchNow) {
+                        editTog(leafVm)
+                    } else if leafVm.branchVm.contains(touchNow) {
+                        touchType = .node
+                    } else {
+                        updateTreeSpot(leafVm.branchVm.treeVm, leafVm, "shift")
+                        shiftBranches() // inside branch containing runway
+                    }
+                    return true
+                }
             }
             return false
         }
@@ -236,9 +237,12 @@ public class MuRootVm: ObservableObject, Equatable {
 
             if let center = nodeSpotVm?.center,
                center.distance(touchNow) < Layout.insideNode {
-                
-                touchType = .node
 
+                if hoverLeafNode() {
+                    // touchType set of .leaf or .tog
+                } else {
+                    touchType = .node
+                }
                 return true
             }
             return false
@@ -263,11 +267,11 @@ public class MuRootVm: ObservableObject, Equatable {
                 case 2:
                     let wasShown = beginViewOps.hasAny([.branch,.trunks])
                     if  wasShown { spotBranches() }
-                    nodeSpotVm?.touching(touchState)
+                    nodeSpotVm?.touchBegin(touchState)
                 case 3:
                     if let firstBranch = treeSpotVm?.branchVms.first,
                        let firstSpotVm = firstBranch.nodeSpotVm {
-                        firstSpotVm.touching(touchState)
+                        firstSpotVm.touchBegin(touchState)
                     }
                 default:
                     if touchType != .root {
@@ -285,17 +289,14 @@ public class MuRootVm: ObservableObject, Equatable {
                 if let branchVm = treeVm.nearestBranch(touchNow),
                    let nodeVm = branchVm.nearestNode(touchNow) {
 
-                    if nodeSpotVm != nodeVm {
+                    updateTreeSpot(treeVm, nodeVm, "tree")
 
-                        updateTreeSpot(treeVm, nodeVm, "tree")
+                    if hoverLeafNode() {
+                        // already set touchElement
+                    } else if !viewOps.contains(.branch) {
 
-                        if hoverLeafNode() {
-                            // already set touchElement
-                        } else if !viewOps.contains(.branch) {
-
-                            viewOps = [.root,.branch]
-                            touchType = .branch
-                        }
+                        viewOps = [.root,.branch]
+                        touchType = .branch
                     }
                     return true
                 }
@@ -387,16 +388,29 @@ public class MuRootVm: ObservableObject, Equatable {
             }
         }
 
-        func editLeaf(_ nodeVm: MuNodeVm?) {
+        // 􁏮􀝰
+        func editTog(_ nodeVm: MuNodeVm?) {
+            guard let leafVm = nodeVm as? MuLeafVm else { return }
 
-            guard let leafVm = nodeSpotVm as? MuLeafVm else { return }
-            if touchType != .leaf {
-
-                touchType = .leaf
-                leafVm.spot( touchState.phase.isDone() ? .off : .on)
-                leafVm.branchSpot(.off)
+            if touchType == .tog,
+               !leafVm.containsPoint(touchNow) {
+                // have moved off node
+                nodeSpotVm = nil
+                touchType = .none
+                return
+            } else {
+                touchType = .tog
             }
             leafVm.touchLeaf(touchState, Visitor(.user))
+        }
+        // 􀥲􀝰
+        func editLeaf(_ nodeVm: MuNodeVm?) {
+            guard let leafVm = nodeVm as? MuLeafVm else { return }
+
+            touchType = .leaf
+            leafVm.touchLeaf(touchState, Visitor(.user))
+            leafVm.spot(touchState.phase.isDone() ? .off : .on)
+            leafVm.branchSpot(.off)
         }
         
         func showTrunks() {

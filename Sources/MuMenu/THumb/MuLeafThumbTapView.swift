@@ -25,16 +25,16 @@ struct MuLeafThumbTapView: View {
 
             Capsule()
                 .fill(.black)
-                .frame(width: 8, height: 8)
-                .offset(CGSize(width: Layout.radius-5,
-                               height: Layout.radius-5))
+                .frame(width: 9, height: 9)
+                .offset(CGSize(width:  Layout.radius-6,
+                               height: Layout.radius-6))
                 .allowsHitTesting(false)
 
             Capsule()
                 .fill(togColor)
                 .frame(width: 7, height: 7)
-                .offset(CGSize(width: Layout.radius-5,
-                               height: Layout.radius-5))
+                .offset(CGSize(width:  Layout.radius-6,
+                               height: Layout.radius-6))
                 .allowsHitTesting(false)
         }
     }

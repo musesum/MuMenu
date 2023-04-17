@@ -11,10 +11,14 @@ struct PeersView: View {
             HStack {
                 Image(systemName: "globe")
                     .imageScale(.medium)
-                    .foregroundColor(.accentColor)
+                    .foregroundColor(.white)
                 Text(peersTitle)
+                    .foregroundColor(.white)
+                    .shadow(color: .black, radius: 1.0)
             }
             Text(peersList)
+                .foregroundColor(.white)
+                .shadow(color: .black, radius: 1.0)
         }
         .padding()
     }
