@@ -188,7 +188,7 @@ public class MuRootVm: ObservableObject, Equatable {
         }
 
 
-        if      hoverNodeSpot() { logRoot("N ") } // is over the same branch node
+        if      hoverNodeSpot() { logRoot("N ") } // over the same branch node
         else if hoverRootNode() { logRoot("R ") } // over the root (home) node
         else if hoverTreeNow()  { logRoot("T ") } // new node on same tree
         else if hoverTreeAlts() { logRoot("A ") } // alternate tree

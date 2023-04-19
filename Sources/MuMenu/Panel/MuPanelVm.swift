@@ -9,7 +9,8 @@ public class MuPanelVm {
     var cornerAxis: CornerAxis
     let isVertical: Bool
     var count: CGFloat
-    var spacing = CGFloat(0) /// overlap with a negative number
+    let maxNodes = CGFloat(5)
+    var spacing = CGFloat(0)
     var aspectSz = CGSize(width: 1, height: 1) /// multiplier aspect ratio
 
     init(nodes: [MuNode],
@@ -20,6 +21,7 @@ public class MuPanelVm {
         self.cornerAxis = treeVm.cornerAxis
         self.isVertical = treeVm.isVertical
         self.nodeType = (count > 1 ? .node : nodes.first?.nodeType ?? .node)
+        self.spacing = max(1, count / maxNodes)
         setAspectFromType()
     }
 
@@ -87,9 +89,9 @@ public class MuPanelVm {
 
             case .none, .node, .tog, .tap:
 
-                let longer = (Layout.diameter2 + spacing) * count
-                let width  = (isVertical ? Layout.diameter2 : longer)
-                let height = (isVertical ? longer : Layout.diameter2)
+                let longer = Layout.diameter2 * min(count,maxNodes)
+                let width  = isVertical ? Layout.diameter2 : longer
+                let height = isVertical ? longer : Layout.diameter2
 
                 result = CGSize(width: width, height: height)
         }

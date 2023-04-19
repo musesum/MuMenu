@@ -109,19 +109,39 @@ public class MuBranchVm: Identifiable, ObservableObject {
                 return nodeSpotVm
             }
         }
+        var candidate: MuNodeVm?
         for nodeVm in nodeVms {
             let distance = nodeVm.center.distance(touchNow)
-            if distance < Layout.diameter {
-                nodeSpotVm?.spotlight = false
-                nodeSpotVm = nodeVm
-                nodeSpotVm?.spot(on: true)
-                nodeVm.superSpotlight()
-                return nodeVm
+            if distance < Layout.radius {
+
+                if distance < candidate?.center.distance(touchNow) ?? .infinity {
+                    candidate = nodeVm
+                }
+            }
+            if let candidate {
+                updateNodeSpot(candidate)
+                return candidate
             }
         }
         return nil
     }
-    
+    func updateNodeSpot(_ candidate: MuNodeVm) {
+        // update new nodespot
+        nodeSpotVm?.spotlight = false
+        nodeSpotVm = candidate
+        nodeSpotVm?.spot(on: true)
+        candidate.superSpotlight()
+        // update zIndex for overlapping nodes
+        var zIncrement = CGFloat(1)
+        var zIndex = self.zindex + CGFloat(nodeVms.count)
+        for nodeVm in nodeVms {
+            nodeVm.zIndex = zIndex
+            if nodeVm == candidate {
+                zIncrement = -1
+            }
+            zIndex += zIncrement
+        }
+    }
     /** check touch point is inside a leaf's branch
 
         - note: already checked inside a leaf's runway

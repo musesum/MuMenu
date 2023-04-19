@@ -63,7 +63,6 @@ fileprivate struct titleV: View {
         }
     }
 
-
     var opacity: CGFloat {
         branchVm.treeVm.depthShown <= 1 ? 0 :
         branchVm.show ? branchVm.opacity : 0 }
@@ -71,6 +70,7 @@ fileprivate struct titleV: View {
     init(_ branchVm: MuBranchVm) {
         self.branchVm = branchVm
     }
+
     var body: some View {
         Text(title)
             .scaledToFit()
@@ -106,7 +106,6 @@ fileprivate struct bodyV: View {
 
     init(_ branchVm: MuBranchVm) {
         self.branchVm = branchVm
-
     }
 
     var body: some View {
@@ -116,7 +115,7 @@ fileprivate struct bodyV: View {
                 VStack {
                     MuPanelAxisView(panelVm) {
 
-                        ForEach(branchVm.treeVm.reversed()
+                        ForEach(branchVm.treeVm.reverse
                                 ? branchVm.nodeVms.reversed()
                                 : branchVm.nodeVms) {
                             MuNodeView(nodeVm: $0)

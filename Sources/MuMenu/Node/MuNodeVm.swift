@@ -13,6 +13,8 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
     /// publish when selected or is under cursor
     @Published var spotlight = false
 
+    @Published var zIndex: CGFloat = 0
+
     func spot(on: Bool) {
         if on == spotlight { return }
         if on == true { node.touch() }
@@ -100,7 +102,7 @@ public class MuNodeVm: Identifiable, Equatable, ObservableObject {
     }
     
     func containsPoint(_ point: CGPoint) -> Bool {
-        center.distance(point) < Layout.diameter
+        center.distance(point) < (Layout.radius + Layout.padding)
     }
     
     /// evenly space branches leading up to current branch's position

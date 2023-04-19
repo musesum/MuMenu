@@ -7,9 +7,9 @@ struct MuIconView: View {
     @Environment(\.colorScheme) var colorScheme // darkMode
     @ObservedObject var nodeVm: MuNodeVm
     let icon: MuIcon
-    var color: Color { nodeVm.spotlight ? .white : .gray }
+    var color: Color { nodeVm.spotlight ? .white : Color(white:0.7) }
     var fill: Color { icon.iconType == .cursor ? .clear : .black }
-    var width: CGFloat { nodeVm.spotlight ? 2.0 : 0.5 }
+    var width: CGFloat { nodeVm.spotlight ? 3.0 : 1.0 }
     
     var body: some View {
         ZStack {

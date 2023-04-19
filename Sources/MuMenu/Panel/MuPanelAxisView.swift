@@ -7,6 +7,7 @@ struct MuPanelAxisView<Content: View>: View {
 
     let panelVm: MuPanelVm
     let content: () -> Content
+    var spacing: CGFloat { (1 - panelVm.spacing) * Layout.diameter }
 
     init(_ panel: MuPanelVm, @ViewBuilder content: @escaping () -> Content) {
         self.panelVm = panel
@@ -25,13 +26,13 @@ struct MuPanelAxisView<Content: View>: View {
 
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading,
-                       spacing: panelVm.spacing,
+                       spacing: spacing,
                        content: content)
             }
         } else {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .bottom,
-                       spacing: panelVm.spacing,
+                       spacing: spacing,
                        content: content)
             }
         }
