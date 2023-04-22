@@ -1,5 +1,4 @@
-// swift-tools-version: 5.6
-// The swift-tools-version declares the minimum version of Swift required to build this package.
+// swift-tools-version: 5.7
 
 import PackageDescription
 
@@ -22,7 +21,8 @@ let package = Package(
             dependencies: [
                 .product(name: "MuPar", package: "MuPar"),
                 .product(name: "MuFlo", package: "MuFlo"),
-                .product(name: "MuTime", package: "MuTime")]),
+                .product(name: "MuTime", package: "MuTime")],
+            resources: [.process("Resources")]),
         .testTarget(
             name: "MuMenuTests",
             dependencies: ["MuMenu"]),

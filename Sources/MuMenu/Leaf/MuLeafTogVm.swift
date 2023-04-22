@@ -25,7 +25,6 @@ public class MuLeafTogVm: MuLeafVm {
             updateLeafPeers(visit)
         } else if editing, touchState.phase.isDone() {
             editing = false
-            syncNext(visit)
         }
     }
 

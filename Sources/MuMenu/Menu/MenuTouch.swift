@@ -5,9 +5,9 @@ import MuTime
 
 public var CornerTouchVm = [Int: MuTouchVm]()
 
-public class TouchMenu {
+public class MenuTouch {
 
-    static var menuKey = [Int: TouchMenu]()
+    static var menuKey = [Int: MenuTouch]()
     private let buffer = DoubleBuffer<MenuItem>(internalLoop: true)
     private let isRemote: Bool
 
@@ -18,7 +18,7 @@ public class TouchMenu {
     }
 }
 
-extension TouchMenu: BufferFlushDelegate {
+extension MenuTouch: BufferFlushDelegate {
 
     public typealias Item = MenuItem
 
@@ -45,13 +45,13 @@ extension TouchMenu: BufferFlushDelegate {
     }
 }
 
-extension TouchMenu {
+extension MenuTouch {
 
     public static func remoteItem(_ item: MenuItem) {
         if let menu = menuKey[item.key] {
             menu.buffer.append(item)
         } else {
-            let touchMenu = TouchMenu(isRemote: true)
+            let touchMenu = MenuTouch(isRemote: true)
             menuKey[item.key] = touchMenu
             touchMenu.buffer.append(item)
         }

@@ -46,8 +46,6 @@ public class TouchMenuLocal {
             }
         }
         return false
-
-
     }
     
     public static func updateTouch(_ touch: UITouch) -> Bool {

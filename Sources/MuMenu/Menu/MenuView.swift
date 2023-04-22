@@ -1,57 +1,33 @@
-//  Created by warren on 6/11/22.
-
+//  Created by warren on 12/1/22.
 
 import SwiftUI
+import MuFlo
 
-/// SwiftUI DragGesture to navigate menu
-///
-public struct MenuDragView: View {
+public struct MenuView: View {
 
-    @GestureState private var touchXY: CGPoint = .zero
-    let menuVm: MenuVm
-
-    public init(menuVm: MenuVm) {
-        self.menuVm = menuVm
+    var menuVms: [MenuVm]
+    var touchVms: [MuTouchVm] { menuVms.map { $0.rootVm.touchVm } }
+    var touchView: TouchView
+    
+    public init(_ root: Flo,
+                _ touchView: TouchView) {
+        self.menuVms = MenuVms(root).menuVms
+        self.touchView = touchView
+    }
+    public init(_ touchView: TouchView,
+                _ menuVms: [MenuVm]) {
+        self.menuVms = menuVms
+        self.touchView = touchView
     }
     public var body: some View {
-        ZStack {
-            GeometryReader { geo in
-                MuStatusView()
-                    .frame(width: geo.size.width, height: 18, alignment: .top)
-                MuRootView()
-                    .environmentObject(menuVm.rootVm)
-                    .onAppear() { menuVm.rootVm.touchVm.updateBounds(geo.frame(in: .global)) }
-                    .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .global)
-                        .updating($touchXY) { (value, touchXY, _) in
-                            touchXY = value.location })
-                    .onChange(of: touchXY) { menuVm.rootVm.touchVm.updateDragXY($0) }
-                    .allowsHitTesting(true) // gestures provided by DragGesture
-                // .defersSystemGestures(on: .vertical)
+
+        ZStack(alignment: .bottomLeading) {
+
+            TouchViewRepresentable(touchVms, touchView)
+            ForEach(menuVms, id: \.self) { menuVm in
+                MenuTouchView(menuVm: menuVm)
             }
         }
-    }
-}
-
-/// UIKit UITouch to navigate menu
-///
-/// requires a ViewController to managage view hierarcy
-///
-public struct MenuTouchView: View {
-
-    let menuVm: MenuVm
-
-    public init(menuVm: MenuVm) {
-        self.menuVm = menuVm
-    }
-    public var body: some View {
-        ZStack {
-            GeometryReader { geo in
-                // MuStatusView().frame(width: geo.size.width, height: 18, alignment: .top)
-                MuRootView()
-                    .environmentObject(menuVm.rootVm)
-                    .onAppear() { menuVm.rootVm.touchVm.updateBounds(geo.frame(in: .global)) }
-                    .allowsHitTesting(false) // gestures provided by UITouch
-            }
-        }
+        .statusBar(hidden: true)
     }
 }

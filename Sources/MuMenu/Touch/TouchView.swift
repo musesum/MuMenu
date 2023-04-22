@@ -10,8 +10,8 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
         super.init(coder: aDecoder)
     }
     
-    public init(_ drawPoint: @escaping TouchDrawPoint,
-                _ drawRadius: @escaping TouchDrawRadius) {
+    public init(_ drawPoint: TouchDrawPoint? = nil,
+                _ drawRadius: TouchDrawRadius? = nil) {
         super.init(frame:.zero)
         let bounds = UIScreen.main.bounds
         let w = bounds.size.width
@@ -19,7 +19,9 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
         frame = CGRect(x: 0, y: 0, width: w, height: h)
         isMultipleTouchEnabled = true
         PeersController.shared.peersDelegates.append(self)
-        TouchCanvas.setDraw(drawPoint, drawRadius)
+        if let drawPoint, let drawRadius {
+            TouchCanvas.setDraw(drawPoint, drawRadius)
+        }
     }
     deinit {
         PeersController.shared.remove(peersDelegate: self)
