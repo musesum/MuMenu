@@ -28,7 +28,7 @@ public class MuPanelVm {
         } else {
             // the last node always is in the same place on a panel
             // so, calculate the spacing of the prior nodes
-            let nodeLen =  Layout.diameter2 // node length
+            let nodeLen = Layout.diameter2 // node length
             let panelLen = (isVertical ? outer.height : outer.width)
             let priorLen = panelLen - nodeLen 
             let nodeSpace = priorLen / (count-1)
