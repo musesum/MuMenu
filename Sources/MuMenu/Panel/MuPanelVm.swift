@@ -10,7 +10,6 @@ public class MuPanelVm {
     let isVertical: Bool
     var count: CGFloat
     let maxNodes = CGFloat(5)
-    var spacing = CGFloat(0)
     var aspectSz = CGSize(width: 1, height: 1) /// multiplier aspect ratio
 
     init(nodes: [MuNode],
@@ -21,8 +20,21 @@ public class MuPanelVm {
         self.cornerAxis = treeVm.cornerAxis
         self.isVertical = treeVm.isVertical
         self.nodeType = (count > 1 ? .node : nodes.first?.nodeType ?? .node)
-        self.spacing = max(1, count / maxNodes)
         setAspectFromType()
+    }
+    var spacing: CGFloat {
+        if count <= maxNodes {
+            return 0
+        } else {
+            // the last node always is in the same place on a panel
+            // so, calculate the spacing of the prior nodes
+            let nodeLen =  Layout.diameter2 // node length
+            let panelLen = (isVertical ? outer.height : outer.width)
+            let priorLen = panelLen - nodeLen 
+            let nodeSpace = priorLen / (count-1)
+            let space = nodeSpace - nodeLen
+            return space
+        }
     }
 
     func setAspectFromType() {
@@ -63,7 +75,8 @@ public class MuPanelVm {
     }()
 
     var inner: CGSize {
-        let result = aspectSz * Layout.diameter
+        
+        let result =  aspectSz * Layout.diameter
         return result
     }
 
@@ -89,9 +102,9 @@ public class MuPanelVm {
 
             case .none, .node, .tog, .tap:
 
-                let longer = Layout.diameter2 * min(count,maxNodes)
-                let width  = isVertical ? Layout.diameter2 : longer
-                let height = isVertical ? longer : Layout.diameter2
+                let length = Layout.diameter2 * min(count,maxNodes)
+                let width  = isVertical ? Layout.diameter2 : length
+                let height = isVertical ? length : Layout.diameter2
 
                 result = CGSize(width: width, height: height)
         }
@@ -144,13 +157,11 @@ public class MuPanelVm {
         var result = bounds
         if isVertical {
             if bounds.minY < 0 {
-                spacing = bounds.minY/max(count,1)
                 result.size.height += bounds.minY
                 result.origin.y = 0
             }
         } else {
             if bounds.minX < 0 {
-                spacing = bounds.minX/max(count,1)
                 result.size.width += bounds.minX
                 result.origin.x = 0
             }

@@ -7,7 +7,7 @@ struct MuPanelAxisView<Content: View>: View {
 
     let panelVm: MuPanelVm
     let content: () -> Content
-    var spacing: CGFloat { (1 - panelVm.spacing) * Layout.diameter }
+    var spacing: CGFloat { panelVm.spacing }
 
     init(_ panel: MuPanelVm, @ViewBuilder content: @escaping () -> Content) {
         self.panelVm = panel

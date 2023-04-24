@@ -23,7 +23,7 @@ open class MenuVm {
     ///     with different axis
     ///
     public init(_ corner: CornerOps,
-                _ rootAxis: [(MuFloNode,Axis)]) {
+                _ rootAxis: [(MuFloNode, Axis)]) {
 
         self.rootVm = MuRootVm(corner)
         var skyTreeVms = [MuTreeVm]()

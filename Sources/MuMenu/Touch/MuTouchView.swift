@@ -12,8 +12,8 @@ struct MuTouchView: View {
             // parked icon
             if let rootNodeVm = touchVm.rootNodeVm {
                 
-                MuNodeView(nodeVm: rootNodeVm)
-                    .frame(width: Layout.diameter, height: Layout.diameter)
+                MuCursorView(rootNodeVm, Layout.diameter)
+                   
                     .onAppear { touchVm.updateRootIcon(geo.frame(in: .global)) }
                     .onChange(of: geo.frame(in: .global)) { touchVm.updateRootIcon($0) }
                     .padding(Layout.padding2)
@@ -25,10 +25,9 @@ struct MuTouchView: View {
             // drag icon, follows touch
             if let dragNodeVm = touchVm.dragNodeVm {
 
-                MuNodeView(nodeVm: dragNodeVm)
+                MuCursorView(dragNodeVm, Layout.diameter2)
                     .position(touchVm.dragIconXY)
                     .animation(Layout.animateFast, value: touchVm.dragIconXY)
-                
                     .opacity(1-touchVm.parkIconAlpha)
                     .offset(touchVm.dragNodeΔ)
             }
