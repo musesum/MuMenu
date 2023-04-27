@@ -137,7 +137,7 @@ extension TouchCanvas {
         }
         return false
     }
-    static func remoteItem(_ item: TouchCanvasItem) {
+    static public func remoteItem(_ item: TouchCanvasItem) {
         if let canvas = canvasKey[item.key] {
             canvas.buffer.append(item)
         } else {
@@ -154,16 +154,6 @@ extension TouchCanvas {
         }
         canvasKey[key]?.buffer.append(item)
     }
-//    static func drawPoint(_ point: CGPoint,
-//                          _ radius: CGFloat) {
-//
-//        for (key, canvas) in canvasKey {
-//            canvas.flushTouches()
-//            if canvas.isDone {
-//                canvasKey.removeValue(forKey: key)
-//            }
-//        }
-//    }
     public static func flushTouchCanvas() {
 
         for (key, canvas) in canvasKey {
