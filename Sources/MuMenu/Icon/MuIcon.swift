@@ -20,7 +20,10 @@ public class MuIcon {
     var type: MuNodeType
 
 
-    public init(_ iconType: MuIconType,_ named: String,_ type: MuNodeType = .none) {
+    public init(_ iconType: MuIconType,
+                _ named: String,
+                _ components:  [(String,Any?)],
+                _ type: MuNodeType = .none) {
         self.iconType = iconType
         self.named = named
         self.type = type

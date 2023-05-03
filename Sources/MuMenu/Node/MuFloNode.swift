@@ -64,20 +64,20 @@ open class MuFloNode: MuNode {
     }
 
     public func makeFloIcon(_ flo: Flo) -> MuIcon {
-        let components = flo.components(named: ["symbol", "image", "svg", "text", "cursor"])
+        let components = flo.components(named: ["sym", "img", "svg", "text","off", "cursor"])
         for (key,name) in components {
             if let name = name as? String {
                 switch key {
-                    case "symbol": return MuIcon(.symbol, name, nodeType)
-                    case "image" : return MuIcon(.image , name, nodeType)
-                    case "svg"   : return MuIcon(.svg   , name, nodeType)
-                    case "text"  : return MuIcon(.text  , name, nodeType)
-                    case "cursor": return MuIcon(.cursor, name, nodeType)
+                    case "sym"   : return MuIcon(.symbol, name, components, nodeType)
+                    case "img"   : return MuIcon(.image , name, components, nodeType)
+                    case "svg"   : return MuIcon(.svg   , name, components, nodeType)
+                    case "text"  : return MuIcon(.text  , name, components, nodeType)
+                    case "cursor": return MuIcon(.cursor, name, components, nodeType)
                     default: continue
                 }
             }
         }
-        return MuIcon(.none, "??")
+        return MuIcon(.none, "??", [])
     }
 }
 
