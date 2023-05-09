@@ -33,7 +33,7 @@ public class MuTouchVm: ObservableObject {
         // choose an arbirary tree to allow for branc
         guard let treeVm = rootVm.treeVms.first else { return }
         self.rootVm = rootVm
-        let icon = MuIcon(.cursor, Layout.hoverRing, [])
+        let icon = MuIcon(.cursor, Layout.hoverRing)
         let cornerNode = MuNode(name: rootVm.corner.indicator(), icon: icon)
 
         let branchVm = MuBranchVm.cached(treeVm: treeVm)

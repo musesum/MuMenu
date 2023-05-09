@@ -74,7 +74,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
     /// add a branch to selected node and follow next node
     func expandBranch() {
 
-        guard let nodeSpotVm = nodeSpotVm else { return }
+        guard let nodeSpotVm else { return }
 
         if nodeSpotVm.node.children.count > 0 {
             

@@ -17,7 +17,7 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
 
         super.init(frame:.zero)
 
-        self.peersDelegate = peersDelegate //??? self
+        self.peersDelegate = peersDelegate 
 
         let bounds = UIScreen.main.bounds
         let w = bounds.size.width

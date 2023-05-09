@@ -68,16 +68,16 @@ open class MuFloNode: MuNode {
         for (key,name) in components {
             if let name = name as? String {
                 switch key {
-                    case "sym"   : return MuIcon(.symbol, name, components, nodeType)
-                    case "img"   : return MuIcon(.image , name, components, nodeType)
-                    case "svg"   : return MuIcon(.svg   , name, components, nodeType)
-                    case "text"  : return MuIcon(.text  , name, components, nodeType)
-                    case "cursor": return MuIcon(.cursor, name, components, nodeType)
+                    case "sym"   : return MuIcon(.symbol, name, nodeType)
+                    case "img"   : return MuIcon(.image , name, nodeType)
+                    case "svg"   : return MuIcon(.svg   , name, nodeType)
+                    case "text"  : return MuIcon(.text  , name, nodeType)
+                    case "cursor": return MuIcon(.cursor, name, nodeType)
                     default: continue
                 }
             }
         }
-        return MuIcon(.none, "??", [])
+        return MuIcon(.none, "??")
     }
 }
 

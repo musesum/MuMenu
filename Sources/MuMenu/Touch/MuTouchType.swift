@@ -2,6 +2,8 @@
 
 import Foundation
 
+
+
 // touch option
 enum MuTouchType  {
     
@@ -69,12 +71,10 @@ enum MuTouchType  {
         return result
     }
     func isIn(_ elements: [MuTouchType]) -> Bool {
-        for element in elements {
-            if element == self {
-                return true
-            }
-        }
-        return false
+        return elements.contains(self)
+    }
+    func isNotIn(_ elements: [MuTouchType]) -> Bool {
+        return !elements.contains(self)
     }
 }
 

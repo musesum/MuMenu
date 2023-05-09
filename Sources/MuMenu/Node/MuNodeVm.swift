@@ -111,28 +111,7 @@ public class MuNodeVm: Identifiable, ObservableObject {
         superSpotlight()
         branchVm.expandBranch()
     }
-    
-    func refreshStatus() {
-        
-        var before = [MuNodeVm]()
-        var after = [MuNodeVm]()
-        
-        func deepBefore(_ nodeVm: MuNodeVm?) {
-            if let nodeVm {
-                deepBefore(nodeVm.prevNodeVm)
-                before.append(nodeVm)
-            }
-        }
-        func deepAfter(_ nodeVm: MuNodeVm) {
-            if let nodeVm = nodeVm.nextBranchVm?.nodeSpotVm {
-                after.append(nodeVm)
-                deepAfter(nodeVm)
-            }
-        }
-        deepBefore(self)
-        deepAfter(self)
-    }
-    
+
     func refreshView() {
         editing = editing
         branchVm.show = branchVm.show

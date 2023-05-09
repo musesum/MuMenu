@@ -40,7 +40,7 @@ extension MuNodeVm { // + Touch
         myTouchBeginTime = touchState.timeBegin
         switch myTouchBeginCount {
             case 0:   break
-            //case 1:   tapSpotlights()
+            case 1:   tapSpotlights() 
             case 2,3: tapAllDescendants()
             default: return
         }
