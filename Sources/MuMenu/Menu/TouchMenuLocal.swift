@@ -21,7 +21,7 @@ public class TouchMenuLocal {
         self.isRemote = isRemote
         buffer.flusher = self
     }
-    
+    @discardableResult
     public static func beginTouch(_ touch: UITouch) -> Bool {
         
         let touchXY = touch.preciseLocation(in: nil)

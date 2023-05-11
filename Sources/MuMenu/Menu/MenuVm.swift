@@ -62,27 +62,28 @@ open class MenuVm {
 
             } else {
                 // parse everything together
-                _ = parseFloNode(menuFlo, rootNode)
+                parseFloNode(menuFlo, rootNode)
             }
             return rootNode.children.first?.children ?? []
 
         } else {
 
             for child in rootFlo.children {
-                _ = parseFloNode(child, rootNode)
+                parseFloNode(child, rootNode)
             }
             return rootNode.children
         }
     }
 
     /// recursively parse flo hierachy
+    @discardableResult
     static func parseFloNode(_ flo: Flo,
                              _ parentNode: MuNode) -> MuFloNode {
 
         let node = MuFloNode(flo, parent: parentNode)
         for child in flo.children {
             if child.name.first != "_" {
-                _ = parseFloNode(child, node)
+                parseFloNode(child, node)
             }
         }
         return node

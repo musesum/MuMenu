@@ -38,7 +38,7 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
     open func beginTouches(_ touches: Set<UITouch>) {
 
         for touch in touches {
-            _ = TouchMenuLocal.beginTouch(touch)
+            TouchMenuLocal.beginTouch(touch)
         }
     }
 
