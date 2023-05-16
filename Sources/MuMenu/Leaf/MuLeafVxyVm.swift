@@ -82,7 +82,6 @@ public class MuLeafVxyVm: MuLeafVm {
         } else {
             editing = false
         }
-        syncNext(visit)
         updateLeafPeers(visit)
 
         func tapThumb() {
@@ -90,6 +89,7 @@ public class MuLeafVxyVm: MuLeafVm {
             let thumbPrior = panelVm.normalizeTouch(xy: touchOffset)
             thumbNext = quantizeThumb(thumbPrior)
             thumbDelta = touchOffset - thumbCenter()
+            syncNext(visit)
         }
 
         func touchThumbBegin() {
@@ -113,6 +113,7 @@ public class MuLeafVxyVm: MuLeafVm {
             let normThumb = panelVm.normalizeTouch(xy: nextThumb)
             thumbNext = [normThumb[0].clamped(to: 0...1),
                          normThumb[1].clamped(to: 0...1)]
+            syncNext(visit) //???
         }
         /// double touch will align thumb to center, corners or sides.
         func quantizeThumb(_ point: [Double]) -> [Double] {

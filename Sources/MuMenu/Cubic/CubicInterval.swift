@@ -3,7 +3,7 @@
 
 import Foundation
 import QuartzCore
-
+#if false
 public struct MuCubic {
 
     var cubic0 = CubicXY()  // first third of animation time interval
@@ -37,3 +37,4 @@ public struct MuCubic {
     }
 }
 
+#endif

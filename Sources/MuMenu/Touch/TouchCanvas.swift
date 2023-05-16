@@ -48,6 +48,7 @@ open class TouchCanvas {
         let altitude = touch.altitudeAngle
         
         let item = makeTouchItem(key, force, radius, nextXY, phase, azimuth, altitude, Visitor(.canvas))
+        buffer.append(item)
         if PeersController.shared.hasPeers {
             let encoder = JSONEncoder()
             do {
@@ -85,7 +86,6 @@ open class TouchCanvas {
             force = 0 // bug: always begins at 0.5
         }
         let item = TouchCanvasItem(key, nextXY, radius, force, azim, phase, visit)
-        buffer.append(item)
         return item
     }
 }

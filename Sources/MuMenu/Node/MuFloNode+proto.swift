@@ -57,13 +57,12 @@ extension MuFloNode: MuMenuSync {
         return result
     }
     public func getMenuRange(named: String) -> ClosedRange<Double> {
-
         let component = modelFlo.component(named: named)
 
         let range = ((component as? FloValScalar)?.range() ??
-                (modelFlo.val as? FloValScalar)?.range() ??
-                0...1)
-        return range 
+                     (modelFlo.val as? FloValScalar)?.range() ??
+                     0...1)
+        return range
     }
     public func getMenuRanges(named: [String]) -> [(String,ClosedRange<Double>)] {
 
