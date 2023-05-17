@@ -3,6 +3,7 @@
 
 import Foundation
 import QuartzCore
+
 #if false
 public struct MuCubic {
 
@@ -26,7 +27,6 @@ public struct MuCubic {
         cubic2.makeCoeficients(Point4(p1, p2, p3, p3))
     }
 
-    /// this was timePoint, renamed to intervalPoint
     public func point(for interval: CGFloat) -> CGPoint {
 
         let inter = min(1.0, interval)
