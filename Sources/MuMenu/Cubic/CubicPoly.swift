@@ -40,10 +40,7 @@ struct CubicPoly {
         return p
     }
 
-    /// standard Catmull-Rom spline: interpolate between f1 and f2 with
-    /// previous/following points f1/f4
-    /// (we don't need this here, but it's for illustration)
-    ///
+    /// standard Catmull-Rom spline: interpolation
     static func MakeCatmullRom(_ f: Flt4) -> CubicPoly {
 
         let poly = MakeCubicPoly(f.1, f.2, 0.5 * (f.2-f.0), 0.5 * (f.3-f.1))
