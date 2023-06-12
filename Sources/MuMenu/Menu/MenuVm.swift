@@ -46,7 +46,7 @@ open class MenuVm {
     }
 
     static func skyNodes(_ rootNode: MuFloNode,
-                         _ corner: CornerOps) -> [MuNode] {
+                         _ corner: CornerOps) -> [MuFloNode] {
 
         let rootFlo = rootNode.modelFlo
 
@@ -78,7 +78,7 @@ open class MenuVm {
     /// recursively parse flo hierachy
     @discardableResult
     static func parseFloNode(_ flo: Flo,
-                             _ parentNode: MuNode) -> MuFloNode {
+                             _ parentNode: MuFloNode) -> MuFloNode {
 
         let node = MuFloNode(flo, parent: parentNode)
         for child in flo.children {

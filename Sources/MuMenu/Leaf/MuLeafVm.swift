@@ -25,7 +25,7 @@ public class MuLeafVm: MuNodeVm {
             rootVm.sendItemToPeers(menuItem)
         }
     }
-    override init (_ node: MuNode,
+    override init (_ node: MuFloNode,
                    _ branchVm: MuBranchVm,
                    _ prevVm: MuNodeVm? = nil) {
         

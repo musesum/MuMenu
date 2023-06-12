@@ -4,7 +4,7 @@ import SwiftUI
 
 extension MuNodeVm {
 
-    static func cached(_ node: MuNode,
+    static func cached(_ node: MuFloNode,
                        _ branchVm: MuBranchVm,
                        _ prevNodeVm: MuNodeVm?,
                        icon: String = "") -> MuNodeVm {

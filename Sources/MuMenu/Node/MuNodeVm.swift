@@ -17,10 +17,9 @@ public class MuNodeVm: Identifiable, ObservableObject {
     func spot(on: Bool) {
         if on == spotlight { return }
         if on == true { node.touch() }
-        spotlight = on
     }
 
-    public let node: MuNode          /// maybe shared on other branches
+    public let node: MuFloNode       /// maybe shared on other branches
     public var nodeType: MuNodeType  /// node, val, vxy, seg, tog, tap
     public var branchVm: MuBranchVm  /// branch that this node is on
 
@@ -63,7 +62,7 @@ public class MuNodeVm: Identifiable, ObservableObject {
     }()
     
 
-    public init (_ node: MuNode,
+    public init (_ node: MuFloNode,
                  _ branchVm: MuBranchVm,
                  _ prevVm: MuNodeVm?) {
         

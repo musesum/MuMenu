@@ -20,6 +20,10 @@ public protocol MuLeafProtocol {
 
     /// get value of thumb
     func refreshValue(_ visit: Visitor)
+
+    /// update remote peers
+    /// /// get value of thumb
+    func refreshPeers(_ visit: Visitor)
     
     /// final upddate
     func syncNext(_ visit: Visitor)

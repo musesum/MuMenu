@@ -5,7 +5,7 @@ import MuPar // Visitor
 
 public class MuLeafTapVm: MuLeafVm {
 
-    init (_ node: MuNode,
+    init (_ node: MuFloNode,
           _ branchVm: MuBranchVm,
           _ prevVm: MuNodeVm?,
           icon: String = "") {

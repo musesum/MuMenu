@@ -6,12 +6,16 @@ import MuPar
 extension MuLeafTapVm: MuLeafProtocol {
 
     public func refreshValue(_ visit: Visitor) {
+       refreshPeers(visit)
+    }
+    public func refreshPeers(_ visit: Visitor) {
         visit.nowHere(self.hash)
         if visit.from.user {
+            syncNext(Visitor(self.hash))
             updateLeafPeers(visit)
-            syncNext(visit)
         }
     }
+
 
     public func updateLeaf(_ any: Any, _ visit: Visitor) {
 
@@ -42,7 +46,7 @@ extension MuLeafTapVm: MuLeafProtocol {
     }
 
     public func syncNext(_ visit: Visitor) {
-        menuSync?.setMenuAny(named: nodeType.name, thumbNext[0], visit)
+        menuSync?.setMenuExprs(node.modelFlo.exprs, thumbNext[0], visit)
         refreshView()
     }
 }

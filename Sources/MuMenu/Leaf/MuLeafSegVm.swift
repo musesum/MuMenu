@@ -8,7 +8,7 @@ public class MuLeafSegVm: MuLeafVm {
 
     var range: ClosedRange<Double> = 0...1
 
-    init (_ node: MuNode,
+    init (_ node: MuFloNode,
           _ branchVm: MuBranchVm,
           _ prevVm: MuNodeVm?,
           icon: String = "") {

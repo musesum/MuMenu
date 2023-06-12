@@ -8,7 +8,7 @@ public class MuLeafVxyVm: MuLeafVm {
     
     var ranges = [String : ClosedRange<Double>]()
 
-    override init (_ node: MuNode,
+    override init (_ node: MuFloNode,
                    _ branchVm: MuBranchVm,
                    _ prevVm: MuNodeVm?) {
         
@@ -17,13 +17,13 @@ public class MuLeafVxyVm: MuLeafVm {
         node.leafProtos.append(self)  //MuLeafProtocol for exchanging value
         refreshValue(Visitor(.model))
     }
-    func normalizeNamed(_ name: String,
-                        _ range: ClosedRange<Double>?) -> Double {
-        
-        let val = (menuSync?.getMenuAny(named: name) as? Double) ?? .zero
-        let norm = scale(val, from: range ?? 0...1, to: 0...1)
-        return norm
-    }
+//    func normalizeNamed(_ name: String,
+//                        _ range: ClosedRange<Double>?) -> Double {
+//        
+//        let val = (menuSync?.getMenuAny(named: name) as? Double) ?? .zero
+//        let norm = scale(val, from: range ?? 0...1, to: 0...1)
+//        return norm
+//    }
     func expand(named: String, _ value: CGFloat) -> Double {
 
         let range = ranges[named] ?? 0...1

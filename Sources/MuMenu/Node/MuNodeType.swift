@@ -40,7 +40,6 @@ public enum MuNodeType: String {
         }
     }
 
-
     init(_ name: String) {
 
         switch name {
@@ -75,5 +74,6 @@ public enum MuNodeType: String {
     }
 }
 
-public let MuNodeLeafNames = ["val", "vxy", "tog", "seg", "tap", "peer", "x", "y"]
-public let MuNodeLeaves = Set<String>(["val", "vxy", "tog", "seg", "tap", "peer"])
+
+//public let MuNodeLeafNames = ["val", "vxy", "tog", "seg", "tap", "peer", "x", "y"]
+//public let MuNodeLeaves = Set<String>(["val", "vxy", "tog", "seg", "tap", "peer"])

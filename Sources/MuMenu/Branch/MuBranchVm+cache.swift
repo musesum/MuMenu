@@ -6,7 +6,7 @@ var BranchCache = [Int: MuBranchVm]()
 
 extension MuBranchVm {
     @discardableResult
-    static func cached(nodes: [MuNode] = [],
+    static func cached(nodes: [MuFloNode] = [],
                        treeVm: MuTreeVm,
                        branchPrev: MuBranchVm? = nil,
                        prevNodeVm: MuNodeVm? = nil,

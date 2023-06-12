@@ -6,17 +6,17 @@ import MuPar
 extension MuLeafVxyVm: MuLeafProtocol {
 
     public func refreshValue(_ visit: Visitor) {
-
-        if let nameRanges = menuSync?.getMenuRanges(named: ["x","y"]) {
-            for (name,range) in nameRanges {
-                ranges[name] = range
-            }
+        let scalars = node.modelFlo.scalars()
+        if scalars.count >= 2 {
+            thumbNext[0] = scale(scalars[0].val, from: scalars[0].range(), to: 0...1)
+            thumbNext[1] = scale(scalars[1].val, from: scalars[1].range(), to: 0...1)
+        } else {
+            print("⁉️ refreshValue: scalar not found")
+            thumbNext[0] = 0
         }
-        let xx = normalizeNamed("x",ranges["x"])
-        let yy = normalizeNamed("y",ranges["y"])
-        
-        thumbNext = [xx,yy]
-
+        refreshPeers(visit)
+    }
+    public func refreshPeers(_ visit: Visitor) {
         visit.nowHere(self.hash)
         if visit.from.user {
             syncNext(Visitor(self.hash))
@@ -62,7 +62,7 @@ extension MuLeafVxyVm: MuLeafProtocol {
     public func syncNext(_ visit: Visitor) {
         let x = expand(named: "x", thumbNext[0])
         let y = expand(named: "y", thumbNext[1])
-        menuSync?.setMenuAnys([("x", x),("y", y)], visit)
+        menuSync?.setMenuExprs(node.modelFlo.exprs, [("x", x),("y", y)], visit)
         refreshView()
     }
 

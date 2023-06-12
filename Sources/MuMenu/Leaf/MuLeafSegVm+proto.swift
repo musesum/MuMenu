@@ -1,24 +1,29 @@
 //  Created by warren on 9/10/22.
 
 import SwiftUI
+import MuFlo
 import MuPar
 
 extension MuLeafSegVm: MuLeafProtocol {
 
+
     public func refreshValue(_ visit: Visitor) {
-        if let menuSync {
-            range = menuSync.getMenuRange(named: nodeType.name)
-            if let val = menuSync.getMenuAny(named: nodeType.name) as? Double {
-                thumbNext[0] = scale(val, from: range, to: 0...1)
-            } else {
-                print("⁉️ refreshValue is not Double")
-                thumbNext[0] = 0
-            }
-            visit.nowHere(self.hash)
-            if visit.from.user {
-                syncNext(Visitor(self.hash))
-                updateLeafPeers(visit)
-            }
+        if let scalar = node.modelFlo.scalars().first
+        {
+            range = scalar.range()
+            let val = scalar.val //??? now?
+            thumbNext[0] = scale(val, from: range, to: 0...1)
+        } else {
+            print("⁉️ refreshValue: scalar not found")
+            thumbNext[0] = 0
+        }
+        refreshPeers(visit)
+    }
+    public func refreshPeers(_ visit: Visitor) {
+        visit.nowHere(self.hash)
+        if visit.from.user {
+            syncNext(Visitor(self.hash))
+            updateLeafPeers(visit)
         }
     }
     
@@ -49,8 +54,7 @@ extension MuLeafSegVm: MuLeafProtocol {
         : CGSize(width: thumbNext[0] * panelVm.runway, height: 1)
     }
     public func syncNext(_ visit: Visitor) {
-
-        menuSync?.setMenuAny(named: nodeType.name, expanded, visit)
+        menuSync?.setMenuExprs(node.modelFlo.exprs, expanded, visit)
         refreshView()
     }
 }

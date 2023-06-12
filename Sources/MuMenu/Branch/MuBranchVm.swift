@@ -33,13 +33,13 @@ public class MuBranchVm: Identifiable, ObservableObject {
         return nameFirst + "…" + nameLast
     }
 
-    static func titleForNodes(_ nodes: [MuNode]) -> String {
+    static func titleForNodes(_ nodes: [MuFloNode]) -> String {
         let nameFirst = nodes.first?.title ?? ""
         let nameLast  = nodes.last?.title ?? ""
         return nameFirst + "…" + nameLast
     }
 
-    public init(nodes: [MuNode] = [],
+    public init(nodes: [MuFloNode] = [],
                 treeVm: MuTreeVm,
                 branchPrev: MuBranchVm? = nil,
                 prevNodeVm: MuNodeVm?,
@@ -58,7 +58,7 @@ public class MuBranchVm: Identifiable, ObservableObject {
         updateTree(treeVm)
     }
 
-    private func buildNodeVms(from nodes: [MuNode],
+    private func buildNodeVms(from nodes: [MuFloNode],
                               prevNodeVm: MuNodeVm?) {
 
         for node in nodes {

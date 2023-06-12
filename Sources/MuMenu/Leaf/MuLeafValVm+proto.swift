@@ -7,18 +7,25 @@ import MuPar
 extension MuLeafValVm: MuLeafProtocol {
 
     public func refreshValue(_ visit: Visitor) {
-
-        thumbNext[0] = normalizeNamed(nodeType.name)
-        range = menuSync?.getMenuRange(named: nodeType.name) ?? 0...1
-
-        if !visit.from.tween {
-            
-            visit.nowHere(self.hash)
+        if let scalar = node.modelFlo.scalars().first
+        {
+            range = scalar.range()
+            let val = scalar.val //??? .val???
+            thumbNext[0] = scale(val, from: range, to: 0...1)
+        } else {
+            print("⁉️ refreshValue: scalar not found")
+            thumbNext[0] = 0
+        }
+        refreshPeers(visit)
+    }
+    public func refreshPeers(_ visit: Visitor) {
+        if !visit.from.tween { //... different
+            visit.nowHere(self.hash) //... different
             syncNext(Visitor(self.hash))
             updateLeafPeers(visit)
         }
     }
-
+    
     /// update from model - not touch
     public func updateLeaf(_ any: Any,_ visit: Visitor) {
 
@@ -48,7 +55,6 @@ extension MuLeafValVm: MuLeafProtocol {
 
     public func syncNext(_ visit: Visitor) {
         let expanded = scale(thumbNext[0], from: 0...1, to: range)
-        menuSync?.setMenuAny(named: nodeType.name, expanded, visit)
         refreshView()
     }
 }

@@ -8,7 +8,7 @@ public class MuLeafValVm: MuLeafVm {
 
     var range: ClosedRange<Double> = 0...1
 
-    init (_ node: MuNode,
+    init (_ node: MuFloNode,
           _ branchVm: MuBranchVm,
           _ prevVm: MuNodeVm?,
           icon: String = "") {
@@ -19,11 +19,6 @@ public class MuLeafValVm: MuLeafVm {
         refreshValue(Visitor(.model))
     }
 
-    func normalizeNamed(_ name: String) -> CGFloat {
-        let val = (menuSync?.getMenuAny(named: name) as? Double) ?? .zero
-        let norm = scale(val, from: range, to: 0...1)
-        return CGFloat(norm)
-    }
     /// scale up normalized to defined range
     var expanded: Double {
         scale(thumbNext[0], from: 0...1, to: range)

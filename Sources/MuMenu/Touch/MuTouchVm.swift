@@ -1,7 +1,7 @@
 // Created by warren on 10/31/21.
 
 import SwiftUI
-
+import MuFlo
 /// Corner node which follows touch
 public class MuTouchVm: ObservableObject {
 
@@ -34,10 +34,11 @@ public class MuTouchVm: ObservableObject {
         guard let treeVm = rootVm.treeVms.first else { return }
         self.rootVm = rootVm
         let icon = MuIcon(.cursor, Layout.hoverRing)
-        let cornerNode = MuNode(name: rootVm.corner.indicator(), icon: icon)
-
+        let name = rootVm.corner.indicator()
+        let cornerFlo = Flo(name)
+        let cornerFloNode = MuFloNode(cornerFlo, .none, icon)
         let branchVm = MuBranchVm.cached(treeVm: treeVm)
-        rootNodeVm = MuNodeVm(cornerNode, branchVm, nil)
+        rootNodeVm = MuNodeVm(cornerFloNode, branchVm, nil)
         branchVm.addNodeVm(rootNodeVm)
 
         dragNodeVm = rootNodeVm?.copy()

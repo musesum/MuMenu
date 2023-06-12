@@ -4,7 +4,7 @@ import SwiftUI
 
 public class MuPanelVm {
  
-    var nodes: [MuNode]
+    var nodes: [MuFloNode]
     var nodeType: MuNodeType
     var cornerAxis: CornerAxis
     let isVertical: Bool
@@ -12,7 +12,7 @@ public class MuPanelVm {
     let maxNodes = CGFloat(5)
     var aspectSz = CGSize(width: 1, height: 1) /// multiplier aspect ratio
 
-    init(nodes: [MuNode],
+    init(nodes: [MuFloNode],
          treeVm: MuTreeVm) {
 
         self.nodes    = nodes

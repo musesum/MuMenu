@@ -5,6 +5,7 @@ import MuPar // Visitor
 extension MuLeafPeerVm: MuLeafProtocol {
 
     public func refreshValue(_ visit: Visitor) {}
+    public func refreshPeers(_ visit: Visitor) {}
     public func updateLeaf(_ any: Any, _ visit: Visitor) {}
     public func leafTitle() -> String { "Bonjour" }
     public func treeTitle() -> String { "Bonjour" }

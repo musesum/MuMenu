@@ -2,20 +2,28 @@
 
 
 import Foundation
+import MuFlo
 import MuPar
 
 extension MuLeafTogVm: MuLeafProtocol {
 
     public func refreshValue(_ visit: Visitor) {
-
-        thumbNext[0] = menuSync?.getMenuAny(named: nodeType.name) as? Double ?? 0
+        if let scalar = node.modelFlo.scalars().first {
+            let val = scalar.val
+            thumbNext[0] = val
+        } else {
+            print("⁉️ refreshValue: scalar not found")
+            thumbNext[0] = 0
+        }
+        refreshPeers(visit)
+    }
+    public func refreshPeers(_ visit: Visitor) {
         visit.nowHere(self.hash)
         if visit.from.user {
+            syncNext(Visitor(self.hash))
             updateLeafPeers(visit)
-            syncNext(visit)
         }
     }
-    
     public func updateLeaf(_ any: Any,_ visit: Visitor) {
         visit.nowHere(hash)
         editing = true
@@ -42,7 +50,7 @@ extension MuLeafTogVm: MuLeafProtocol {
         CGSize(width: 1, height: 1)
     }
     public func syncNext(_ visit: Visitor) {
-        menuSync?.setMenuAny(named: nodeType.name, thumbNext[0], visit)
+        menuSync?.setMenuExprs(node.modelFlo.exprs, thumbNext[0], visit)
         refreshView()
     }
     
