@@ -20,7 +20,7 @@ public class MuLeafTogVm: MuLeafVm {
                                    _ visit: Visitor) {
         if !editing, touchState.phase == .began  {
             editing = true
-            thumbNext[0] = (thumbNext[0] == 1.0 ? 0 : 1)
+            thumbVal[0] = (thumbVal[0] == 1.0 ? 0 : 1)
             syncNext(visit)
             updateLeafPeers(visit)
         } else if editing, touchState.phase.isDone() {

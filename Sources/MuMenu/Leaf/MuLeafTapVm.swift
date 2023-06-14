@@ -20,11 +20,11 @@ public class MuLeafTapVm: MuLeafVm {
                                    _ visit: Visitor) {
         if touchState.phase == .began {
             editing = true
-            thumbNext[0] = 1
+            thumbVal[0] = 1
             syncNext(visit)
             updateLeafPeers(visit)
         } else if touchState.phase.isDone() {
-            thumbNext[0] = 0
+            thumbVal[0] = 0
             syncNext(visit)
             updateLeafPeers(visit)
             editing = false

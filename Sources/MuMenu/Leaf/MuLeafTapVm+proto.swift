@@ -23,8 +23,8 @@ extension MuLeafTapVm: MuLeafProtocol {
 
         editing = true
         switch any {
-            case let v as Double:   thumbNext[0] = v
-            case let v as [Double]: thumbNext[0] = v[0]
+            case let v as Double:   thumbVal[0] = v
+            case let v as [Double]: thumbVal[0] = v[0]
             default: break
         }
         editing = false
@@ -38,7 +38,7 @@ extension MuLeafTapVm: MuLeafProtocol {
     }
     public func treeTitle() -> String {
         editing
-        ? thumbNext[0] == 1.0 ? "on" : "off"
+        ? thumbVal[0] == 1.0 ? "on" : "off"
         : node.title
     }
     public func thumbOffset() -> CGSize {
@@ -46,7 +46,7 @@ extension MuLeafTapVm: MuLeafProtocol {
     }
 
     public func syncNext(_ visit: Visitor) {
-        menuSync?.setMenuExprs(node.modelFlo.exprs, thumbNext[0], visit)
+        menuSync?.setMenuExprs(node.modelFlo.exprs, thumbVal[0], visit)
         refreshView()
     }
 }

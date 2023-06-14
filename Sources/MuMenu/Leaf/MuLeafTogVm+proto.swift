@@ -10,10 +10,10 @@ extension MuLeafTogVm: MuLeafProtocol {
     public func refreshValue(_ visit: Visitor) {
         if let scalar = node.modelFlo.scalars().first {
             let val = scalar.val
-            thumbNext[0] = val
+            thumbVal[0] = val
         } else {
             print("⁉️ refreshValue: scalar not found")
-            thumbNext[0] = 0
+            thumbVal[0] = 0
         }
         refreshPeers(visit)
     }
@@ -28,8 +28,8 @@ extension MuLeafTogVm: MuLeafProtocol {
         visit.nowHere(hash)
         editing = true
         switch any {
-            case let v as Double:   thumbNext[0] = (v    < 1.0 ? 0 : 1)
-            case let v as [Double]: thumbNext[0] = (v[0] < 1.0 ? 0 : 1)
+            case let v as Double:   thumbVal[0] = (v    < 1.0 ? 0 : 1)
+            case let v as [Double]: thumbVal[0] = (v[0] < 1.0 ? 0 : 1)
             default: break
         }
         editing = false
@@ -42,7 +42,7 @@ extension MuLeafTogVm: MuLeafProtocol {
     }
     public func treeTitle() -> String {
         editing
-        ? thumbNext[0] == 1.0 ? "on" : "off"
+        ? thumbVal[0] == 1.0 ? "on" : "off"
         : node.title
     }
     
@@ -50,7 +50,7 @@ extension MuLeafTogVm: MuLeafProtocol {
         CGSize(width: 1, height: 1)
     }
     public func syncNext(_ visit: Visitor) {
-        menuSync?.setMenuExprs(node.modelFlo.exprs, thumbNext[0], visit)
+        menuSync?.setMenuExprs(node.modelFlo.exprs, thumbVal[0], visit)
         refreshView()
     }
     

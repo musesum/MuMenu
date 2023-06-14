@@ -47,7 +47,7 @@ public class MuLeafSegVm: MuLeafVm {
         panelVm.aspectSz = size
     }
 
-    var nearestTick: Double { return round(thumbNext[0]*count)/count }
+    var nearestTick: Double { return round(thumbVal[0]*count)/count }
 
     /// ticks above and below nearest tick,
     /// but never on panel border or thumb border
@@ -99,12 +99,12 @@ public class MuLeafSegVm: MuLeafVm {
         updateLeafPeers(visit)
 
         func touchThumbBegin() {
-            let thumbPrev = thumbNext[0]
+            let thumbPrev = thumbVal[0]
             let touchDelta = touchState.pointNow - runwayBounds.origin
             let thumbDelta = normalizeTouch(touchDelta)
             let touchedInsideThumb = abs(thumbDelta.distance(to: thumbPrev)) < thumbRadius
             thumbBeginΔ = touchedInsideThumb ? thumbPrev - thumbDelta : .zero
-            thumbNext[0] = thumbDelta + thumbBeginΔ
+            thumbVal[0] = thumbDelta + thumbBeginΔ
         }
         /// user touched control, translate to normalized thumb (0...1)
         func touchThumbNext() {
@@ -113,7 +113,7 @@ public class MuLeafSegVm: MuLeafVm {
                 thumbBeginΔ = thumbBeginΔ * 0.85
             }
             let touchDelta = touchState.pointNow - runwayBounds.origin
-            thumbNext[0] = normalizeTouch(touchDelta) + thumbBeginΔ
+            thumbVal[0] = normalizeTouch(touchDelta) + thumbBeginΔ
         }
     }
 }

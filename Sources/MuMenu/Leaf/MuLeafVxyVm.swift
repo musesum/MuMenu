@@ -17,13 +17,7 @@ public class MuLeafVxyVm: MuLeafVm {
         node.leafProtos.append(self)  //MuLeafProtocol for exchanging value
         refreshValue(Visitor(.model))
     }
-//    func normalizeNamed(_ name: String,
-//                        _ range: ClosedRange<Double>?) -> Double {
-//        
-//        let val = (menuSync?.getMenuAny(named: name) as? Double) ?? .zero
-//        let norm = scale(val, from: range ?? 0...1, to: 0...1)
-//        return norm
-//    }
+ 
     func expand(named: String, _ value: CGFloat) -> Double {
 
         let range = ranges[named] ?? 0...1
@@ -35,8 +29,8 @@ public class MuLeafVxyVm: MuLeafVm {
     /// shown at center, corner, and sides.
     /// So: NW, N, NE, E, SE, S, SW, W, Center
     var nearestTick: CGPoint {
-        CGPoint(x: round(thumbNext[0] * 4) / 4,
-                y: round(thumbNext[1] * 4) / 4)
+        CGPoint(x: round(thumbVal[0] * 4) / 4,
+                y: round(thumbVal[1] * 4) / 4)
     }
 
     /// ticks above and below nearest tick,
@@ -87,7 +81,7 @@ public class MuLeafVxyVm: MuLeafVm {
         func tapThumb() {
             let touchOffset = touchState.pointNow - runwayBounds.origin
             let thumbPrior = panelVm.normalizeTouch(xy: touchOffset)
-            thumbNext = quantizeThumb(thumbPrior)
+            thumbVal = quantizeThumb(thumbPrior)
             thumbDelta = touchOffset - thumbCenter()
             syncNext(visit)
         }
@@ -111,7 +105,7 @@ public class MuLeafVxyVm: MuLeafVm {
             let touchOffset = touchState.pointNow - runwayBounds.origin
             let nextThumb = touchOffset - thumbDelta
             let normThumb = panelVm.normalizeTouch(xy: nextThumb)
-            thumbNext = [normThumb[0].clamped(to: 0...1),
+            thumbVal = [normThumb[0].clamped(to: 0...1),
                          normThumb[1].clamped(to: 0...1)]
             syncNext(visit) //???
         }

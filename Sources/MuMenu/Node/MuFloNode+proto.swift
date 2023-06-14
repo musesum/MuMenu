@@ -8,7 +8,7 @@ extension MuFloNode: MuMenuSync {
 
 
     public func setMenuExprs(_ exprs: MuFlo.FloExprs?, _ val: Any, _ visit: MuPar.Visitor) -> Bool {
-        guard let exprs else { return false }
+        //???? guard let exprs else { return false }
         if visit.newVisit(hash) {
             modelFlo.setAny(val, .activate, visit)
             return true
@@ -19,39 +19,8 @@ extension MuFloNode: MuMenuSync {
 
     public func setMenuDefault(_ visit: Visitor) {
         modelFlo.bindDefaults(visit)
-        //?? modelFlo.activate()
+        modelFlo.activate(visit)
     }
-
-    // MARK: - get
-
-
-//    public func getMenuExprs() -> MuFlo.FloExprs? {
-//        if let menuSync,
-//           let scalar = modelFlo.scalars().first
-//        {
-//            
-//        }
-//    }
-
-    public func getMenuAny(named: String) -> Any? {
-
-        let any = modelFlo.component(named: named)
-
-        if let val = any as? FloValScalar {
-            return val.now
-        } else if let num = any as? Double {
-            return num
-        } else {
-            return nil
-        }
-    }
-
-//    public func getMenuRange(named: String) -> ClosedRange<Double> {
-//        return modelFlo.getRange(named: named)
-//    }
-//    public func getMenuRanges(named: [String]) -> [(String,ClosedRange<Double>)] {
-//        return modelFlo.getRanges(named: named)
-//    }
 
     /// callback from flo
     public func syncMenuModel(_ any: Any, _ visit: Visitor) {

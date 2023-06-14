@@ -21,7 +21,7 @@ public class MuLeafValVm: MuLeafVm {
 
     /// scale up normalized to defined range
     var expanded: Double {
-        scale(thumbNext[0], from: 0...1, to: range)
+        scale(thumbVal[0], from: 0...1, to: range)
     }
     func normalizeTouch(_ point: CGPoint) -> CGFloat {
         let v = panelVm.isVertical ? point.y : point.x
@@ -57,12 +57,12 @@ public class MuLeafValVm: MuLeafVm {
         updateLeafPeers(visit)
 
         func touchThumbBegin() {
-            let thumbPrev = thumbNext[0]
+            let thumbPrev = thumbVal[0]
             let touchDelta = touchState.pointNow - runwayBounds.origin
             let thumbDelta = normalizeTouch(touchDelta)
             let touchedInsideThumb = abs(thumbDelta.distance(to: thumbPrev)) < thumbRadius
             thumbBeginΔ = touchedInsideThumb ? thumbPrev - thumbDelta : .zero
-            thumbNext[0] = thumbDelta + thumbBeginΔ
+            thumbVal[0] = thumbDelta + thumbBeginΔ
             syncNext(visit) //???
         }
         /// user touched control, translate to normalized thumb (0...1)
@@ -72,7 +72,7 @@ public class MuLeafValVm: MuLeafVm {
                 thumbBeginΔ = thumbBeginΔ * 0.85
             }
             let touchDelta = touchState.pointNow - runwayBounds.origin
-            thumbNext[0] = normalizeTouch(touchDelta) + thumbBeginΔ
+            thumbVal[0] = normalizeTouch(touchDelta) + thumbBeginΔ
             syncNext(visit) //???
         }
     }
