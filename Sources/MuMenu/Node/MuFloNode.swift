@@ -2,6 +2,7 @@
 
 import SwiftUI
 import MuFlo
+import MuPar
 
 open class MuFloNode: Identifiable, Equatable {
     public let id = MuNodeIdentity.getId()
@@ -10,7 +11,6 @@ open class MuFloNode: Identifiable, Equatable {
     public var icon: MuIcon!
     public var parent: MuFloNode?
     public var children = [MuFloNode]()
-    public var menuSync: MuMenuSync?
     public var leafProtos = [MuLeafProtocol]()
     public var nodeType = MuNodeType.node
 
@@ -60,7 +60,6 @@ open class MuFloNode: Identifiable, Equatable {
 
         icon = makeFloIcon(modelFlo)
 
-        menuSync = self
         makeOptionalControl()
     }
 
@@ -78,8 +77,23 @@ open class MuFloNode: Identifiable, Equatable {
         parent?.children.append(self)
 
         modelFlo.addClosure(syncMenuModel) // update node value closure
+    }
+    // callback from flo
+    func syncMenuModel(_ any: Any,
+                       _ visit: Visitor) {
         
-        menuSync = self // setup delegate for MuValue protocol
+        guard let flo = any as? Flo else { return }
+        
+        for leaf in self.leafProtos {
+            
+            let nameScalars = flo.nameScalars()
+            let vals = nameScalars.compactMap {
+                $1.normalized()
+            }
+            DispatchQueue.main.async {
+                leaf.updateLeaf(vals, visit)
+            }
+        }
     }
 
     public func touch() {

@@ -10,7 +10,6 @@ public enum Toggle { case on, off }
 /// extend MuNodeVm to show title and thumb position
 public class MuLeafVm: MuNodeVm {
     
-    var menuSync: MuMenuSync?
     var leafProto: MuLeafProtocol?
     
     /// normalized to 0...1
@@ -30,9 +29,6 @@ public class MuLeafVm: MuNodeVm {
                    _ prevVm: MuNodeVm? = nil) {
         
         super.init(node, branchVm, prevVm)
-        
-        // some leaves spawn a child view
-        menuSync = node.menuSync ?? prevVm?.node.menuSync
     }
     
     /// bounds for control surface, used to determin if touch is inside control area

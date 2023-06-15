@@ -8,11 +8,11 @@ extension MuNodeVm { // + Touch
     /// reset leaf to default value
     func maybeTapLeaf() {
         if nodeType.isLeaf,
-           let leafVm = self as? MuLeafVm,
-           let menuSync = leafVm.menuSync {
+           let leafVm = self as? MuLeafVm {
             
             let visit = Visitor(.user)
-            menuSync.setMenuDefault(visit)
+            node.modelFlo.bindDefaults(visit)
+            node.modelFlo.activate(visit)
             leafVm.leafProto?.refreshValue(visit)
         }
     }
