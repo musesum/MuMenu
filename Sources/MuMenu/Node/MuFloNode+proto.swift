@@ -6,16 +6,6 @@ import MuPar
 
 extension MuFloNode: MuMenuSync {
 
-    public func setMenuExprs(_ any: Any,
-                             _ visit: MuPar.Visitor) -> Bool {
-
-        if visit.newVisit(hash) {
-            modelFlo.setAny(any, .activate, visit)
-            return true
-        } else {
-            return false
-        }
-    }
 
     public func setMenuDefault(_ visit: Visitor) {
         modelFlo.bindDefaults(visit)

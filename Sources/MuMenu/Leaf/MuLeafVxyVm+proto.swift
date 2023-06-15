@@ -75,9 +75,9 @@ extension MuLeafVxyVm: MuLeafProtocol {
             let x = expand(named: "x", thumbVal[0])
             let y = expand(named: "y", thumbVal[1])
             node.modelFlo.setAny([("x", x),("y", y)], .activate, visit)
+            refreshView()
         }
-        //... menuSync?.setMenuExprs([("x", x),("y", y)], visit) //....
-        refreshView()
+
     }
 
 }

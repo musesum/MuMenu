@@ -65,8 +65,7 @@ extension MuLeafValVm: MuLeafProtocol {
         if visit.newVisit(hash) {
             let expanded = scale(thumbVal[0], from: 0...1, to: range)
             node.modelFlo.setAny(expanded, .activate, visit)
+            refreshView()
         }
-        //... menuSync?.setMenuExprs(expanded, visit)
-        refreshView()
     }
 }

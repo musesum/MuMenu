@@ -52,9 +52,8 @@ extension MuLeafTogVm: MuLeafProtocol {
     public func syncNext(_ visit: Visitor) {
         if visit.newVisit(hash) {
             node.modelFlo.setAny(thumbVal[0], .activate, visit)
+            refreshView()
         }
-        //... menuSync?.setMenuExprs(thumbVal[0], visit)
-        refreshView()
     }
     
 }
