@@ -62,7 +62,11 @@ extension MuLeafSegVm: MuLeafProtocol {
         : CGSize(width: thumbVal[0] * panelVm.runway, height: 1)
     }
     public func syncNext(_ visit: Visitor) {
-        menuSync?.setMenuExprs(node.modelFlo.exprs, expanded, visit)
+        if visit.newVisit(hash) {
+            let expanded = scale(Double(nearestTick), from: 0...1, to: range)
+            node.modelFlo.setAny(expanded, .activate, visit)
+        }
+        //... menuSync?.setMenuExprs(expanded, visit)
         refreshView()
     }
 }

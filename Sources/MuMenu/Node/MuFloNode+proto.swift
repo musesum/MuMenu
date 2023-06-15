@@ -6,11 +6,11 @@ import MuPar
 
 extension MuFloNode: MuMenuSync {
 
+    public func setMenuExprs(_ any: Any,
+                             _ visit: MuPar.Visitor) -> Bool {
 
-    public func setMenuExprs(_ exprs: MuFlo.FloExprs?, _ val: Any, _ visit: MuPar.Visitor) -> Bool {
-        //???? guard let exprs else { return false }
         if visit.newVisit(hash) {
-            modelFlo.setAny(val, .activate, visit)
+            modelFlo.setAny(any, .activate, visit)
             return true
         } else {
             return false
@@ -23,7 +23,9 @@ extension MuFloNode: MuMenuSync {
     }
 
     /// callback from flo
-    public func syncMenuModel(_ any: Any, _ visit: Visitor) {
+    public func syncMenuModel(_ any: Any,
+                              _ visit: Visitor) {
+        
         guard let flo = any as? Flo else { return }
 
         for leaf in self.leafProtos {

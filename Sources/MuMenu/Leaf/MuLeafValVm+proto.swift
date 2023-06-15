@@ -62,8 +62,11 @@ extension MuLeafValVm: MuLeafProtocol {
     }
 
     public func syncNext(_ visit: Visitor) {
-        let expanded = scale(thumbVal[0], from: 0...1, to: range)
-        menuSync?.setMenuExprs(node.modelFlo.exprs, expanded, visit)
+        if visit.newVisit(hash) {
+            let expanded = scale(thumbVal[0], from: 0...1, to: range)
+            node.modelFlo.setAny(expanded, .activate, visit)
+        }
+        //... menuSync?.setMenuExprs(expanded, visit)
         refreshView()
     }
 }

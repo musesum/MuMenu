@@ -34,7 +34,9 @@ extension MuLeafVxyVm: MuLeafProtocol {
         }
     }
     /// update from model - not touch
-    public func updateLeaf(_ any: Any, _ visit: Visitor) {
+    public func updateLeaf(_ any: Any,
+                           _ visit: Visitor) {
+
         visit.nowHere(hash)
         editing = true
         if let v = any as? [Double], v.count == 2 {
@@ -69,9 +71,12 @@ extension MuLeafVxyVm: MuLeafProtocol {
 
     /// called via user touch or via model update
     public func syncNext(_ visit: Visitor) {
-        let x = expand(named: "x", thumbVal[0])
-        let y = expand(named: "y", thumbVal[1])
-        menuSync?.setMenuExprs(node.modelFlo.exprs, [("x", x),("y", y)], visit) //....
+        if visit.newVisit(hash) {
+            let x = expand(named: "x", thumbVal[0])
+            let y = expand(named: "y", thumbVal[1])
+            node.modelFlo.setAny([("x", x),("y", y)], .activate, visit)
+        }
+        //... menuSync?.setMenuExprs([("x", x),("y", y)], visit) //....
         refreshView()
     }
 

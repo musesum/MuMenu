@@ -46,7 +46,10 @@ extension MuLeafTapVm: MuLeafProtocol {
     }
 
     public func syncNext(_ visit: Visitor) {
-        menuSync?.setMenuExprs(node.modelFlo.exprs, thumbVal[0], visit)
+        if visit.newVisit(hash) {
+            node.modelFlo.setAny(thumbVal[0], .activate, visit)
+        }
+        //... menuSync?.setMenuExprs(thumbVal[0], visit)
         refreshView()
     }
 }

@@ -11,9 +11,6 @@ import MuPar // Visitor
 ///
 public protocol MuMenuSync {
 
-    @discardableResult
-    func setMenuExprs(_ exprs: FloExprs?,_ val: Any, _ visit: Visitor) -> Bool
-
     /// reset node to default value
     func setMenuDefault(_ visit: Visitor)
 
