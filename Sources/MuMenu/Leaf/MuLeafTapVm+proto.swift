@@ -11,13 +11,13 @@ extension MuLeafTapVm: MuLeafProtocol {
     public func refreshPeers(_ visit: Visitor) {
         visit.nowHere(self.hash)
         if visit.from.user {
-            syncNext(Visitor(self.hash))
+            syncVal(Visitor(self.hash))
             updateLeafPeers(visit)
         }
     }
 
 
-    public func updateLeaf(_ any: Any, _ visit: Visitor) {
+    public func updateFromModel(_ any: Any, _ visit: Visitor) {
 
         visit.nowHere(hash)
 
@@ -28,7 +28,7 @@ extension MuLeafTapVm: MuLeafProtocol {
             default: break
         }
         editing = false
-        syncNext(visit)
+        syncVal(visit)
         updateLeafPeers(visit)
     }
 
@@ -45,7 +45,7 @@ extension MuLeafTapVm: MuLeafProtocol {
         CGSize(width: 0, height:  panelVm.runway)
     }
 
-    public func syncNext(_ visit: Visitor) {
+    public func syncVal(_ visit: Visitor) {
         if visit.newVisit(hash) {
             node.modelFlo.setAny(thumbVal[0], .activate, visit)
             refreshView()

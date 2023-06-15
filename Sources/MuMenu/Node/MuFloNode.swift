@@ -68,33 +68,29 @@ open class MuFloNode: Identifiable, Equatable {
          _ nodeType: MuNodeType,
          _ icon: MuIcon,
          parent: MuFloNode? = nil) {
-
+        
         self.modelFlo = modelFlo
         self.title = modelFlo.name
         self.icon = icon
         self.parent = parent
         self.nodeType = nodeType
         parent?.children.append(self)
-
-        modelFlo.addClosure(syncMenuModel) // update node value closure
-    }
-    // callback from flo
-    func syncMenuModel(_ any: Any,
-                       _ visit: Visitor) {
         
-        guard let flo = any as? Flo else { return }
-        
-        for leaf in self.leafProtos {
+        modelFlo.addClosure { flo, visit in
+            for leaf in self.leafProtos {
+                
+                let nameScalars = flo.nameScalars()
+                let vals = nameScalars.compactMap {
+                    $1.normalized()
+                }
+                DispatchQueue.main.async {
+                    leaf.updateFromModel(vals, visit)
+                }
+            }
             
-            let nameScalars = flo.nameScalars()
-            let vals = nameScalars.compactMap {
-                $1.normalized()
-            }
-            DispatchQueue.main.async {
-                leaf.updateLeaf(vals, visit)
-            }
         }
     }
+
 
     public func touch() {
         viewFlo?.updateTime()

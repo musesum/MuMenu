@@ -19,23 +19,23 @@ extension MuLeafVxyVm: MuLeafProtocol {
     public func refreshPeers(_ visit: Visitor) {
         visit.nowHere(self.hash)
         if visit.from.user {
-            syncNext(Visitor(self.hash))
+            syncVal(Visitor(self.hash))
             updateLeafPeers(visit)
         }
     }
     //... different
     public func refreshPeersDifferent(_ visit: Visitor) {
-        if //??? !visit.from.tween,
-           visit.from.user // good for remote, bad for xy
+        if !visit.from.tween//,
+           //visit.from.user // good for remote, bad for xy
         {
             visit.nowHere(self.hash)
-            syncNext(Visitor(self.hash))
+            syncVal(Visitor(self.hash))
             updateLeafPeers(visit)
         }
     }
     /// update from model - not touch
-    public func updateLeaf(_ any: Any,
-                           _ visit: Visitor) {
+    public func updateFromModel(_ any: Any,
+                                _ visit: Visitor) {
 
         visit.nowHere(hash)
         editing = true
@@ -45,7 +45,7 @@ extension MuLeafVxyVm: MuLeafProtocol {
             print("⁉️ unknown update type")
         }
         editing = false
-        syncNext(visit)
+        syncVal(visit)
         updateLeafPeers(visit)
     }
 
@@ -70,7 +70,7 @@ extension MuLeafVxyVm: MuLeafProtocol {
     }
 
     /// called via user touch or via model update
-    public func syncNext(_ visit: Visitor) {
+    public func syncVal(_ visit: Visitor) {
         if visit.newVisit(hash) {
             let x = expand(named: "x", thumbVal[0])
             let y = expand(named: "y", thumbVal[1])

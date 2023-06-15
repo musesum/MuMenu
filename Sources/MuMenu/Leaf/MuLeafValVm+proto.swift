@@ -7,8 +7,7 @@ import MuPar
 extension MuLeafValVm: MuLeafProtocol {
 
     public func refreshValue(_ visit: Visitor) {
-        if let scalar = node.modelFlo.scalars().first
-        {
+        if let scalar = node.modelFlo.scalars().first {
             range = scalar.range()
             let val = scalar.val //??? .val???
             thumbVal[0] = scale(val, from: range, to: 0...1)
@@ -21,7 +20,7 @@ extension MuLeafValVm: MuLeafProtocol {
     public func refreshPeers(_ visit: Visitor) {
         visit.nowHere(self.hash)
         if visit.from.user {
-            syncNext(Visitor(self.hash))
+            syncVal(Visitor(self.hash))
             updateLeafPeers(visit)
         }
     }
@@ -29,13 +28,13 @@ extension MuLeafValVm: MuLeafProtocol {
     public func refreshPeersDifferent(_ visit: Visitor) {
         if !visit.from.tween {
             visit.nowHere(self.hash)
-            syncNext(Visitor(self.hash))
+            syncVal(Visitor(self.hash))
             updateLeafPeers(visit)
         }
     }
     
     /// update from model - not touch
-    public func updateLeaf(_ any: Any,_ visit: Visitor) {
+    public func updateFromModel(_ any: Any,_ visit: Visitor) {
 
         visit.nowHere(hash)
         editing = true
@@ -45,7 +44,7 @@ extension MuLeafValVm: MuLeafProtocol {
             default: break
         }
         editing = false
-        syncNext(visit)
+        syncVal(visit)
         updateLeafPeers(visit)
     }
 
@@ -61,7 +60,7 @@ extension MuLeafValVm: MuLeafProtocol {
         : CGSize(width: thumbVal[0] * panelVm.runway, height: 1)
     }
 
-    public func syncNext(_ visit: Visitor) {
+    public func syncVal(_ visit: Visitor) {
         if visit.newVisit(hash) {
             let expanded = scale(thumbVal[0], from: 0...1, to: range)
             node.modelFlo.setAny(expanded, .activate, visit)

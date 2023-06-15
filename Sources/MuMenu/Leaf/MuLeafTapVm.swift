@@ -21,14 +21,14 @@ public class MuLeafTapVm: MuLeafVm {
         if touchState.phase == .began {
             editing = true
             thumbVal[0] = 1
-            syncNext(visit)
+            syncVal(visit)
             updateLeafPeers(visit)
         } else if touchState.phase.isDone() {
             thumbVal[0] = 0
-            syncNext(visit)
+            syncVal(visit)
             updateLeafPeers(visit)
             editing = false
-            syncNext(visit)
+            syncVal(visit)
         }
     }
 

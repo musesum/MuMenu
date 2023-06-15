@@ -91,7 +91,7 @@ public class MuLeafSegVm: MuLeafVm {
         } else {
             editing = false
         }
-        syncNext(visit)
+        syncVal(visit)
         updateLeafPeers(visit)
 
         func touchThumbBegin() {

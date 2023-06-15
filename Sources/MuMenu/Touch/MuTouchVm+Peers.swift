@@ -29,9 +29,12 @@ extension MuTouchVm {
             case .leaf:
 
                 if let leafItem = item.item as? MenuLeafItem,
-                   let leafVm = leafItem.treeVm?.gotoLeafItem(leafItem) {
+                   let leafVm = leafItem.treeVm?.gotoLeafItem(leafItem),
+                   let leafProto = leafVm.leafProto {
 
-                    updateRemoteLeafVm(leafVm, leafItem.thumb)
+                    DispatchQueue.main.async {
+                        leafProto.updateFromModel(leafItem.thumb, Visitor(.remote))
+                    }
                 }
             case .touch:
 
@@ -44,16 +47,6 @@ extension MuTouchVm {
         }
     }
 
-    func updateRemoteLeafVm(_ leafVm: MuLeafVm,
-                            _ thumb: [Double]) {
-        
-        DispatchQueue.main.async {
-
-            if let leafProto = leafVm.leafProto {
-                leafProto.updateLeaf(thumb, Visitor(.remote))
-            }
-        }
-    }
     /// current not called, useful for shared screen where teacher controls the students root cursor
     public func updateRemoteTouch(_ touchItem: MenuTouchItem,
                                   _ phase: Int) {

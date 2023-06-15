@@ -22,7 +22,7 @@ extension MuLeafSegVm: MuLeafProtocol {
     public func refreshPeers(_ visit: Visitor) {
         visit.nowHere(self.hash)
         if visit.from.user {
-            syncNext(Visitor(self.hash))
+            syncVal(Visitor(self.hash))
             updateLeafPeers(visit)
         }
     }
@@ -30,12 +30,12 @@ extension MuLeafSegVm: MuLeafProtocol {
     public func refreshPeersDifferent(_ visit: Visitor) {
         if !visit.from.tween {
             visit.nowHere(self.hash)
-            syncNext(Visitor(self.hash))
+            syncVal(Visitor(self.hash))
             updateLeafPeers(visit)
         }
     }
     
-    public func updateLeaf(_ any: Any, _ visit: Visitor) {
+    public func updateFromModel(_ any: Any, _ visit: Visitor) {
         visit.nowHere(hash)
         editing = true
         switch any {
@@ -44,7 +44,7 @@ extension MuLeafSegVm: MuLeafProtocol {
             default: break
         }
         editing = false
-        syncNext(visit)
+        syncVal(visit)
         updateLeafPeers(visit)
     }
 
@@ -61,7 +61,7 @@ extension MuLeafSegVm: MuLeafProtocol {
         ? CGSize(width: 1, height: (1-thumbVal[0]) * panelVm.runway)
         : CGSize(width: thumbVal[0] * panelVm.runway, height: 1)
     }
-    public func syncNext(_ visit: Visitor) {
+    public func syncVal(_ visit: Visitor) {
         if visit.newVisit(hash) {
             let expanded = scale(Double(nearestTick), from: 0...1, to: range)
             node.modelFlo.setAny(expanded, .activate, visit)
