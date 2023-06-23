@@ -115,9 +115,8 @@ open class MenuVm {
                 return parentNode
             }
             for childNode in parentNode.children {
-                if childNode.title == flo.name,
-                   let childNodeFlo = childNode as? MuFloNode {
-                    return childNodeFlo
+                if childNode.title == flo.name {
+                    return childNode
                 }
             }
             return nil
