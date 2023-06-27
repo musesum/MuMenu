@@ -50,11 +50,9 @@ public class MuLeafValVm: MuLeafVm {
             touchThumbNext()
             editing = true
         } else {
-            //???? syncNext(visit) 
             editing = false
         }
-
-        updateLeafPeers(visit)
+        syncVal(visit)
 
         func touchThumbBegin() {
             let thumbPrev = thumbVal[0]
@@ -63,7 +61,7 @@ public class MuLeafValVm: MuLeafVm {
             let touchedInsideThumb = abs(thumbDelta.distance(to: thumbPrev)) < thumbRadius
             thumbBeginΔ = touchedInsideThumb ? thumbPrev - thumbDelta : .zero
             thumbVal[0] = thumbDelta + thumbBeginΔ
-            syncVal(visit) //???
+
         }
         /// user touched control, translate to normalized thumb (0...1)
         func touchThumbNext() {
@@ -73,7 +71,6 @@ public class MuLeafValVm: MuLeafVm {
             }
             let touchDelta = touchState.pointNow - runwayBounds.origin
             thumbVal[0] = normalizeTouch(touchDelta) + thumbBeginΔ
-            syncVal(visit) //???
         }
     }
     

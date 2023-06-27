@@ -2,50 +2,54 @@
 
 
 import Foundation
+import MuFlo
 import MuPar
 
 extension MuLeafValVm: MuLeafProtocol {
 
     public func refreshValue(_ visit: Visitor) {
-        if let scalar = node.modelFlo.scalars().first {
-            range = scalar.range()
-            let val = scalar.val //??? .val???
-            thumbVal[0] = scale(val, from: range, to: 0...1)
-        } else {
-            print("⁉️ refreshValue: scalar not found")
-            thumbVal[0] = 0
-        }
+        updateFromModel(node.modelFlo, visit)
         refreshPeers(visit)
     }
     public func refreshPeers(_ visit: Visitor) {
-        visit.nowHere(self.hash)
-        if visit.from.user {
-            syncVal(Visitor(self.hash))
-            updateLeafPeers(visit)
-        }
-    }
-    //... different
-    public func refreshPeersDifferent(_ visit: Visitor) {
         if !visit.from.tween {
             visit.nowHere(self.hash)
             syncVal(Visitor(self.hash))
             updateLeafPeers(visit)
         }
     }
-    
-    /// update from model - not touch
-    public func updateFromModel(_ any: Any,_ visit: Visitor) {
 
-        visit.nowHere(hash)
+    // always from remote
+    public func updateFromThumbs(_ thumbs: Thumbs,
+                                 _ visit: Visitor) {
         editing = true
-        switch any {
-            case let v as Double:   thumbVal[0] = v
-            case let v as [Double]: thumbVal[0] = v[0]
-            default: break
+        thumbVal[0] = thumbs[0][0]
+        thumbTwe[0] = (node.modelFlo.hasPlugins
+                       ? thumbs[1][0]
+                       : thumbVal[0])
+        editing = false
+        syncVal(visit)
+    }
+    public func updateFromModel(_ flo: Flo,
+                                _ visit: Visitor) {
+        guard !visit.wasHere(hash) else { return }
+
+        editing = true
+
+        if let exprs = flo.exprs,
+           let v = (exprs.nameAny["_0"] as? FloValScalar ??
+                    exprs.nameAny.values.first as? FloValScalar) {
+
+            thumbVal[0] = v.normalized(.val)
+
+            thumbTwe[0] = (flo.hasPlugins
+                           ? v.normalized(.twe)
+                           : thumbVal[0])
+        } else {
+            print("⁉️ unknown update type")
         }
         editing = false
         syncVal(visit)
-        updateLeafPeers(visit)
     }
 
     public func leafTitle() -> String {
@@ -54,17 +58,26 @@ extension MuLeafValVm: MuLeafProtocol {
     public func treeTitle() -> String {
         node.title
     }
-    public func thumbOffset() -> CGSize {
+    public func thumbValOffset() -> CGSize {
         panelVm.isVertical
         ? CGSize(width: 1, height: (1-thumbVal[0]) * panelVm.runway)
         : CGSize(width: thumbVal[0] * panelVm.runway, height: 1)
     }
-
+    public func thumbTweOffset() -> CGSize {
+        panelVm.isVertical
+        ? CGSize(width: 1, height: (1-thumbTwe[0]) * panelVm.runway)
+        : CGSize(width: thumbTwe[0] * panelVm.runway, height: 1)
+    }
     public func syncVal(_ visit: Visitor) {
-        if visit.newVisit(hash) {
+        guard visit.newVisit(hash) else { return }
+        if !visit.from.tween {
             let expanded = scale(thumbVal[0], from: 0...1, to: range)
             node.modelFlo.setAny(expanded, .activate, visit)
-            refreshView()
+            updateLeafPeers(visit)
         }
+        if !node.modelFlo.hasPlugins {
+            thumbTwe[0] = thumbVal[0]
+        }
+        refreshView()
     }
 }

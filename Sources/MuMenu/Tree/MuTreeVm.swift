@@ -1,12 +1,12 @@
 // Created by warren 10/27/21.
 import SwiftUI
+import MuPar
 
-
-public var CornerAxisTreeVm = [Int: MuTreeVm]()
+public var CornerAxisTreeVm = [CornerAxisId: MuTreeVm]()
 
 public class MuTreeVm: Identifiable, Equatable, ObservableObject {
     
-    public let id = MuNodeIdentity.getId()
+    public let id = Visitor.nextId()
     public static func == (lhs: MuTreeVm, rhs: MuTreeVm) -> Bool { return lhs.id == rhs.id }
 
     @Published var branchVms = [MuBranchVm]()

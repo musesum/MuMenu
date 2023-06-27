@@ -5,7 +5,7 @@ import MuFlo
 import MuPar
 
 open class MuFloNode: Identifiable, Equatable {
-    public let id = MuNodeIdentity.getId()
+    public let id = Visitor.nextId()
 
     public var title: String
     public var icon: MuIcon!
@@ -78,19 +78,13 @@ open class MuFloNode: Identifiable, Equatable {
         
         modelFlo.addClosure { flo, visit in
             for leaf in self.leafProtos {
-                
-                let nameScalars = flo.nameScalars()
-                let vals = nameScalars.compactMap {
-                    $1.normalized()
-                }
                 DispatchQueue.main.async {
-                    leaf.updateFromModel(vals, visit)
+                    leaf.updateFromModel(flo, visit)
                 }
             }
             
         }
     }
-
 
     public func touch() {
         viewFlo?.updateTime()

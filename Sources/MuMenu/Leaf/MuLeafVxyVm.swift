@@ -14,6 +14,10 @@ public class MuLeafVxyVm: MuLeafVm {
         
         super.init(node, branchVm, prevVm)
         super.leafProto = self
+        let scalars = node.modelFlo.scalars()
+        for scalar in scalars {
+            ranges[scalar.name] = scalar.range()
+        }
         node.leafProtos.append(self)  //MuLeafProtocol for exchanging value
         refreshValue(Visitor(.model))
     }
@@ -76,7 +80,7 @@ public class MuLeafVxyVm: MuLeafVm {
         } else {
             editing = false
         }
-        updateLeafPeers(visit)
+        syncVal(visit)
 
         func tapThumb() {
             let touchOffset = touchState.pointNow - runwayBounds.origin
@@ -107,7 +111,7 @@ public class MuLeafVxyVm: MuLeafVm {
             let normThumb = panelVm.normalizeTouch(xy: nextThumb)
             thumbVal = [normThumb[0].clamped(to: 0...1),
                         normThumb[1].clamped(to: 0...1)]
-            syncVal(visit) //???
+
         }
         /// double touch will align thumb to center, corners or sides.
         func quantizeThumb(_ point: [Double]) -> [Double] {

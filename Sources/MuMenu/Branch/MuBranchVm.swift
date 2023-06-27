@@ -1,9 +1,11 @@
 // Created by warren on 10/16/21.
 
 import SwiftUI
+import MuPar // Visitor.nextId()
 
 public class MuBranchVm: Identifiable, ObservableObject {
-    public let id = MuNodeIdentity.getId()
+    
+    public let id = Visitor.nextId()
     static func == (lhs: MuBranchVm, rhs: MuBranchVm) -> Bool { lhs.id == rhs.id }
     static func == (lhs: MuBranchVm, rhs: MuBranchVm?) -> Bool { lhs.id == (rhs?.id ?? -1) }
 

@@ -1,33 +1,24 @@
 //  Created by warren on 9/10/22.
 
 import Foundation
+import MuFlo
 import MuPar // Visitor
 
 /// MuLeaf* Model and View  protocols
 public protocol MuLeafProtocol {
 
     /// update from model normalized range of 0...1, not touch gesture
-    func updateFromModel(_ any: Any, _ visit: Visitor)
+    func updateFromModel(_ flo: Flo, _ visit: Visitor)
+    func updateFromThumbs(_ thumbs: Thumbs, _ visit: Visitor)
 
-    /// title for control value
-    func leafTitle() -> String
+    func leafTitle() -> String /// title for control value
+    func treeTitle() -> String /// title for control value
 
-    /// title for control value
-    func treeTitle() -> String
-
-    /// position of thumb in control
-    func thumbOffset() -> CGSize
-
-    /// get value of thumb
-    func refreshValue(_ visit: Visitor)
-
-    /// update remote peers
-    /// /// get value of thumb
-    func refreshPeers(_ visit: Visitor)
-    
-    /// final upddate
-    func syncVal(_ visit: Visitor)
-    
+    func thumbValOffset() -> CGSize /// position of thumb in control
+    func thumbTweOffset() -> CGSize /// position of tween in control
+    func refreshValue(_ visit: Visitor)  /// get value of thumb
+    func refreshPeers(_ visit: Visitor) /// update remote peers
+    func syncVal(_ visit: Visitor) /// final upddate
 }
 
 

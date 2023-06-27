@@ -12,7 +12,7 @@ extension MuTouchVm {
         if let rootNodeVm, rootNodeVm.containsPoint(touchNow) {
             return rootNodeVm // hits the root (home) node icon
         } else if let rootVm, let nodeVm = rootVm.hitTest(touchNow) {
-            return nodeVm // hits one of the shown branches
+            return nodeVm // hits one of the shown branches
         }
         return nil // does NOT hit menu
     }
@@ -31,9 +31,9 @@ extension MuTouchVm {
                 if let leafItem = item.item as? MenuLeafItem,
                    let leafVm = leafItem.treeVm?.gotoLeafItem(leafItem),
                    let leafProto = leafVm.leafProto {
-
+                    print("􀤆", terminator: "")
                     DispatchQueue.main.async {
-                        leafProto.updateFromModel(leafItem.thumb, Visitor(.remote))
+                        leafProto.updateFromThumbs(leafItem.thumbs, Visitor(.remote))
                     }
                 }
             case .touch:

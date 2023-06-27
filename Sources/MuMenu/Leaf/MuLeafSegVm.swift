@@ -92,7 +92,6 @@ public class MuLeafSegVm: MuLeafVm {
             editing = false
         }
         syncVal(visit)
-        updateLeafPeers(visit)
 
         func touchThumbBegin() {
             let thumbPrev = thumbVal[0]

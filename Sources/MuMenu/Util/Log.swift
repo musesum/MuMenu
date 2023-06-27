@@ -2,6 +2,7 @@
 
 import SwiftUI
 import MuFlo // .digits
+import MuPar // Visitor
 
 public func log(_ title: String,
                 format: String = "%.0f",
@@ -80,4 +81,25 @@ func logTouch(_ time: TimeInterval,
          _ symbol: String) {
 
     print(String(format: "\n%.2f \(symbol)", time))
+}
+
+public func log(_ visit: Visitor) {
+    var logs = [String]()
+    for visited in visit.visited {
+        if let flo = Flo.IdFlo[visited] {
+            logs.append(flo.path(99) + ":\(flo.id)")
+        } else if let val = FloExprs.IdFloVal[visited] {
+            logs.append(val.flo.path(99) + "(\(val.name)):\(val.id)")
+        } else if let exprs = FloExprs.IdExprs[visited] {
+            logs.append(exprs.flo.path(99) + "(\(exprs.name)):\(exprs.id)")
+        } else if let nodeVm = MuNodeVm.IdNode[visited] {
+            logs.append(nodeVm.path ?? "⁉️")
+        } else {
+            logs.append(String(visited))
+        }
+    }
+    print(visit.log)
+    for log in logs {
+        print(log)
+    }
 }

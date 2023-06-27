@@ -3,9 +3,11 @@
 import SwiftUI
 import MuPar // Visitor
 
+public typealias CornerAxisId = Int
+
 public struct MenuTreeItem: Codable {
-    
-    public var cornax : Int // corner axis
+
+    public var cornax : CornerAxisId //Int
     public var depth  : Int
     public var start  : Int
 
@@ -21,7 +23,7 @@ public struct MenuTreeItem: Codable {
 
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        try cornax = c.decode(Int.self, forKey: .cornax)
+        try cornax = c.decode(Int.self, forKey: .cornax) // CornerAxisId
         try depth  = c.decode(Int.self, forKey: .depth )
         try start  = c.decode(Int.self, forKey: .start )
     }

@@ -1,52 +1,52 @@
 //  Created by warren on 9/10/22.
 
 import SwiftUI
+import MuFlo
 import MuPar
 
 extension MuLeafVxyVm: MuLeafProtocol {
 
     public func refreshValue(_ visit: Visitor) {
-        let scalars = node.modelFlo.scalars()
-        if scalars.count >= 2 {
-            thumbVal[0] = scale(scalars[0].val, from: scalars[0].range(), to: 0...1)
-            thumbVal[1] = scale(scalars[1].val, from: scalars[1].range(), to: 0...1)
-        } else {
-            print("⁉️ refreshValue: scalar not found")
-            thumbVal[0] = 0
-        }
-        refreshPeersDifferent(visit)
+        updateFromModel(node.modelFlo, visit)
+        refreshPeers(visit)
     }
     public func refreshPeers(_ visit: Visitor) {
-        visit.nowHere(self.hash)
-        if visit.from.user {
-            syncVal(Visitor(self.hash))
-            updateLeafPeers(visit)
-        }
+        guard !visit.wasHere(hash) else { return }
+        guard !visit.from.tween else { return }
+        updateLeafPeers(visit)
+        visit.nowHere(hash)
     }
-    //... different
-    public func refreshPeersDifferent(_ visit: Visitor) {
-        if !visit.from.tween//,
-           //visit.from.user // good for remote, bad for xy
-        {
-            visit.nowHere(self.hash)
-            syncVal(Visitor(self.hash))
-            updateLeafPeers(visit)
-        }
+
+    /// always from remote
+    public func updateFromThumbs(_ thumbs: Thumbs,
+                                 _ visit: Visitor) {
+        editing = true
+        thumbVal[0] = thumbs[0][0]
+        thumbVal[1] = thumbs[0][1]
+        thumbTwe[0] = thumbs[1][0]
+        thumbTwe[1] = thumbs[1][1]
+        editing = false
+        syncVal(visit)
     }
-    /// update from model - not touch
-    public func updateFromModel(_ any: Any,
+    /// update from model - not touch //??? still gets here from user touch?
+    public func updateFromModel(_ flo: Flo,
                                 _ visit: Visitor) {
 
-        visit.nowHere(hash)
+        guard !visit.wasHere(hash) else { return }
+
         editing = true
-        if let v = any as? [Double], v.count == 2 {
-            thumbVal = [v[0],v[1]]
+        if let exprs = flo.exprs,
+           let x = exprs.nameAny["x"] as? FloValScalar,
+           let y = exprs.nameAny["y"] as? FloValScalar {
+            thumbVal = [x.normalized(.val), y.normalized(.val)]
+            thumbTwe = (flo.hasPlugins
+                        ?  [x.normalized(.twe), y.normalized(.twe)]
+                        : [thumbVal[0], thumbVal[1]])
         } else {
             print("⁉️ unknown update type")
         }
         editing = false
         syncVal(visit)
-        updateLeafPeers(visit)
     }
 
     public func leafTitle() -> String {
@@ -59,11 +59,16 @@ extension MuLeafVxyVm: MuLeafProtocol {
         node.title
     }
 
-
-    public func thumbOffset() -> CGSize {
+    public func thumbValOffset() -> CGSize {
         return CGSize(width:     thumbVal[0]  * panelVm.runway,
                       height: (1-thumbVal[1]) * panelVm.runway)
     }
+    public func thumbTweOffset() -> CGSize {
+        return CGSize(width:     thumbTwe[0]  * panelVm.runway,
+                      height: (1-thumbTwe[1]) * panelVm.runway)
+        
+    }
+    
     public func thumbCenter() -> CGPoint {
         CGPoint(x:     thumbVal[0]  * panelVm.runway + panelVm.thumbRadius,
                 y:  (1-thumbVal[1]) * panelVm.runway + panelVm.thumbRadius)
@@ -71,13 +76,18 @@ extension MuLeafVxyVm: MuLeafProtocol {
 
     /// called via user touch or via model update
     public func syncVal(_ visit: Visitor) {
-        if visit.newVisit(hash) {
+        guard visit.newVisit(hash) else { return }
+        if !visit.from.tween {
             let x = expand(named: "x", thumbVal[0])
             let y = expand(named: "y", thumbVal[1])
             node.modelFlo.setAny([("x", x),("y", y)], .activate, visit)
-            refreshView()
+            updateLeafPeers(visit)
         }
-
+        if !node.modelFlo.hasPlugins {
+            thumbTwe[0] = thumbVal[0]
+            thumbTwe[1] = thumbVal[1]
+        }
+        refreshView()
     }
 
 }

@@ -3,7 +3,9 @@
 import SwiftUI
 import MuPar // strHash
 
+
 public class MuNodeVm: Identifiable, ObservableObject {
+    public static var IdNode = [Int: MuNodeVm]()
 
     /// publish changing value of leaf (or order of node, later)
     @Published var editing: Bool = false
@@ -36,7 +38,7 @@ public class MuNodeVm: Identifiable, ObservableObject {
     public var center = CGPoint.zero /// current position
 
     /// path and hash get updated through MuNodeDispatch::bindDispatch
-    lazy var path: String? = {
+    public lazy var path: String? = {
         var path = ""
         let corner = rootVm.corner
 
@@ -49,7 +51,9 @@ public class MuNodeVm: Identifiable, ObservableObject {
     }()
 
     public lazy var hash: Int = {
-        path?.strHash() ?? -1
+        let id = path?.strHash() ?? -1
+        MuNodeVm.IdNode[id] = self
+        return id
     }()
 
     public lazy var nodeVmPath: [MuNodeVm] = {
@@ -85,13 +89,13 @@ public class MuNodeVm: Identifiable, ObservableObject {
     /// spotlight self, parent, grand, etc. in branch
     func superSpotlight() {
 
-        if branchVm.nodeSpotVm != self {
+        //???? if branchVm.nodeSpotVm != self {
             
             branchVm.nodeSpotVm?.spotlight = false
             branchVm.nodeSpotVm = self
             branchVm.show = true
             spotlight = true
-        }
+        // }
         prevNodeVm?.superSpotlight()
     }
     

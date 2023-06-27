@@ -13,13 +13,16 @@ public class MuLeafVm: MuNodeVm {
     var leafProto: MuLeafProtocol?
     
     /// normalized to 0...1
-    var thumbVal  = Thumb(repeatElement(0, count: 2))
+    var thumbVal  = Thumb(repeatElement(0, count: 2)) // destination value
+    var thumbTwe  = Thumb(repeatElement(0, count: 2)) // current tween value
     var thumbDelta = CGPoint.zero
     var timer: Timer?
     
     func updateLeafPeers(_ visit: Visitor) {
         if visit.isLocal() {
-            let leafItem = MenuLeafItem(self, thumbVal)
+            let thumbs: Thumbs = [[thumbVal[0],thumbVal[1]],
+                                  [thumbTwe[0],thumbTwe[1]]]
+            let leafItem = MenuLeafItem(self, thumbs)
             let menuItem = MenuItem(leaf: leafItem, rootVm.corner, .moved)
             rootVm.sendItemToPeers(menuItem)
         }
