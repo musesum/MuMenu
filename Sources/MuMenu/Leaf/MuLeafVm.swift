@@ -20,8 +20,12 @@ public class MuLeafVm: MuNodeVm {
     
     func updateLeafPeers(_ visit: Visitor) {
         if visit.isLocal() {
-            let thumbs: Thumbs = [[thumbVal[0],thumbVal[1]],
-                                  [thumbTwe[0],thumbTwe[1]]]
+            var thumbs: Thumbs = [[0,0],[0,0]]
+            thumbs[0][0] = thumbVal[0] // scalar.x.val
+            thumbs[0][1] = thumbTwe[0] // scalar.x.twe
+            thumbs[1][0] = thumbVal[1] // scalar.y.val
+            thumbs[1][1] = thumbTwe[1] // scalar.y.twe
+
             let leafItem = MenuLeafItem(self, thumbs)
             let menuItem = MenuItem(leaf: leafItem, rootVm.corner, .moved)
             rootVm.sendItemToPeers(menuItem)

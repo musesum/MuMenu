@@ -1,6 +1,5 @@
 //  Created by warren on 9/10/22.
 
-
 import Foundation
 import MuFlo
 import MuPar
@@ -11,22 +10,21 @@ extension MuLeafValVm: MuLeafProtocol {
         updateFromModel(node.modelFlo, visit)
         refreshPeers(visit)
     }
+    
     public func refreshPeers(_ visit: Visitor) {
-        if !visit.from.tween {
-            visit.nowHere(self.hash)
-            syncVal(Visitor(self.hash))
-            updateLeafPeers(visit)
-        }
+        guard !visit.from.tween else { return }
+        visit.nowHere(hash)
+        syncVal(Visitor(hash))
     }
 
-    // always from remote
+    /// always from remote
     public func updateFromThumbs(_ thumbs: Thumbs,
                                  _ visit: Visitor) {
         editing = true
-        thumbVal[0] = thumbs[0][0]  // scalar.x.val
+        thumbVal[0] = thumbs[0][0]      // scalar.x.val
         thumbTwe[0] = (node.modelFlo.hasPlugins
-                       ? thumbs[1][0] // scalar.x.twe
-                       : thumbs[0][0]) //scalar.x.val
+                       ? thumbs[0][1]   // scalar.x.twe
+                       : thumbVal[0])   // scalar.x.val
         editing = false
         syncVal(visit)
     }
@@ -70,7 +68,10 @@ extension MuLeafValVm: MuLeafProtocol {
     }
     public func syncVal(_ visit: Visitor) {
         guard visit.newVisit(hash) else { return }
-        if !visit.from.tween {
+
+        if  !visit.from.tween,
+            !visit.from.bind {
+
             let expanded = scale(thumbVal[0], from: 0...1, to: range)
             node.modelFlo.setAny(expanded, .activate, visit)
             updateLeafPeers(visit)

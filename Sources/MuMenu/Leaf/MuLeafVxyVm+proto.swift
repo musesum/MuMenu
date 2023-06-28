@@ -10,25 +10,25 @@ extension MuLeafVxyVm: MuLeafProtocol {
         updateFromModel(node.modelFlo, visit)
         refreshPeers(visit)
     }
+    
     public func refreshPeers(_ visit: Visitor) {
-        guard !visit.wasHere(hash) else { return }
         guard !visit.from.tween else { return }
-        updateLeafPeers(visit)
         visit.nowHere(hash)
+        syncVal(Visitor(hash))
     }
 
     /// always from remote
     public func updateFromThumbs(_ thumbs: Thumbs,
                                  _ visit: Visitor) {
         editing = true
-        thumbVal[0] = thumbs[0][0] // scalar.x.val
-        thumbVal[1] = thumbs[0][1] // scalar.y.val
+        thumbVal[0] = thumbs[0][0]      // scalar.x.val
+        thumbVal[1] = thumbs[1][0]      // scalar.y.val
         if node.modelFlo.hasPlugins {
-            thumbTwe[0] = thumbs[1][0] // scalar.x.twe
-            thumbTwe[1] = thumbs[1][1] // scalar.y.twe
+            thumbTwe[0] = thumbs[0][1]  // scalar.x.twe
+            thumbTwe[1] = thumbs[1][1]  // scalar.y.twe
         } else {
-            thumbTwe[0] = thumbs[0][0] // scalar.x.val
-            thumbTwe[1] = thumbs[0][1] // scalar.y.val
+            thumbTwe[0] = thumbVal[0]   // scalar.x.val
+            thumbTwe[1] = thumbVal[1]   // scalar.y.val
         }
         editing = false
         syncVal(visit)
@@ -82,7 +82,10 @@ extension MuLeafVxyVm: MuLeafProtocol {
     /// called via user touch or via model update
     public func syncVal(_ visit: Visitor) {
         guard visit.newVisit(hash) else { return }
-        if !visit.from.tween {
+
+        if  !visit.from.tween,
+            !visit.from.bind {
+
             let x = expand(named: "x", thumbVal[0])
             let y = expand(named: "y", thumbVal[1])
             node.modelFlo.setAny([("x", x),("y", y)], .activate, visit)

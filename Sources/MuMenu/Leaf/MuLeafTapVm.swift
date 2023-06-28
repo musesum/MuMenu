@@ -13,21 +13,21 @@ public class MuLeafTapVm: MuLeafVm {
         super.init(node, branchVm, prevVm)
         super.leafProto = self
         node.leafProtos.append(self) // MuLeaf delegate for setting value
-        refreshValue(Visitor(.model))
+        refreshValue(Visitor(.bind))
     }
     /// user touch gesture inside runway
     override public func touchLeaf(_ touchState: MuTouchState,
                                    _ visit: Visitor) {
-        if touchState.phase == .began {
+        if !editing, touchState.phase == .began {
+
             editing = true
             thumbVal[0] = 1
             syncVal(visit)
-            updateLeafPeers(visit)
+
         } else if touchState.phase.isDone() {
-            thumbVal[0] = 0
-            syncVal(visit)
-            updateLeafPeers(visit)
+
             editing = false
+            thumbVal[0] = 0
             syncVal(visit)
         }
     }

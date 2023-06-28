@@ -13,7 +13,7 @@ extension MuNodeVm { // + Touch
             let visit = Visitor(.user)
             node.modelFlo.bindDefaults(visit)
             node.modelFlo.activate(visit)
-            leafVm.leafProto?.refreshValue(visit)
+            leafVm.leafProto?.refreshValue(Visitor(.user))
         }
     }
     /// update all descendants

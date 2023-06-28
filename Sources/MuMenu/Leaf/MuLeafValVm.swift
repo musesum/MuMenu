@@ -19,7 +19,7 @@ public class MuLeafValVm: MuLeafVm {
         node.leafProtos.append(self)
 
         setRanges()
-        refreshValue(Visitor(.model))
+        refreshValue(Visitor(.bind))
     }
     /// normalize to and from scalar range
     func setRanges() {

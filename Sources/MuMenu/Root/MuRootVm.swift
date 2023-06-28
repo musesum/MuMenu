@@ -128,6 +128,7 @@ public class MuRootVm: ObservableObject, Equatable {
         }
         return nil
     }
+
     var touchState = MuTouchState()
     
     func touchBegin(_ touchState: MuTouchState,
@@ -149,6 +150,7 @@ public class MuRootVm: ObservableObject, Equatable {
         self.touchState = touchState
         updateRoot(fromRemote)
     }
+    
     func touchEnded(_ touchState: MuTouchState,
                     _ fromRemote: Bool) {
         
@@ -169,7 +171,7 @@ public class MuRootVm: ObservableObject, Equatable {
         }
     }
     func logRoot(_ s: String = "") {
-        // print(touchType.symbol+s, terminator: "")
+        print(touchType.symbol+s, terminator: "")
     }
     private func updateRoot(_ fromRemote: Bool) {
 

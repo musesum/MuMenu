@@ -14,18 +14,20 @@ public class MuLeafTogVm: MuLeafVm {
         super.init(node, branchVm, prevVm)
         super.leafProto = self
         node.leafProtos.append(self) 
-        refreshValue(Visitor(.model))
+        refreshValue(Visitor(.bind))
     }
     override public func touchLeaf(_ touchState: MuTouchState,
                                    _ visit: Visitor) {
         if !editing, touchState.phase == .began  {
+
             editing = true
             thumbVal[0] = (thumbVal[0] == 1.0 ? 0 : 1)
             syncVal(visit)
-            updateLeafPeers(visit)
+            
         } else if editing, touchState.phase.isDone() {
+
             editing = false
-            refreshView()
+            syncVal(visit)
         }
     }
 

@@ -65,17 +65,12 @@ public struct MenuLeafItem: Codable {
         try thumbs   = container.decode(Thumbs.self, forKey: .thumbs   )
     }
     public var nextXY: CGPoint {
-        do {
 
-            let x = try thumbs[0][0]
-            let y = try thumbs[0][1]
-            let point = CGPoint(x: CGFloat(x),
-                                y: CGFloat(y))
-            return point
-        } catch {
-            return .zero
-        }
-
+        let x = thumbs[0][0] // scalar.x.val
+        let y = thumbs[0][1] // scalar.y.val
+        let point = CGPoint(x: CGFloat(x),
+                            y: CGFloat(y))
+        return point
     }
 
     var treeVm: MuTreeVm? {

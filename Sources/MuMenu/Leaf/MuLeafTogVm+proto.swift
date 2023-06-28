@@ -1,6 +1,5 @@
 //  Created by warren on 9/10/22.
 
-
 import Foundation
 import MuFlo
 import MuPar
@@ -11,22 +10,23 @@ extension MuLeafTogVm: MuLeafProtocol {
         updateFromModel(node.modelFlo, visit)
         refreshPeers(visit)
     }
+    
     public func refreshPeers(_ visit: Visitor) {
-        visit.nowHere(self.hash)
-        if visit.from.user {
-            syncVal(Visitor(self.hash))
-            updateLeafPeers(visit)
-        }
+        guard !visit.from.tween else { return }
+        visit.nowHere(hash)
+        syncVal(Visitor(hash)) 
     }
+    
     /// always from remote
     public func updateFromThumbs(_ thumbs: Thumbs,
                                  _ visit: Visitor) {
         editing = true
-        thumbVal[0] = thumbs[0][0] < 1.0 ? 0 : 1    // scalar.x.val
+        thumbVal[0] = thumbs[0][0] < 1.0 ? 0 : 1     // scalar.x.val
         thumbTwe[0] = (node.modelFlo.hasPlugins
-                       ? thumbs[1][0] < 1.0 ? 0 : 1  // scalar.x.twe
-                       : thumbs[0][0] < 1.0 ? 0 : 1) // scalar.x.val
-
+                       ? thumbs[0][1] < 1.0 ? 0 : 1  // scalar.x.twe
+                       : thumbVal[0]) // scalar.x.val
+        editing = false
+        syncVal(visit)
     }
     public func updateFromModel(_ flo: Flo,
                                 _ visit: Visitor) {
@@ -36,13 +36,13 @@ extension MuLeafTogVm: MuLeafProtocol {
         editing = true
 
         if let exprs = flo.exprs,
-           let v = (exprs.nameAny["_0"] as? FloValScalar ??
+           let scalar = (exprs.nameAny["_0"] as? FloValScalar ??
                     exprs.nameAny.values.first as? FloValScalar) {
 
-            thumbVal[0] = v.val < 1.0 ? 0 : 1
+            thumbVal[0] = scalar.val < 1.0 ? 0 : 1      // scalar.val
             thumbTwe[0] = (flo.hasPlugins
-                           ? v.twe < 1.0 ? 0 : 1
-                           : thumbVal[0])
+                           ? scalar.twe < 1.0 ? 0 : 1   // scalar.twe
+                           : thumbVal[0])               // scalar.val
         } else {
             print("⁉️ unknown update type")
         }
@@ -67,10 +67,15 @@ extension MuLeafTogVm: MuLeafProtocol {
         CGSize(width: 1, height: 1)
     }
     public func syncVal(_ visit: Visitor) {
-        if visit.newVisit(hash) {
+        guard visit.newVisit(hash) else { return }
+
+        if  !visit.from.tween,
+            !visit.from.bind {
+
             node.modelFlo.setAny(thumbVal[0], .activate, visit)
-            refreshView()
+            updateLeafPeers(visit)
         }
+        refreshView()
     }
     
 }

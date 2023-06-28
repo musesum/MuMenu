@@ -20,7 +20,7 @@ public class MuLeafSegVm: MuLeafVm {
 
         setRanges()
 
-        refreshValue(Visitor(.model))
+        refreshValue(Visitor(.bind))
         updatePanelSizes()
     }
 
