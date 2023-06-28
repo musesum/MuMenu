@@ -1,6 +1,7 @@
 //  Created by warren on 12/10/21.
 
 import SwiftUI
+import MuFlo
 import MuPar // Visitor
 
 /// segmented control
@@ -16,9 +17,24 @@ public class MuLeafSegVm: MuLeafVm {
         super.init(node, branchVm, prevVm)
         super.leafProto = self
         node.leafProtos.append(self) // MuLeaf delegate for setting value
-        
+
+        setRanges()
+
         refreshValue(Visitor(.model))
         updatePanelSizes()
+    }
+
+    /// normalize to and from scalar range
+    func setRanges() {
+        if let exprs = node.modelFlo.exprs {
+            if let x = exprs.nameAny["x"] as? FloValScalar {
+                range = x.range()
+            } else if let y = exprs.nameAny["y"] as? FloValScalar {
+                range = y.range()
+            } else if let scalar = exprs.nameAny.values.first as? FloValScalar {
+                range = scalar.range()
+            }
+        }
     }
 
     /// normalize point to 0...1 based on defined range

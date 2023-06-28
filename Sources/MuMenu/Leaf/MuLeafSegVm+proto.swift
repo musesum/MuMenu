@@ -7,16 +7,7 @@ import MuPar
 extension MuLeafSegVm: MuLeafProtocol {
 
     public func refreshValue(_ visit: Visitor) {
-        if let scalar = node.modelFlo.scalars().first
-        {
-            range = scalar.range()
-            let val = scalar.val 
-            thumbVal[0] = scale(val, from: range, to: 0...1)
-            thumbTwe[0] = thumbVal[0]
-        } else {
-            print("⁉️ refreshValue: scalar not found")
-            thumbVal[0] = 0
-        }
+        updateFromModel(node.modelFlo, visit)
         refreshPeers(visit)
     }
 
@@ -32,8 +23,8 @@ extension MuLeafSegVm: MuLeafProtocol {
         editing = true
         thumbVal[0] = thumbs[0][0]
         thumbTwe[0] = (node.modelFlo.hasPlugins
-                       ? thumbs[1][0]
-                       : thumbVal[0])
+                       ? thumbs[1][0] // scalar.x.twe
+                       : thumbs[0][0]) //scalar.x.val
         editing = false
         syncVal(visit)
     }

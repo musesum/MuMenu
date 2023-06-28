@@ -1,6 +1,7 @@
 //  Created by warren on 5/10/22.
 
 import SwiftUI
+import MuFlo
 import MuPar
 
 /// 2d XY control
@@ -14,11 +15,21 @@ public class MuLeafVxyVm: MuLeafVm {
         
         super.init(node, branchVm, prevVm)
         super.leafProto = self
-        let scalars = node.modelFlo.scalars()
-        for scalar in scalars {
-            ranges[scalar.name] = scalar.range()
-        }
         node.leafProtos.append(self)  //MuLeafProtocol for exchanging value
+
+        // set ranges
+        if let exprs = node.modelFlo.exprs,
+           let x = exprs.nameAny["x"] as? FloValScalar,
+           let y = exprs.nameAny["y"] as? FloValScalar {
+            ranges["x"] = x.range()
+            ranges["y"] = y.range()
+        } else {
+            let scalars = node.modelFlo.scalars()
+            for scalar in scalars {
+                ranges[scalar.name] = scalar.range()
+            }
+        }
+
         refreshValue(Visitor(.model))
     }
  

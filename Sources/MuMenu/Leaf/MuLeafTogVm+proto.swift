@@ -22,10 +22,11 @@ extension MuLeafTogVm: MuLeafProtocol {
     public func updateFromThumbs(_ thumbs: Thumbs,
                                  _ visit: Visitor) {
         editing = true
-        thumbVal[0] = thumbs[0][0] < 1.0 ? 0 : 1
+        thumbVal[0] = thumbs[0][0] < 1.0 ? 0 : 1    // scalar.x.val
         thumbTwe[0] = (node.modelFlo.hasPlugins
-                       ? thumbs[1][0] < 1.0 ? 0 : 1
-                       : thumbVal[0])
+                       ? thumbs[1][0] < 1.0 ? 0 : 1  // scalar.x.twe
+                       : thumbs[0][0] < 1.0 ? 0 : 1) // scalar.x.val
+
     }
     public func updateFromModel(_ flo: Flo,
                                 _ visit: Visitor) {

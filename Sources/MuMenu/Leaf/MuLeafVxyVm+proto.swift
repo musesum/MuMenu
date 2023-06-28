@@ -21,10 +21,15 @@ extension MuLeafVxyVm: MuLeafProtocol {
     public func updateFromThumbs(_ thumbs: Thumbs,
                                  _ visit: Visitor) {
         editing = true
-        thumbVal[0] = thumbs[0][0]
-        thumbVal[1] = thumbs[0][1]
-        thumbTwe[0] = thumbs[1][0]
-        thumbTwe[1] = thumbs[1][1]
+        thumbVal[0] = thumbs[0][0] // scalar.x.val
+        thumbVal[1] = thumbs[0][1] // scalar.y.val
+        if node.modelFlo.hasPlugins {
+            thumbTwe[0] = thumbs[1][0] // scalar.x.twe
+            thumbTwe[1] = thumbs[1][1] // scalar.y.twe
+        } else {
+            thumbTwe[0] = thumbs[0][0] // scalar.x.val
+            thumbTwe[1] = thumbs[0][1] // scalar.y.val
+        }
         editing = false
         syncVal(visit)
     }
