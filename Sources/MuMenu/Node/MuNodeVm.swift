@@ -88,14 +88,12 @@ public class MuNodeVm: Identifiable, ObservableObject {
     
     /// spotlight self, parent, grand, etc. in branch
     func superSpotlight() {
-
-        //???? if branchVm.nodeSpotVm != self {
-            
-            branchVm.nodeSpotVm?.spotlight = false
-            branchVm.nodeSpotVm = self
-            branchVm.show = true
-            spotlight = true
-        // }
+        
+        branchVm.nodeSpotVm?.spotlight = false
+        branchVm.nodeSpotVm = self
+        branchVm.show = true
+        spotlight = true
+        
         prevNodeVm?.superSpotlight()
     }
     

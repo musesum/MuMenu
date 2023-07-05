@@ -33,7 +33,7 @@ extension MuLeafVxyVm: MuLeafProtocol {
         editing = false
         syncVal(visit)
     }
-    /// update from model - not touch //??? still gets here from user touch?
+    /// update from model - not touch 
     public func updateFromModel(_ flo: Flo,
                                 _ visit: Visitor) {
 

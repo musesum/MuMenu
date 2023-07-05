@@ -171,7 +171,7 @@ public class MuRootVm: ObservableObject, Equatable {
         }
     }
     func logRoot(_ s: String = "") {
-        print(touchType.symbol+s, terminator: "")
+        //print(touchType.symbol+s, terminator: "")
     }
     private func updateRoot(_ fromRemote: Bool) {
 

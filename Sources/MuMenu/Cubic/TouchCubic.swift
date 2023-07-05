@@ -97,7 +97,7 @@ public struct TouchCubic {
     }
 
     public func drawPoints(_ drawPoint: TouchDrawPoint?)  {
-
+        guard let drawPoint else { return }
         // if index<2 { return }
 
         let p1 = p.1
@@ -113,7 +113,7 @@ public struct TouchCubic {
             let p = getXY(z1)
             let r = getR(z1)
 
-            drawPoint?(p, r)
+            drawPoint(p, r)
         }
     }
 }
