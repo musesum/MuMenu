@@ -2,17 +2,18 @@
 
 
 import SwiftUI
+import MuPeer
 import MuPar
 
 public class MuLeafPeerVm: MuLeafVm {
-
-    var peersVm = PeersVm.shared
-
-    init (_ node: MuFloNode,
-          _ branchVm: MuBranchVm,
-          _ prevVm: MuNodeVm?,
-          icon: String = "") {
-
+    
+    public var peersVm = PeersVm.shared
+    
+    public init (_ node: MuFloNode,
+                 _ branchVm: MuBranchVm,
+                 _ prevVm: MuNodeVm?,
+                 icon: String = "") {
+        
         super.init(node, branchVm, prevVm)
         super.leafProto = self
         node.leafProtos.append(self)

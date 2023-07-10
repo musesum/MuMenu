@@ -3,6 +3,7 @@
 import UIKit
 import MuFlo // digits
 import MuPar // visit
+import MuPeer
 import MuTime // DoubleBuffer
 
 
@@ -28,13 +29,6 @@ open class TouchCanvas {
         
         self.isRemote = isRemote
         buffer.flusher = self
-    }
-
-    static func setDraw(_ drawPoint: @escaping TouchDrawPoint,
-                        _ drawRadius: @escaping TouchDrawRadius) {
-        
-        TouchCanvas.drawPoint = drawPoint
-        TouchCanvas.drawRadius = drawRadius
     }
 
     func addTouchItem(_ key: Int,
@@ -95,10 +89,14 @@ extension TouchCanvas: BufferFlushDelegate {
     public typealias Item = TouchCanvasItem
 
     public func flushItem<Item>(_ item: Item) -> Bool {
-        let item = item as! TouchCanvasItem
+        guard let item = item as? TouchCanvasItem else {
+            return false }
         lastItem = item
 
         let radius = TouchCanvas.drawRadius?(item) ?? 10
+        if radius > 512 {
+            return false //???
+        }
         let point = item.cgPoint
         isDone = item.isDone()
 

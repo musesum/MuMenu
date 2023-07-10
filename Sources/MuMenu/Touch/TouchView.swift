@@ -1,38 +1,36 @@
 
 import SwiftUI
 import MuFlo
+import MuPeer
 import MultipeerConnectivity
 
+public protocol TouchDelegate: AnyObject {
+    func drawPoint(_ point: CGPoint, _ value: CGFloat)
+    func drawRadius(_ radius: CGFloat)
+}
 
 open class TouchView: UIView, UIGestureRecognizerDelegate {
 
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    var peersDelegate: PeersControllerDelegate!
+    var touchDraw: TouchDraw! // also a peers delegate
 
-    public init(_ drawPoint: TouchDrawPoint? = nil,
-                _ drawRadius: TouchDrawRadius? = nil,
-                _ peersDelegate: PeersControllerDelegate? = nil) {
+    public init(_ touchDraw: TouchDraw!) {
 
-        super.init(frame:.zero)
-
-        self.peersDelegate = peersDelegate 
+        super.init(frame: .zero)
+        self.touchDraw = touchDraw
 
         let bounds = UIScreen.main.bounds
         let w = bounds.size.width
         let h = bounds.size.height
         frame = CGRect(x: 0, y: 0, width: w, height: h)
         isMultipleTouchEnabled = true
-        PeersController.shared.peersDelegates.append(self.peersDelegate)
-        if let drawPoint, let drawRadius {
-            TouchCanvas.setDraw(drawPoint, drawRadius)
-        }
+        PeersController.shared.peersDelegates.append(touchDraw)
     }
     deinit {
-        PeersController.shared.remove(peersDelegate: peersDelegate)
+        PeersController.shared.remove(peersDelegate: touchDraw)
     }
-
 
     /// When starting new touch, assign finger to either Menu or Canvas.
     open func beginTouches(_ touches: Set<UITouch>) {

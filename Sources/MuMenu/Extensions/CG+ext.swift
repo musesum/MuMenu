@@ -70,6 +70,20 @@ extension CGRect {
         return pp
     }
 
+    /// normalize to 0...1 //??? replace with normalizeTo01 ??
+    public func normalize() -> ClipRect {
+        let x = origin.x
+        let y = origin.y
+        let w = size.width
+        let h = size.height
+
+        let pp = ClipRect(x: x / w,
+                          y: y / h,
+                          width: (w - 2*x) / w,
+                          height:(h - 2*y) / h)
+        return pp
+    }
+
     /// scale down to a point p normalized between 0...1
     public func normalizeTo01(_ p: CGPoint) -> CGPoint {
 

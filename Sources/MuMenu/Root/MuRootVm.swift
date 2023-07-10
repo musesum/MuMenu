@@ -1,6 +1,7 @@
 // Created by warren 10/13/21.
 
 import SwiftUI
+import MuPeer
 import MuPar // Visitor
 
 public class MuRootVm: ObservableObject, Equatable {

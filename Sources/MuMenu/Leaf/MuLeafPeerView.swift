@@ -1,8 +1,7 @@
 //  Created by warren on 12/5/22.
 
 import SwiftUI
-
-import SwiftUI
+import MuPeer
 
 struct MuLeafPeerView: View {
 
@@ -14,13 +13,13 @@ struct MuLeafPeerView: View {
             if panelVm.cornerAxis.corner.upper {
                 
                 MuLeafBodyView(leafVm) {
-                    PeersView(peersVm: leafVm.peersVm)
+                    PeersView(leafVm.peersVm)
                 }
                 MuLeafTitleView(leafVm)
             } else {
                 MuLeafTitleView(leafVm)
                 MuLeafBodyView(leafVm) {
-                    PeersView(peersVm: leafVm.peersVm)
+                    PeersView(leafVm.peersVm)
                 }
             }
         }
