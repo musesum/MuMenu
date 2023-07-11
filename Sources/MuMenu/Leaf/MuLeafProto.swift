@@ -2,7 +2,7 @@
 
 import Foundation
 import MuFlo
-import MuPar // Visitor
+import MuVisit
 
 /// MuLeaf* Model and View  protocols
 public protocol MuLeafProtocol {

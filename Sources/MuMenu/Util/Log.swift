@@ -2,7 +2,7 @@
 
 import SwiftUI
 import MuFlo // .digits
-import MuPar // Visitor
+import MuVisit
 
 public func log(_ title: String,
                 format: String = "%.0f",

@@ -2,7 +2,7 @@
 
 import SwiftUI
 import MuFlo
-import MuPar // Visitor
+import MuVisit
 
 /// segmented control
 public class MuLeafSegVm: MuLeafVm {

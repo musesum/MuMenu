@@ -1,7 +1,7 @@
 // Created by warren on 10/16/21.
 
 import SwiftUI
-import MuPar // Visitor.nextId()
+import MuVisit
 
 public class MuBranchVm: Identifiable, ObservableObject {
     

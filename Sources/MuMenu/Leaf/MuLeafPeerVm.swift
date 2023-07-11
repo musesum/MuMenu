@@ -3,7 +3,7 @@
 
 import SwiftUI
 import MuPeer
-import MuPar
+import MuVisit
 
 public class MuLeafPeerVm: MuLeafVm {
     

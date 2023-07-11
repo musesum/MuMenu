@@ -2,7 +2,7 @@
 
 import SwiftUI
 import MuFlo
-import MuPar
+import MuVisit
 
 extension MuLeafSegVm: MuLeafProtocol {
 

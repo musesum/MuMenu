@@ -2,7 +2,7 @@
 import QuartzCore
 import UIKit
 import MuFlo
-import MuPar   // Visitor
+import MuVisit
 import MuMetal // TextureData
 
 public class TouchDraw {

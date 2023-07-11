@@ -2,7 +2,7 @@
 
 import SwiftUI
 import MuFlo
-import MuPar // Visitor
+import MuVisit
 extension MuLeafPeerVm: MuLeafProtocol {
 
     public func refreshValue(_ _: Visitor) {}

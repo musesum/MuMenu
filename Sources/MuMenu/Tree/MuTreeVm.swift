@@ -1,6 +1,6 @@
 // Created by warren 10/27/21.
 import SwiftUI
-import MuPar
+import MuVisit
 
 public var CornerAxisTreeVm = [CornerAxisId: MuTreeVm]()
 

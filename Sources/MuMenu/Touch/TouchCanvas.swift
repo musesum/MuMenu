@@ -2,7 +2,7 @@
 
 import UIKit
 import MuFlo // digits
-import MuPar // visit
+import MuVisit
 import MuPeer
 import MuTime // DoubleBuffer
 

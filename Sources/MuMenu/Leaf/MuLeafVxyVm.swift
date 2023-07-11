@@ -2,7 +2,7 @@
 
 import SwiftUI
 import MuFlo
-import MuPar
+import MuVisit
 
 /// 2d XY control
 public class MuLeafVxyVm: MuLeafVm {

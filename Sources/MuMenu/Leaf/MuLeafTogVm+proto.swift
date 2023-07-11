@@ -2,7 +2,7 @@
 
 import Foundation
 import MuFlo
-import MuPar
+import MuVisit
 
 extension MuLeafTogVm: MuLeafProtocol {
 

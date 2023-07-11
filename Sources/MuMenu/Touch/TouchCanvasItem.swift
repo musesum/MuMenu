@@ -1,6 +1,6 @@
 
 import UIKit
-import MuPar // Visitor
+import MuVisit
 
 public struct TouchCanvasItem: Codable {
     
