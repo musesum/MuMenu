@@ -4,12 +4,11 @@ import UIKit
 import MuFlo
 import MuVisit
 import MuMetal // TextureData
+import MuAudio
 
 public class TouchDraw {
 
-    //??? static let shared = TouchDraw()
-
-    private var root     : Flo //??? SkyFlo.shared.root˚
+    private var root     : Flo
     private var tilt˚    : Flo? ; var tilt    = false
     private var press˚   : Flo? ; var press   = true
     private var size˚    : Flo? ; var size    = CGFloat(1)
@@ -27,7 +26,7 @@ public class TouchDraw {
     private var texSize = CGSize.zero
     private var viewSize = CGSize.zero
 
-   public init(_ root: Flo, _ viewSize: CGSize) {
+    public init(_ root: Flo, _ viewSize: CGSize) {
 
         self.root = root
         self.viewSize = viewSize
@@ -144,7 +143,6 @@ public class TouchDraw {
         guard let texBuf else { return }
         if point == .zero { return }
         let p = point * UIScreen.main.scale
-    //???   let viewSize = SkyPipeline.shared.viewSize
         let p1 = MuAspect.viewPointToTexture(p, viewSize: viewSize, texSize: texSize)
 
         let r = radius * 2.0 - 1

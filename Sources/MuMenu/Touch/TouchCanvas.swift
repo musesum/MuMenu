@@ -95,7 +95,7 @@ extension TouchCanvas: BufferFlushDelegate {
 
         let radius = TouchCanvas.drawRadius?(item) ?? 10
         if radius > 512 {
-            return false //???
+            return false //??? was crashing here, fixed?
         }
         let point = item.cgPoint
         isDone = item.isDone()
