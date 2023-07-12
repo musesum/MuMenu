@@ -4,25 +4,25 @@ import MuVisit
 
 public struct TouchCanvasItem: Codable {
     
-    public var key     : Int      // unique id of touch
-    public var time    : Double   // time event was created
-    public var nextX   : Float    // touch point x
-    public var nextY   : Float    // touch point y
-    public var force   : Float    // pencil pressure
-    public var radius  : Float    // size of dot
-    public var azimX   : Double   // pencil tilt X
-    public var azimY   : Double   // pencil tilt Y
-    public var phase   : Int      // UITouch.Phase.rawValue
-    public var from    : Int      // Visitor.from
-    
-    public init(_ key      : Int,
-         _ next     : CGPoint,
-         _ radius   : Float,
-         _ force    : Float,
-         _ azimuth  : CGVector,
-         _ phase    : UITouch.Phase,
-         _ visit  : Visitor) {
-        
+    public var key    : Int      // unique id of touch
+    public var time   : Double   // time event was created
+    public var nextX  : Float    // touch point x
+    public var nextY  : Float    // touch point y
+    public var force  : Float    // pencil pressure
+    public var radius : Float    // size of dot
+    public var azimX  : Double   // pencil tilt X
+    public var azimY  : Double   // pencil tilt Y
+    public var phase  : Int      // UITouch.Phase.rawValue
+    public var from   : Int      // Visitor.from
+
+    public init(_ key     : Int,
+                _ next    : CGPoint,
+                _ radius  : Float,
+                _ force   : Float,
+                _ azimuth : CGVector,
+                _ phase   : UITouch.Phase,
+                _ visit   : Visitor) {
+
         // tested timeDrift between UITouches.time and Date() is around 30 msec
         self.time   = Date().timeIntervalSince1970
         

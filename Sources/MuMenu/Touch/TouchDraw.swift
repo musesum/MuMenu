@@ -73,7 +73,7 @@ public class TouchDraw {
             let radius = Float(z.twe/2 + 1)
 
             let key = "drawDot".hash
-            let item = TouchCanvasItem(key, point, radius, radius, .zero, phase, Visitor(.midi))
+            let item = TouchCanvasItem(key, point, radius, .zero, .zero, phase, Visitor(.midi))
             TouchCanvas.addCanvasItem(item, isRemote: false)
         }
     }
