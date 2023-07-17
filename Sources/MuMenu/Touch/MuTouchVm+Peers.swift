@@ -31,6 +31,7 @@ extension MuTouchVm {
                 if let leafItem = item.item as? MenuLeafItem,
                    let leafVm = leafItem.treeVm?.gotoLeafItem(leafItem),
                    let leafProto = leafVm.leafProto {
+                    
                     print("􀤆", terminator: "")
                     DispatchQueue.main.async {
                         leafProto.updateFromThumbs(leafItem.thumbs, Visitor(.remote))

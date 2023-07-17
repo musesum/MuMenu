@@ -35,7 +35,7 @@ open class MuFloNode: Identifiable, Equatable {
                 return Int(title.strHash())
             }
         } else {
-            print("⁉️ MuNode path==nil")
+            print("⁉️ MuFloNode path==nil")
             return -1
         }
     }()

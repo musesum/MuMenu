@@ -9,7 +9,7 @@
 #### Naming convention for components
 DeepMenu follows a MVVM pattern (Model, View, View Model) 
 
-+ MuNode* - proxy for Model, such as MuNodeFlo
++ MuFloNode* - proxy for Model, such as MuNodeFlo
 + Mu*View - SwiftUI View for [root,tree,branch,panel,node,leaf] 
 + Mu*Vm   - View Model for [root,tree,branch,panel,node,leaf] 
 
@@ -19,7 +19,7 @@ DeepMenu follows a MVVM pattern (Model, View, View Model)
 + MuRootStatus - publish changed state in [root,tree,edit,space]
 
 ##### MuTree* - horizonatal or vertical hierarcy of MuBranches 
-+ MuTreeVm - select MuNode, add or remove sub-branches
++ MuTreeVm - select MuFloNode, add or remove sub-branches
 + MuTreeView - SwiftUI view collection of MuBranch's 
 
 ##### MuBranch* - one level in a hierachy containing MuNodes
@@ -27,15 +27,15 @@ DeepMenu follows a MVVM pattern (Model, View, View Model)
 + MuBranchView - SwiftUI view collection of MuNodeViews
 + MuBranchPanelView - background panel for MuBranchView
         
-##### MuNode* - A persistent model of items (shared by many Mu*Vms) 
-+ MuNode - a generic node, may be shared my many NodeVm's (and views)
+##### MuFloNode* - A persistent model of items (shared by many Mu*Vms) 
++ MuFloNode - a generic node, may be shared my many NodeVm's (and views)
 + MuNodeFlo - a node proxy for Flo items 
 + MuNodeVm - a view model for a View, may share a Node from another Vm
 + MuNodeView - a SwiftUI view, has a companion MuNodeVm
 + MuNodeIconView - a subview of MuNodeView for icons
 + MuNodeTextView - a subview of MuNodeView for text
         
-##### MuLeaf* - subclass of MuNode with a user touch control  
+##### MuLeaf* - subclass of MuFloNode with a user touch control  
 + MuLeafTap - tap to activate, like a drum pad
 + MuLeafTog - toggle a switch 0 or 1
 + MuLeafSeg - segmented control
