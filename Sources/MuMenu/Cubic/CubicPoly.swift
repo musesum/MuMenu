@@ -1,10 +1,13 @@
 import QuartzCore
 
+typealias Pnt4 = (CGPoint,CGPoint,CGPoint,CGPoint)
+typealias Flt4 = (CGFloat,CGFloat,CGFloat,CGFloat)
+
 struct CubicPoly {
 
     var coef = Flt4(0,0,0,0)
 
-    func getFloat(_  t: CGFloat) -> CGFloat {
+    func getInter(_  t: CGFloat) -> CGFloat {
         
         let t2 = t * t
         let t3 = t2 * t
@@ -18,23 +21,14 @@ struct CubicPoly {
     ///     p(0) = x0, p(1) = x1 // and
     ///     p'(0) = t0, p'(1) = t1.
     ///
-    mutating func makeCubicPoly(_ f0: CGFloat,
-                                _ f1: CGFloat,
-                                _ t0: CGFloat,
-                                _ t1: CGFloat) {
-        
+    mutating func updateCoef(_ f0: CGFloat,
+                             _ f1: CGFloat,
+                             _ t0: CGFloat,
+                             _ t1: CGFloat) {
         coef.0 = f0
         coef.1 = t0
         coef.2 = -3*f0 + 3*f1 - 2*t0 - t1
         coef.3 =  2*f0 - 2*f1 +   t0 + t1
-    }
-
-    func getPoint(_ t: CGFloat,
-                  _ xy: CubicXY) -> CGPoint {
-
-        let p = CGPoint(x: xy.x.getFloat(t),
-                        y: xy.y.getFloat(t))
-        return p
     }
 
     func sqrtDistance(_ f0: CGFloat, _ f1: CGFloat) -> CGFloat {
@@ -55,7 +49,6 @@ struct CubicPoly {
         if d01 < 1e-4 { d01 = d12 }
         if d23 < 1e-4 { d23 = d12 }
 
-        makeCubicPoly(f.1, f.2, 0.5 * (f.2-f.0), 0.5 * (f.3-f.1))
+        updateCoef(f.1, f.2, 0.5 * (f.2-f.0), 0.5 * (f.3-f.1))
     }
-
 }
