@@ -1,5 +1,5 @@
 //  Created by warren on 7/26/19.
-//  Copyright © 2019 DeepMuse All rights reserved.
+//  Copyright © 2019 DeepMuse
 
 import Foundation
 import QuartzCore
