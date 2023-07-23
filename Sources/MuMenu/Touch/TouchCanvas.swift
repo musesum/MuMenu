@@ -19,7 +19,7 @@ open class TouchCanvas {
 
     private let buffer = DoubleBuffer<TouchCanvasItem>(internalLoop: false)
     private var lastItem: TouchCanvasItem? // repeat last touch until isDone
-    private var cubic = TouchCubic()
+    private var touchCubic = TouchCubic()
     private var indexNow = 0
     private var isDone = false
     private var filterForce = CGFloat(0) // Apple Pencil begins at 0.333; filter the blotch
@@ -97,8 +97,8 @@ extension TouchCanvas: BufferFlushDelegate {
         let point = item.cgPoint
         isDone = item.isDone()
 
-        cubic.addPointRadius(point, radius, isDone)
-        cubic.drawPoints(TouchCanvas.drawPoint)
+        touchCubic.addPointRadius(point, radius, isDone)
+        touchCubic.drawPoints(TouchCanvas.drawPoint)
         return isDone
     }
 
