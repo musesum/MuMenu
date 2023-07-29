@@ -2,8 +2,6 @@
 
 import Foundation
 
-
-
 // touch option
 enum MuTouchType  {
     

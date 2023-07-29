@@ -1,25 +1,13 @@
 
 import QuartzCore
+import MuFlo // CubicPoly
 
 public struct TouchCubic {
 
-    var x = CubicPoly() // point x
-    var y = CubicPoly() // point y
-    var r = CubicPoly() // radius
+    var x = CubicPoly<CGFloat>() // point x
+    var y = CubicPoly<CGFloat>() // point y
+    var r = CubicPoly<CGFloat>() // radius
 
-    /// Add cubic poly points.Problem is that control points are drawn in real time.
-    /// So need to make special cases for 1st control points.
-    /// For example for the first point a, b, c, d, e :
-    ///
-    ///          control   draw
-    ///          position  from
-    ///       t  0 1 2 3
-    ///       0: a a a a  a to a
-    ///       1: a a b b  a to b
-    ///       2: a b b c  b to b (redundant)
-    ///       3: a b c d  b to c
-    ///       4: b c d e  c to d // continue for f, g, ...
-    ///
     public mutating func addPointRadius(_ point  : CGPoint,
                                         _ radius : CGFloat,
                                         _ isDone : Bool   ) {
