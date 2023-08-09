@@ -82,7 +82,6 @@ open class MuFloNode: Identifiable, Equatable {
                     leaf.updateFromModel(flo, visit)
                 }
             }
-            
         }
     }
 

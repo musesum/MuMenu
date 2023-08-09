@@ -143,7 +143,7 @@ public class TouchDraw {
         guard let texBuf else { return }
         if point == .zero { return }
         let p = point * UIScreen.main.scale
-        let p1 = MuAspect.viewPointToTexture(p, viewSize: viewSize, texSize: texSize)
+        let p1 = MetAspect.viewPointToTexture(p, viewSize: viewSize, texSize: texSize)
 
         let r = radius * 2.0 - 1
         let r2 = Int(r * r / 4.0)

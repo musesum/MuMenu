@@ -4,6 +4,7 @@
 import Foundation
 import QuartzCore
 import UIKit
+import MuMetal // clipRect
 
 public typealias RangeXY = (ClosedRange<CGFloat>, ClosedRange<CGFloat>)
 
