@@ -1,9 +1,11 @@
 //  Created by warren on 12/19/22.
 
 import Foundation
-import MuAudio
 import MuPeer
 
+#if TouchMidi
+import MuAudio
+#endif
 extension TouchDraw: PeersControllerDelegate {
 
     public func didChange() {
@@ -21,10 +23,12 @@ extension TouchDraw: PeersControllerDelegate {
             MenuTouch.remoteItem(item)
             return
         }
+        #if TouchMidi
         if let item = try? decoder.decode(MidiItem.self, from: data) {
             TouchMidi.remoteItem(item)
             return
         }
+        #endif
     }
 
 

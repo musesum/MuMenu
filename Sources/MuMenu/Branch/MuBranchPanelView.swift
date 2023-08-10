@@ -11,11 +11,11 @@ struct MuBranchPanelView: View {
     var body: some View {
         GeometryReader { geo in
             Rectangle()
-                .background(.ultraThinMaterial)
+                .background(.clear)
                 .cornerRadius(Layout.cornerRadius)
                 .overlay(RoundedRectangle(cornerRadius: Layout.cornerRadius)
                     .stroke(strokeColor, lineWidth: lineWidth))
-                .opacity(0.66)
+                .opacity(0.10)
         }
     }
 }

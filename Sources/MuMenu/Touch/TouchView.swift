@@ -16,12 +16,13 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
     }
     var touchDraw: TouchDraw! // also a peers delegate
 
-    public init(_ touchDraw: TouchDraw!) {
+    public init(_ touchDraw: TouchDraw,
+                _ bounds: CGRect) {
 
         super.init(frame: .zero)
         self.touchDraw = touchDraw
 
-        let bounds = UIScreen.main.bounds
+        //!!! let bounds = UIScreen.main.bounds
         let w = bounds.size.width
         let h = bounds.size.height
         frame = CGRect(x: 0, y: 0, width: w, height: h)

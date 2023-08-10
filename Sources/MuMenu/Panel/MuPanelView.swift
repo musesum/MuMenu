@@ -15,7 +15,7 @@ struct MuPanelView: View {
         ZStack {
             // fill
             RoundedRectangle(cornerRadius: Layout.cornerRadius)
-                .fill(Layout.panelFill)
+                .fill(.clear) //??? (Layout.panelFill)
                 .overlay(RoundedRectangle(cornerRadius: Layout.cornerRadius)
                     .stroke(strokeColor, lineWidth: strokeWidth))
                 .frame(width:  panelVm.inner.width,

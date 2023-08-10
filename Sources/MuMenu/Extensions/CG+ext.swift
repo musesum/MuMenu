@@ -4,7 +4,7 @@
 import Foundation
 import QuartzCore
 import UIKit
-import MuMetal // clipRect
+//import MuMetal // clipRect
 
 public typealias RangeXY = (ClosedRange<CGFloat>, ClosedRange<CGFloat>)
 
@@ -72,13 +72,13 @@ extension CGRect {
     }
 
     /// normalize to 0...1 //??? replace with normalizeTo01 ??
-    public func normalize() -> ClipRect {
+    public func normalize() -> CGRect {
         let x = origin.x
         let y = origin.y
         let w = size.width
         let h = size.height
 
-        let pp = ClipRect(x: x / w,
+        let pp = CGRect(x: x / w,
                           y: y / h,
                           width: (w - 2*x) / w,
                           height:(h - 2*y) / h)

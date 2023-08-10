@@ -11,21 +11,17 @@ let package = Package(
             targets: ["MuMenu"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/musesum/MuAudio.git", from: "0.23.0"),
         .package(url: "https://github.com/musesum/MuPar.git", from: "0.23.0"),
         .package(url: "https://github.com/musesum/MuFlo.git", from: "0.23.0"),
-        .package(url: "https://github.com/musesum/MuPeer.git", from: "0.23.0"),
-        .package(url: "https://github.com/musesum/MuMetal.git", from: "0.23.0"), // TextureData
+        .package(url: "https://github.com/musesum/MuPeer.git", from: "0.23.0"), // TextureData
     ],
     targets: [
         .target(
             name: "MuMenu",
             dependencies: [
-                .product(name: "MuAudio", package: "MuAudio"),
                 .product(name: "MuPar", package: "MuPar"),
                 .product(name: "MuFlo", package: "MuFlo"),
-                .product(name: "MuPeer", package: "MuPeer"),
-                .product(name: "MuMetal", package: "MuMetal")],
+                .product(name: "MuPeer", package: "MuPeer")],
             resources: [.process("Resources")]),
         .testTarget(
             name: "MuMenuTests",

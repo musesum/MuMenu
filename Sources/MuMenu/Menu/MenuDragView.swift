@@ -4,7 +4,7 @@
 import SwiftUI
 
 /// SwiftUI DragGesture to navigate menu
-///
+
 public struct MenuDragView: View {
 
     @GestureState private var touchXY: CGPoint = .zero
@@ -22,9 +22,9 @@ public struct MenuDragView: View {
                     .environmentObject(menuVm.rootVm)
                     .onAppear() { menuVm.rootVm.touchVm.updateBounds(geo.frame(in: .global)) }
                     .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .global)
-                        .updating($touchXY) { (value, touchXY, _) in
-                            touchXY = value.location })
+                        .updating($touchXY) { (value, touchXY, _) in touchXY = value.location })
                     .onChange(of: touchXY) { menuVm.rootVm.touchVm.updateDragXY($0) }
+
                     .allowsHitTesting(true) // gestures provided by DragGesture
                 // .defersSystemGestures(on: .vertical)
             }

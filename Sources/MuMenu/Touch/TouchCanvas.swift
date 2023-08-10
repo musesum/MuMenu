@@ -26,21 +26,21 @@ open class TouchCanvas {
     private var isRemote: Bool
 
     public init(isRemote: Bool) {
-        
+
         self.isRemote = isRemote
         buffer.flusher = self
     }
 
     func addTouchItem(_ key: Int,
                       _ touch: UITouch) {
-        
+
         let force = touch.force
         let radius = touch.majorRadius
         let nextXY = touch.preciseLocation(in: nil)
         let phase = touch.phase
         let azimuth = touch.azimuthAngle(in: nil)
         let altitude = touch.altitudeAngle
-        
+
         let item = makeTouchItem(key, force, radius, nextXY, phase, azimuth, altitude, Visitor(.canvas))
         buffer.append(item)
         if PeersController.shared.hasPeers {
@@ -53,7 +53,7 @@ open class TouchCanvas {
             }
         }
     }
-    
+
     func makeTouchItem(_ key     : Int,
                        _ force   : CGFloat,
                        _ radius  : CGFloat,
@@ -62,17 +62,17 @@ open class TouchCanvas {
                        _ azimuth : CGFloat,
                        _ altitude: CGFloat,
                        _ visit   : Visitor) -> TouchCanvasItem {
-        
+
         let alti = (.pi/2 - altitude) / .pi/2
         let azim = CGVector(dx: -sin(azimuth) * alti, dy: cos(azimuth) * alti)
         var force = Float(force)
         var radius = Float(radius)
-        
+
         if let lastItem {
-            
+
             let forceFilter = Float(0.90)
             force = (lastItem.force * forceFilter) + (force * (1-forceFilter))
-            
+
             let radiusFilter = Float(0.95)
             radius = (lastItem.radius * radiusFilter) + (radius * (1-radiusFilter))
             //print(String(format: "* %.3f -> %.3f", lastItem.force, force))
@@ -106,7 +106,7 @@ extension TouchCanvas: BufferFlushDelegate {
 
         if buffer.isEmpty,
            TouchCanvas.touchRepeat,
-            let lastItem {
+           let lastItem {
             // finger is stationary repeat last movement
             _ = flushItem(lastItem)
         } else {
@@ -142,7 +142,7 @@ extension TouchCanvas {
         }
     }
     public static func addCanvasItem(_ item: TouchCanvasItem,
-                              isRemote: Bool) {
+                                     isRemote: Bool) {
         let key = item.key
         if canvasKey[key] == nil {
             canvasKey[key] = TouchCanvas(isRemote: isRemote)

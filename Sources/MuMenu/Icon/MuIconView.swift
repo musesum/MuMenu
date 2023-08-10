@@ -17,7 +17,7 @@ struct MuIconView: View {
                 .fill(fill)
                 .overlay(RoundedRectangle(cornerRadius:  Layout.cornerRadius)
                     .stroke(color, lineWidth: width)
-                    .background(Color.clear))
+                    .background(.clear))
 
             switch icon.iconType {
 

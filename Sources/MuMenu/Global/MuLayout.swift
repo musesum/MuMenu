@@ -19,9 +19,8 @@ struct Layout {
     static let animateSlow = Animation.easeInOut(duration: 0.50)
     static let hoverRing = "icon.ring.roygbiv"
     static let lagStep = TimeInterval(1.0/32.0) // sixteenth of a second
-    static let panelFill = Color(white: 0.01, opacity: 0.5)
-    static func togColor(_ spot: Bool) -> Color {
-        return spot ? .white : Color(white: 0.4) }
+    static let panelFill = Color(white: 0.01, opacity: 0.25)
+    static func togColor(_ spot: Bool) -> Color { return spot ? .white : Color(white: 0.4) }
 
     /// quick animatin for fla
     static var flashAnim: Animation { .easeInOut(duration: 0.20) }
@@ -36,11 +35,11 @@ struct Layout {
     static func strokeColor(_ high: Bool) -> Color {
         let color = (high
                      ? Color(white: 1.0, opacity: 0.8)
-                     : Color(white: 0.5, opacity: 0.4))
+                     : Color(white: 0.8, opacity: 0.7))
         return color
     }
     static func strokeWidth(_ high: Bool) -> CGFloat {
-        return(high ? 1.5 : 1.0)
+        return(high ? 2.0 : 1.2)
     }
 
     static func tapColor(_ high: Bool) -> Color {
