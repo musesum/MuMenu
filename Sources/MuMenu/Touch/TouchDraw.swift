@@ -3,7 +3,7 @@ import QuartzCore
 import UIKit
 import MuFlo
 import MuVisit
-//import MuMetal // TextureData
+import MuMetal
 
 public class TouchDraw {
 
@@ -116,7 +116,7 @@ public class TouchDraw {
         self.texBuf = texBuf
         self.texSize = size
 
-        if TextureData.shared.data != nil {
+        if TextureData["TouchDraw"] != nil {
             fill = -1 // preempt fill after data
             drawData()
             return false
@@ -188,7 +188,13 @@ public class TouchDraw {
 
         guard let texBuf else { return }
         if point == .zero { return }
-        let p = point * UITraitCollection().displayScale
+
+        #if os(iOS)
+        let scale = UIScreen.main.scale
+        #else
+        let scale = CGFloat(3) //??? UITraitCollection().displayScale
+        #endif
+        let p = point * scale
         let p1 = viewPointToTexture(p, viewSize: viewSize, texSize: texSize)
 
         let r = radius * 2.0 - 1
@@ -248,20 +254,15 @@ public class TouchDraw {
         let h = Int(texSize.height)
         let count = w * h // count
 
-        TextureData.shared.data?.withUnsafeBytes { dataPtr in
-            guard let texBuf else { return }
-            let tex32Ptr = dataPtr.bindMemory(to: UInt32.self)
-            for i in 0 ..< count {
-                texBuf[i] = tex32Ptr[i]
+        if let data = TextureData["TouchDraw"] {
+            data?.withUnsafeBytes { dataPtr in
+                guard let texBuf else { return }
+                let tex32Ptr = dataPtr.bindMemory(to: UInt32.self)
+                for i in 0 ..< count {
+                    texBuf[i] = tex32Ptr[i]
+                }
             }
+            TextureData["TouchDraw"] = nil
         }
-        TextureData.shared.data = nil
     }
-}
-
-public class TextureData {
-    public static let shared = TextureData()
-    public var data: Data?
-
-    public init() {}
 }
