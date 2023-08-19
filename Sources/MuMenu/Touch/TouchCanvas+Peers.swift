@@ -13,7 +13,7 @@ extension TouchCanvas: PeersControllerDelegate {
 
         let decoder = JSONDecoder()
         if let item = try? decoder.decode(TouchCanvasItem.self, from: data) {
-            TouchCanvas.remoteItem(item)
+            remoteItem(item)
             return true
         }
         return false

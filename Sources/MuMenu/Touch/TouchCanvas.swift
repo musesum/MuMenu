@@ -5,34 +5,44 @@ import MuFlo // digits
 import MuVisit
 import MuPeer
 import MuTime // DoubleBuffer
-
+import MuMetal
 
 public typealias TouchDrawPoint = ((CGPoint, CGFloat)->())
 public typealias TouchDrawRadius = ((TouchCanvasItem)->(CGFloat))
 
-open class TouchCanvas {
+open class TouchCanvasBuffer {
 
-    static public var touchRepeat = true /// repeat touch, even when not moving finger
-    static var drawPoint: TouchDrawPoint?
-    static var drawRadius: TouchDrawRadius?
-    static var canvasKey = [Int: TouchCanvas]()
-
-    private let buffer = DoubleBuffer<TouchCanvasItem>(internalLoop: false)
-    private var lastItem: TouchCanvasItem? // repeat last touch until isDone
-    private var touchCubic = TouchCubic()
+    var lastItem: TouchCanvasItem? // repeat last touch until isDone
+                                   // each finger or brush gets its own double buffer
+    public let buffer = DoubleBuffer<TouchCanvasItem>(internalLoop: false)
     private var indexNow = 0
+    private var touchCanvas: TouchCanvas
     private var isDone = false
-    private var filterForce = CGFloat(0) // Apple Pencil begins at 0.333; filter the blotch
-    private var isRemote: Bool
+    private var touchCubic = TouchCubic()
 
-    public init(isRemote: Bool) {
-
-        self.isRemote = isRemote
+    public init(_ touch: UITouch,
+                _ touchCanvas: TouchCanvas) {
+        self.touchCanvas = touchCanvas
         buffer.flusher = self
+
+        addTouchItem(touch)
+        
     }
 
-    func addTouchItem(_ key: Int,
-                      _ touch: UITouch) {
+    public init(_ touchItem: TouchCanvasItem,
+                _ touchCanvas: TouchCanvas) {
+        self.touchCanvas = touchCanvas
+        buffer.flusher = self
+
+        addTouchCanvasItem(touchItem)
+
+    }
+
+    public func addTouchCanvasItem(_ touchItem: TouchCanvasItem) {
+        buffer.append(touchItem)
+    }
+
+    public func addTouchItem(_ touch: UITouch) {
 
         let force = touch.force
         let radius = touch.majorRadius
@@ -41,8 +51,8 @@ open class TouchCanvas {
         let azimuth = touch.azimuthAngle(in: nil)
         let altitude = touch.altitudeAngle
 
-        let item = makeTouchItem(key, force, radius, nextXY, phase, azimuth, altitude, Visitor(.canvas))
-        buffer.append(item)
+        let item = makeTouchCanvasItem(touch.hash, force, radius, nextXY, phase, azimuth, altitude, Visitor(.canvas))
+
         if PeersController.shared.hasPeers {
             let encoder = JSONEncoder()
             do {
@@ -52,111 +62,124 @@ open class TouchCanvas {
                 print(error)
             }
         }
-    }
+        buffer.append(item)
 
-    func makeTouchItem(_ key     : Int,
-                       _ force   : CGFloat,
-                       _ radius  : CGFloat,
-                       _ nextXY  : CGPoint,
-                       _ phase   : UITouch.Phase,
-                       _ azimuth : CGFloat,
-                       _ altitude: CGFloat,
-                       _ visit   : Visitor) -> TouchCanvasItem {
+        func makeTouchCanvasItem(
+            _ key     : Int,
+            _ force   : CGFloat,
+            _ radius  : CGFloat,
+            _ nextXY  : CGPoint,
+            _ phase   : UITouch.Phase,
+            _ azimuth : CGFloat,
+            _ altitude: CGFloat,
+            _ visit   : Visitor) -> TouchCanvasItem {
 
-        let alti = (.pi/2 - altitude) / .pi/2
-        let azim = CGVector(dx: -sin(azimuth) * alti, dy: cos(azimuth) * alti)
-        var force = Float(force)
-        var radius = Float(radius)
+            let alti = (.pi/2 - altitude) / .pi/2
+            let azim = CGVector(dx: -sin(azimuth) * alti, dy: cos(azimuth) * alti)
+            var force = Float(force)
+            var radius = Float(radius)
 
-        if let lastItem {
+            if let lastItem {
 
-            let forceFilter = Float(0.90)
-            force = (lastItem.force * forceFilter) + (force * (1-forceFilter))
+                let forceFilter = Float(0.90)
+                force = (lastItem.force * forceFilter) + (force * (1-forceFilter))
 
-            let radiusFilter = Float(0.95)
-            radius = (lastItem.radius * radiusFilter) + (radius * (1-radiusFilter))
-            //print(String(format: "* %.3f -> %.3f", lastItem.force, force))
-        } else {
-            force = 0 // bug: always begins at 0.5
+                let radiusFilter = Float(0.95)
+                radius = (lastItem.radius * radiusFilter) + (radius * (1-radiusFilter))
+                //print(String(format: "* %.3f -> %.3f", lastItem.force, force))
+            } else {
+                force = 0 // bug: always begins at 0.5
+            }
+            let item = TouchCanvasItem(key, nextXY, radius, force, azim, phase, visit)
+            return item
         }
-        let item = TouchCanvasItem(key, nextXY, radius, force, azim, phase, visit)
-        return item
     }
-}
 
-extension TouchCanvas: BufferFlushDelegate {
+}
+extension TouchCanvasBuffer: BufferFlushDelegate {
 
     public typealias Item = TouchCanvasItem
 
+    @discardableResult
     public func flushItem<Item>(_ item: Item) -> Bool {
-        guard let item = item as? TouchCanvasItem else {
-            return false }
+        guard let item = item as? TouchCanvasItem else { return false }
+
         lastItem = item
 
-        let radius = TouchCanvas.drawRadius?(item) ?? 10
+        let radius = touchCanvas.touchFlo.updateRadius(item)
         let point = item.cgPoint
         isDone = item.isDone()
 
         touchCubic.addPointRadius(point, radius, isDone)
-        touchCubic.drawPoints(TouchCanvas.drawPoint)
+        touchCubic.drawPoints(touchCanvas.touchFlo.drawPoint)
         return isDone
     }
 
-    func flushTouches()  {
+    func flushTouches() -> Bool {
 
         if buffer.isEmpty,
-           TouchCanvas.touchRepeat,
+           TouchCanvas.shared.touchRepeat,
            let lastItem {
             // finger is stationary repeat last movement
-            _ = flushItem(lastItem)
+            flushItem(lastItem)
         } else {
             isDone = buffer.flushBuf()
         }
+        return isDone
+
+    }
+
+}
+
+open class TouchCanvas {
+
+    static public let shared = TouchCanvas()
+    static var touchBuffers = [Int: TouchCanvasBuffer]()
+    public var touchRepeat = true /// repeat touch, even when not moving finger
+    public var touchFlo = TouchFlo()
+
+    public init() {
+
+        PeersController.shared.peersDelegates.append(self)
+    }
+    deinit {
+        PeersController.shared.remove(peersDelegate: self)
     }
 }
 
 extension TouchCanvas {
 
-    public static func beginTouch(_ touch: UITouch) -> Bool {
-        let touchCanvas = TouchCanvas(isRemote: false)
-        let key = touch.hash
-        canvasKey[key] = touchCanvas
-        touchCanvas.addTouchItem(key, touch)
+    public func beginTouch(_ touch: UITouch) -> Bool {
+        TouchCanvas.touchBuffers[touch.hash] = TouchCanvasBuffer(touch, self)
         return true
     }
-    public static func updateTouch(_ touch: UITouch) -> Bool {
-        let key = touch.hash
-        if let touchCanvas = canvasKey[key] {
-            touchCanvas.addTouchItem(key, touch)
+    public func updateTouch(_ touch: UITouch) -> Bool {
+        if let touchBuffer = TouchCanvas.touchBuffers[touch.hash] {
+            touchBuffer.addTouchItem(touch)
             return true
         }
+
         return false
     }
-    static public func remoteItem(_ item: TouchCanvasItem) {
-        if let canvas = canvasKey[item.key] {
-            canvas.buffer.append(item)
+    public func remoteItem(_ item: TouchCanvasItem) {
+
+        if let touchBuffer = TouchCanvas.touchBuffers[item.key] {
+            touchBuffer.addTouchCanvasItem(item)
         } else {
-            let canvas = TouchCanvas(isRemote: true)
-            canvasKey[item.key] = canvas
-            canvas.buffer.append(item)
+            TouchCanvas.touchBuffers[item.key] = TouchCanvasBuffer(item, self)
         }
-    }
-    public static func addCanvasItem(_ item: TouchCanvasItem,
-                                     isRemote: Bool) {
-        let key = item.key
-        if canvasKey[key] == nil {
-            canvasKey[key] = TouchCanvas(isRemote: isRemote)
-        }
-        canvasKey[key]?.buffer.append(item)
     }
     public static func flushTouchCanvas() {
-
-        for (key, canvas) in canvasKey {
-            canvas.flushTouches()
-            if canvas.isDone {
-                canvasKey.removeValue(forKey: key)
-            }
+        var removeKeys = [Int]()
+        for (key, buf) in touchBuffers {
+            let isDone = buf.flushTouches()
+            if isDone { removeKeys.append(key) }
+        }
+        for key in removeKeys {
+            touchBuffers.removeValue(forKey: key)
         }
     }
 
 }
+
+

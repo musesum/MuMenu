@@ -5,8 +5,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/musesum/MuFlo.git",
       "state" : {
-        "revision" : "c9299abd9c687ea4b484fe021841f421a95305d7",
-        "version" : "0.23.201"
+        "revision" : "214e6f72052b8a29fb5711e80e1a0a0f67a0d9aa",
+        "version" : "0.23.811"
+      }
+    },
+    {
+      "identity" : "mumetal",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/musesum/MuMetal.git",
+      "state" : {
+        "revision" : "130805fc2c9454181a5eac7adae37d4c6c47d700",
+        "version" : "0.23.819"
       }
     },
     {
@@ -14,8 +23,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/musesum/MuPar.git",
       "state" : {
-        "revision" : "84c1daaebac2091286b4da2381a5fc4108f276d3",
-        "version" : "0.23.201"
+        "revision" : "38596069f16a9a2aeb831aa88e5e80cdbd582780",
+        "version" : "0.23.809"
+      }
+    },
+    {
+      "identity" : "mupeer",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/musesum/MuPeer.git",
+      "state" : {
+        "revision" : "dfd053d91ec059e552c74d5fb419d89dbbdd6587",
+        "version" : "0.23.818"
       }
     },
     {
@@ -23,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/musesum/MuSkyFlo.git",
       "state" : {
-        "revision" : "2aa1ca2bac367dca9114bfa49762168cc913cd71",
-        "version" : "0.23.201"
+        "revision" : "b30c2e2598fc9039fa53999bb8d92e8e46021929",
+        "version" : "0.23.811"
       }
     },
     {
@@ -32,8 +50,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/musesum/MuTime.git",
       "state" : {
-        "revision" : "81adea94421037659bca892ac210686e8b28d7e3",
-        "version" : "0.23.201"
+        "revision" : "4884df7b5085fb5a6b8f7864cd785782fa1f10ac",
+        "version" : "0.23.811"
+      }
+    },
+    {
+      "identity" : "muvisit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/musesum/MuVisit.git",
+      "state" : {
+        "revision" : "ba4d7a30208f21c72938980b955a2a5e61265698",
+        "version" : "0.23.811"
       }
     },
     {
@@ -43,6 +70,15 @@
       "state" : {
         "revision" : "937e904258d22af6e447a0b72c0bc67583ef64a2",
         "version" : "1.0.4"
+      }
+    },
+    {
+      "identity" : "swift-numerics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-numerics",
+      "state" : {
+        "revision" : "0a5bc04095a675662cf24757cc0640aa2204253b",
+        "version" : "1.0.2"
       }
     }
   ],
