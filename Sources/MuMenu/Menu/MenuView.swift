@@ -5,7 +5,7 @@ import MuFlo
 
 
 public protocol MenuDelegate {
-    func window(bounds: CGRect)
+    func window(bounds: CGRect, insets: EdgeInsets)
 }
 
 public struct MenuView: View {
@@ -39,8 +39,8 @@ public struct MenuView: View {
                     MenuTouchView(menuVm: menuVm)
                 }
             }
-            .onAppear { delegate.window(bounds: geo.frame(in: .global)) }
-            .onChange(of: geo.frame(in: .global)) { delegate.window(bounds: $0) }
+            .onAppear { delegate.window(bounds: geo.frame(in: .global), insets: geo.safeAreaInsets) }
+            .onChange(of: geo.frame(in: .global)) { delegate.window(bounds: $0, insets: geo.safeAreaInsets) }
 
             .statusBar(hidden: true)
         }

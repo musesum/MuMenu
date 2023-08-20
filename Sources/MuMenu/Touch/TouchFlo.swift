@@ -119,11 +119,11 @@ extension TouchFlo {
         guard let texBuf else { return }
         if point == .zero { return }
 
-#if os(xrOS)
-        let scale = CGFloat(2) //??? UITraitCollection().displayScale
-#else
+        #if os(xrOS)
+        let scale = CGFloat(2) //?? UITraitCollection().displayScale == 0
+        #else
         let scale = UIScreen.main.scale
-#endif
+        #endif
 
         let p = point * scale
         let p1 = viewPointToTexture(p, viewSize: viewSize, texSize: texSize)
