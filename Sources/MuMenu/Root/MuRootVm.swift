@@ -51,6 +51,11 @@ public class MuRootVm: ObservableObject, Equatable {
         self.corner = corner
         self.touchVm = MuTouchVm(corner)
         self.peers = PeersController.shared
+        PeersController.shared.peersDelegates.append(self)
+    }
+
+    deinit {
+        PeersController.shared.remove(peersDelegate: self)
     }
 
     public func updateTreeVms(_ treeVms: [MuTreeVm]) {

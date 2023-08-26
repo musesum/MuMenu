@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/musesum/MuFlo.git",
       "state" : {
-        "revision" : "214e6f72052b8a29fb5711e80e1a0a0f67a0d9aa",
-        "version" : "0.23.811"
+        "revision" : "77d688bb2226e884b18b7646c920852c7f8996ba",
+        "version" : "0.23.824"
       }
     },
     {
@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/musesum/MuMetal.git",
       "state" : {
-        "revision" : "130805fc2c9454181a5eac7adae37d4c6c47d700",
-        "version" : "0.23.819"
+        "revision" : "b91ab5a12ace659c783c6a4201286c5e77f0ac7c",
+        "version" : "0.23.823"
       }
     },
     {
@@ -79,6 +79,15 @@
       "state" : {
         "revision" : "0a5bc04095a675662cf24757cc0640aa2204253b",
         "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "zipfoundation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/weichsel/ZIPFoundation.git",
+      "state" : {
+        "revision" : "43ec568034b3731101dbf7670765d671c30f54f3",
+        "version" : "0.9.16"
       }
     }
   ],

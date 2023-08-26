@@ -6,6 +6,18 @@
 ### Components
 ![Diagram](Resources/Components.png)
 
+### Design
+
+MuMenu is both a namespace tree and controller. Navigating is similar to any other menu trees, with one key difference: it saves your place. Not, only for the last thing you done, but for everthing. The last thing you've done may be several levels deep and yet hovering over its main branch will automatically expend to show where you left off. Or, perhaps something a few days ago -- hovering over its part will reveal it. Automatically. So, each branch bookmarks its sub-branch, and that branch unfolds the sub-sub-branch, and so on. 
+
+For example, let's say you have a 5^5 menu, averaging 5 choices and goes 5 levels deep. That would allow you to track 3,123 choices. With eye-tracking, that choice could be made in less than a second. Maybe. Perhaps, similar gains with an 8^8 menu wrapping 16 million choice? We don't know. It hasn't been tested. Yet. 
+
+### Status
+
+For now, MuMenu works with a toy: a visual Music synthesizer, called Deep Muse. The goal is to wrap about 2000 real-time parameters. It currently works on iOS and iPadOS, and a simulator for xrOS. 
+
+The eyetracking and handpose is not yet available.
+
 #### Naming convention for components
 DeepMenu follows a MVVM pattern (Model, View, View Model) 
 
@@ -18,7 +30,7 @@ DeepMenu follows a MVVM pattern (Model, View, View Model)
 + MuRootView - manage UIViews for each corner 
 + MuRootStatus - publish changed state in [root,tree,edit,space]
 
-##### MuTree* - horizonatal or vertical hierarcy of MuBranches 
+##### MuTree* - horizontal or vertical hierarcy of MuBranches 
 + MuTreeVm - select MuFloNode, add or remove sub-branches
 + MuTreeView - SwiftUI view collection of MuBranch's 
 
@@ -88,53 +100,3 @@ DeepMenu follows a MVVM pattern (Model, View, View Model)
   - `√` `𐂷` `✎` `⬚` - status: .root .tree .edit .space
   - `V⃝ 1⇨0=0` vertical branch from single level to hidden 
   - `H⃝ 0⇨1=1` horzontal branch from hidden to single level
-
-  
-### SwiftUI restrictions
-+ SwiftUI Views do not modify its own state  
-  - So, no @State, @Binding, or @StateObject are used
-  - Instead, change state in view model (Vm)
-+ View Model(Vm) is a class, not struct
-  - fine tuned @Published to update View
-  - synchronize state between devices, including: iPhone, iPad, TV, watch, Shareplay
-+ pros
-    - @State has been somewhat buggy in the past
-    - @State, @Binding, @StateObject adds semantic complexity
-    - Simplify migration from UIKit with MVVM pattern
-    - confusion on how to extract value from gestures
-+ cons 
-    - requires a manually enforced coding policy 
-        
-### SwiftLint violations - emphasis on columnwise alignment
-+ Column-wise comments on right side
-+ Finite State Machine columns for case statements
-+ pros
-  - Human Readable; catch mistakes
-  - allow column-wise cursor to edit multiple rows at a time    
-+ cons 
-  - when refactoring, may need manual fixup
-  - will not pass standard SwiftLint
-  - requires a manually enforced coding policy 
-  - cannot build documentation with right column /// comments 
-  - maybe discarded in favor of dev team consensus 
-        
-##### Exceptions to columnwise alignment 
-        
-+ lvalue = rvalue, where equals(=) sign is always single space from lvalue
-
-         name = value
-         longerName = value
-    
-    so, avoid
-      
-         name       = value
-         longerNmae = value
-         
-    to allow later searches 
-
-         name =
-         longerName =
-             
-see [Baeker & Marcus](https://dl.acm.org/doi/pdf/10.1145/800045.801621)
-        using typography for source code
-         

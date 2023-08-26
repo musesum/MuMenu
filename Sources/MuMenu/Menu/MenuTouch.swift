@@ -2,6 +2,7 @@
 
 import UIKit
 import MuTime
+import MuPeer
 
 public var CornerTouchVm = [Int: MuTouchVm]()
 
@@ -12,10 +13,11 @@ public class MenuTouch {
     private let isRemote: Bool
 
     public init(isRemote: Bool) {
-
+        
         self.isRemote = isRemote
         buffer.flusher = self
     }
+
 }
 
 extension MenuTouch: BufferFlushDelegate {
@@ -44,7 +46,6 @@ extension MenuTouch: BufferFlushDelegate {
         return false // never invalidate internal timer
     }
 }
-
 extension MenuTouch {
 
     public static func remoteItem(_ item: MenuItem) {

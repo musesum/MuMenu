@@ -6,12 +6,7 @@ import MuPeer
 open class MuMenu {
 
     public static let bundle = Bundle.module
-
-    public init() {
-        PeersController.shared.peersDelegates.append(self)
-
-    }
-
+    
     public static func read(_ filename: String,
                             _ ext: String) -> String? {
 
@@ -26,21 +21,4 @@ open class MuMenu {
         }
         return nil
     }
-}
-extension MuMenu: PeersControllerDelegate {
-
-    public func didChange() {
-    }
-
-    public func received(data: Data,
-                         viaStream: Bool) -> Bool {
-
-        let decoder = JSONDecoder()
-        if let item = try? decoder.decode(MenuItem.self, from: data) {
-            MenuTouch.remoteItem(item)
-            return true
-        }
-        return false
-    }
-
 }

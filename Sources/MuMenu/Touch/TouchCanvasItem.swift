@@ -1,6 +1,7 @@
 
 import UIKit
 import MuVisit
+import MuTime // DoubleBuffer
 
 public struct TouchCanvasItem: Codable {
     

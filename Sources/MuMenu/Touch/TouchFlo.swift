@@ -5,13 +5,6 @@ import MuFlo
 import MuVisit
 import MuMetal
 
-public class TextureData {
-    public static let shared = TextureData()
-    public var data: Data?
-
-    init() {}
-}
-
 public class TouchFlo {
 
     private var root     : Flo?
@@ -31,13 +24,16 @@ public class TouchFlo {
     private var texSize = CGSize.zero
     public var viewSize = CGSize(width: 1920, height: 1080)
     private var texBuf: UnsafeMutablePointer<UInt32>?
+    private var archive: FloArchive?
 
     public init() {
     }
 
-    public func parseRoot(_ root: Flo) {
+    public func parseRoot(_ root: Flo,
+                          _ archive: FloArchive) {
 
         self.root = root
+        self.archive = archive
 
         let sky    = root.bind("sky"   )
         let input  = sky .bind("input" )
@@ -199,14 +195,14 @@ extension TouchFlo {
         let h = Int(texSize.height)
         let count = w * h // count
 
-        TextureData.shared.data?.withUnsafeBytes { dataPtr in
+        archive?.textureData["draw"]??.withUnsafeBytes { dataPtr in
             guard let texBuf else { return }
             let tex32Ptr = dataPtr.bindMemory(to: UInt32.self)
             for i in 0 ..< count {
                 texBuf[i] = tex32Ptr[i]
             }
         }
-        TextureData.shared.data = nil
+        archive?.textureData["draw"] = nil
     }
 }
 extension TouchFlo: TouchDrawDelegate {
@@ -217,7 +213,7 @@ extension TouchFlo: TouchDrawDelegate {
         self.texBuf = texBuf
         self.texSize = size
 
-        if TextureData.shared.data != nil{
+        if archive?.textureData["draw"] != nil {
             fill = -1 // preempt fill after data
             drawData()
             return false
