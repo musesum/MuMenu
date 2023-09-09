@@ -8,7 +8,6 @@ import MuMetal
 public typealias TouchDrawPoint = ((CGPoint, CGFloat)->())
 public typealias TouchDrawRadius = ((TouchCanvasItem)->(CGFloat))
 
-
 open class TouchCanvas {
 
     static public let shared = TouchCanvas()

@@ -20,7 +20,6 @@ open class TouchCanvasBuffer {
         buffer.flusher = self
 
         addTouchItem(touch)
-
     }
 
     public init(_ touchItem: TouchCanvasItem,

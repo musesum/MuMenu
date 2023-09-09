@@ -23,10 +23,12 @@ extension LayerRenderer.Clock.Instant.Duration {
     }
 }
 
-class Renderer {
+public class Renderer {
 
     public let device: MTLDevice
     let commandQueue: MTLCommandQueue
+    var rotation: Float = 0
+
 //    var dynamicUniformBuffer: MTLBuffer
 //    var pipelineState: MTLRenderPipelineState
 //    var depthState: MTLDepthStencilState
@@ -36,16 +38,13 @@ class Renderer {
 //    var uniformBufferOffset = 0
 //    var uniformBufferIndex = 0
 //    var uniforms: UnsafeMutablePointer<UniformsArray>
-//
-    var rotation: Float = 0
-//
 //    var mesh: MTKMesh
 
     let arSession: ARKitSession
     let worldTracking: WorldTrackingProvider
     let layerRenderer: LayerRenderer
     
-    init(_ layerRenderer: LayerRenderer) {
+public init(_ layerRenderer: LayerRenderer) {
         self.layerRenderer = layerRenderer
         self.device = layerRenderer.device
         self.commandQueue = self.device.makeCommandQueue()!
@@ -86,11 +85,11 @@ class Renderer {
 //            fatalError("Unable to load texture. Error info: \(error)")
 //        }
 //        
-//        worldTracking = WorldTrackingProvider()
-//        arSession = ARKitSession()
-    }
-    
-    func startRenderLoop() {
+        worldTracking = WorldTrackingProvider()
+        arSession = ARKitSession()
+ }
+
+public func startRenderLoop() {
 //        Task {
 //            do {
 //                try await arSession.run([worldTracking])
@@ -205,7 +204,7 @@ class Renderer {
 //        uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents() + uniformBufferOffset).bindMemory(to:UniformsArray.self, capacity:1)
 //    }
 
-    private func updateGameState(drawable: LayerRenderer.Drawable, pose: Pose?) {
+//    private func updateGameState(drawable: LayerRenderer.Drawable, pose: Pose?) {
 //        /// Update any game state before rendering
 //        
 //        let rotationAxis = SIMD3<Float>(1, 1, 0)
@@ -233,9 +232,9 @@ class Renderer {
 //        if drawable.views.count > 1 {
 //            self.uniforms[0].uniforms.1 = uniforms(forViewIndex: 1)
 //        }
-        
-        rotation += 0.01
-    }
+//        
+//        rotation += 0.01
+//    }
 
     /// Per frame updates hare
     func renderFrame() {
