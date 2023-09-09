@@ -23,8 +23,11 @@ public struct MenuDragView: View {
                     .onAppear() { menuVm.rootVm.touchVm.updateBounds(geo.frame(in: .global)) }
                     .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .global)
                         .updating($touchXY) { (value, touchXY, _) in touchXY = value.location })
+                #if os(xrOS)
+                    .onChange(of: touchXY) { old, now in menuVm.rootVm.touchVm.updateDragXY(now) }
+                #else
                     .onChange(of: touchXY) { menuVm.rootVm.touchVm.updateDragXY($0) }
-
+                #endif
                     .allowsHitTesting(true) // gestures provided by DragGesture
                 // .defersSystemGestures(on: .vertical)
             }

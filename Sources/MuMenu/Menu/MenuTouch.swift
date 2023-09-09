@@ -1,7 +1,7 @@
 //  Created by warren on 9/26/22
 
 import UIKit
-import MuTime
+import MuFlo // double buffer
 import MuPeer
 
 public var CornerTouchVm = [Int: MuTouchVm]()

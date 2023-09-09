@@ -3,6 +3,7 @@
 
 import SwiftUI
 
+
 public struct MenuTouchView: View {
 
     let menuVm: MenuVm

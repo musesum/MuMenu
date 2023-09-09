@@ -2,7 +2,6 @@
 
 import Foundation
 import MuFlo
-import MuVisit
 
 /// MuLeaf* Model and View  protocols
 public protocol MuLeafProtocol {

@@ -2,7 +2,6 @@
 
 import UIKit
 import MuFlo // digits
-import MuVisit
 import MuPeer
 import MuMetal
 

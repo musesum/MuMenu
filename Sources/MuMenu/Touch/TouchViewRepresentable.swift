@@ -10,6 +10,7 @@ struct TouchViewRepresentable: UIViewRepresentable {
 
     public init(_ touchVms: [MuTouchVm],
                 _ touchView: TouchView) {
+
         self.touchVms = touchVms
         self.touchView = touchView
         for touchVm in touchVms {

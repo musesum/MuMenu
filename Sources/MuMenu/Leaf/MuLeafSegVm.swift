@@ -2,8 +2,6 @@
 
 import SwiftUI
 import MuFlo
-import MuVisit
-
 /// segmented control
 public class MuLeafSegVm: MuLeafVm {
 

@@ -2,7 +2,6 @@
 
 import SwiftUI
 import MuFlo
-import MuVisit
 
 /// 1d slider control
 public class MuLeafValVm: MuLeafVm {

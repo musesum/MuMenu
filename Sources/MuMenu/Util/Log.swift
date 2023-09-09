@@ -1,8 +1,7 @@
 // Created by warren on 10/5/21.
 
 import SwiftUI
-import MuFlo // .digits
-import MuVisit
+import MuFlo
 
 public func log(_ title: String,
                 format: String = "%.0f",

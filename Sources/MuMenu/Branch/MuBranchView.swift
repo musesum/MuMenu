@@ -124,7 +124,11 @@ fileprivate struct bodyV: View {
                 }
             }
             .onAppear { branchVm.updateBounds(geo.frame(in: .global)) }
+            #if os(xrOS)
+            .onChange(of: geo.frame(in: .global)) { old, now in branchVm.updateBounds(now) }
+            #else
             .onChange(of: geo.frame(in: .global)) { branchVm.updateBounds($0) }
+            #endif
         }
         .frame(width: panelVm.outer.width, height: panelVm.outer.height)
         .offset(branchVm.branchShift)

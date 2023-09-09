@@ -20,8 +20,11 @@ struct MuNodeView: View {
                     default: MuIconView(nodeVm: nodeVm, icon: nodeVm.node.icon)
                 }
             }
-
+            #if os(xrOS)
+            .onChange(of: geo.frame(in: .global)) { old,now in nodeVm.updateCenter(now) }
+            #else
             .onChange(of: geo.frame(in: .global)) { nodeVm.updateCenter($0) }
+            #endif
             .onAppear { nodeVm.updateCenter(geo.frame(in: .global)) }
         }
         .frame(width: panelVm.inner.width, height: panelVm.inner.height)
@@ -46,7 +49,11 @@ struct MuCursorView: View {
     var body: some View {
         GeometryReader() { geo in
             MuIconView(nodeVm: nodeVm, icon: nodeVm.node.icon)
+            #if os(xrOS)
+            .onChange(of: geo.frame(in: .global)) { old, now in nodeVm.updateCenter(now) }
+            #else
             .onChange(of: geo.frame(in: .global)) { nodeVm.updateCenter($0) }
+            #endif
             .onAppear { nodeVm.updateCenter(geo.frame(in: .global)) }
         }
         .frame(width: diameter, height: diameter)

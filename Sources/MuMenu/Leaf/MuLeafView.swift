@@ -87,7 +87,11 @@ struct MuLeafBodyView<Content: View>: View {
             MuPanelView(leafVm: leafVm)
             content() // custom control thumb is here
                 .onAppear { leafVm.updateRunway(geo.frame(in: .global)) }
+            #if os(xrOS)
+                .onChange(of: geo.frame(in: .global)) { old, now in leafVm.updateRunway(now) }
+            #else
                 .onChange(of: geo.frame(in: .global)) { leafVm.updateRunway($0) }
+            #endif
         }
         .frame(width: panelVm.inner.width, height: panelVm.inner.height)
     }
@@ -108,7 +112,11 @@ struct MuTogBodyView<Content: View>: View {
 
             content() // custom control thumb is here
                 .onAppear { leafVm.updateRunway(geo.frame(in: .global)) }
+            #if os(xrOS)
+                .onChange(of: geo.frame(in: .global)) { old, now in leafVm.updateRunway(now) }
+            #else
                 .onChange(of: geo.frame(in: .global)) { leafVm.updateRunway($0) }
+            #endif
         }
         .frame(width: panelVm.inner.width, height: panelVm.inner.height)
     }

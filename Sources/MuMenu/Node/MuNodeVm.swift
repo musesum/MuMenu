@@ -1,7 +1,7 @@
 // Created by warren on 10/17/21.
 
 import SwiftUI
-import MuPar // strHash
+import MuFlo // strHash
 
 
 public class MuNodeVm: Identifiable, ObservableObject {

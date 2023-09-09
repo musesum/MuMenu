@@ -2,9 +2,7 @@
 
 import Foundation
 import SwiftUI
-import MuVisit
-import MuTime // NextFrame
-
+import MuFlo
 public enum Toggle { case on, off }
 
 /// extend MuNodeVm to show title and thumb position

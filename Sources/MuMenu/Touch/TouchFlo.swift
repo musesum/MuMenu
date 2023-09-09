@@ -2,7 +2,6 @@
 import QuartzCore
 import UIKit
 import MuFlo
-import MuVisit
 import MuMetal
 
 public class TouchFlo {

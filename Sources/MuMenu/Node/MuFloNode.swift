@@ -2,7 +2,6 @@
 
 import SwiftUI
 import MuFlo
-import MuVisit
 
 open class MuFloNode: Identifiable, Equatable {
     public let id = Visitor.nextId()

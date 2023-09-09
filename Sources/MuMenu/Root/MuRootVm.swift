@@ -2,7 +2,7 @@
 
 import SwiftUI
 import MuPeer
-import MuVisit
+import MuFlo
 
 public class MuRootVm: ObservableObject, Equatable {
     let id = Visitor.nextId()
