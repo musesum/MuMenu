@@ -47,6 +47,7 @@ public struct MenuView: View {
             ZStack(alignment: .bottomLeading) {
 
                 TouchViewRepresentable(touchVms, touchView)
+                    .background(.clear)
                 ForEach(menuVms, id: \.self) { menuVm in
                     MenuTouchView(menuVm: menuVm)
                 }
@@ -58,8 +59,8 @@ public struct MenuView: View {
             .onChange(of: geo.frame(in: .global)) { delegate.window(bounds: $0, insets: geo.safeAreaInsets) }
             #endif
             .statusBar(hidden: true)
-
         }
-        
+        .background(.clear)
+
     }
 }
