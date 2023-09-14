@@ -10,6 +10,7 @@ public protocol MenuDelegate {
 }
 
 public struct MenuView: View {
+
     #if os(xrOS)
     @State private var enlarge = false //...
     @State private var showImmersiveSpace = false //...
