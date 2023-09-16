@@ -44,10 +44,11 @@ public struct MenuView: View {
     public var body: some View {
 
         GeometryReader { geo in
-            ZStack(alignment: .bottomLeading) {
+            ZStack(alignment: .topLeading) {
 
                 TouchViewRepresentable(touchVms, touchView)
-                    .background(.clear)
+                    .background(.black)
+                    .ignoresSafeArea()
                 ForEach(menuVms, id: \.self) { menuVm in
                     MenuTouchView(menuVm: menuVm)
                 }
@@ -61,6 +62,5 @@ public struct MenuView: View {
             .statusBar(hidden: true)
         }
         .background(.clear)
-
     }
 }

@@ -29,314 +29,314 @@ public class Renderer {
     let commandQueue: MTLCommandQueue
     var rotation: Float = 0
 
-//    var dynamicUniformBuffer: MTLBuffer
-//    var pipelineState: MTLRenderPipelineState
-//    var depthState: MTLDepthStencilState
-//    var colorMap: MTLTexture
-//
-//    let inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
-//    var uniformBufferOffset = 0
-//    var uniformBufferIndex = 0
-//    var uniforms: UnsafeMutablePointer<UniformsArray>
-//    var mesh: MTKMesh
+    //    var dynamicUniformBuffer: MTLBuffer
+    //    var pipelineState: MTLRenderPipelineState
+    //    var depthState: MTLDepthStencilState
+    //    var colorMap: MTLTexture
+    //
+    //    let inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
+    //    var uniformBufferOffset = 0
+    //    var uniformBufferIndex = 0
+    //    var uniforms: UnsafeMutablePointer<UniformsArray>
+    //    var mesh: MTKMesh
 
     let arSession: ARKitSession
     let worldTracking: WorldTrackingProvider
     let layerRenderer: LayerRenderer
-    
-public init(_ layerRenderer: LayerRenderer) {
+
+    public init(_ layerRenderer: LayerRenderer) {
         self.layerRenderer = layerRenderer
         self.device = layerRenderer.device
         self.commandQueue = self.device.makeCommandQueue()!
 
-//        let uniformBufferSize = alignedUniformsSize * maxBuffersInFlight
-//
-//        self.dynamicUniformBuffer = self.device.makeBuffer(length:uniformBufferSize,
-//                                                           options:[MTLResourceOptions.storageModeShared])!
-//
-//        self.dynamicUniformBuffer.label = "UniformBuffer"
-//
-//        uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents()).bindMemory(to:UniformsArray.self, capacity:1)
-//
-//        let mtlVertexDescriptor = Renderer.buildMetalVertexDescriptor()
-//
-//        do {
-//            pipelineState = try Renderer.buildRenderPipelineWithDevice(device: device,
-//                                                                       layerRenderer: layerRenderer,
-//                                                                       mtlVertexDescriptor: mtlVertexDescriptor)
-//        } catch {
-//            fatalError("Unable to compile render pipeline state.  Error info: \(error)")
-//        }
-//
-//        let depthStateDescriptor = MTLDepthStencilDescriptor()
-//        depthStateDescriptor.depthCompareFunction = MTLCompareFunction.greater
-//        depthStateDescriptor.isDepthWriteEnabled = true
-//        self.depthState = device.makeDepthStencilState(descriptor:depthStateDescriptor)!
-//
-//        do {
-//            mesh = try Renderer.buildMesh(device: device, mtlVertexDescriptor: mtlVertexDescriptor)
-//        } catch {
-//            fatalError("Unable to build MetalKit Mesh. Error info: \(error)")
-//        }
-//
-//        do {
-//            colorMap = try Renderer.loadTexture(device: device, textureName: "ColorMap")
-//        } catch {
-//            fatalError("Unable to load texture. Error info: \(error)")
-//        }
-//        
+        //        let uniformBufferSize = alignedUniformsSize * maxBuffersInFlight
+        //
+        //        self.dynamicUniformBuffer = self.device.makeBuffer(length:uniformBufferSize,
+        //                                                           options:[MTLResourceOptions.storageModeShared])!
+        //
+        //        self.dynamicUniformBuffer.label = "UniformBuffer"
+        //
+        //        uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents()).bindMemory(to:UniformsArray.self, capacity:1)
+        //
+        //        let mtlVertexDescriptor = Renderer.buildMetalVertexDescriptor()
+        //
+        //        do {
+        //            pipelineState = try Renderer.buildRenderPipelineWithDevice(device: device,
+        //                                                                       layerRenderer: layerRenderer,
+        //                                                                       mtlVertexDescriptor: mtlVertexDescriptor)
+        //        } catch {
+        //            fatalError("Unable to compile render pipeline state.  Error info: \(error)")
+        //        }
+        //
+        //        let depthStateDescriptor = MTLDepthStencilDescriptor()
+        //        depthStateDescriptor.depthCompareFunction = MTLCompareFunction.greater
+        //        depthStateDescriptor.isDepthWriteEnabled = true
+        //        self.depthState = device.makeDepthStencilState(descriptor:depthStateDescriptor)!
+        //
+        //        do {
+        //            mesh = try Renderer.buildMesh(device: device, mtlVertexDescriptor: mtlVertexDescriptor)
+        //        } catch {
+        //            fatalError("Unable to build MetalKit Mesh. Error info: \(error)")
+        //        }
+        //
+        //        do {
+        //            colorMap = try Renderer.loadTexture(device: device, textureName: "ColorMap")
+        //        } catch {
+        //            fatalError("Unable to load texture. Error info: \(error)")
+        //        }
+        //
         worldTracking = WorldTrackingProvider()
         arSession = ARKitSession()
- }
-
-public func startRenderLoop() {
-//        Task {
-//            do {
-//                try await arSession.run([worldTracking])
-//            } catch {
-//                fatalError("Failed to initialize ARSession")
-//            }
-//            
-//            let renderThread = Thread {
-//                self.renderLoop()
-//            }
-//            renderThread.name = "Render Thread"
-//            renderThread.start()
-//        }
     }
 
-//    class func buildMetalVertexDescriptor() -> MTLVertexDescriptor {
-//        // Create a Metal vertex descriptor specifying how vertices will by laid out for input into our render
-//        // pipeline and how we'll layout our Model IO vertices
-//
-//        let vd = MTLVertexDescriptor()
-//
-//        vd.attributes[VertexAttribute.position.rawValue].format = .float3
-//        vd.attributes[VertexAttribute.position.rawValue].offset = 0
-//        vd.attributes[VertexAttribute.position.rawValue].bufferIndex = BufferIndex.positions.rawValue
-//
-//        vd.attributes[VertexAttribute.texcoord.rawValue].format = .float2
-//        vd.attributes[VertexAttribute.texcoord.rawValue].offset = 0
-//        vd.attributes[VertexAttribute.texcoord.rawValue].bufferIndex = BufferIndex.generics.rawValue
-//
-//        vd.layouts[BufferIndex.positions.rawValue].stride = 12
-//        vd.layouts[BufferIndex.positions.rawValue].stepRate = 1
-//        vd.layouts[BufferIndex.positions.rawValue].stepFunction = .perVertex
-//
-//        vd.layouts[BufferIndex.generics.rawValue].stride = 8
-//        vd.layouts[BufferIndex.generics.rawValue].stepRate = 1
-//        vd.layouts[BufferIndex.generics.rawValue].stepFunction = .perVertex
-//
-//        return vd
-//    }
+    public func startRenderLoop() {
+        //        Task {
+        //            do {
+        //                try await arSession.run([worldTracking])
+        //            } catch {
+        //                fatalError("Failed to initialize ARSession")
+        //            }
+        //
+        //            let renderThread = Thread {
+        //                self.renderLoop()
+        //            }
+        //            renderThread.name = "Render Thread"
+        //            renderThread.start()
+        //        }
+    }
 
-//    class func buildRenderPipelineWithDevice(device: MTLDevice,
-//                                             layerRenderer: LayerRenderer,
-//                                             mtlVertexDescriptor: MTLVertexDescriptor) throws -> MTLRenderPipelineState {
-//        /// Build a render state pipeline object
-//
-//        let library = device.makeDefaultLibrary()
-//        let vertexFunction = library?.makeFunction(name: "vertexShader")
-//        let fragmentFunction = library?.makeFunction(name: "fragmentShader")
-//
-//        let pd = MTLRenderPipelineDescriptor()
-//        pd.label = "RenderPipeline"
-//        pd.vertexFunction = vertexFunction
-//        pd.fragmentFunction = fragmentFunction
-//        pd.vertexDescriptor = mtlVertexDescriptor
-//
-//        pd.colorAttachments[0].pixelFormat = layerRenderer.configuration.colorFormat
-//        pd.depthAttachmentPixelFormat = layerRenderer.configuration.depthFormat
-//
-//        pd.maxVertexAmplificationCount = layerRenderer.properties.viewCount
-//        
-//        return try device.makeRenderPipelineState(descriptor: pd)
-//    }
+    //    class func buildMetalVertexDescriptor() -> MTLVertexDescriptor {
+    //        // Create a Metal vertex descriptor specifying how vertices will by laid out for input into our render
+    //        // pipeline and how we'll layout our Model IO vertices
+    //
+    //        let vd = MTLVertexDescriptor()
+    //
+    //        vd.attributes[VertexAttribute.position.rawValue].format = .float3
+    //        vd.attributes[VertexAttribute.position.rawValue].offset = 0
+    //        vd.attributes[VertexAttribute.position.rawValue].bufferIndex = BufferIndex.positions.rawValue
+    //
+    //        vd.attributes[VertexAttribute.texcoord.rawValue].format = .float2
+    //        vd.attributes[VertexAttribute.texcoord.rawValue].offset = 0
+    //        vd.attributes[VertexAttribute.texcoord.rawValue].bufferIndex = BufferIndex.generics.rawValue
+    //
+    //        vd.layouts[BufferIndex.positions.rawValue].stride = 12
+    //        vd.layouts[BufferIndex.positions.rawValue].stepRate = 1
+    //        vd.layouts[BufferIndex.positions.rawValue].stepFunction = .perVertex
+    //
+    //        vd.layouts[BufferIndex.generics.rawValue].stride = 8
+    //        vd.layouts[BufferIndex.generics.rawValue].stepRate = 1
+    //        vd.layouts[BufferIndex.generics.rawValue].stepFunction = .perVertex
+    //
+    //        return vd
+    //    }
 
-//    class func buildMesh(device: MTLDevice,
-//                         mtlVertexDescriptor: MTLVertexDescriptor) throws -> MTKMesh {
-//        /// Create and condition mesh data to feed into a pipeline using the given vertex descriptor
-//
-//        let metalAllocator = MTKMeshBufferAllocator(device: device)
-//
-//        let mdlMesh = MDLMesh.newBox(withDimensions: SIMD3<Float>(4, 4, 4),
-//                                     segments: SIMD3<UInt32>(2, 2, 2),
-//                                     geometryType: MDLGeometryType.triangles,
-//                                     inwardNormals:false,
-//                                     allocator: metalAllocator)
-//
-//        let mdlVertexDescriptor = MTKModelIOVertexDescriptorFromMetal(mtlVertexDescriptor)
-//
-//        guard let attributes = mdlVertexDescriptor.attributes as? [MDLVertexAttribute] else {
-//            throw RendererError.badVertexDescriptor
-//        }
-//        attributes[VertexAttribute.position.rawValue].name = MDLVertexAttributePosition
-//        attributes[VertexAttribute.texcoord.rawValue].name = MDLVertexAttributeTextureCoordinate
-//
-//        mdlMesh.vertexDescriptor = mdlVertexDescriptor
-//
-//        return try MTKMesh(mesh:mdlMesh, device:device)
-//    }
+    //    class func buildRenderPipelineWithDevice(device: MTLDevice,
+    //                                             layerRenderer: LayerRenderer,
+    //                                             mtlVertexDescriptor: MTLVertexDescriptor) throws -> MTLRenderPipelineState {
+    //        /// Build a render state pipeline object
+    //
+    //        let library = device.makeDefaultLibrary()
+    //        let vertexFunction = library?.makeFunction(name: "vertexShader")
+    //        let fragmentFunction = library?.makeFunction(name: "fragmentShader")
+    //
+    //        let pd = MTLRenderPipelineDescriptor()
+    //        pd.label = "RenderPipeline"
+    //        pd.vertexFunction = vertexFunction
+    //        pd.fragmentFunction = fragmentFunction
+    //        pd.vertexDescriptor = mtlVertexDescriptor
+    //
+    //        pd.colorAttachments[0].pixelFormat = layerRenderer.configuration.colorFormat
+    //        pd.depthAttachmentPixelFormat = layerRenderer.configuration.depthFormat
+    //
+    //        pd.maxVertexAmplificationCount = layerRenderer.properties.viewCount
+    //
+    //        return try device.makeRenderPipelineState(descriptor: pd)
+    //    }
 
-//    class func loadTexture(device: MTLDevice,
-//                           textureName: String) throws -> MTLTexture {
-//        /// Load texture data with optimal parameters for sampling
-//
-//        let textureLoader = MTKTextureLoader(device: device)
-//
-//        let textureLoaderOptions = [
-//            MTKTextureLoader.Option.textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
-//            MTKTextureLoader.Option.textureStorageMode: NSNumber(value: MTLStorageMode.`private`.rawValue)
-//        ]
-//
-//        return try textureLoader.newTexture(name: textureName,
-//                                            scaleFactor: 1.0,
-//                                            bundle: nil,
-//                                            options: textureLoaderOptions)
-//
-//    }
+    //    class func buildMesh(device: MTLDevice,
+    //                         mtlVertexDescriptor: MTLVertexDescriptor) throws -> MTKMesh {
+    //        /// Create and condition mesh data to feed into a pipeline using the given vertex descriptor
+    //
+    //        let metalAllocator = MTKMeshBufferAllocator(device: device)
+    //
+    //        let mdlMesh = MDLMesh.newBox(withDimensions: SIMD3<Float>(4, 4, 4),
+    //                                     segments: SIMD3<UInt32>(2, 2, 2),
+    //                                     geometryType: MDLGeometryType.triangles,
+    //                                     inwardNormals:false,
+    //                                     allocator: metalAllocator)
+    //
+    //        let mdlVertexDescriptor = MTKModelIOVertexDescriptorFromMetal(mtlVertexDescriptor)
+    //
+    //        guard let attributes = mdlVertexDescriptor.attributes as? [MDLVertexAttribute] else {
+    //            throw RendererError.badVertexDescriptor
+    //        }
+    //        attributes[VertexAttribute.position.rawValue].name = MDLVertexAttributePosition
+    //        attributes[VertexAttribute.texcoord.rawValue].name = MDLVertexAttributeTextureCoordinate
+    //
+    //        mdlMesh.vertexDescriptor = mdlVertexDescriptor
+    //
+    //        return try MTKMesh(mesh:mdlMesh, device:device)
+    //    }
 
-//    private func updateDynamicBufferState() {
-//        /// Update the state of our uniform buffers before rendering
-//
-//        uniformBufferIndex = (uniformBufferIndex + 1) % maxBuffersInFlight
-//        uniformBufferOffset = alignedUniformsSize * uniformBufferIndex
-//        uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents() + uniformBufferOffset).bindMemory(to:UniformsArray.self, capacity:1)
-//    }
+    //    class func loadTexture(device: MTLDevice,
+    //                           textureName: String) throws -> MTLTexture {
+    //        /// Load texture data with optimal parameters for sampling
+    //
+    //        let textureLoader = MTKTextureLoader(device: device)
+    //
+    //        let textureLoaderOptions = [
+    //            MTKTextureLoader.Option.textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
+    //            MTKTextureLoader.Option.textureStorageMode: NSNumber(value: MTLStorageMode.`private`.rawValue)
+    //        ]
+    //
+    //        return try textureLoader.newTexture(name: textureName,
+    //                                            scaleFactor: 1.0,
+    //                                            bundle: nil,
+    //                                            options: textureLoaderOptions)
+    //
+    //    }
 
-//    private func updateGameState(drawable: LayerRenderer.Drawable, pose: Pose?) {
-//        /// Update any game state before rendering
-//        
-//        let rotationAxis = SIMD3<Float>(1, 1, 0)
-//        let modelRotationMatrix = matrix4x4_rotation(radians: rotation, axis: rotationAxis)
-//        let modelTranslationMatrix = matrix4x4_translation(0.0, 0.0, -8.0)
-//        let modelMatrix = modelTranslationMatrix * modelRotationMatrix
-//        
-//        let simdPose = pose?.originFromDeviceTransform ?? matrix_identity_float4x4
-//
-//        func uniforms(forViewIndex viewIndex: Int) -> Uniforms {
-//            let view = drawable.views[viewIndex]
-//            let viewMatrix = (simdPose * view.transform).inverse
-//            let projection = ProjectiveTransform3D(leftTangent: Double(view.tangents[0]),
-//                                                   rightTangent: Double(view.tangents[1]),
-//                                                   topTangent: Double(view.tangents[2]),
-//                                                   bottomTangent: Double(view.tangents[3]),
-//                                                   nearZ: Double(drawable.depthRange.y),
-//                                                   farZ: Double(drawable.depthRange.x),
-//                                                   reverseZ: true)
-//            
-//            return Uniforms(projectionMatrix: .init(projection), modelViewMatrix: viewMatrix * modelMatrix)
-//        }
-//        
-//        self.uniforms[0].uniforms.0 = uniforms(forViewIndex: 0)
-//        if drawable.views.count > 1 {
-//            self.uniforms[0].uniforms.1 = uniforms(forViewIndex: 1)
-//        }
-//        
-//        rotation += 0.01
-//    }
+    //    private func updateDynamicBufferState() {
+    //        /// Update the state of our uniform buffers before rendering
+    //
+    //        uniformBufferIndex = (uniformBufferIndex + 1) % maxBuffersInFlight
+    //        uniformBufferOffset = alignedUniformsSize * uniformBufferIndex
+    //        uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents() + uniformBufferOffset).bindMemory(to:UniformsArray.self, capacity:1)
+    //    }
+
+    //    private func updateGameState(drawable: LayerRenderer.Drawable, pose: Pose?) {
+    //        /// Update any game state before rendering
+    //
+    //        let rotationAxis = SIMD3<Float>(1, 1, 0)
+    //        let modelRotationMatrix = matrix4x4_rotation(radians: rotation, axis: rotationAxis)
+    //        let modelTranslationMatrix = matrix4x4_translation(0.0, 0.0, -8.0)
+    //        let modelMatrix = modelTranslationMatrix * modelRotationMatrix
+    //
+    //        let simdPose = pose?.originFromDeviceTransform ?? matrix_identity_float4x4
+    //
+    //        func uniforms(forViewIndex viewIndex: Int) -> Uniforms {
+    //            let view = drawable.views[viewIndex]
+    //            let viewMatrix = (simdPose * view.transform).inverse
+    //            let projection = ProjectiveTransform3D(leftTangent: Double(view.tangents[0]),
+    //                                                   rightTangent: Double(view.tangents[1]),
+    //                                                   topTangent: Double(view.tangents[2]),
+    //                                                   bottomTangent: Double(view.tangents[3]),
+    //                                                   nearZ: Double(drawable.depthRange.y),
+    //                                                   farZ: Double(drawable.depthRange.x),
+    //                                                   reverseZ: true)
+    //
+    //            return Uniforms(projectionMatrix: .init(projection), modelViewMatrix: viewMatrix * modelMatrix)
+    //        }
+    //
+    //        self.uniforms[0].uniforms.0 = uniforms(forViewIndex: 0)
+    //        if drawable.views.count > 1 {
+    //            self.uniforms[0].uniforms.1 = uniforms(forViewIndex: 1)
+    //        }
+    //
+    //        rotation += 0.01
+    //    }
 
     /// Per frame updates hare
     func renderFrame() {
-//        guard let frame = layerRenderer.queryNextFrame() else { return }
-//        
-//        frame.startUpdate()
-//        //... Perform frame independent work
-//        frame.endUpdate()
-//        
-//        guard let timing = frame.predictTiming() else { return }
-//        LayerRenderer.Clock().wait(until: timing.optimalInputTime)
-//
-//        guard let commandBuffer = commandQueue.makeCommandBuffer() else {
-//            fatalError("Failed to create command buffer")
-//        }
-//        
-//        guard let drawable = frame.queryDrawable() else { return }
-//        
-//        _ = inFlightSemaphore.wait(timeout: DispatchTime.distantFuture)
-//        
-//        frame.startSubmission()
-//        
-//        let time = LayerRenderer.Clock.Instant.epoch.duration(to: drawable.frameTiming.presentationTime).timeInterval
-//        let pose = worldTracking.queryPose(atTimestamp: time)
-//        
-//        drawable.pose = pose
-//        
-//        let semaphore = inFlightSemaphore
-//        commandBuffer.addCompletedHandler { (_ commandBuffer)-> Swift.Void in
-//            semaphore.signal()
-//        }
-//        
-//        self.updateDynamicBufferState()
-//        
-//        self.updateGameState(drawable: drawable, pose: pose)
-//        
-//        let rd = MTLRenderPassDescriptor()
-//        rd.colorAttachments[0].texture = drawable.colorTextures[0]
-//        rd.colorAttachments[0].loadAction = .clear
-//        rd.colorAttachments[0].storeAction = .store
-//        rd.colorAttachments[0].clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0)
-//        rd.depthAttachment.texture = drawable.depthTextures[0]
-//        rd.depthAttachment.loadAction = .clear
-//        rd.depthAttachment.storeAction = .store
-//        rd.depthAttachment.clearDepth = 0.0
-//        rd.rasterizationRateMap = drawable.rasterizationRateMaps.first
-//        if layerRenderer.configuration.layout == .layered {
-//            rd.renderTargetArrayLength = drawable.views.count
-//        }
-//        
-//        /// Final pass rendering code here
-//        guard let re = commandBuffer.makeRenderCommandEncoder(descriptor: rd) else {
-//            fatalError("Failed to create render encoder")
-//        }
-//    
-//        re.label = "Primary Render Encoder"
-//        re.pushDebugGroup("Draw Box")
-//        re.setCullMode(.back)
-//        re.setFrontFacing(.counterClockwise)
-//        re.setRenderPipelineState(pipelineState)
-//        re.setDepthStencilState(depthState)
-//        re.setVertexBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-//
-//        let viewports = drawable.views.map { $0.textureMap.viewport }
-//        
-//        re.setViewports(viewports)
-//        
-//        if drawable.views.count > 1 {
-//            var viewMappings = (0 ..< drawable.views.count).map {
-//                MTLVertexAmplificationViewMapping(viewportArrayIndexOffset: UInt32($0),
-//                                                  renderTargetArrayIndexOffset: UInt32($0))
-//            }
-//            re.setVertexAmplificationCount(viewports.count, viewMappings: &viewMappings)
-//        }
-//
-//
-//        for (index, element) in mesh.vertexDescriptor.layouts.enumerated() {
-//            guard let layout = element as? MDLVertexBufferLayout else {
-//                return
-//            }
-//
-//            if layout.stride != 0 {
-//                let buffer = mesh.vertexBuffers[index]
-//                re.setVertexBuffer(buffer.buffer, offset:buffer.offset, index: index)
-//            }
-//        }
-//
-//        re.setFragmentTexture(colorMap, index: TextureIndex.color.rawValue)
-//
-//        for submesh in mesh.submeshes {
-//            re.drawIndexedPrimitives(type: submesh.primitiveType,
-//                                     indexCount: submesh.indexCount,
-//                                     indexType: submesh.indexType,
-//                                     indexBuffer: submesh.indexBuffer.buffer,
-//                                     indexBufferOffset: submesh.indexBuffer.offset)
-//        }
-//
-//        re.popDebugGroup()
-//        re.endEncoding()
-//        drawable.encodePresent(commandBuffer: commandBuffer)
-//        commandBuffer.commit()
-//        frame.endSubmission()
+        //        guard let frame = layerRenderer.queryNextFrame() else { return }
+        //
+        //        frame.startUpdate()
+        //        //... Perform frame independent work
+        //        frame.endUpdate()
+        //
+        //        guard let timing = frame.predictTiming() else { return }
+        //        LayerRenderer.Clock().wait(until: timing.optimalInputTime)
+        //
+        //        guard let commandBuffer = commandQueue.makeCommandBuffer() else {
+        //            fatalError("Failed to create command buffer")
+        //        }
+        //
+        //        guard let drawable = frame.queryDrawable() else { return }
+        //
+        //        _ = inFlightSemaphore.wait(timeout: DispatchTime.distantFuture)
+        //
+        //        frame.startSubmission()
+        //
+        //        let time = LayerRenderer.Clock.Instant.epoch.duration(to: drawable.frameTiming.presentationTime).timeInterval
+        //        let pose = worldTracking.queryPose(atTimestamp: time)
+        //
+        //        drawable.pose = pose
+        //
+        //        let semaphore = inFlightSemaphore
+        //        commandBuffer.addCompletedHandler { (_ commandBuffer)-> Swift.Void in
+        //            semaphore.signal()
+        //        }
+        //
+        //        self.updateDynamicBufferState()
+        //
+        //        self.updateGameState(drawable: drawable, pose: pose)
+        //
+        //        let rd = MTLRenderPassDescriptor()
+        //        rd.colorAttachments[0].texture = drawable.colorTextures[0]
+        //        rd.colorAttachments[0].loadAction = .clear
+        //        rd.colorAttachments[0].storeAction = .store
+        //        rd.colorAttachments[0].clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0)
+        //        rd.depthAttachment.texture = drawable.depthTextures[0]
+        //        rd.depthAttachment.loadAction = .clear
+        //        rd.depthAttachment.storeAction = .store
+        //        rd.depthAttachment.clearDepth = 0.0
+        //        rd.rasterizationRateMap = drawable.rasterizationRateMaps.first
+        //        if layerRenderer.configuration.layout == .layered {
+        //            rd.renderTargetArrayLength = drawable.views.count
+        //        }
+        //
+        //        /// Final pass rendering code here
+        //        guard let re = commandBuffer.makeRenderCommandEncoder(descriptor: rd) else {
+        //            fatalError("Failed to create render encoder")
+        //        }
+        //
+        //        re.label = "Primary Render Encoder"
+        //        re.pushDebugGroup("Draw Box")
+        //        re.setCullMode(.back)
+        //        re.setFrontFacing(.counterClockwise)
+        //        re.setRenderPipelineState(pipelineState)
+        //        re.setDepthStencilState(depthState)
+        //        re.setVertexBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
+        //
+        //        let viewports = drawable.views.map { $0.textureMap.viewport }
+        //
+        //        re.setViewports(viewports)
+        //
+        //        if drawable.views.count > 1 {
+        //            var viewMappings = (0 ..< drawable.views.count).map {
+        //                MTLVertexAmplificationViewMapping(viewportArrayIndexOffset: UInt32($0),
+        //                                                  renderTargetArrayIndexOffset: UInt32($0))
+        //            }
+        //            re.setVertexAmplificationCount(viewports.count, viewMappings: &viewMappings)
+        //        }
+        //
+        //
+        //        for (index, element) in mesh.vertexDescriptor.layouts.enumerated() {
+        //            guard let layout = element as? MDLVertexBufferLayout else {
+        //                return
+        //            }
+        //
+        //            if layout.stride != 0 {
+        //                let buffer = mesh.vertexBuffers[index]
+        //                re.setVertexBuffer(buffer.buffer, offset:buffer.offset, index: index)
+        //            }
+        //        }
+        //
+        //        re.setFragmentTexture(colorMap, index: TextureIndex.color.rawValue)
+        //
+        //        for submesh in mesh.submeshes {
+        //            re.drawIndexedPrimitives(type: submesh.primitiveType,
+        //                                     indexCount: submesh.indexCount,
+        //                                     indexType: submesh.indexType,
+        //                                     indexBuffer: submesh.indexBuffer.buffer,
+        //                                     indexBufferOffset: submesh.indexBuffer.offset)
+        //        }
+        //
+        //        re.popDebugGroup()
+        //        re.endEncoding()
+        //        drawable.encodePresent(commandBuffer: commandBuffer)
+        //        commandBuffer.commit()
+        //        frame.endSubmission()
     }
 
     func renderLoop() {
