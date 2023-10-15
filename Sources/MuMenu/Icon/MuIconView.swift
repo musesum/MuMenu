@@ -2,22 +2,30 @@
 
 import SwiftUI
 
+
 struct MuIconView: View {
 
     @Environment(\.colorScheme) var colorScheme // darkMode
     @ObservedObject var nodeVm: MuNodeVm
     let icon: MuIcon
     var color: Color { nodeVm.spotlight ? .white : Color(white:0.7) }
-    var fill: Color { icon.iconType == .cursor ? .clear : .black }
+    var fill: Color { icon.iconType == .cursor ? .clear : isHover ? .blue : .black }
     var width: CGFloat { nodeVm.spotlight ? 3.0 : 1.0 }
-    
+    @State private var isHover: Bool = false
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: Layout.cornerRadius)
                 .fill(fill)
+
                 .overlay(RoundedRectangle(cornerRadius:  Layout.cornerRadius)
                     .stroke(color, lineWidth: width)
-                    .background(.clear))
+                    .background(.clear)
+                )
+                .onHover { hover in
+                    print("hover: \(hover)")
+                    isHover = hover }
+
+
 
             switch icon.iconType {
 
@@ -69,7 +77,6 @@ struct MuIconView: View {
                             .padding(1)
                     }
             }
-            
         }
     }
 }

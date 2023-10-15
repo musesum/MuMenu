@@ -2,6 +2,7 @@
 
 import SwiftUI
 
+
 struct MuNodeView: View {
 
     @ObservedObject var nodeVm: MuNodeVm
@@ -11,13 +12,13 @@ struct MuNodeView: View {
         GeometryReader() { geo in
             Group {
                 switch nodeVm {
-                    case let n as MuLeafVxyVm: MuLeafVxyView(leafVm: n)
-                    case let n as MuLeafValVm: MuLeafValView(leafVm: n)
-                    case let n as MuLeafSegVm: MuLeafSegView(leafVm: n)
-                    case let n as MuLeafPeerVm: MuLeafPeerView(leafVm: n)
-                    case let n as MuLeafTogVm: MuLeafTogView(leafVm: n)
-                    case let n as MuLeafTapVm: MuLeafTapView(leafVm: n)
-                    default: MuIconView(nodeVm: nodeVm, icon: nodeVm.node.icon)
+                case let n as MuLeafVxyVm: MuLeafVxyView(leafVm: n)
+                case let n as MuLeafValVm: MuLeafValView(leafVm: n)
+                case let n as MuLeafSegVm: MuLeafSegView(leafVm: n)
+                case let n as MuLeafPeerVm: MuLeafPeerView(leafVm: n)
+                case let n as MuLeafTogVm: MuLeafTogView(leafVm: n)
+                case let n as MuLeafTapVm: MuLeafTapView(leafVm: n)
+                default: MuIconView(nodeVm: nodeVm, icon: nodeVm.node.icon)
                 }
             }
             #if os(xrOS)
