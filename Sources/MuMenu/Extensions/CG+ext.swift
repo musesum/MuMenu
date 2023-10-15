@@ -1,10 +1,8 @@
-// Created by warren on 7/19/19.
-//  Copyright © 2019 DeepMuse All rights reserved.
+// created by musesum on 7/19/19.
 
 import Foundation
 import QuartzCore
 import UIKit
-//import MuMetal // clipRect
 
 public typealias RangeXY = (ClosedRange<CGFloat>, ClosedRange<CGFloat>)
 

@@ -1,4 +1,4 @@
-//  Created by warren on 9/26/22
+//  created by musesum on 9/26/22
 
 import UIKit
 import MuFlo // double buffer
@@ -15,12 +15,12 @@ public class MenuTouch {
     public init(isRemote: Bool) {
         
         self.isRemote = isRemote
-        buffer.flusher = self
+        buffer.delegate = self
     }
 
 }
 
-extension MenuTouch: BufferFlushDelegate {
+extension MenuTouch: DoubleBufferDelegate {
 
     public typealias Item = MenuItem
 

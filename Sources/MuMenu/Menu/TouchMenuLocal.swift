@@ -1,4 +1,4 @@
-//  Created by warren on 1/3/23.
+//  created by musesum on 1/3/23.
 
 import UIKit
 import MuFlo // double buffer
@@ -19,7 +19,7 @@ public class TouchMenuLocal {
         self.touchVm = touchVm
         self.nodeVm = nodeVm
         self.isRemote = isRemote
-        buffer.flusher = self
+        buffer.delegate = self
     }
     @discardableResult
     public static func beginTouch(_ touch: UITouch) -> Bool {
@@ -59,7 +59,7 @@ public class TouchMenuLocal {
     }
 }
 
-extension TouchMenuLocal: BufferFlushDelegate {
+extension TouchMenuLocal: DoubleBufferDelegate {
 
     public typealias Item = MenuItem
 

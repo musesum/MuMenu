@@ -1,4 +1,4 @@
-//  Created by warren on 8/22/23.
+//  created by musesum on 8/22/23.
 
 import UIKit
 import MuFlo
@@ -17,7 +17,7 @@ open class TouchCanvasBuffer {
     public init(_ touch: UITouch,
                 _ touchCanvas: TouchCanvas) {
         self.touchCanvas = touchCanvas
-        buffer.flusher = self
+        buffer.delegate = self
 
         addTouchItem(touch)
     }
@@ -25,7 +25,7 @@ open class TouchCanvasBuffer {
     public init(_ touchItem: TouchCanvasItem,
                 _ touchCanvas: TouchCanvas) {
         self.touchCanvas = touchCanvas
-        buffer.flusher = self
+        buffer.delegate = self
 
         addTouchCanvasItem(touchItem)
 
@@ -89,7 +89,7 @@ open class TouchCanvasBuffer {
     }
 
 }
-extension TouchCanvasBuffer: BufferFlushDelegate {
+extension TouchCanvasBuffer: DoubleBufferDelegate {
 
     public typealias Item = TouchCanvasItem
 
