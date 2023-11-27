@@ -14,7 +14,7 @@ For example, let's say you have a 5^5 menu, averaging 5 choices and goes 5 level
 
 ### Status
 
-For now, MuMenu works with a toy: a visual Music synthesizer, called Deep Muse. The goal is to wrap about 2000 real-time parameters. It currently works on iOS and iPadOS, and a simulator for xrOS. 
+For now, MuMenu works with a toy: a visual Music synthesizer, called Deep Muse. The goal is to wrap about 2000 real-time parameters. It currently works on iOS and iPadOS, and a simulator for visionOS. 
 
 The eyetracking and handpose is not yet available.
 

@@ -15,7 +15,7 @@ struct MuTouchView: View {
                 MuCursorView(rootNodeVm, Layout.diameter)
                    
                     .onAppear { touchVm.updateRootIcon(geo.frame(in: .global)) }
-                    #if os(xrOS)
+                    #if os(visionOS)
                     .onChange(of: geo.frame(in: .global)) { old, now in touchVm.updateRootIcon(now) }
                     #else
                     .onChange(of: geo.frame(in: .global)) { touchVm.updateRootIcon($0) }

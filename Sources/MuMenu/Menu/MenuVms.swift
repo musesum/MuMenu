@@ -13,20 +13,20 @@ struct MenuVms {
             MenuVm([.lower, .left],
                    [(rootNode, .vertical),
                     (rootNode, .horizontal)]))
-        
-        menuVms.append(
-            MenuVm([.lower, .right],
-                   [(rootNode, .vertical),
-                    (rootNode, .horizontal)]))
-        
-        menuVms.append(
-            MenuVm([.upper, .left],
-                   [(rootNode, .vertical),
-                    (rootNode, .horizontal)]))
-        
-        menuVms.append(
-            MenuVm([.upper, .right],
-                   [(rootNode, .vertical),
-                    (rootNode, .horizontal)]))
+//        
+//        menuVms.append(
+//            MenuVm([.lower, .right],
+//                   [(rootNode, .vertical),
+//                    (rootNode, .horizontal)]))
+//        
+//        menuVms.append(
+//            MenuVm([.upper, .left],
+//                   [(rootNode, .vertical),
+//                    (rootNode, .horizontal)]))
+//        
+//        menuVms.append(
+//            MenuVm([.upper, .right],
+//                   [(rootNode, .vertical),
+//                    (rootNode, .horizontal)]))
     }
 }

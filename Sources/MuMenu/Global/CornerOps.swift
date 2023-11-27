@@ -39,10 +39,10 @@ public struct CornerOps: OptionSet {
 
     public func str() -> String {
         switch self {
-            case [.lower, .right]: return "SE"
-            case [.lower, .left ]: return "SW"
-            case [.upper, .right]: return "NE"
-            case [.upper, .left ]: return "NW"
+            case [.lower, .right]: return "SE" // south east
+            case [.lower, .left ]: return "SW" // south west
+            case [.upper, .right]: return "NE" // north east
+            case [.upper, .left ]: return "NW" // north west
 
                 // reserved for later middling roots
             case [.upper]: return "N"

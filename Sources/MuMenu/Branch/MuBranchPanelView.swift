@@ -5,17 +5,19 @@ import SwiftUI
 struct MuBranchPanelView: View {
     
     let spotlight: Bool
-    var strokeColor: Color { spotlight ? .white : .clear }
-    var lineWidth: CGFloat { spotlight ? 1 : 1 }
 
     var body: some View {
         GeometryReader { geo in
             Rectangle()
+            #if os(visionOS)
                 .background(.clear)
+                .opacity(0.38)
+            #else
+                .background(.ultraThinMaterial)
+                .opacity(0.62)
+            #endif
                 .cornerRadius(Layout.cornerRadius)
-                .overlay(RoundedRectangle(cornerRadius: Layout.cornerRadius)
-                    .stroke(strokeColor, lineWidth: lineWidth))
-                .opacity(0.10)
+                .shadow(color: .black, radius: 3)
         }
     }
 }

@@ -124,7 +124,7 @@ fileprivate struct bodyV: View {
                 }
             }
             .onAppear { branchVm.updateBounds(geo.frame(in: .global)) }
-            #if os(xrOS)
+            #if os(visionOS)
             .onChange(of: geo.frame(in: .global)) { old, now in branchVm.updateBounds(now) }
             #else
             .onChange(of: geo.frame(in: .global)) { branchVm.updateBounds($0) }

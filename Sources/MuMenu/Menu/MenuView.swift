@@ -2,7 +2,7 @@
 
 import SwiftUI
 import MuFlo
-#if os(xrOS)
+#if os(visionOS)
 import _CompositorServices_SwiftUI
 #endif
 public protocol MenuDelegate {
@@ -11,7 +11,7 @@ public protocol MenuDelegate {
 
 public struct MenuView: View {
 
-    #if os(xrOS)
+    #if os(visionOS)
     @State private var enlarge = false //...
     @State private var showImmersiveSpace = false //...
     @State private var immersiveSpaceIsShown = false //...
@@ -54,7 +54,7 @@ public struct MenuView: View {
                 }
             }
             .onAppear { delegate.window(bounds: geo.frame(in: .global), insets: geo.safeAreaInsets) }
-            #if os(xrOS)
+            #if os(visionOS)
             .onChange(of: geo.frame(in: .global)) { old, now in delegate.window(bounds: now, insets: geo.safeAreaInsets) }
             #else
             .onChange(of: geo.frame(in: .global)) { delegate.window(bounds: $0, insets: geo.safeAreaInsets) }

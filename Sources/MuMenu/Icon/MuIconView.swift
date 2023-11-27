@@ -9,9 +9,14 @@ struct MuIconView: View {
     @ObservedObject var nodeVm: MuNodeVm
     let icon: MuIcon
     var color: Color { nodeVm.spotlight ? .white : Color(white:0.7) }
-    var fill: Color { icon.iconType == .cursor ? .clear : isHover ? .blue : .black }
+    
+    #if os(visionOS)
+    var fill: Color { icon.iconType == .cursor ? .clear : Color(white:0.2)  }
+    #else
+    var fill: Color { icon.iconType == .cursor ? .clear : .black  }
+    #endif
+
     var width: CGFloat { nodeVm.spotlight ? 3.0 : 1.0 }
-    @State private var isHover: Bool = false
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: Layout.cornerRadius)
@@ -21,11 +26,8 @@ struct MuIconView: View {
                     .stroke(color, lineWidth: width)
                     .background(.clear)
                 )
-                .onHover { hover in
-                    print("hover: \(hover)")
-                    isHover = hover }
-
-
+                .shadow(radius: 2)
+                //??? .hoverEffect()//??? buttoneBorderEfffect, baseForegroundColor
 
             switch icon.iconType {
 

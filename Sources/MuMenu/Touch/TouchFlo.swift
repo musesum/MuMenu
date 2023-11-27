@@ -114,7 +114,7 @@ extension TouchFlo {
         guard let texBuf else { return }
         if point == .zero { return }
 
-        #if os(xrOS)
+        #if os(visionOS)
         let scale = CGFloat(2) //?? UITraitCollection().displayScale == 0
         #else
         let scale = UIScreen.main.scale
