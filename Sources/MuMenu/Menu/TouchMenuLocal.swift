@@ -8,12 +8,12 @@ public class TouchMenuLocal {
     static var menuKey = [Int: TouchMenuLocal]()
 
     private let buffer = DoubleBuffer<MenuItem>(internalLoop: true)
-    private let touchVm: MuTouchVm
+    private let touchVm: TouchVm
     private let isRemote: Bool
-    private let nodeVm: MuNodeVm?
+    private let nodeVm: NodeVm?
     
-    public init(_ touchVm: MuTouchVm,
-                _ nodeVm: MuNodeVm?,
+    public init(_ touchVm: TouchVm,
+                _ nodeVm: NodeVm?,
                 isRemote: Bool) {
         
         self.touchVm = touchVm
@@ -36,7 +36,7 @@ public class TouchMenuLocal {
                     }
                 }
             }
-            func addMenu(_ nodeVm: MuNodeVm? = nil) -> Bool {
+            func addMenu(_ nodeVm: NodeVm? = nil) -> Bool {
                 let touchMenu = TouchMenuLocal(touchVm, nodeVm, isRemote: false)
                 let menuItem = MenuItem(touch, touchVm.corner)
                 touchMenu.buffer.append(menuItem)

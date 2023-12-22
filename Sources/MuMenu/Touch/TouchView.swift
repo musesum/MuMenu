@@ -1,42 +1,42 @@
+// created by musesum 10/29/21.
 
 import SwiftUI
-import MuFlo
-import MuPeer
-import MultipeerConnectivity
 
+struct TouchView: View {
 
-open class TouchView: UIView, UIGestureRecognizerDelegate {
+    @ObservedObject var touchVm: TouchVm
+    let offset = CGSize(width: Layout.padding2, height: -Layout.padding2)
+    var body: some View {
 
-    required public init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
+        GeometryReader() { geo  in
+            // parked icon
+            if let rootNodeVm = touchVm.rootNodeVm {
+                
+                CursorView(rootNodeVm, Layout.diameter)
+                   
+                    .onAppear { touchVm.updateRootIcon(geo.frame(in: .global)) }
+                    #if os(visionOS)
+                    .onChange(of: geo.frame(in: .global)) { old, now in touchVm.updateRootIcon(now) }
+                    #else
+                    .onChange(of: geo.frame(in: .global)) { touchVm.updateRootIcon($0) }
+                    #endif
 
-    public init(_ bounds: CGRect) {
+                    .padding(Layout.padding2)
+                    .opacity(touchVm.parkIconAlpha + 0.1)
+                    .position(touchVm.parkIconXY)
+                    .offset(touchVm.rootVm?.rootOffset ?? .zero)
+            }
 
-        super.init(frame: .zero)
-        frame = bounds
-        isMultipleTouchEnabled = true
-    }
+            // drag icon, follows touch
+            if let dragNodeVm = touchVm.dragNodeVm {
 
-
-    /// When starting new touch, assign finger to either Menu or Canvas.
-    open func beginTouches(_ touches: Set<UITouch>) {
-
-        for touch in touches {
-            TouchMenuLocal.beginTouch(touch)
+                CursorView(dragNodeVm, Layout.diameter2)
+                    .position(touchVm.dragIconXY)
+                    .animation(Layout.animateFast, value: touchVm.dragIconXY)
+                    .opacity(1-touchVm.parkIconAlpha)
+                    .offset(touchVm.dragNodeΔ)
+            }
         }
+        .animation(Layout.animateFast, value: touchVm.parkIconAlpha)
     }
-
-    /// Continue dispatching finger to canvas or menu
-    open func updateTouches(_ touches: Set<UITouch>) {
-
-        for touch in touches {
-            if TouchMenuLocal.updateTouch(touch) { }
-            else { print("*** unknown touch \(touch.hash)") }
-        }
-    }
-    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) { beginTouches(touches) }
-    open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) { updateTouches(touches) }
-    open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) { updateTouches(touches) }
-    open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) { updateTouches(touches) }
 }

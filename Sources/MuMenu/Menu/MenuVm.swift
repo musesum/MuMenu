@@ -6,9 +6,9 @@ import MuFlo
 open class MenuVm {
     let id: Int = Visitor.nextId()
 
-    public var rootVm: MuRootVm
+    public var rootVm: RootVm
 
-    public init(_ rootVm: MuRootVm) {
+    public init(_ rootVm: RootVm) {
         self.rootVm = rootVm
     }
 
@@ -22,17 +22,17 @@ open class MenuVm {
     ///     with different axis
     ///
     public init(_ corner: CornerOps,
-                _ rootAxis: [(MuFloNode, Axis)]) {
+                _ rootAxis: [(FloNode, Axis)]) {
 
-        self.rootVm = MuRootVm(corner)
-        var skyTreeVms = [MuTreeVm]()
+        self.rootVm = RootVm(corner)
+        var skyTreeVms = [TreeVm]()
 
         for (rootNode,axis) in rootAxis {
             let cornerAxis = CornerAxis(corner,axis)
-            let skyTreeVm = MuTreeVm(rootVm, cornerAxis)
+            let skyTreeVm = TreeVm(rootVm, cornerAxis)
             let skyNodes = MenuVm.skyNodes(rootNode, corner)
 
-            let skyBranchVm = MuBranchVm(nodes: skyNodes,
+            let skyBranchVm = BranchVm(nodes: skyNodes,
                                          treeVm: skyTreeVm,
                                          prevNodeVm: nil)
 
@@ -41,11 +41,11 @@ open class MenuVm {
         }
 
         rootVm.updateTreeVms(skyTreeVms)
-        MuIcon.altBundle = MuMenu.bundle
+        Icon.altBundle = MuMenu.bundle
     }
 
-    static func skyNodes(_ rootNode: MuFloNode,
-                         _ corner: CornerOps) -> [MuFloNode] {
+    static func skyNodes(_ rootNode: FloNode,
+                         _ corner: CornerOps) -> [FloNode] {
 
         let rootFlo = rootNode.modelFlo
 
@@ -77,9 +77,9 @@ open class MenuVm {
     /// recursively parse flo hierachy
     @discardableResult
     static func parseFloNode(_ flo: Flo,
-                             _ parentNode: MuFloNode) -> MuFloNode {
+                             _ parentNode: FloNode) -> FloNode {
 
-        let node = MuFloNode(flo, parent: parentNode)
+        let node = FloNode(flo, parent: parentNode)
         for child in flo.children {
             if child.name.first != "_" {
                 parseFloNode(child, node)
@@ -90,7 +90,7 @@ open class MenuVm {
 
     /// merge menu.view with with model
     static func mergeFloNode(_ viewFlo: Flo,
-                             _ parentNode: MuFloNode) {
+                             _ parentNode: FloNode) {
 
         for child in viewFlo.children {
 
@@ -109,7 +109,7 @@ open class MenuVm {
                 mergeFloNode(child, nodeFlo)
             }
         }
-        func findFloNode(_ flo: Flo) -> MuFloNode? {
+        func findFloNode(_ flo: Flo) -> FloNode? {
             if parentNode.title == flo.name {
                 return parentNode
             }

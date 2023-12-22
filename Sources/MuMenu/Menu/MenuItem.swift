@@ -11,7 +11,7 @@ public struct MenuTreeItem: Codable {
     public var depth  : Int
     public var start  : Int
 
-    public init(_ treeVm: MuTreeVm) {
+    public init(_ treeVm: TreeVm) {
         self.cornax = treeVm.cornerAxis.cornax.rawValue
         self.depth  = treeVm.depthShown
         self.start  = treeVm.startIndex
@@ -27,7 +27,7 @@ public struct MenuTreeItem: Codable {
         try depth  = c.decode(Int.self, forKey: .depth )
         try start  = c.decode(Int.self, forKey: .start )
     }
-    var treeVm: MuTreeVm? {
+    var treeVm: TreeVm? {
         return CornerAxisTreeVm[cornax]
     }
     func showTree(_ fromRemote: Bool) {
@@ -44,7 +44,7 @@ public struct MenuRootItem: Codable {
     public var corner : Int
     public var phase  : Int // UITouch.Phase
 
-    public init(_ rootVm: MuRootVm) {
+    public init(_ rootVm: RootVm) {
         var trees = [MenuTreeItem]()
         for treeVm in rootVm.treeVms {
             trees.append(MenuTreeItem(treeVm))
@@ -166,7 +166,7 @@ public struct MenuItem: Codable {
         (phase == UITouch.Phase.ended.rawValue ||
          phase == UITouch.Phase.cancelled.rawValue)
     }
-    var touchVm: MuTouchVm? {
+    var touchVm: TouchVm? {
         CornerTouchVm[corner]
     }
 

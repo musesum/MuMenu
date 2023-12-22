@@ -11,7 +11,7 @@ public struct MenuNodeItem: Codable {
     public var hashPath : [Int] // last shown item on tree
     public var hashNow  : Int // hash of currently selected item
 
-    public init(_ nodeVm : MuNodeVm) {
+    public init(_ nodeVm : NodeVm) {
 
         self.type     = nodeVm.nodeType.rawValue
         self.cornax   = nodeVm.branchVm.treeVm.cornerAxis.cornax.rawValue
@@ -30,7 +30,7 @@ public struct MenuNodeItem: Codable {
         try hashNow  = container.decode(Int   .self, forKey: .hashNow )
     }
 
-    var treeVm: MuTreeVm? {
+    var treeVm: TreeVm? {
         return CornerAxisTreeVm[cornax]
     }
 }
@@ -43,7 +43,7 @@ public struct MenuLeafItem: Codable {
     public var hashNow  : Int // hash of currently selected item
     public let thumbs   : Thumbs
 
-    public init(_ leafVm : MuLeafVm,
+    public init(_ leafVm : LeafVm,
                 _ thumbs : Thumbs) {
 
         self.type      = leafVm.nodeType.rawValue
@@ -73,7 +73,7 @@ public struct MenuLeafItem: Codable {
         return point
     }
 
-    var treeVm: MuTreeVm? {
+    var treeVm: TreeVm? {
         return CornerAxisTreeVm[cornax]
     }
 

@@ -4,7 +4,7 @@ import UIKit
 import MuFlo // double buffer
 import MuPeer
 
-public var CornerTouchVm = [Int: MuTouchVm]()
+public var CornerTouchVm = [Int: TouchVm]()
 
 public class MenuTouch {
 

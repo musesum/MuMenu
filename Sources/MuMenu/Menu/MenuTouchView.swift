@@ -15,7 +15,7 @@ public struct MenuTouchView: View {
         ZStack {
             GeometryReader { geo in
                 // MuStatusView().frame(width: geo.size.width, height: 18, alignment: .top)
-                MuRootView()
+                RootView()
                     .environmentObject(menuVm.rootVm)
                     .onAppear() { menuVm.rootVm.touchVm.updateBounds(geo.frame(in: .global)) }
                     .allowsHitTesting(false) // gestures provided by UITouch

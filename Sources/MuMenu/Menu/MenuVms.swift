@@ -7,7 +7,7 @@ struct MenuVms {
     var menuVms = [MenuVm]()
     
     init(_ root: Flo) {
-        let rootNode = MuFloNode(root)
+        let rootNode = FloNode(root)
         
         menuVms.append(
             MenuVm([.lower, .left],

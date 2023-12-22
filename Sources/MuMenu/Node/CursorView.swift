@@ -1,0 +1,31 @@
+// created by musesum on 12/22/23
+
+import SwiftUI
+
+struct CursorView: View {
+
+    @ObservedObject var nodeVm: NodeVm
+    var diameter: CGFloat
+    var panelVm: PanelVm { nodeVm.panelVm }
+
+    init(_ nodeVm: NodeVm,
+         _ diameter: CGFloat) {
+        self.nodeVm = nodeVm
+        self.diameter = diameter
+    }
+
+    var body: some View {
+        GeometryReader() { geo in
+            IconView(nodeVm: nodeVm, icon: nodeVm.node.icon)
+#if os(visionOS)
+                .onChange(of: geo.frame(in: .global)) { old, now in nodeVm.updateCenter(now) }
+#else
+                .onChange(of: geo.frame(in: .global)) { nodeVm.updateCenter($0) }
+#endif
+                .onAppear { nodeVm.updateCenter(geo.frame(in: .global)) }
+        }
+        .frame(width: diameter, height: diameter)
+        .padding(Layout.padding)
+        .zIndex(nodeVm.zIndex)
+    }
+}

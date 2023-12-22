@@ -19,8 +19,8 @@ public func log(_ title: String,
             case let v as CGSize  : text += String(format: "∘(\(format), \(format)) ", v.width, v.height)
             case let v as CGRect  : text += String(format: "▭(\(format),\(format); \(format),\(format)) ", v.origin.x, v.origin.y, v.size.width, v.size.height)
 
-            case let v as MuTouchType: text += "\(v.symbol)"
-            case let v as Set<MuTouchType>: text += "\(MuTouchType.symbols(v))"
+            case let v as TouchType: text += "\(v.symbol)"
+            case let v as Set<TouchType>: text += "\(TouchType.symbols(v))"
             case let v as String: text += v
 
             case let v as Int: text += " \(v)"
@@ -91,7 +91,7 @@ public func log(_ visit: Visitor) {
             logs.append(val.flo.path(99) + "(\(val.name)):\(val.id)")
         } else if let exprs = FloExprs.IdExprs[visited] {
             logs.append(exprs.flo.path(99) + "(\(exprs.name)):\(exprs.id)")
-        } else if let nodeVm = MuNodeVm.IdNode[visited] {
+        } else if let nodeVm = NodeVm.IdNode[visited] {
             logs.append(nodeVm.path ?? "⁉️")
         } else {
             logs.append(String(visited))

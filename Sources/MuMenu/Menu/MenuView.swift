@@ -21,23 +21,23 @@ public struct MenuView: View {
     #endif
 
     var menuVms: [MenuVm]
-    var touchVms: [MuTouchVm] { menuVms.map { $0.rootVm.touchVm } }
-    var touchView: TouchView
+    var touchVms: [TouchVm] { menuVms.map { $0.rootVm.touchVm } }
+    var touchesView: TouchesView
     var delegate: MenuDelegate
 
     public init(_ root: Flo,
-                _ touchView: TouchView,
+                _ touchView: TouchesView,
                 _ delegate: MenuDelegate) {
 
         self.menuVms = MenuVms(root).menuVms
-        self.touchView = touchView
+        self.touchesView = touchView
         self.delegate = delegate
     }
-    public init(_ touchView: TouchView,
+    public init(_ touchView: TouchesView,
                 _ menuVms: [MenuVm],
                 _ delegate: MenuDelegate) {
         self.menuVms = menuVms
-        self.touchView = touchView
+        self.touchesView = touchView
         self.delegate = delegate
     }
 
@@ -46,7 +46,7 @@ public struct MenuView: View {
         GeometryReader { geo in
             ZStack(alignment: .topLeading) {
 
-                TouchViewRepresentable(touchVms, touchView)
+                TouchViewRepresentable(touchVms, touchesView)
                     .background(.black)
                     .ignoresSafeArea()
                 ForEach(menuVms, id: \.self) { menuVm in
