@@ -9,7 +9,7 @@ public class PanelVm {
     var cornerAxis: CornerAxis
     let isVertical: Bool
     var count: CGFloat
-    let maxNodes = CGFloat(5)
+    let maxNodes = CGFloat(7)
     var aspectSz = CGSize(width: 1, height: 1) /// multiplier aspect ratio
 
     init(nodes: [FloNode],
