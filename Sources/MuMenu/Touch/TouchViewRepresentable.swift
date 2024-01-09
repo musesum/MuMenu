@@ -6,19 +6,19 @@ struct TouchViewRepresentable: UIViewRepresentable {
 
     typealias Context = UIViewRepresentableContext<TouchViewRepresentable>
     var touchVms: [TouchVm]
-    var touchView: TouchesView
+    var touchesView: TouchesView
 
     public init(_ touchVms: [TouchVm],
                 _ touchView: TouchesView) {
 
         self.touchVms = touchVms
-        self.touchView = touchView
+        self.touchesView = touchView
         for touchVm in touchVms {
             CornerTouchVm[touchVm.corner.rawValue] = touchVm
         }
     }
     public func makeUIView(context: Context) -> TouchesView {
-        return touchView
+        return touchesView
     }
     public func updateUIView(_ uiView: TouchesView, context: Context) {
         //print("updateUIView", terminator: " ")

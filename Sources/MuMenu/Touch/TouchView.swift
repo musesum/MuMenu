@@ -2,6 +2,7 @@
 
 import SwiftUI
 
+/// Capture SwiftUI drag gestures
 struct TouchView: View {
 
     @ObservedObject var touchVm: TouchVm

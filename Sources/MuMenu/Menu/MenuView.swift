@@ -26,18 +26,19 @@ public struct MenuView: View {
     var delegate: MenuDelegate
 
     public init(_ root: Flo,
-                _ touchView: TouchesView,
+                _ touchesView: TouchesView,
                 _ delegate: MenuDelegate) {
 
         self.menuVms = MenuVms(root).menuVms
-        self.touchesView = touchView
+        self.touchesView = touchesView
         self.delegate = delegate
     }
-    public init(_ touchView: TouchesView,
-                _ menuVms: [MenuVm],
-                _ delegate: MenuDelegate) {
+    public init(_ touchesView : TouchesView,
+                _ menuVms     : [MenuVm],
+                _ delegate    : MenuDelegate) {
+
         self.menuVms = menuVms
-        self.touchesView = touchView
+        self.touchesView = touchesView
         self.delegate = delegate
     }
 
@@ -47,20 +48,24 @@ public struct MenuView: View {
             ZStack(alignment: .topLeading) {
 
                 TouchViewRepresentable(touchVms, touchesView)
-                    .background(.black)
+                    .background(.clear) //????
                     .ignoresSafeArea()
+                #if os(visionOS)
+                    .opacity(immersiveSpaceIsShown ? 0 : 1)
+                #endif
                 ForEach(menuVms, id: \.self) { menuVm in
                     MenuTouchView(menuVm: menuVm)
                 }
+                .background(.clear)
             }
             .onAppear { delegate.window(bounds: geo.frame(in: .global), insets: geo.safeAreaInsets) }
             #if os(visionOS)
             .onChange(of: geo.frame(in: .global)) { old, now in delegate.window(bounds: now, insets: geo.safeAreaInsets) }
             #else
-            .onChange(of: geo.frame(in: .global)) { delegate.window(bounds: $0, insets: geo.safeAreaInsets) }
+            .onChange(of: geo.frame(in: .global)) { 
+                delegate.window(bounds: $0, insets: geo.safeAreaInsets) }
             #endif
             .statusBar(hidden: true)
         }
-        .background(.clear)
     }
 }

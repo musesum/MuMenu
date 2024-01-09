@@ -12,7 +12,7 @@ struct TreeView: View {
 
         ZStack(alignment: corner.alignment) {
 
-            MuTreeCanopyView(treeVm: treeVm)
+            TreeCanopyView(treeVm: treeVm)
 
             if treeVm.isVertical {
                 HStack(alignment: corner.vAlign)  {
@@ -41,7 +41,7 @@ struct TreeView: View {
 }
 
 /// hierarchical menu of horizontal or vertical branches
-struct MuTreeCanopyView: View {
+struct TreeCanopyView: View {
 
     @ObservedObject var treeVm: TreeVm
 
@@ -53,7 +53,7 @@ struct MuTreeCanopyView: View {
         Rectangle()
             .background(.thinMaterial)
             .cornerRadius(cornerRadius)
-            .opacity(0.01)
+            .opacity(0.1)
             .frame(width: treeSize.width, height: treeSize.height)
     }
 }

@@ -11,7 +11,7 @@ struct IconView: View {
     var color: Color { nodeVm.spotlight ? .white : Color(white:0.7) }
     
     #if os(visionOS)
-    var fill: Color { icon.iconType == .cursor ? .clear : Color(white:0.2)  }
+    var fill: Color { icon.iconType == .cursor ? .clear : Color(white: 0.3)  }
     #else
     var fill: Color { icon.iconType == .cursor ? .clear : .black  }
     #endif
@@ -48,6 +48,8 @@ struct IconView: View {
                             Image(uiImage: image)
                                 .resizable()
                                 .padding(geo.size.width * 0.1)
+                                .shadow(color: .black, radius: 2)
+
                         }
                     } else {
                         MuIconTextView(text: nodeVm.node.title,
@@ -61,10 +63,12 @@ struct IconView: View {
                                 .resizable()
                                 .padding(geo.size.width * 0.15)
                                 .colorInvert()
+                                .shadow(color: .black, radius: 2)
                         }
                     } else {
                         MuIconTextView(text: nodeVm.node.title,
                                        color: color)
+                        .shadow(color: .black, radius: 2)
                     }
                 case .symbol:
 
@@ -72,11 +76,13 @@ struct IconView: View {
                         Image(systemName: nodeVm.node.icon.named)
                             .scaledToFit()
                             .padding(1)
+                            .shadow(color: .black, radius: 2)
                     } else {
                         Image(systemName: nodeVm.node.icon.named)
                             .colorInvert()
                             .scaledToFit()
                             .padding(1)
+                            .shadow(color: .black, radius: 2)
                     }
             }
         }

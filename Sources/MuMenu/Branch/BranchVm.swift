@@ -215,7 +215,7 @@ public class BranchVm: Identifiable, ObservableObject {
         let ww = abs(clampDelta.width) / boundStart.width
         let hh = abs(clampDelta.height) / boundStart.height
         opacity = min(1-ww,1-hh)
-        // refresh MuTreeView with updated treeBounds
+        // refresh TreeView with updated treeBounds
         treeVm.treeShift = treeVm.treeShift
         return opacity
     }
