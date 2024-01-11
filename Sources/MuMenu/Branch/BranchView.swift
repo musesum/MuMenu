@@ -22,8 +22,6 @@ struct BranchView: View {
 
 /// title showing position of control
 fileprivate struct titleV: View {
-    
-    //@EnvironmentObject var rootVm: MuRootVm
     @ObservedObject var branchVm: BranchVm
     var treeVm: TreeVm { branchVm.treeVm }
     var panelVm: PanelVm { branchVm.panelVm }

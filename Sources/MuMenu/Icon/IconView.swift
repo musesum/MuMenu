@@ -8,34 +8,35 @@ struct IconView: View {
     @Environment(\.colorScheme) var colorScheme // darkMode
     @ObservedObject var nodeVm: NodeVm
     let icon: Icon
-    var color: Color { nodeVm.spotlight ? .white : Color(white:0.7) }
-    
-    #if os(visionOS)
-    var fill: Color { icon.iconType == .cursor ? .clear : Color(white: 0.3)  }
-    #else
-    var fill: Color { icon.iconType == .cursor ? .clear : .black  }
-    #endif
+    var stroke: Color { nodeVm.spotlight ? .white : Color(white: 0.7) }
+    var title: String { nodeVm.node.title }
+    var named: String { nodeVm.node.icon.named }
+
+    var fill: Color { (icon.iconType == .cursor
+                       ? .clear
+                       : (nodeVm.spotlight
+                          ? Color(white: 0.30)
+                          : Color(white: 0.15)))  }
+
 
     var width: CGFloat { nodeVm.spotlight ? 3.0 : 1.0 }
     var body: some View {
         ZStack {
+
             RoundedRectangle(cornerRadius: Layout.cornerRadius)
                 .fill(fill)
-
                 .overlay(RoundedRectangle(cornerRadius:  Layout.cornerRadius)
-                    .stroke(color, lineWidth: width)
+                    .stroke(stroke, lineWidth: width)
                     .background(.clear)
                 )
-                .shadow(radius: 2)
-                //??? .hoverEffect()//??? buttoneBorderEfffect, baseForegroundColor
+                .shadow(color: .black, radius: 1)
+                .contentShape(.hoverEffect, RoundedRectangle(cornerRadius: Layout.cornerRadius-10))
+                .hoverEffect()
+            ZStack {
+                switch icon.iconType {
 
-            switch icon.iconType {
-
-                case .none: MuIconTextView(text: nodeVm.node.title,
-                                           color: color)
-                    
-                case .text: MuIconTextView(text: nodeVm.node.icon.named,
-                                           color: color)
+                case .none: IconTextView(text: title, color: stroke)
+                case .text: IconTextView(text: named, color: stroke)
                 case .cursor:
 
                     if let uiImage = UIImage(named: nodeVm.node.icon.named) {
@@ -48,12 +49,10 @@ struct IconView: View {
                             Image(uiImage: image)
                                 .resizable()
                                 .padding(geo.size.width * 0.1)
-                                .shadow(color: .black, radius: 2)
 
                         }
                     } else {
-                        MuIconTextView(text: nodeVm.node.title,
-                                       color: color)
+                        IconTextView(text: nodeVm.node.title, color: stroke)
                     }
                 case .svg:
 
@@ -63,12 +62,11 @@ struct IconView: View {
                                 .resizable()
                                 .padding(geo.size.width * 0.15)
                                 .colorInvert()
-                                .shadow(color: .black, radius: 2)
+
                         }
                     } else {
-                        MuIconTextView(text: nodeVm.node.title,
-                                       color: color)
-                        .shadow(color: .black, radius: 2)
+                        IconTextView(text: nodeVm.node.title, color: stroke)
+                            .shadow(color: .black, radius: 1)
                     }
                 case .symbol:
 
@@ -76,20 +74,20 @@ struct IconView: View {
                         Image(systemName: nodeVm.node.icon.named)
                             .scaledToFit()
                             .padding(1)
-                            .shadow(color: .black, radius: 2)
                     } else {
                         Image(systemName: nodeVm.node.icon.named)
                             .colorInvert()
                             .scaledToFit()
                             .padding(1)
-                            .shadow(color: .black, radius: 2)
                     }
-            }
+                }
+            }.allowsHitTesting(false)
         }
+
     }
 }
 
-private struct MuIconTextView: View {
+private struct IconTextView: View {
 
     let text: String
     var color: Color

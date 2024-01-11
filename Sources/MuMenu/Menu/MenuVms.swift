@@ -2,17 +2,20 @@
 
 import MuFlo
 
-struct MenuVms {
+public struct MenuVms {
 
-    var menuVms = [MenuVm]()
+    public var menuVms = [MenuVm]()
     
-    init(_ root: Flo) {
+    public init(_ root: Flo) {
         let rootNode = FloNode(root)
         
         menuVms.append(
             MenuVm([.lower, .left],
-                   [(rootNode, .vertical),
-                    (rootNode, .horizontal)]))
+                   [(rootNode, .vertical)]))
+
+//            MenuVm([.lower, .left],
+//                   [(rootNode, .vertical),
+//                    (rootNode, .horizontal)]))
 //        
 //        menuVms.append(
 //            MenuVm([.lower, .right],

@@ -8,11 +8,28 @@ public typealias RangeXY = (ClosedRange<CGFloat>, ClosedRange<CGFloat>)
 
 extension CGRect {
 
+
+    public static func / (lhs: CGRect, rhs: CGFloat) -> CGRect {
+
+        if rhs > 0 {
+            return CGRect(x: lhs.minX / rhs, y: lhs.minY / rhs, width: lhs.width / rhs, height: lhs.height / rhs)
+        } else {
+            return .zero
+        }
+    }
+    public static func * (lhs: CGRect, rhs: CGFloat) -> CGRect {
+            return CGRect(x: lhs.minX * rhs, y: lhs.minY * rhs, width: lhs.width * rhs, height: lhs.height * rhs)
+    }
+    
+    var script: String {
+        "(\(minX.digits(0...2)),\(minY.digits(0...2)), \(width.digits(0...2)),\(height.digits(0...2)))"
+    }
+
     public func horizontal() -> Bool {
         return size.width > size.height
     }
 
-   public func between(_ p: CGPoint) -> CGPoint {
+    public func between(_ p: CGPoint) -> CGPoint {
 
         let x = origin.x
         let y = origin.y

@@ -21,48 +21,48 @@ The eyetracking and handpose is not yet available.
 #### Naming convention for components
 DeepMenu follows a MVVM pattern (Model, View, View Model) 
 
-+ MuFloNode* - proxy for Model, such as MuNodeFlo
-+ Mu*View - SwiftUI View for [root,tree,branch,panel,node,leaf] 
-+ Mu*Vm   - View Model for [root,tree,branch,panel,node,leaf] 
++ FloNode* - proxy for Model, such as NodeFlo
++ *View - SwiftUI View for [root,tree,branch,panel,node,leaf] 
++ *Vm   - View Model for [root,tree,branch,panel,node,leaf] 
 
-##### MuRoot* - starting point for one of more MuTree(s)
-+ MuRootVm - touch, corner, pilot, trees, branchSpot, nodeSpot
-+ MuRootView - manage UIViews for each corner 
-+ MuRootStatus - publish changed state in [root,tree,edit,space]
+##### Root* - starting point for one of more Tree(s)
++ RootVm - touch, corner, pilot, trees, branchSpot, nodeSpot
++ RootView - manage UIViews for each corner 
++ RootStatus - publish changed state in [root,tree,edit,space]
 
-##### MuTree* - horizontal or vertical hierarcy of MuBranches 
-+ MuTreeVm - select MuFloNode, add or remove sub-branches
-+ MuTreeView - SwiftUI view collection of MuBranch's 
+##### Tree* - horizontal or vertical hierarcy of Branches 
++ TreeVm - select FloNode, add or remove sub-branches
++ TreeView - SwiftUI view collection of Branch's 
 
-##### MuBranch* - one level in a hierachy containing MuNodes
-+ MuBranchVm - view model of a branch
-+ MuBranchView - SwiftUI view collection of MuNodeViews
-+ MuBranchPanelView - background panel for MuBranchView
+##### Branch* - one level in a hierachy containing Nodes
++ BranchVm - view model of a branch
++ BranchView - SwiftUI view collection of NodeViews
++ BranchPanelView - background panel for BranchView
         
-##### MuFloNode* - A persistent model of items (shared by many Mu*Vms) 
-+ MuFloNode - a generic node, may be shared my many NodeVm's (and views)
-+ MuNodeFlo - a node proxy for Flo items 
-+ MuNodeVm - a view model for a View, may share a Node from another Vm
-+ MuNodeView - a SwiftUI view, has a companion MuNodeVm
-+ MuNodeIconView - a subview of MuNodeView for icons
-+ MuNodeTextView - a subview of MuNodeView for text
+##### FloNode* - A persistent model of items (shared by many *Vms) 
++ FloNode - a generic node, may be shared my many NodeVm's (and views)
++ NodeFlo - a node proxy for Flo items 
++ NodeVm - a view model for a View, may share a Node from another Vm
++ NodeView - a SwiftUI view, has a companion NodeVm
++ NodeIconView - a subview of NodeView for icons
++ NodeTextView - a subview of NodeView for text
         
-##### MuLeaf* - subclass of MuFloNode with a user touch control  
-+ MuLeafTap - tap to activate, like a drum pad
-+ MuLeafTog - toggle a switch 0 or 1
-+ MuLeafSeg - segmented control
-+ MuLeafVal - single dimension value
-+ MuLeafVxy - 2 dimension xy control
+##### Leaf* - subclass of FloNode with a user touch control  
++ LeafTap - tap to activate, like a drum pad
++ LeafTog - toggle a switch 0 or 1
++ LeafSeg - segmented control
++ LeafVal - single dimension value
++ LeafVxy - 2 dimension xy control
    
-##### MuPanel* - stroke+fill branches and bounds for node views
-+ MuPanelVm - type, axis, size, and margins for View
-+ MuPanelView - SwiftUI background 
-+ MuPanelAxisView - vertical or horizontal PanelView 
+#####Panel* - stroke+fill branches and bounds for node views
++ PanelVm - type, axis, size, and margins for View
++ PanelView - SwiftUI background 
++ PanelAxisView - vertical or horizontal PanelView 
 
-##### MuTouch* - capture touches which are captured by all branches
-  - MuTouch - manage touch's [begin,moved,ended] state plus taps
-  - MuTouchVm - state for root and drag nodes
-  - MuTouchView - view for root and drag nodes
+##### Touch* - capture touches which are captured by all branches
+  - Touch - manage touch's [begin,moved,ended] state plus taps
+  - TouchVm - state for root and drag nodes
+  - TouchView - view for root and drag nodes
    
 ##### Prefixes and Suffixes
 + component instances 

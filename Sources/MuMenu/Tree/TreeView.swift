@@ -12,7 +12,7 @@ struct TreeView: View {
 
         ZStack(alignment: corner.alignment) {
 
-            TreeCanopyView(treeVm: treeVm)
+            // TreeCanopyView(treeVm: treeVm)
 
             if treeVm.isVertical {
                 HStack(alignment: corner.vAlign)  {
@@ -53,7 +53,7 @@ struct TreeCanopyView: View {
         Rectangle()
             .background(.thinMaterial)
             .cornerRadius(cornerRadius)
-            .opacity(0.1)
+            .opacity(0.01)
             .frame(width: treeSize.width, height: treeSize.height)
     }
 }
