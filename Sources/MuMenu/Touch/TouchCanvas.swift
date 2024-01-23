@@ -24,8 +24,27 @@ open class TouchCanvas {
     }
 }
 
+#if os(visionOS)
+// ARKit visionOS Handpose
 extension TouchCanvas {
 
+    public func beginTouchHand(_ touchHand: TouchHand) {
+        TouchCanvas.touchBuffers[touchHand.hash] = TouchCanvasBuffer(touchHand, self)
+    }
+
+    public func updateTouchHand(_ touchHand: TouchHand) {
+        if let touchBuffer = TouchCanvas.touchBuffers[touchHand.hash] {
+            touchBuffer.addTouchHand(touchHand)
+        } else {
+            print("\(#function) failed")
+        }
+    }
+}
+#endif
+
+// UIKit Touches
+
+extension TouchCanvas {
     public func beginTouch(_ touch: UITouch) -> Bool {
         TouchCanvas.touchBuffers[touch.hash] = TouchCanvasBuffer(touch, self)
         return true
@@ -35,7 +54,6 @@ extension TouchCanvas {
             touchBuffer.addTouchItem(touch)
             return true
         }
-
         return false
     }
     public func remoteItem(_ item: TouchCanvasItem) {
