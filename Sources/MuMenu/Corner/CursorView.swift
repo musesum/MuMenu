@@ -17,12 +17,13 @@ struct CursorView: View {
     var body: some View {
         GeometryReader() { geo in
             IconView(nodeVm: nodeVm, icon: nodeVm.node.icon)
-#if os(visionOS)
+                #if os(visionOS)
                 .onChange(of: geo.frame(in: .global)) { old, now in nodeVm.updateCenter(now) }
-#else
+                #else
                 .onChange(of: geo.frame(in: .global)) { nodeVm.updateCenter($0) }
-#endif
+                #endif
                 .onAppear { nodeVm.updateCenter(geo.frame(in: .global)) }
+                .cornerRadius(Layout.cornerRadius)
         }
         .frame(width: diameter, height: diameter)
         .padding(Layout.padding)
