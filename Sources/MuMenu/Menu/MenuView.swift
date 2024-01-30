@@ -19,10 +19,9 @@ public struct MenuView: View {
     #endif
 
     var menuVms: [MenuVm]
-    var touchVms: [TouchVm] { menuVms.map { $0.rootVm.touchVm } }
+    var cornerVms: [CornerVm] { menuVms.map { $0.rootVm.cornerVm } }
     var touchesView: TouchesView
     var delegate: MenuDelegate
-    //???? @ObservedObject var renderState: RenderState
 
     public init(_ root: Flo,
                 _ touchesView: TouchesView,
@@ -45,21 +44,28 @@ public struct MenuView: View {
 
         GeometryReader { geo in
             ZStack(alignment: .topLeading) {
-                
-                TouchViewRepresentable(touchVms, touchesView)
-                    .ignoresSafeArea()
-                
+
+                TouchViewRepresentable(cornerVms, touchesView)
+
                 ForEach(menuVms, id: \.self) { menuVm in
-                    MenuTouchView(menuVm: menuVm).ignoresSafeArea()
+                    MenuDragView(menuVm: menuVm)
+                    //MenuTouchView(menuVm: menuVm)
                 }
             }
             .onAppear {
-                delegate.window(frame: geo.frame(in: .global), insets: geo.safeAreaInsets)
+             var insets = geo.safeAreaInsets
+                insets.bottom = 20
+                delegate.window(frame: geo.frame(in: .global), insets: insets)
             }
 
             #if os(visionOS)
             .onChange(of: geo.frame(in: .global)) { old, now in
-                delegate.window(frame: now, insets: geo.safeAreaInsets)
+                var insets = geo.safeAreaInsets
+                //insets.bottom = 20
+                var next = now
+                next.origin.y -= 20
+
+                delegate.window(frame: next, insets: insets)
                 //???? print("frame old\(old.script) now\(now.script)")
             }
             #else

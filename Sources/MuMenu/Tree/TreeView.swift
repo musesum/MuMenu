@@ -6,13 +6,13 @@ struct TreeView: View {
 
     @ObservedObject var treeVm: TreeVm
 
-    var corner: CornerOps { treeVm.rootVm.corner }
+    var corner: CornerOp { treeVm.rootVm.cornerOp }
 
     var body: some View {
 
         ZStack(alignment: corner.alignment) {
 
-            // TreeCanopyView(treeVm: treeVm)
+            //?? TreeCanopyView(treeVm: treeVm)
 
             if treeVm.isVertical {
                 HStack(alignment: corner.vAlign)  {

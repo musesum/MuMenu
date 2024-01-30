@@ -20,16 +20,16 @@ public struct MenuDragView: View {
                     .frame(width: geo.size.width, height: 18, alignment: .top)
                 RootView()
                     .environmentObject(menuVm.rootVm)
-                    .onAppear() { menuVm.rootVm.touchVm.updateBounds(geo.frame(in: .global)) }
+                    .onAppear() { menuVm.rootVm.cornerVm.updateBounds(geo.frame(in: .global)) }
                     .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .global)
                         .updating($touchXY) { (value, touchXY, _) in touchXY = value.location })
                 #if os(visionOS)
                     .onChange(of: touchXY) { old, now in
-                        menuVm.rootVm.touchVm.updateDragXY(now)
+                        menuVm.rootVm.cornerVm.updateDragXY(now)
                     }
                 #else
                     .onChange(of: touchXY) {
-                        menuVm.rootVm.touchVm.updateDragXY($0)
+                        menuVm.rootVm.cornerVm.updateDragXY($0)
                     }
                 #endif
 

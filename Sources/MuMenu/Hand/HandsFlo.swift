@@ -34,12 +34,8 @@ public class HandsFlo {
                            _ anchor: HandAnchor) {
         switch chirality {
         case .left:  leftHand.updateAnchor(anchor)
-
-        case .right: 
-
-            rightHand.updateAnchor(anchor)
+        case .right: rightHand.updateAnchor(anchor)
         }
-
     }
 }
 

@@ -5,7 +5,7 @@ public struct RootView: View {
     @EnvironmentObject var rootVm: RootVm
     public var body: some View {
         
-        switch rootVm.corner {
+        switch rootVm.cornerOp {
             case [.lower, .right]: LowerRightView()
             case [.lower, .left ]: LowerLeftView()
             case [.upper, .right]: UpperRightView()
@@ -22,7 +22,7 @@ private struct ForestView: View {
         ForEach(rootVm.treeVms, id: \.id) {
             TreeView(treeVm: $0)
         }
-        TouchView(touchVm: rootVm.touchVm)
+        CornerView(cornerVm: rootVm.cornerVm)
     }
 }
 

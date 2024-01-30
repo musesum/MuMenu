@@ -8,7 +8,7 @@ open class TouchCanvasBuffer {
 
     var lastItem: TouchCanvasItem? // repeat last touch until isDone
                                    // each finger or brush gets its own double buffer
-    
+
     public let buffer = DoubleBuffer<TouchCanvasItem>(internalLoop: false)
     private var indexNow = 0
     private var touchCanvas: TouchCanvas
@@ -25,14 +25,15 @@ open class TouchCanvasBuffer {
 
     public init(_ touchItem: TouchCanvasItem,
                 _ touchCanvas: TouchCanvas) {
-        
+
         self.touchCanvas = touchCanvas
         buffer.delegate = self
 
         addTouchCanvasItem(touchItem)
     }
 
-    #if os(visionOS)
+
+#if os(visionOS)
     public init(_ touchHand: TouchHand,
                 _ touchCanvas: TouchCanvas) {
 
@@ -41,20 +42,25 @@ open class TouchCanvasBuffer {
 
         addTouchHand(touchHand)
     }
+
+
+
     public func addTouchHand(_ touchHand: TouchHand) {
 
-        let force = CGFloat(touchHand.pos.z)
-        let radius = CGFloat(touchHand.pos.z)
-        let nextXY = CGPoint(x: CGFloat(touchHand.pos.x),
-                             y: CGFloat(touchHand.pos.y))
+        let force = CGFloat(touchHand.pos.z) * -200
+        let radius = force
+        let nextXY = CGPoint(x: CGFloat( touchHand.pos.x * 400 + 800),
+                             y: CGFloat(-touchHand.pos.y * 400 + 800))
 
         let phase = touchHand.phase
         let azimuth = CGFloat.zero
         let altitude = CGFloat.zero
+        logTouch(phase, nextXY, radius)
 
         let item = makeTouchCanvasItem(touchHand.hash, force, radius, nextXY, phase, azimuth, altitude, Visitor(.canvas))
 
         if PeersController.shared.hasPeers {
+
             let encoder = JSONEncoder()
             do {
                 let data = try encoder.encode(item)
@@ -66,12 +72,63 @@ open class TouchCanvasBuffer {
         buffer.append(item)
 
     }
-    #endif
+#endif
+
+    // TODO:  separate out //????
+    var posX: ClosedRange<CGFloat>?
+    var posY: ClosedRange<CGFloat>?
+    var radi: ClosedRange<CGFloat>?
+
+    func logTouch(_ phase: UITouch.Phase,
+                  _ nextXY: CGPoint,
+                  _ radius: CGFloat) {
+
+        switch phase {
+        case .began: logNow("\n👍🟢") ; resetRanges()
+        case .moved: logNow("🫰🔷")   ; setRanges()
+        case .ended: logNow("🖐️🛑")   ; setRanges() ; logRanges()
+        default    : print("🖐️⁉️")
+        }
+        func logNow(_ msg: String) {
+            print("\(msg)(\(nextXY.x.digits(0...2)), \(nextXY.y.digits(0...2)), \(radius.digits(0...2)))", terminator: " ")
+        }
+        func resetRanges() {
+            posX = nil
+            posY = nil
+            radi = nil
+            setRanges()
+        }
+        func setRanges() {
+            if posX == nil {
+                posX = nextXY.x...nextXY.x
+            } else if let xx = posX {
+                posX = min(xx.lowerBound, nextXY.x)...max(xx.upperBound, nextXY.x)
+            }
+            if posY == nil {
+                posY = nextXY.y...nextXY.y
+            } else if let yy = posY {
+                posY = min(yy.lowerBound, nextXY.y)...max(yy.upperBound, nextXY.y)
+            }
+            if radi == nil {
+                radi = radius...radius
+            } else if let rr = radi {
+                radi = min(rr.lowerBound, radius)...max(rr.upperBound, radius)
+            }
+        }
+        func logRanges() {
+            if let posX, let  posY, let radi {
+                let xStr = "\(posX.lowerBound.digits(0...2))...\(posX.upperBound.digits(0...2))"
+                let yStr = "\(posY.lowerBound.digits(0...2))...\(posY.upperBound.digits(0...2))"
+                let rStr = "\(radi.lowerBound.digits(0...2))...\(radi.upperBound.digits(0...2))"
+
+                print("\n👐 (\(xStr), \(yStr), \(rStr))")
+            }
+        }
+    }
 
     public func addTouchCanvasItem(_ touchItem: TouchCanvasItem) {
         buffer.append(touchItem)
     }
-
 
     public func addTouchItem(_ touch: UITouch) {
 
@@ -81,8 +138,10 @@ open class TouchCanvasBuffer {
         let phase = touch.phase
         let azimuth = touch.azimuthAngle(in: nil)
         let altitude = touch.altitudeAngle
+        logTouch(phase, nextXY, radius)
 
         let item = makeTouchCanvasItem(touch.hash, force, radius, nextXY, phase, azimuth, altitude, Visitor(.canvas))
+
 
         if PeersController.shared.hasPeers {
             let encoder = JSONEncoder()
@@ -95,7 +154,7 @@ open class TouchCanvasBuffer {
         }
         buffer.append(item)
     }
-   public func makeTouchCanvasItem(
+    public func makeTouchCanvasItem(
         _ key     : Int,
         _ force   : CGFloat,
         _ radius  : CGFloat,

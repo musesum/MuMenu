@@ -4,13 +4,13 @@ import Foundation
 import MuFlo
 import UIKit
 
-extension TouchVm {
+extension CornerVm {
 
     /// called by UIKit to see if UITouchBegin hits a menu.
     /// If not, it will not call touch
     public func hitTest(_ touchNow: CGPoint) ->  NodeVm? {
-        if let rootNodeVm, rootNodeVm.containsPoint(touchNow) {
-            return rootNodeVm // hits the root (home) node icon
+        if let logoNodeVm, logoNodeVm.containsPoint(touchNow) {
+            return logoNodeVm // hits the root (home) node icon
         } else if let rootVm, let nodeVm = rootVm.hitTest(touchNow) {
             return nodeVm // hits one of the shown branches
         }

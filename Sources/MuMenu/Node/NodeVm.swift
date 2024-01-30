@@ -40,7 +40,7 @@ public class NodeVm: Identifiable, ObservableObject {
     /// path and hash get updated through MuNodeDispatch::bindDispatch
     public lazy var path: String? = {
         var path = ""
-        let corner = rootVm.corner
+        let corner = rootVm.cornerOp
 
         if let nodePath = node.path {
             path += nodePath

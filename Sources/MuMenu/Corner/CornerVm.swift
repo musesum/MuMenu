@@ -3,28 +3,23 @@
 import SwiftUI
 import MuFlo
 /// Corner node which follows touch
-public class TouchVm: ObservableObject {
+public class CornerVm: ObservableObject {
 
-    @Published var dragIconXY = CGPoint.zero /// current position
+    @Published var ringIconXY = CGPoint.zero /// current position
     public var parkIconXY = CGPoint.zero     /// fixed position of icon
 
-    /// hide park icon while hovering elsewhere
-    var parkIconAlpha: CGFloat {
-        (dragIconXY == parkIconXY) ||
-        (dragIconXY == .zero) ? 1 : 0
-    }
     var rootVm: RootVm?
-    var rootNodeVm: NodeVm?  /// fixed root node in corner in which to drag from
-    var dragNodeVm: NodeVm?  /// drag from root with duplicate node icon
+    var logoNodeVm: NodeVm?  /// fixed root node in corner in which to drag from
+    var ringNodeVm: NodeVm?  /// drag from root with duplicate node icon
     var touchState = TouchState() /// begin,moved,end state plus tap count
 
     private var rootNodeΔ = CGSize.zero /// offset between rootNode and touchNow
     private var spotNodeΔ = CGSize.zero /// offset between touch point and center in coord
     var dragNodeΔ: CGSize = .zero /// weird kludge to compsate for small right offset
 
-    public var corner: CornerOps
+    public var corner: CornerOp
 
-    init(_ corner: CornerOps) {
+    init(_ corner: CornerOp) {
         self.corner = corner
     }
 
@@ -33,16 +28,23 @@ public class TouchVm: ObservableObject {
         // choose an arbirary tree to allow for branc
         guard let treeVm = rootVm.treeVms.first else { return }
         self.rootVm = rootVm
-        let icon = Icon(.cursor, Layout.hoverRing)
-        let name = rootVm.corner.indicator()
-        let cornerFlo = Flo(name)
-        let cornerFloNode = FloNode(cornerFlo, .none, icon)
-        let branchVm = BranchVm.cached(treeVm: treeVm)
-        rootNodeVm = NodeVm(cornerFloNode, branchVm, nil)
-        branchVm.addNodeVm(rootNodeVm)
 
-        dragNodeVm = rootNodeVm?.copy()
-        if rootVm.corner.right {
+        let branchVm = BranchVm.cached(treeVm: treeVm)
+        let name = rootVm.cornerOp.indicator()
+        let cornerFlo = Flo(name)
+
+        let iconLogo = Icon(.cursor, Layout.iconLogo)
+        let cornerLogo = FloNode(cornerFlo, .none, iconLogo)
+        logoNodeVm = NodeVm(cornerLogo, branchVm, nil)
+
+        let iconRing = Icon(.cursor, Layout.iconRing)
+        let cornerRing = FloNode(cornerFlo, .none, iconRing)
+        ringNodeVm = NodeVm(cornerRing, branchVm, nil)
+
+        branchVm.addNodeVm(logoNodeVm)
+        branchVm.addNodeVm(ringNodeVm)
+
+        if rootVm.cornerOp.right {
             let rightOffset: CGFloat = -(2 * Layout.padding)
             dragNodeΔ = CGSize(width: rightOffset, height: 0)
         }
@@ -91,14 +93,14 @@ public class TouchVm: ObservableObject {
     func ended(_ touchXY: CGPoint, fromRemote: Bool) {
         touchState.ended()
         rootVm?.touchEnded(touchState, fromRemote)
-        dragIconXY = parkIconXY
+        ringIconXY = parkIconXY
         spotNodeΔ = .zero // no spotNode to align with
         rootNodeΔ = .zero // go back to rootNode
     }
     /// updated on startup or change in screen orientation
     func updateRootIcon(_ from: CGRect) {
         parkIconXY = rootVm?.cornerXY(in: from) ?? .zero
-        dragIconXY = parkIconXY
+        ringIconXY = parkIconXY
         //log("*** rootIconXY: ", [from,rootIconXY])
     }
     
@@ -106,21 +108,21 @@ public class TouchVm: ObservableObject {
     func alignCursor(_ touchXY: CGPoint) {
 
         guard let rootVm else {
-            return dragIconXY = touchXY - bounds.origin
+            return ringIconXY = touchXY - bounds.origin
         }
         if !touchState.touching ||
             rootVm.touchType.isIn([.root, .canopy]) ||
             rootVm.nodeSpotVm?.nodeType.isControl ?? false {
 
-            dragIconXY = parkIconXY  // park the dragIcon
+            ringIconXY = parkIconXY  // park the dragIcon
 
         } else if let spotCenter = rootVm.nodeSpotVm?.center {
 
-            dragIconXY = spotCenter - bounds.origin
+            ringIconXY = spotCenter - bounds.origin
 
         } else {
 
-            dragIconXY = touchXY - bounds.origin
+            ringIconXY = touchXY - bounds.origin
         }
     }
     var bounds = CGRect.zero
@@ -130,8 +132,8 @@ public class TouchVm: ObservableObject {
     }
 
     func touchingRoot(_ touchNow: CGPoint) -> Bool {
-        if let rootNodeVm,
-           rootNodeVm.containsPoint(touchNow) {
+        if let logoNodeVm,
+           logoNodeVm.containsPoint(touchNow) {
             return true
         }
         return false

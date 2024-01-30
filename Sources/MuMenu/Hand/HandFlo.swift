@@ -103,8 +103,9 @@ public class HandFlo {
 
         func err(_ msg: String) { print("HandJoints::update err: \(msg)") }
     }
-
+    var count = -1
     func logAll() {
+        count = (count + 1) % 10; if count != 0 { return }
         for (handJoint, xyzOn) in joints {
             if xyzOn.on {
                 print(handJoint.rawValue + xyzOn.xyz.script, terminator: " ")

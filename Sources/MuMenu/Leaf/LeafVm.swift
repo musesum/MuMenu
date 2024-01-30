@@ -25,7 +25,7 @@ public class LeafVm: NodeVm {
             thumbs[1][1] = thumbTwe[1] // scalar.y.twe
 
             let leafItem = MenuLeafItem(self, thumbs)
-            let menuItem = MenuItem(leaf: leafItem, rootVm.corner, .moved)
+            let menuItem = MenuItem(leaf: leafItem, rootVm.cornerOp, .moved)
             rootVm.sendItemToPeers(menuItem)
         }
     }

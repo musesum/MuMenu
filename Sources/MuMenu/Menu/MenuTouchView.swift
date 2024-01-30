@@ -15,7 +15,7 @@ public struct MenuTouchView: View {
                 // MuStatusView().frame(width: geo.size.width, height: 18, alignment: .top)
                 RootView()
                     .environmentObject(menuVm.rootVm)
-                    .onAppear() { menuVm.rootVm.touchVm.updateBounds(geo.frame(in: .global)) }
+                    .onAppear() { menuVm.rootVm.cornerVm.updateBounds(geo.frame(in: .global)) }
                     .allowsHitTesting(false) // gestures provided by UITouch
             }
         }

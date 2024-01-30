@@ -4,7 +4,7 @@ import UIKit
 import MuFlo // double buffer
 import MuPeer
 
-public var CornerTouchVm = [Int: TouchVm]()
+public var CornerOpVm = [Int: CornerVm]()
 
 public class MenuTouch {
 
@@ -30,7 +30,7 @@ extension MenuTouch: DoubleBufferDelegate {
         if isRemote {
             switch item.type {
                 case .node, .leaf:
-                    item.touchVm?.gotoMenuItem(item)
+                    item.cornerVm?.gotoMenuItem(item)
                 case .root:
                     if let root = item.item as? MenuRootItem {
                         for tree in root.trees {
@@ -41,7 +41,7 @@ extension MenuTouch: DoubleBufferDelegate {
             }
 
         } else if let touch = item.item as? MenuTouchItem {
-            item.touchVm?.updateTouchXY(touch.cgPoint, item.phase)
+            item.cornerVm?.updateTouchXY(touch.cgPoint, item.phase)
         }
         return false // never invalidate internal timer
     }

@@ -59,11 +59,13 @@ DeepMenu follows a MVVM pattern (Model, View, View Model)
 + PanelView - SwiftUI background 
 + PanelAxisView - vertical or horizontal PanelView 
 
+##### Corner* - Corner start of menu
+  - CornerVm - state for selection ring and logo nodes
+  - CornerView - view for selection ring and logo nodes
+
 ##### Touch* - capture touches which are captured by all branches
   - Touch - manage touch's [begin,moved,ended] state plus taps
-  - TouchVm - state for root and drag nodes
-  - TouchView - view for root and drag nodes
-   
+ 
 ##### Prefixes and Suffixes
 + component instances 
   - *Vm - instance of view model, such as branchVm

@@ -13,7 +13,7 @@ public class RootVm: ObservableObject, Equatable {
     var touchTypeBegin = TouchType.none
     
     /// captures touch events to dispatch to this root
-    public let touchVm: TouchVm
+    public let cornerVm: CornerVm
     
     /// which menu elements are shown on View
     var viewOps: Set<TouchType> = [.root, .trunks]
@@ -22,12 +22,11 @@ public class RootVm: ObservableObject, Equatable {
     /// To prevent touchEnded from hiding elements that were shown during `touchBegin`
     var beginViewOps: Set<TouchType> = []
     
-    var corner: CornerOps        /// corner where root begins, ex: `[south,west]`
+    var cornerOp: CornerOp        /// corner where root begins, ex: `[south,west]`
     var treeVms = [TreeVm]()  /// vertical or horizontal stack of branches
     var treeSpotVm: TreeVm?   /// most recently used tree
     var rootOffset: CGSize = .zero
     public var nodeSpotVm: NodeVm?   /// current last touched or hovered node
-    private var nodePushVm: NodeVm?
 
     var peers: PeersController?
 
@@ -41,15 +40,15 @@ public class RootVm: ObservableObject, Equatable {
         if !fromRemote {
             let phase = touchState.phase
             let nodeItem = MenuNodeItem(newSpotVm)
-            let menuItem = MenuItem(node: nodeItem, corner, phase)
+            let menuItem = MenuItem(node: nodeItem, cornerOp, phase)
             sendItemToPeers(menuItem)
         }
     }
 
-    public init(_ corner: CornerOps) {
+    public init(_ corner: CornerOp) {
         
-        self.corner = corner
-        self.touchVm = TouchVm(corner)
+        self.cornerOp = corner
+        self.cornerVm = CornerVm(corner)
         self.peers = PeersController.shared
         PeersController.shared.peersDelegates.append(self)
     }
@@ -60,15 +59,16 @@ public class RootVm: ObservableObject, Equatable {
 
     public func updateTreeVms(_ treeVms: [TreeVm]) {
         self.treeVms.append(contentsOf: treeVms)
-        touchVm.setRoot(self)
+        cornerVm.setRoot(self)
         updateTreeOffsets()
     }
 
     func updateTreeOffsets() {
 
-        // xy top left to bottom right cornders
-        let x0 = Layout.padding2
-        let y0 = Layout.padding2
+        let margins = idiomMargins()
+        // xy top left to bottom right corners
+        let x0 = margins.width
+        let y0 = margins.height
         let x1 = x0 + Layout.diameter + Layout.padding * 3
         let y1 = y0 + Layout.diameter + Layout.padding * 3
 
@@ -80,14 +80,11 @@ public class RootVm: ObservableObject, Equatable {
         func h(_ w:CGFloat,_ h:CGFloat) { hs = CGSize(width:w,height:h) }
         func r(_ w:CGFloat,_ h:CGFloat) { rs = CGSize(width:w,height:h) }
 
-        // corner offsets are different for ipad
-        let pad = UIDevice.current.userInterfaceIdiom == .pad
-
-        switch corner {
-            case [.lower, .right]: v(-x0,-y1); h(-x1,-y0); pad ? r(0, 0) : r(-x0,-y0)
-            case [.lower, .left ]: v( x0,-y1); h( x1,-y0); pad ? r(0, 0) : r( x0,-y0)
-            case [.upper, .right]: v(-x0, y1); h(-x1, y0); pad ? r(0,y0) : r(-x0,  0)
-            case [.upper, .left ]: v( x0, y1); h( x1, y0); pad ? r(0,y0) : r( x0,  0)
+        switch cornerOp {
+            case [.lower, .right]: v(-x0,-y1); h(-x1,-y0); r(0, 0)
+            case [.lower, .left ]: v( x0,-y1); h( x1,-y0); r(0, 0)
+            case [.upper, .right]: v(-x0, y1); h(-x1, y0); r(0,y0)
+            case [.upper, .left ]: v( x0, y1); h( x1, y0); r(0,y0)
             default: break
         }
         rootOffset = rs
@@ -95,20 +92,40 @@ public class RootVm: ObservableObject, Equatable {
             treeVm.treeOffset = (treeVm.isVertical ? vs : hs)
         }
     }
-    
+    func idiomMargins() -> CGSize {
+        let idiom = UIDevice.current.userInterfaceIdiom
+        let padding2 = Layout.padding2
+
+        let w: CGFloat
+        switch idiom {
+        case .pad    : w = padding2
+        case .phone  : w = 0
+        case .vision : w = padding2 * 2
+        default      : w = 0
+        }
+
+        let h: CGFloat
+        switch idiom {
+        case .pad    : h = cornerOp.lower ? padding2 : 0
+        case .phone  : h = cornerOp.upper ? padding2 : 0
+        case .vision : h = padding2 * 2
+        default      : h = 0
+        }
+        return CGSize(width: w, height: h)
+    }
+
     func cornerXY(in frame: CGRect) -> CGPoint {
         
-        let idiom = UIDevice.current.userInterfaceIdiom
-        let margin = 2 * Layout.padding
-        let x = (idiom == .pad ? margin : 0)
-        let y = ((corner.upper && idiom == .phone) ||
-                 (corner.lower && idiom == .pad)) ? margin : 0
+        let margins = idiomMargins()
+        let x = margins.width
+        let y = margins.height
+
         let w = frame.size.width
         let h = frame.size.height
         let s = Layout.padding
         let r = Layout.diameter / 2
         
-        switch corner {
+        switch cornerOp {
             case [.lower, .right]: return CGPoint(x: w-x-r-s, y: h-y-r-s)
             case [.lower, .left ]: return CGPoint(x:   x+r+s, y: h-y-r-s)
             case [.upper, .right]: return CGPoint(x: w-x-r-s, y:   y+r+s)
@@ -172,7 +189,7 @@ public class RootVm: ObservableObject, Equatable {
 
         if !fromRemote, let nodeSpotVm {
             let nodeItem = MenuNodeItem(nodeSpotVm)
-            let menuItem = MenuItem(node: nodeItem, corner, touchState.phase)
+            let menuItem = MenuItem(node: nodeItem, cornerOp, touchState.phase)
             sendItemToPeers(menuItem)
         }
     }
@@ -255,7 +272,7 @@ public class RootVm: ObservableObject, Equatable {
         }
         func hoverRootNode() -> Bool {
 
-            if !touchVm.touchingRoot(touchNow) {
+            if !cornerVm.touchingRoot(touchNow) {
                 if touchTypeBegin == .root {
                     // when dragging root over branches, expand tree
                     treeSpotVm?.shiftExpandLast(fromRemote)
@@ -295,9 +312,6 @@ public class RootVm: ObservableObject, Equatable {
                 if let branchVm = treeVm.nearestBranch(touchNow),
                    let nodeVm = branchVm.nearestNode(touchNow) {
 
-                    if nodeVm.nodeType.isTog {
-                        nodePushVm = (nodeSpotVm != nodeVm ? nodeSpotVm : nil)
-                    }
                     updateTreeSpot(treeVm, nodeVm, "tree")
 
                     if hoverLeafNode() {
@@ -364,7 +378,7 @@ public class RootVm: ObservableObject, Equatable {
         }
         
         func shiftBranches() {
-            if touchVm.touchingRoot(touchNow) {
+            if cornerVm.touchingRoot(touchNow) {
                 showTrunks()
                 touchType = .root
                 return
@@ -386,7 +400,7 @@ public class RootVm: ObservableObject, Equatable {
             if touchState.phase.isDone() {
                 treeSpotVm?.shiftNearest()
                 touchType = .root
-            } else if touchVm.touchingRoot(touchNow) {
+            } else if cornerVm.touchingRoot(touchNow) {
                 showTrunks()
                 touchState.beginPoint(touchNow)
                 touchType = .root
@@ -402,16 +416,12 @@ public class RootVm: ObservableObject, Equatable {
 
             if touchState.phase == .ended,
                leafVm.containsPoint(touchNow) {
-                if let nodePushVm {
-                    updateTreeSpot(leafVm.branchVm.treeVm, nodePushVm, "tog")
-                }
             }
 
             if touchType == .tog,
                !leafVm.containsPoint(touchNow) {
                 // have moved off node
                 nodeSpotVm = nil
-                nodePushVm = nil
                 touchType = .none
                 return
             } else {

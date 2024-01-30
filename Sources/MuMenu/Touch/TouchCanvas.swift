@@ -29,11 +29,13 @@ open class TouchCanvas {
 extension TouchCanvas {
 
     public func beginTouchHand(_ touchHand: TouchHand) {
+        print("👍", terminator: "")
         TouchCanvas.touchBuffers[touchHand.hash] = TouchCanvasBuffer(touchHand, self)
     }
 
     public func updateTouchHand(_ touchHand: TouchHand) {
         if let touchBuffer = TouchCanvas.touchBuffers[touchHand.hash] {
+            
             touchBuffer.addTouchHand(touchHand)
         } else {
             print("\(#function) failed")

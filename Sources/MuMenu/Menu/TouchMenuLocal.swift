@@ -8,15 +8,15 @@ public class TouchMenuLocal {
     static var menuKey = [Int: TouchMenuLocal]()
 
     private let buffer = DoubleBuffer<MenuItem>(internalLoop: true)
-    private let touchVm: TouchVm
+    private let cornerVm: CornerVm
     private let isRemote: Bool
     private let nodeVm: NodeVm?
     
-    public init(_ touchVm: TouchVm,
+    public init(_ cornerVm: CornerVm,
                 _ nodeVm: NodeVm?,
                 isRemote: Bool) {
         
-        self.touchVm = touchVm
+        self.cornerVm = cornerVm
         self.nodeVm = nodeVm
         self.isRemote = isRemote
         buffer.delegate = self
@@ -26,19 +26,19 @@ public class TouchMenuLocal {
         
         let touchXY = touch.preciseLocation(in: nil)
 
-        for touchVm in CornerTouchVm.values {
-            if let nodeVm = touchVm.hitTest(touchXY) {
+        for cornerVm in CornerOpVm.values {
+            if let nodeVm = cornerVm.hitTest(touchXY) {
                 return addMenu(nodeVm)
             } else {
-                for treeVm in touchVm.rootVm?.treeVms ?? [] {
+                for treeVm in cornerVm.rootVm?.treeVms ?? [] {
                     if treeVm.treeBoundsPad.contains(touchXY) {
                         return addMenu()
                     }
                 }
             }
             func addMenu(_ nodeVm: NodeVm? = nil) -> Bool {
-                let touchMenu = TouchMenuLocal(touchVm, nodeVm, isRemote: false)
-                let menuItem = MenuItem(touch, touchVm.corner)
+                let touchMenu = TouchMenuLocal(cornerVm, nodeVm, isRemote: false)
+                let menuItem = MenuItem(touch, cornerVm.corner)
                 touchMenu.buffer.append(menuItem)
                 let key = touch.hash
                 menuKey[key] = touchMenu
@@ -51,7 +51,7 @@ public class TouchMenuLocal {
     public static func updateTouch(_ touch: UITouch) -> Bool {
         
         if let touchMenu = menuKey[touch.hash] {
-            let corner = touchMenu.touchVm.corner
+            let corner = touchMenu.cornerVm.corner
             touchMenu.buffer.append(MenuItem(touch, corner))
             return true
         }
@@ -66,9 +66,9 @@ extension TouchMenuLocal: DoubleBufferDelegate {
     public func flushItem<Item>(_ item: Item) -> Bool {
         let item = item as! MenuItem
         if let touch = item.item as? MenuTouchItem,
-           let touchVm = CornerTouchVm[item.corner] {
+           let cornerVm = CornerOpVm[item.cornerOp] {
 
-            touchVm.updateTouchXY(touch.cgPoint, item.phase)
+            cornerVm.updateTouchXY(touch.cgPoint, item.phase)
         }
         return item.isDone
     }

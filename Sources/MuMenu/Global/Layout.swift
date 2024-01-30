@@ -17,7 +17,8 @@ struct Layout {
 
     static let animateFast = Animation.easeInOut(duration: 0.25)
     static let animateSlow = Animation.easeInOut(duration: 0.50)
-    static let hoverRing = "icon.ring.roygbiv"
+    static let iconRing = "icon.ring"
+    static let iconLogo = "icon.logo"
     static let lagStep = TimeInterval(1.0/32.0) // sixteenth of a second
     static let panelFill = Color.clear //?? Color(white: 0.01, opacity: 0.15)
     static func togColor(_ spot: Bool) -> Color { return spot ? .white : Color(white: 0.4) }

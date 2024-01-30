@@ -5,16 +5,16 @@ import SwiftUI
 struct TouchViewRepresentable: UIViewRepresentable {
 
     typealias Context = UIViewRepresentableContext<TouchViewRepresentable>
-    var touchVms: [TouchVm]
+    var cornerVms: [CornerVm]
     var touchesView: TouchesView
 
-    public init(_ touchVms: [TouchVm],
+    public init(_ cornerVms: [CornerVm],
                 _ touchView: TouchesView) {
 
-        self.touchVms = touchVms
+        self.cornerVms = cornerVms
         self.touchesView = touchView
-        for touchVm in touchVms {
-            CornerTouchVm[touchVm.corner.rawValue] = touchVm
+        for cornerVm in cornerVms {
+            CornerOpVm[cornerVm.corner.rawValue] = cornerVm
         }
     }
     public func makeUIView(context: Context) -> TouchesView {
