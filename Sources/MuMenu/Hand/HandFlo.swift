@@ -2,8 +2,7 @@
 #if os(visionOS)
 import MuFlo
 import ARKit
-import MuVision // logger, script
-
+import MuExtensions
 public class HandFlo {
     /// each `Flo` joint has an `xyz` and `on`  value
 
