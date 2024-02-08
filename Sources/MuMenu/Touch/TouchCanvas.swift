@@ -29,7 +29,7 @@ open class TouchCanvas {
 extension TouchCanvas {
 
     public func beginTouchHand(_ touchHand: TouchHand) {
-        print("👍", terminator: "")
+        //print("👍", terminator: "")
         TouchCanvas.touchBuffers[touchHand.hash] = TouchCanvasBuffer(touchHand, self)
     }
 

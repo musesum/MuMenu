@@ -3,6 +3,8 @@
 import SwiftUI
 import MuPeer
 import MuFlo
+import MuExtensions
+import MuVision
 
 public class RootVm: ObservableObject, Equatable {
     let id = Visitor.nextId()
@@ -65,7 +67,7 @@ public class RootVm: ObservableObject, Equatable {
 
     func updateTreeOffsets() {
 
-        let margins = idiomMargins()
+        let margins = RenderDepth.state == .immer ? .zero : idiomMargins()
         // xy top left to bottom right corners
         let x0 = margins.width
         let y0 = margins.height

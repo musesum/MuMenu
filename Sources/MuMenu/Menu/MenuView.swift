@@ -2,21 +2,13 @@
 
 import SwiftUI
 import MuFlo
-import MuVision
+import MuExtensions
 
-#if os(visionOS)
-import _CompositorServices_SwiftUI
-#endif
 public protocol MenuDelegate {
     func window(frame: CGRect, insets: EdgeInsets)
 }
 
 public struct MenuView: View {
-
-    #if os(visionOS)
-    @State private var immersiveSpaceIsShown = false //...
-
-    #endif
 
     var menuVms: [MenuVm]
     var cornerVms: [CornerVm] { menuVms.map { $0.rootVm.cornerVm } }
@@ -49,24 +41,13 @@ public struct MenuView: View {
 
                 ForEach(menuVms, id: \.self) { menuVm in
                     MenuDragView(menuVm: menuVm)
-                    //MenuTouchView(menuVm: menuVm)
                 }
             }
             .onAppear {
-             var insets = geo.safeAreaInsets
-                insets.bottom = 20
-                delegate.window(frame: geo.frame(in: .global), insets: insets)
-            }
-
+                delegate.window(frame: geo.frame(in: .global), insets:  geo.safeAreaInsets) }
             #if os(visionOS)
             .onChange(of: geo.frame(in: .global)) { old, now in
-                var insets = geo.safeAreaInsets
-                //insets.bottom = 20
-                var next = now
-                next.origin.y -= 20
-
-                delegate.window(frame: next, insets: insets)
-                //???? print("frame old\(old.script) now\(now.script)")
+                delegate.window(frame: now, insets: geo.safeAreaInsets)
             }
             #else
             .onChange(of: geo.frame(in: .global)) {

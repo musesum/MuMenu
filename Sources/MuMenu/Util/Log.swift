@@ -2,6 +2,7 @@
 
 import SwiftUI
 import MuFlo
+import MuExtensions
 
 public func log(_ title: String,
                 format: String = "%.0f",
@@ -43,13 +44,13 @@ public func log(_ title: String,
 
             case let v as Double:
 
-                text += v.digits(1...3) + " "
+                text += v.digits(-2) + " "
 
             case let v as [Double]:
                 
                 text += " ["
                 for vv in v {
-                    text += (delim + "\(vv.digits(1...3))")
+                    text += (delim + "\(vv.digits(-2))")
                     delim = ","
                 }
                 text += "] "
@@ -76,7 +77,7 @@ public func log(_ title: String,
 
 }
 
-func logTouch(_ time: TimeInterval,
+func logTouchState(_ time: TimeInterval,
          _ symbol: String) {
 
     print(String(format: "\n%.2f \(symbol)", time))

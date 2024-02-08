@@ -1,6 +1,7 @@
 //  created by musesum on 1/15/22.
 
 import SwiftUI
+import MuExtensions
 
 public class TouchState {
 
@@ -38,7 +39,7 @@ public class TouchState {
         pointBegin = pointNow
         pointPrev = pointNow
 
-        logTouch(0, "🟢")
+        logTouchState(0, "🟢")
         updateTouchBeginCount()
     }
 
@@ -54,7 +55,7 @@ public class TouchState {
         phase = .ended
         updateTimePoint(pointNow)
         updateTouchEndCount()
-        logTouch(timeBeginΔ, "🛑")
+        logTouchState(timeBeginΔ, "🛑")
     }
 
     private func updateTimePoint(_ point: CGPoint) {

@@ -55,7 +55,8 @@ open class TouchCanvasBuffer {
         let phase = touchHand.phase
         let azimuth = CGFloat.zero
         let altitude = CGFloat.zero
-        logTouch(phase, nextXY, radius)
+
+        //logTouch(phase, nextXY, radius)
 
         let item = makeTouchCanvasItem(touchHand.hash, force, radius, nextXY, phase, azimuth, altitude, Visitor(.canvas))
 
@@ -74,7 +75,7 @@ open class TouchCanvasBuffer {
     }
 #endif
 
-    // TODO:  separate out //????
+    // TODO:  separate out //??
     var posX: ClosedRange<CGFloat>?
     var posY: ClosedRange<CGFloat>?
     var radi: ClosedRange<CGFloat>?
@@ -90,7 +91,7 @@ open class TouchCanvasBuffer {
         default    : print("🖐️⁉️")
         }
         func logNow(_ msg: String) {
-            print("\(msg)(\(nextXY.x.digits(0...2)), \(nextXY.y.digits(0...2)), \(radius.digits(0...2)))", terminator: " ")
+            //print("\(msg)(\(nextXY.x.digits(0...2)), \(nextXY.y.digits(0...2)), \(radius.digits(0...2)))", terminator: " ")
         }
         func resetRanges() {
             posX = nil
@@ -138,7 +139,8 @@ open class TouchCanvasBuffer {
         let phase = touch.phase
         let azimuth = touch.azimuthAngle(in: nil)
         let altitude = touch.altitudeAngle
-        logTouch(phase, nextXY, radius)
+
+        //logTouch(phase, nextXY, radius)
 
         let item = makeTouchCanvasItem(touch.hash, force, radius, nextXY, phase, azimuth, altitude, Visitor(.canvas))
 

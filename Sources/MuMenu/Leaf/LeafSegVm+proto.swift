@@ -2,7 +2,7 @@
 
 import SwiftUI
 import MuFlo
-
+import MuExtensions
 extension LeafSegVm: LeafProtocol {
 
     public func refreshValue(_ visit: Visitor) {

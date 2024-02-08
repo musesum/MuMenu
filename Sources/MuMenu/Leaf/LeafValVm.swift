@@ -2,7 +2,7 @@
 
 import SwiftUI
 import MuFlo
-
+import MuExtensions
 /// 1d slider control
 public class LeafValVm: LeafVm {
 

@@ -22,7 +22,8 @@ struct CursorView: View {
                 #else
                 .onChange(of: geo.frame(in: .global)) { nodeVm.updateCenter($0) }
                 #endif
-                .onAppear { nodeVm.updateCenter(geo.frame(in: .global)) }
+                .onAppear { 
+                    nodeVm.updateCenter(geo.frame(in: .global)) }
                 .cornerRadius(Layout.cornerRadius)
         }
         .frame(width: diameter, height: diameter)

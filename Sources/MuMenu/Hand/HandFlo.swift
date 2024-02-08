@@ -2,6 +2,7 @@
 #if os(visionOS)
 import MuFlo
 import ARKit
+import MuVision // logger, script
 
 public class HandFlo {
     /// each `Flo` joint has an `xyz` and `on`  value
@@ -99,30 +100,20 @@ public class HandFlo {
         if newUpdate {
             time = Date().timeIntervalSince1970
         }
-        logAll()
-
-        func err(_ msg: String) { print("HandJoints::update err: \(msg)") }
-    }
-    var count = -1
-    func logAll() {
-        count = (count + 1) % 10; if count != 0 { return }
-        for (handJoint, xyzOn) in joints {
-            if xyzOn.on {
-                print(handJoint.rawValue + xyzOn.xyz.script, terminator: " ")
+        MuLog.NoLog("HandFlo", interval: 1.0) {
+            var msg = ""
+            for (handJoint, xyzOn) in self.joints {
+                if xyzOn.on {
+                    msg += handJoint.rawValue + xyzOn.xyz.script + " "
+                }
+            }
+            if !msg.isEmpty {
+                print("🖐️" + msg)
             }
         }
-        print()
+        func err(_ msg: String) { print("HandJoints::update err: \(msg)") }
     }
-    func logPos(_ name: String, _ value: SIMD3<Float>) {
-        print(name + value.script, terminator: " ")
-    }
-
 
 }
-extension SIMD3<Float> {
 
-    var script: String {
-        "(\(x.digits(0...2)), \(y.digits(0...2)), \(z.digits(0...2)))"
-    }
-}
 #endif

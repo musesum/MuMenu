@@ -40,7 +40,7 @@ open class TouchThumbMiddle {
                 let tipsDistance = distance(thumbTip, middleTip)
                 if tipsDistance < 0.04 {
                     touchRight.touching(true, middleTip)
-                    print("🤏", terminator: " ")
+                    //print("🤏", terminator: " ")
                 } else {
                     touchRight.touching(false, middleTip)
                 }

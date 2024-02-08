@@ -1,6 +1,7 @@
 //  created by musesum on 12/20/21.
 
 import SwiftUI
+import MuExtensions
 
 public class PanelVm {
  

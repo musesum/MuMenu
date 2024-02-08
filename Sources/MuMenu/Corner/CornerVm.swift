@@ -2,6 +2,8 @@
 
 import SwiftUI
 import MuFlo
+import MuExtensions
+
 /// Corner node which follows touch
 public class CornerVm: ObservableObject {
 
@@ -11,7 +13,7 @@ public class CornerVm: ObservableObject {
     var rootVm: RootVm?
     var logoNodeVm: NodeVm?  /// fixed root node in corner in which to drag from
     var ringNodeVm: NodeVm?  /// drag from root with duplicate node icon
-    var touchState = TouchState() /// begin,moved,end state plus tap count
+    var touchState = TouchState() /// begin,moved,end state plus t count
 
     private var rootNodeΔ = CGSize.zero /// offset between rootNode and touchNow
     private var spotNodeΔ = CGSize.zero /// offset between touch point and center in coord
@@ -106,9 +108,15 @@ public class CornerVm: ObservableObject {
     
     /// either center dragNode icon on spotNode or track finger
     func alignCursor(_ touchXY: CGPoint) {
+        
+        #if os(visionOS)
+        let origin = CGPoint.zero
+        #else
+        let origin = bounds.origin
+        #endif
 
         guard let rootVm else {
-            return ringIconXY = touchXY - bounds.origin
+            return ringIconXY = touchXY - origin
         }
         if !touchState.touching ||
             rootVm.touchType.isIn([.root, .canopy]) ||
@@ -118,11 +126,11 @@ public class CornerVm: ObservableObject {
 
         } else if let spotCenter = rootVm.nodeSpotVm?.center {
 
-            ringIconXY = spotCenter - bounds.origin
+            ringIconXY = spotCenter - origin
 
         } else {
 
-            ringIconXY = touchXY - bounds.origin
+            ringIconXY = touchXY - origin
         }
     }
     var bounds = CGRect.zero

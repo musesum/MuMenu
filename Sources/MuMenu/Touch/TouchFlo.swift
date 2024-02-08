@@ -3,6 +3,7 @@ import QuartzCore
 import UIKit
 import MuFlo
 import MuMetal
+import MuExtensions
 
 public class TouchFlo {
 
