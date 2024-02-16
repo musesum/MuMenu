@@ -3,13 +3,15 @@
 import UIKit
 import MuFlo
 import MuPeer
+import MuHand
 
 open class TouchCanvasBuffer {
 
-    var lastItem: TouchCanvasItem? // repeat last touch until isDone
-                                   // each finger or brush gets its own double buffer
+    // repeat last touch until isDone
+    private var lastItem: TouchCanvasItem?
 
-    public let buffer = DoubleBuffer<TouchCanvasItem>(internalLoop: false)
+    // each finger or brush gets its own double buffer
+    private let buffer = DoubleBuffer<TouchCanvasItem>(internalLoop: false)
     private var indexNow = 0
     private var touchCanvas: TouchCanvas
     private var isDone = false
@@ -17,6 +19,7 @@ open class TouchCanvasBuffer {
 
     public init(_ touch: UITouch,
                 _ touchCanvas: TouchCanvas) {
+
         self.touchCanvas = touchCanvas
         buffer.delegate = self
 
@@ -42,8 +45,6 @@ open class TouchCanvasBuffer {
 
         addTouchHand(touchHand)
     }
-
-
 
     public func addTouchHand(_ touchHand: TouchHand) {
 

@@ -1,9 +1,10 @@
 //  created by musesum on 2/5/19.
 
 import UIKit
-import MuFlo // digits
+import MuExtensions
 import MuPeer
 import MuMetal
+import MuHand
 
 public typealias TouchDrawPoint = ((CGPoint, CGFloat)->())
 public typealias TouchDrawRadius = ((TouchCanvasItem)->(CGFloat))
@@ -26,14 +27,14 @@ open class TouchCanvas {
 
 #if os(visionOS)
 // ARKit visionOS Handpose
-extension TouchCanvas {
+extension TouchCanvas: TouchHandDelegate {
 
-    public func beginTouchHand(_ touchHand: TouchHand) {
+    public func begin(_ touchHand: TouchHand) {
         //print("👍", terminator: "")
         TouchCanvas.touchBuffers[touchHand.hash] = TouchCanvasBuffer(touchHand, self)
     }
 
-    public func updateTouchHand(_ touchHand: TouchHand) {
+    public func update(_ touchHand: TouchHand) {
         if let touchBuffer = TouchCanvas.touchBuffers[touchHand.hash] {
             
             touchBuffer.addTouchHand(touchHand)

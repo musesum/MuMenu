@@ -1,6 +1,7 @@
 // created by musesum on 1/22/24
 #if os(visionOS)
 import ARKit
+import MuHand
 
 open class TouchThumbMiddle {
 
@@ -8,10 +9,17 @@ open class TouchThumbMiddle {
     var rightHand: HandFlo
     var timeLeft = TimeInterval.zero
     var timeRight = TimeInterval.zero
-    var touchLeft = TouchHand(.left)
-    var touchRight = TouchHand(.right)
+    var touchLeft: TouchHand
+    var touchRight: TouchHand
+    var touchPhase: TouchHandDelegate
 
-    public init(_ handsFlo: HandsFlo) {
+    public init(_ touchPhase: TouchHandDelegate,
+                _ handsFlo: HandsFlo) {
+
+        self.touchPhase = touchPhase
+        self.touchLeft = TouchHand(touchPhase, .left)
+        self.touchRight = TouchHand(touchPhase, .right)
+
         self.leftHand = handsFlo.leftHand
         self.rightHand = handsFlo.rightHand
         leftHand.setJoints([.thumbTip, .middleTip], on: true)

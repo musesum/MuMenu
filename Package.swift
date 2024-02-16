@@ -12,6 +12,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/musesum/MuExtensions.git", .branch("main")),
+        .package(url: "https://github.com/musesum/MuHand.git", .branch("main")),
         .package(url: "https://github.com/musesum/MuFlo.git", .branch("main")),
         .package(url: "https://github.com/musesum/MuMetal.git", .branch("main")),
         .package(url: "https://github.com/musesum/MuPeer.git", from: "0.23.0"),
@@ -23,6 +24,7 @@ let package = Package(
                 .product(name: "MuFlo", package: "MuFlo"),
                 .product(name: "MuMetal", package: "MuMetal"),
                 .product(name: "MuPeer", package: "MuPeer"),
+                .product(name: "MuHand", package: "MuHand"),
                 .product(name: "MuExtensions", package: "MuExtensions")],
             resources: [.process("Resources")]),
         .testTarget(
