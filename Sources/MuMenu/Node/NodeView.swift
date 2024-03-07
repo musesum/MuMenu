@@ -31,6 +31,7 @@ struct NodeView: View {
         .frame(width: panelVm.inner.width, height: panelVm.inner.height)
         .padding(Layout.padding)
         .zIndex(nodeVm.zIndex)
+        .hoverEffect()
     }
 }
 

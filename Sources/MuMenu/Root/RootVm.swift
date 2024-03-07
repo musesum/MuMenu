@@ -443,7 +443,7 @@ public class RootVm: ObservableObject, Equatable {
         
         func showTrunks() {
             if treeVms.count == 1 {
-                showSoloTree()
+                showSoloTree(fromRemote)
             } else {
                 for treeVm in treeVms {
                     treeVm.showTree(depth: 1, "trunk", fromRemote)
@@ -453,13 +453,7 @@ public class RootVm: ObservableObject, Equatable {
                 viewOps = [.root, .trunks]
             }
         }
-        func showSoloTree() {
-            if let treeVm = treeVms.first {
-                treeSpotVm = treeVm
-                treeVm.showTree(depth: 9, "solo", fromRemote)
-                viewOps = [.root,.branch]
-            }
-        }
+
         func spotBranches() {
             if let treeSpotVm {
                 for treeVm in treeVms {
@@ -481,5 +475,12 @@ public class RootVm: ObservableObject, Equatable {
             viewOps = [.root]
         }
     }
-    
+    func showSoloTree(_ fromRemote: Bool) {
+        if let treeVm = treeVms.first {
+            treeSpotVm = treeVm
+            treeVm.showTree(depth: 9, "solo", fromRemote)
+            viewOps = [.root,.branch]
+        }
+    }
+
 }

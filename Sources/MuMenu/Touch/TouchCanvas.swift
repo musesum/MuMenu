@@ -29,12 +29,12 @@ open class TouchCanvas {
 // ARKit visionOS Handpose
 extension TouchCanvas: TouchHandDelegate {
 
-    public func begin(_ touchHand: TouchHand) {
+    public func handBegin(_ touchHand: TouchHand) {
         //print("👍", terminator: "")
         TouchCanvas.touchBuffers[touchHand.hash] = TouchCanvasBuffer(touchHand, self)
     }
 
-    public func update(_ touchHand: TouchHand) {
+    public func handUpdate(_ touchHand: TouchHand) {
         if let touchBuffer = TouchCanvas.touchBuffers[touchHand.hash] {
             
             touchBuffer.addTouchHand(touchHand)

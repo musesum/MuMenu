@@ -14,7 +14,7 @@ struct IconView: View {
 
     var spotlight: Bool { nodeVm.spotlight }
     var stroke: Color { spotlight ? .white : Color(white: 0.7) }
-    var fill: Color { spotlight ? Color(white: 0.30) : Color(white: 0.15)  }
+    var fill = Color(white: 0.25) 
     var width: CGFloat { spotlight ? 3.0 : 1.0 }
     
     var body: some View {
@@ -77,7 +77,6 @@ struct IconView: View {
             }
         }
         .allowsHitTesting(true)
-        .hoverEffect()
     }
 }
 

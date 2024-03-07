@@ -41,6 +41,7 @@ open class MenuVm {
         }
 
         rootVm.updateTreeVms(skyTreeVms)
+        rootVm.showSoloTree(false)
         Icon.altBundle = MuMenu.bundle
     }
 
