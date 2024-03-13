@@ -27,7 +27,7 @@ open class TouchCanvas {
 
 #if os(visionOS)
 // ARKit visionOS Handpose
-extension TouchCanvas: TouchHandDelegate {
+extension TouchCanvas: TouchHandState {
 
     public func handBegin(_ touchHand: TouchHand) {
         //print("👍", terminator: "")
