@@ -59,7 +59,7 @@ open class TouchCanvasBuffer {
 
         //logTouch(phase, nextXY, radius)
 
-        let item = makeTouchCanvasItem(touchHand.hash, force, radius, nextXY, phase, azimuth, altitude, Visitor(.canvas))
+        let item = makeTouchCanvasItem(touchHand.chiral.rawValue, force, radius, nextXY, phase, azimuth, altitude, Visitor(.canvas))
 
         if PeersController.shared.hasPeers {
 

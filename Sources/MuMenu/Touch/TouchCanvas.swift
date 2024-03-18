@@ -31,11 +31,11 @@ extension TouchCanvas: TouchHandState {
 
     public func handBegin(_ touchHand: TouchHand) {
         //print("👍", terminator: "")
-        TouchCanvas.touchBuffers[touchHand.hash] = TouchCanvasBuffer(touchHand, self)
+        TouchCanvas.touchBuffers[touchHand.chiral.rawValue] = TouchCanvasBuffer(touchHand, self)
     }
 
     public func handUpdate(_ touchHand: TouchHand) {
-        if let touchBuffer = TouchCanvas.touchBuffers[touchHand.hash] {
+        if let touchBuffer = TouchCanvas.touchBuffers[touchHand.chiral.rawValue] {
             
             touchBuffer.addTouchHand(touchHand)
         } else {
