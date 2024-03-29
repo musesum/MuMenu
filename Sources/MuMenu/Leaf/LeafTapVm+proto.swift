@@ -17,13 +17,11 @@ extension LeafTapVm: LeafProtocol {
     }
     
     /// always from remote
-    public func updateFromThumbs(_ thumbs: Thumbs,
+    public func updateFromThumbs(_ thumbs: ValTween,
                                  _ visit: Visitor) {
         editing = true
-        thumbVal[0] = thumbs[0][0]  // scalar.x.val
-        thumbTwe[0] = (node.modelFlo.hasPlugins
-                       ? thumbs[0][1] // scalar.x.twe
-                       : thumbVal[0]) // scalar.x.val
+        thumbVal = thumbs.val // scalar.x.val
+        thumbTwe = (node.modelFlo.hasPlugins ? thumbs.twe : thumbVal) 
         editing = false
         syncVal(visit)
     }
@@ -37,10 +35,10 @@ extension LeafTapVm: LeafProtocol {
            let v = (exprs.nameAny["_0"] as? FloValScalar ??
                     exprs.nameAny.values.first as? FloValScalar) {
 
-            thumbVal[0] = v.normalized(.val)
-            thumbTwe[0] = (flo.hasPlugins
+            thumbVal.x = v.normalized(.val)
+            thumbTwe.x = (flo.hasPlugins
                            ? v.normalized(.twe)
-                           : thumbVal[0])
+                           : thumbVal.x)
         } else {
             print("⁉️ unknown update type")
         }
@@ -55,14 +53,16 @@ extension LeafTapVm: LeafProtocol {
     }
     public func treeTitle() -> String {
         editing
-        ? thumbVal[0] == 1.0 ? "on" : "off"
+        ? thumbVal.x == 1.0 ? "on" : "off"
         : node.title
     }
-    public func thumbValOffset() -> CGSize {
-        CGSize(width: 0, height:  panelVm.runway)
+    public func thumbValOffset(_ runwayType: RunwayType) -> CGSize {
+        let runway = panelVm.runway(runwayType)
+        return CGSize(width: 0, height:  runway)
     }
-    public func thumbTweOffset() -> CGSize {
-        CGSize(width: 0, height:  panelVm.runway)
+    public func thumbTweOffset(_ runwayType: RunwayType) -> CGSize {
+        let runway = panelVm.runway(runwayType)
+        return CGSize(width: 0, height: runway)
     }
 
     public func syncVal(_ visit: Visitor) {
@@ -71,7 +71,7 @@ extension LeafTapVm: LeafProtocol {
         if  !visit.from.tween,
             !visit.from.bind {
 
-            node.modelFlo.setAny(thumbVal[0], .activate, visit)
+            node.modelFlo.setAny(thumbVal.x, .activate, visit)
             updateLeafPeers(visit)
         }
         refreshView()

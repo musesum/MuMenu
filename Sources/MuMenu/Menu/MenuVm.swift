@@ -2,6 +2,7 @@
 
 import SwiftUI
 import MuFlo
+import MuHand
 
 open class MenuVm {
     let id: Int = Visitor.nextId()
@@ -42,14 +43,14 @@ open class MenuVm {
 
         rootVm.updateTreeVms(skyTreeVms)
         rootVm.showSoloTree(false)
-        Icon.altBundle = MuMenu.bundle
+        Icon.altBundles.append(MuMenu.bundle)
     }
 
     static func skyNodes(_ rootNode: FloNode,
                          _ corner: CornerOp) -> [FloNode] {
 
         let rootFlo = rootNode.modelFlo
-
+        Icon.altBundles.append(MuHand.bundle)
         if let menuFlo = rootFlo.findPath("menu"),
            let modelFlo = rootFlo.findPath("model") {
 
@@ -57,8 +58,8 @@ open class MenuVm {
 
             if let cornerFlo = menuFlo.findPath(cornerStr) {
 
-                let model = parseFloNode(modelFlo, rootNode)
-                mergeFloNode(cornerFlo, model)
+                let floNode = parseFloNode(modelFlo, rootNode)
+                mergeFloNode(cornerFlo, floNode)
 
             } else {
                 // parse everything together

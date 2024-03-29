@@ -2,43 +2,42 @@
 
 import SwiftUI
 
-struct LeafThumbSlideView: View {
+public struct LeafThumbSlideView: View {
 
     @ObservedObject var leafVm: LeafVm
+    let runwayType: RunwayType
+
     var panelVm: PanelVm { leafVm.panelVm }
     var spotlight: Bool { leafVm.spotlight }
     var valColor: Color { Layout.tapColor(spotlight) }
     var tweColor: Color { Layout.tweColor(spotlight) }
-    var thumbValOffset: CGSize { leafVm.leafProto?.thumbValOffset() ?? .zero }
-    var thumbTweOffset: CGSize { leafVm.leafProto?.thumbTweOffset() ?? .zero }
+    var proto: LeafProtocol? { leafVm.leafProto }
+    var thumbValOffset: CGSize { proto?.thumbValOffset(runwayType) ?? .zero }
+    var thumbTweOffset: CGSize { proto?.thumbTweOffset(runwayType) ?? .zero }
+    var thumbDiameter: Double { panelVm.thumbDiameter(runwayType)}
 
-    var body: some View {
+    public init(_ leafVm: LeafVm,
+                _ runwayType: RunwayType) {
+        self.leafVm = leafVm
+        self.runwayType = runwayType
+    }
+    public var body: some View {
         ZStack {
-            Capsule()
+            Capsule() // thumb tween
                 .fill(tweColor)
-                .frame(width:  panelVm.thumbDiameter,
-                       height: panelVm.thumbDiameter)
+                .frame(width: thumbDiameter, height: thumbDiameter)
                 .offset(thumbTweOffset)
                 .allowsHitTesting(false)
 
-            Capsule()
+            Capsule() // thumb value
                 .fill(valColor)
-                .frame(width:  panelVm.thumbDiameter,
-                       height: panelVm.thumbDiameter)
+                .frame(width: thumbDiameter, height: thumbDiameter)
                 .offset(thumbValOffset)
                 .allowsHitTesting(false)
 
-            if spotlight {
-                IconView(nodeVm: leafVm, icon: leafVm.node.icon)
-                    .frame(width:  panelVm.thumbDiameter,
-                           height: panelVm.thumbDiameter)
-                    .offset(thumbValOffset)
-            } else {
-                IconView(nodeVm: leafVm, icon: leafVm.node.icon)
-                    .frame(width:  panelVm.thumbDiameter,
-                           height: panelVm.thumbDiameter)
-                    .offset(thumbValOffset)
-            }
+            IconView(leafVm, leafVm.node.icon, runwayType)
+                .frame(width: thumbDiameter, height: thumbDiameter)
+                .offset(thumbValOffset)
         }
     }
 }

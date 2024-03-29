@@ -103,8 +103,8 @@ open class FloNode: Identifiable, Equatable {
 
         guard let comp = modelFlo.exprs?.flo.components() else { return .node}
         switch comp.keys.intersection(["x","y","z"]).count {
-        case 3: return .vxy // later vxyz
-        case 2: return .vxy
+        case 3: return .xyz
+        case 2: return .xy
         case 1:
             for key in ["x","y","z"] {
                 if let type = scalarType(comp[key]) {
@@ -141,16 +141,21 @@ open class FloNode: Identifiable, Equatable {
     }
 
     public func makeFloIcon(_ flo: Flo) -> Icon {
-        let components = flo.components(named: ["sym", "img", "svg", "text","off", "cursor"])
-        for (key,name) in components {
-            if let name = name as? String {
-                switch key {
-                    case "sym"    : return Icon(.symbol, name, nodeType)
-                    case "img"    : return Icon(.image , name, nodeType)
-                    case "svg"    : return Icon(.svg   , name, nodeType)
-                    case "text"   : return Icon(.text  , name, nodeType)
-                    case "cursor" : return Icon(.cursor, name, nodeType)
+        if let nameAny = flo.exprs?.nameAny {
+            for (key,name) in nameAny {
+                if let name = name as? String {
+                    switch key {
+                    case "sym"    : return makeIcon(.symbol)
+                    case "img"    : return makeIcon(.image )
+                    case "svg"    : return makeIcon(.svg   )
+                    case "text"   : return makeIcon(.text  )
+                    case "cursor" : return makeIcon(.cursor)
                     default       : continue
+                    }
+                    func makeIcon(_ iconType: IconType) -> Icon {
+                        let on = nameAny["on"] as? String ?? nil
+                        return Icon(iconType, name, on, nodeType)
+                    }
                 }
             }
         }

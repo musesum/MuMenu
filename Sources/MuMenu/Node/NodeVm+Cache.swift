@@ -10,13 +10,15 @@ extension NodeVm {
                        icon: String = "") -> NodeVm {
 
         switch node.nodeType {
-            case .vxy:  return LeafVxyVm (node, branchVm, prevNodeVm)
-            case .val:  return LeafValVm (node, branchVm, prevNodeVm)
-            case .seg:  return LeafSegVm (node, branchVm, prevNodeVm)
-            case .peer: return LeafPeerVm(node, branchVm, prevNodeVm)
-            case .tog:  return LeafTogVm (node, branchVm, prevNodeVm)
-            case .tap:  return LeafTapVm (node, branchVm, prevNodeVm)
-            default:    return NodeVm    (node, branchVm, prevNodeVm)
+        case .xy   : return LeafXyVm   (node, branchVm, prevNodeVm)
+        case .xyz  : return LeafXyzVm  (node, branchVm, prevNodeVm)
+        case .val  : return LeafValVm  (node, branchVm, prevNodeVm)
+        case .seg  : return LeafSegVm  (node, branchVm, prevNodeVm)
+        case .peer : return LeafPeerVm (node, branchVm, prevNodeVm)
+        case .tog  : return LeafTogVm  (node, branchVm, prevNodeVm)
+        case .tap  : return LeafTapVm  (node, branchVm, prevNodeVm)
+        case .hand : return LeafHandVm (node, branchVm, prevNodeVm)
+        default    : return NodeVm     (node, branchVm, prevNodeVm)
         }
     }
 }

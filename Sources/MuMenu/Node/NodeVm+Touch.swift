@@ -58,8 +58,8 @@ extension NodeVm { // + Touch
         }
         myTouchEndedTime = touchState.timeBegin
         switch myTouchEndedCount {
-            case 0:   break
-            case 1:   tapSpotlights()
+            case 0: break
+            case 1: tapSpotlights()
             //case 2,3: tapAllDescendants()
             default: return
         }

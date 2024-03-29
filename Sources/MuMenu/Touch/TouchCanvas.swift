@@ -25,25 +25,26 @@ open class TouchCanvas {
     }
 }
 
-#if os(visionOS)
-// ARKit visionOS Handpose
-extension TouchCanvas: TouchHandState {
 
-    public func handBegin(_ touchHand: TouchHand) {
+// ARKit visionOS Handpose
+extension TouchCanvas: TouchCanvasDelegate {
+
+    public func handBegin(_ jointFlo: JointFlo) {
         //print("👍", terminator: "")
-        TouchCanvas.touchBuffers[touchHand.chiral.rawValue] = TouchCanvasBuffer(touchHand, self)
+
+        TouchCanvas.touchBuffers[jointFlo.hash] = TouchCanvasBuffer(jointFlo, self)
     }
 
-    public func handUpdate(_ touchHand: TouchHand) {
-        if let touchBuffer = TouchCanvas.touchBuffers[touchHand.chiral.rawValue] {
-            
-            touchBuffer.addTouchHand(touchHand)
+    public func handUpdate(_ jointFlo: JointFlo) {
+        if let touchBuffer = TouchCanvas.touchBuffers[jointFlo.hash] {
+
+            touchBuffer.addTouchHand(jointFlo)
         } else {
             print("\(#function) failed")
         }
     }
 }
-#endif
+
 
 // UIKit Touches
 

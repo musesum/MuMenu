@@ -21,13 +21,13 @@ public class LeafTapVm: LeafVm {
         if !editing, touchState.phase == .began {
 
             editing = true
-            thumbVal[0] = 1
+            thumbVal.x = 1
             syncVal(visit)
 
         } else if touchState.phase.isDone() {
 
             editing = false
-            thumbVal[0] = 0
+            thumbVal.x = 0
             syncVal(visit)
         }
     }

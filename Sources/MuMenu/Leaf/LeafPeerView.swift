@@ -8,17 +8,18 @@ struct LeafPeerView: View {
     @ObservedObject var leafVm: LeafPeerVm
     var panelVm: PanelVm { leafVm.panelVm }
 
+
     var body: some View {
         VStack {
             if panelVm.cornerAxis.corner.upper {
                 
-                LeafBodyView(leafVm) {
+                LeafBezelView(leafVm, .none) {
                     PeersView(leafVm.peersVm)
                 }
                 LeafTitleView(leafVm)
             } else {
                 LeafTitleView(leafVm)
-                LeafBodyView(leafVm) {
+                LeafBezelView(leafVm, .none) {
                     PeersView(leafVm.peersVm)
                 }
             }

@@ -9,7 +9,7 @@ struct LeafTogView: View {
 
     var body: some View {
         LeafView(leafVm) {
-            LeafThumbTapView(leafVm: leafVm)
+            LeafThumbTapView(leafVm, .xy)
         }
     }
 }

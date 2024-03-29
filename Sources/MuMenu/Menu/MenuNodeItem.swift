@@ -1,8 +1,6 @@
 //  created by musesum on 9/26/22.
 
 import SwiftUI
-public typealias Thumb = [Double]
-public typealias Thumbs = [[Double]]
 
 public struct MenuNodeItem: Codable {
 
@@ -41,10 +39,10 @@ public struct MenuLeafItem: Codable {
     public var cornax   : Int
     public var hashPath : [Int] // last shown item on tree
     public var hashNow  : Int // hash of currently selected item
-    public let thumbs   : Thumbs
+    public let thumbs   : ValTween
 
     public init(_ leafVm : LeafVm,
-                _ thumbs : Thumbs) {
+                _ thumbs : ValTween) {
 
         self.type      = leafVm.nodeType.rawValue
         self.cornax    = leafVm.branchVm.treeVm.cornerAxis.cornax.rawValue
@@ -53,24 +51,18 @@ public struct MenuLeafItem: Codable {
         self.thumbs    = thumbs
     }
 
-    enum CodingKeys: String, CodingKey {
-        case type, cornax, hashPath, hashNow, thumbs }
+    enum CodingKeys: String, CodingKey { case type, cornax, hashPath, hashNow, thumbs }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        try type     = container.decode(String.self, forKey: .type     )
-        try cornax   = container.decode(Int   .self, forKey: .cornax   )
-        try hashPath = container.decode([Int] .self, forKey: .hashPath )
-        try hashNow  = container.decode(Int   .self, forKey: .hashNow  )
-        try thumbs   = container.decode(Thumbs.self, forKey: .thumbs   )
+        try type     = container.decode(String   .self, forKey: .type    )
+        try cornax   = container.decode(Int      .self, forKey: .cornax  )
+        try hashPath = container.decode([Int]    .self, forKey: .hashPath)
+        try hashNow  = container.decode(Int      .self, forKey: .hashNow )
+        try thumbs   = container.decode(ValTween .self, forKey: .thumbs  )
     }
     public var nextXY: CGPoint {
-
-        let x = thumbs[0][0] // scalar.x.val
-        let y = thumbs[0][1] // scalar.y.val
-        let point = CGPoint(x: CGFloat(x),
-                            y: CGFloat(y))
-        return point
+        return CGPoint(x: thumbs.val.x, y: thumbs.val.y)
     }
 
     var treeVm: TreeVm? {

@@ -36,30 +36,29 @@ open class TouchCanvasBuffer {
     }
 
 
-#if os(visionOS)
-    public init(_ touchHand: TouchHand,
+    public init(_ jointFlo: JointFlo,
                 _ touchCanvas: TouchCanvas) {
 
         self.touchCanvas = touchCanvas
         buffer.delegate = self
 
-        addTouchHand(touchHand)
+        addTouchHand(jointFlo)
     }
 
-    public func addTouchHand(_ touchHand: TouchHand) {
+    public func addTouchHand(_ jointFlo: JointFlo) {
 
-        let force = CGFloat(touchHand.pos.z) * -200
+        let force = CGFloat(jointFlo.pos.z) * -200
         let radius = force
-        let nextXY = CGPoint(x: CGFloat( touchHand.pos.x * 400 + 800),
-                             y: CGFloat(-touchHand.pos.y * 400 + 800))
+        let nextXY = CGPoint(x: CGFloat( jointFlo.pos.x * 400 + 800),
+                             y: CGFloat(-jointFlo.pos.y * 400 + 800))
 
-        let phase = touchHand.phase
+        let phase = jointFlo.phase
         let azimuth = CGFloat.zero
         let altitude = CGFloat.zero
 
         //logTouch(phase, nextXY, radius)
 
-        let item = makeTouchCanvasItem(touchHand.chiral.rawValue, force, radius, nextXY, phase, azimuth, altitude, Visitor(.canvas))
+        let item = makeTouchCanvasItem(jointFlo.hash, force, radius, nextXY, phase, azimuth, altitude, Visitor(.canvas))
 
         if PeersController.shared.hasPeers {
 
@@ -74,7 +73,7 @@ open class TouchCanvasBuffer {
         buffer.append(item)
 
     }
-#endif
+
 
     // TODO:  separate out //??
     var posX: ClosedRange<CGFloat>?

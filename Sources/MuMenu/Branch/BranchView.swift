@@ -31,7 +31,7 @@ fileprivate struct titleV: View {
     var title: String {
         (nodeSpotVm as? LeafVm)?.leafProto?.treeTitle() ??
         nodeSpotVm?.node.title ?? "" }
-    var size: CGSize { return (branchVm.nodeSpotVm?.nodeType ?? .none) == .vxy 
+    var size: CGSize { return (branchVm.nodeSpotVm?.nodeType ?? .none) == .xy 
         ? CGSize(width: branchVm.boundsNow.width, height: Layout.radius)
         : CGSize(width: Layout.diameter, height: Layout.radius) }
 
@@ -112,7 +112,7 @@ fileprivate struct bodyV: View {
             ZStack {
                 BranchPanelView(spotlight: spotlight)
                 VStack {
-                    PanelAxisView(panelVm) {
+                    BranchAxisView(panelVm) {
 
                         ForEach(branchVm.treeVm.reverse
                                 ? branchVm.nodeVms.reversed()
@@ -138,3 +138,38 @@ fileprivate struct bodyV: View {
     }
 }
 
+struct BranchAxisView<Content: View>: View {
+
+    let panelVm: PanelVm
+    let content: () -> Content
+    var spacing: CGFloat { panelVm.spacing }
+
+    init(_ panel: PanelVm, @ViewBuilder content: @escaping () -> Content) {
+        self.panelVm = panel
+        self.content = content
+    }
+
+    var body: some View {
+
+        // even though .vxy has only one inner view, a
+        // .horizonal ScrollView shifts and truncates the inner views
+        // so, perhaps there is a phantom space for indicators?
+
+        if (panelVm.isVertical  ||
+            panelVm.nodeType == .xy ||
+            panelVm.nodeType == .peer) {
+
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(alignment: .leading,
+                       spacing: spacing,
+                       content: content)
+            }
+        } else {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(alignment: .bottom,
+                       spacing: spacing,
+                       content: content)
+            }
+        }
+    }
+}

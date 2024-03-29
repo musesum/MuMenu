@@ -5,7 +5,7 @@ import MuFlo
 import MuExtensions
 
 /// 2d XY control
-public class LeafVxyVm: LeafVm {
+public class LeafXyzVm: LeafVm {
     
     var ranges = [String : ClosedRange<Double>]()
 
@@ -17,12 +17,17 @@ public class LeafVxyVm: LeafVm {
         super.leafProto = self
         node.leafProtos.append(self)  //MuLeafProtocol for exchanging value
 
+        node.leafProtos.append(self)  //MuLeafProtocol for exchanging value
+
         // set ranges
         if let exprs = node.modelFlo.exprs,
            let x = exprs.nameAny["x"] as? FloValScalar,
-           let y = exprs.nameAny["y"] as? FloValScalar {
+           let y = exprs.nameAny["y"] as? FloValScalar,
+           let z = exprs.nameAny["z"] as? FloValScalar {
+
             ranges["x"] = x.range()
             ranges["y"] = y.range()
+            ranges["z"] = z.range()
         } else {
             let scalars = node.modelFlo.scalars()
             for scalar in scalars {
@@ -33,26 +38,12 @@ public class LeafVxyVm: LeafVm {
         refreshValue(Visitor(.model))
     }
  
-    func expand(named: String, _ value: CGFloat) -> Double {
-
-        let range = ranges[named] ?? 0...1
-        let result = scale(Double(value), from: 0...1, to: range)
-        return result
-    }
-
-    /// Tick marks for double touch alignments
-    /// shown at center, corner, and sides.
-    /// So: NW, N, NE, E, SE, S, SW, W, Center
-    var nearestTick: CGPoint {
-        CGPoint(x: round(thumbVal[0] * 4) / 4,
-                y: round(thumbVal[1] * 4) / 4)
-    }
 
     /// ticks above and below nearest tick,
     /// but never on panel border or thumb border
-    lazy var ticks: [CGSize] = {
+   func ticks() -> [CGSize] {
         var result = [CGSize]()
-        let runway = self.panelVm.runwayXY
+        let runway = self.panelVm.runwayXYZ
         let radius = self.panelVm.thumbRadius
         let span = CGFloat(0.25)
         let margin = Layout.radius - 2
@@ -66,12 +57,14 @@ public class LeafVxyVm: LeafVm {
             }
         }
         return result
-    }()
+    }
 
-    /// normalized thumb radius
-    lazy var thumbRadius: CGFloat = {
-        Layout.diameter / max(runwayBounds.height,runwayBounds.width) / 2
-    }()
+    func expand(named: String, _ value: CGFloat) -> Double {
+
+        let range = ranges[named] ?? 0...1
+        let result = scale(Double(value), from: 0...1, to: range)
+        return result
+    }
 
     /// user touch gesture inside runway
     override public func touchLeaf(_ touchState: TouchState,
@@ -94,18 +87,19 @@ public class LeafVxyVm: LeafVm {
         syncVal(visit)
 
         func tapThumb() {
-            let touchOffset = touchState.pointNow - runwayBounds.origin
+            guard let runwayBounds = runway(.xy) else { return }
+            let touchOffset = SIMD2<Double>(touchState.pointNow - runwayBounds.origin)
             let thumbPrior = panelVm.normalizeTouch(xy: touchOffset)
-            thumbVal = quantizeThumb(thumbPrior)
-            thumbDelta = touchOffset - thumbCenter()
+            thumbVal = thumbPrior.quantize(4)
+            thumbDelta = touchOffset - thumbCenter(.xyz)
             syncVal(visit)
         }
 
         func touchThumbBegin() {
-
-            let touchOffset = touchState.pointNow - runwayBounds.origin
-            let deltaOffset = touchOffset - thumbCenter()
-            let insideThumb = deltaOffset.distance(.zero) < panelVm.thumbRadius
+            guard let runwayBounds = runway(.xy) else { return }
+            let touchOffset = SIMD2<Double>(touchState.pointNow - runwayBounds.origin)
+            let deltaOffset = touchOffset - thumbCenter(.xyz)
+            let insideThumb = deltaOffset.distance(SIMD2<Double>.zero) < panelVm.thumbRadius
 
             thumbDelta = insideThumb ? deltaOffset : .zero
             touchThumbNext()
@@ -113,24 +107,16 @@ public class LeafVxyVm: LeafVm {
 
         /// user touched control, translate to normalized thumb (0...1)
         func touchThumbNext() {
+            guard let runwayBounds = runway(.xy) else { return }
             if !runwayBounds.contains(touchState.pointNow) {
                 // slowly erode delta when out of bounds
                 thumbDelta =  thumbDelta * 0.88
             }
-            let touchOffset = touchState.pointNow - runwayBounds.origin
+            let touchOffset = SIMD2<Double>(touchState.pointNow - runwayBounds.origin)
             let nextThumb = touchOffset - thumbDelta
-            let normThumb = panelVm.normalizeTouch(xy: nextThumb)
-            thumbVal = [normThumb[0].clamped(to: 0...1),
-                        normThumb[1].clamped(to: 0...1)]
+            thumbVal = panelVm.normalizeTouch(xy: nextThumb).clamped(to: 0...1)
 
-        }
-        /// double touch will align thumb to center, corners or sides.
-        func quantizeThumb(_ point: [Double]) -> [Double] {
-
-            let x = round(point[0] * 4) / 4
-            let y = round(point[1] * 4) / 4
-            return [x,y]
         }
     }
-    
+
 }

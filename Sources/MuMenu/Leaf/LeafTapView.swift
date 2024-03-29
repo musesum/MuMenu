@@ -7,7 +7,7 @@ struct LeafTapView: View {
     @ObservedObject var leafVm: LeafTapVm
     var body: some View {
         LeafView(leafVm) {
-            LeafThumbTapView(leafVm: leafVm)
+            LeafThumbTapView(leafVm, .xy)
                 .offset(CGSize(width: 1, height: -1))
         }
     }

@@ -21,7 +21,7 @@ public class LeafTogVm: LeafVm {
         if !editing, touchState.phase == .began  {
 
             editing = true
-            thumbVal[0] = (thumbVal[0] == 1.0 ? 0 : 1)
+            thumbVal.x = (thumbVal.x == 1.0 ? 0 : 1)
             syncVal(visit)
             
         } else if editing, touchState.phase.isDone() {

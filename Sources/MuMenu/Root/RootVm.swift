@@ -223,37 +223,36 @@ public class RootVm: ObservableObject, Equatable {
 
         // ⓝL
         func hoverLeafNode() -> Bool {
-
-            if let leafVm = nodeSpotVm as? LeafVm {
-
-                if touchState.phase == .began,
-                   leafVm.runwayBounds.contains(touchNow) {
-
-                    updateTreeSpot(leafVm.branchVm.treeVm, leafVm, "edit")
-                    if      leafVm.nodeType.isControl { editLeaf(leafVm) }
-                    else if leafVm.nodeType.isTog     { editTog(leafVm) }
-                    return true
-
-                }
-                if leafVm.nodeType.isControl,
-                   touchType.isNotIn([.node, .space]),
-                   leafVm.branchVm.contains(touchNow) {
-
+            guard let leafVm = nodeSpotVm as? LeafVm else { return false }
+            guard let runwayBounds = leafVm.runway(.xy) else { return false }
+            
+            if touchState.phase == .began,
+               runwayBounds.contains(touchNow) {
+                
+                updateTreeSpot(leafVm.branchVm.treeVm, leafVm, "edit")
+                if      leafVm.nodeType.isControl { editLeaf(leafVm) }
+                else if leafVm.nodeType.isTog     { editTog(leafVm) }
+                return true
+                
+            }
+            if leafVm.nodeType.isControl,
+               touchType.isNotIn([.node, .space]),
+               leafVm.branchVm.contains(touchNow) {
+                
+                updateTreeSpot(leafVm.branchVm.treeVm, leafVm, "shift")
+                shiftBranches() // inside branch containing runway
+                return true
+            }
+            if leafVm.nodeType.isTog {
+                if leafVm.containsPoint(touchNow) {
+                    editTog(leafVm)
+                } else if leafVm.branchVm.contains(touchNow) {
+                    touchType = .node
+                } else {
                     updateTreeSpot(leafVm.branchVm.treeVm, leafVm, "shift")
                     shiftBranches() // inside branch containing runway
-                    return true
                 }
-                if leafVm.nodeType.isTog {
-                    if leafVm.containsPoint(touchNow) {
-                        editTog(leafVm)
-                    } else if leafVm.branchVm.contains(touchNow) {
-                        touchType = .node
-                    } else {
-                        updateTreeSpot(leafVm.branchVm.treeVm, leafVm, "shift")
-                        shiftBranches() // inside branch containing runway
-                    }
-                    return true
-                }
+                return true
             }
             return false
         }

@@ -35,7 +35,7 @@ public class LeafValVm: LeafVm {
 
     /// scale up normalized to defined range
     var expanded: Double {
-        scale(thumbVal[0], from: 0...1, to: range)
+        scale(thumbVal.x, from: 0...1, to: range)
     }
     func normalizeTouch(_ point: CGPoint) -> CGFloat {
         let v = panelVm.isVertical ? point.y : point.x
@@ -43,10 +43,10 @@ public class LeafValVm: LeafVm {
         return vv 
     }
 
-    /// normalized thumb radius
-    lazy var thumbRadius: CGFloat = {
-        Layout.diameter / max(runwayBounds.height,runwayBounds.width) / 2
-    }()
+//    /// normalized thumb radius
+//    lazy var thumbRadius: CGFloat = {
+//        Layout.diameter / max(runwayBounds.height,runwayBounds.width) / 2
+//    }()
 
     /// `touchBegin` inside thumb will Not move thumb.
     /// So, determing delta from center at touchState.begin
@@ -69,22 +69,23 @@ public class LeafValVm: LeafVm {
         syncVal(visit)
 
         func touchThumbBegin() {
-            let thumbPrev = thumbVal[0]
-            let touchDelta = touchState.pointNow - runwayBounds.origin
+            let thumbPrev = thumbVal.x
+            let touchDelta = touchState.pointNow - (runway(.xy)?.origin ?? .zero)
             let thumbDelta = normalizeTouch(touchDelta)
-            let touchedInsideThumb = abs(thumbDelta.distance(to: thumbPrev)) < thumbRadius
+            let touchedInsideThumb = abs(thumbDelta.distance(to: thumbPrev)) < thumbNormRadius()
             thumbBeginΔ = touchedInsideThumb ? thumbPrev - thumbDelta : .zero
-            thumbVal[0] = thumbDelta + thumbBeginΔ
+            thumbVal.x = thumbDelta + thumbBeginΔ
 
         }
         /// user touched control, translate to normalized thumb (0...1)
         func touchThumbNext() {
+            guard let runwayBounds = runway(.xy) else { return }
             if !runwayBounds.contains(touchState.pointNow) {
                 // slowly erode thumbBegin∆ when out of bounds
                 thumbBeginΔ = thumbBeginΔ * 0.85
             }
             let touchDelta = touchState.pointNow - runwayBounds.origin
-            thumbVal[0] = normalizeTouch(touchDelta) + thumbBeginΔ
+            thumbVal.x = normalizeTouch(touchDelta) + thumbBeginΔ
         }
     }
     

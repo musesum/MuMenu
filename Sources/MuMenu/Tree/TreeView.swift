@@ -6,17 +6,17 @@ struct TreeView: View {
 
     @ObservedObject var treeVm: TreeVm
 
-    var corner: CornerOp { treeVm.rootVm.cornerOp }
+    var cornerOp: CornerOp { treeVm.rootVm.cornerOp }
 
     var body: some View {
 
-        ZStack(alignment: corner.alignment) {
+        ZStack(alignment: cornerOp.alignment) {
 
             //?? TreeCanopyView(treeVm: treeVm)
 
             if treeVm.isVertical {
-                HStack(alignment: corner.vAlign)  {
-                    ForEach(corner.right
+                HStack(alignment: cornerOp.vAlign)  {
+                    ForEach(cornerOp.right
                             ? treeVm.branchVms.reversed()
                             : treeVm.branchVms) {
 
@@ -25,8 +25,8 @@ struct TreeView: View {
                     }
                 }
             } else {
-                VStack(alignment: corner.hAlign) {
-                    ForEach(corner.lower
+                VStack(alignment: cornerOp.hAlign) {
+                    ForEach(cornerOp.lower
                             ? treeVm.branchVms.reversed()
                             : treeVm.branchVms) {
 

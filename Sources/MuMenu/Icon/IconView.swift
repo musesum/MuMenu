@@ -8,15 +8,31 @@ struct IconView: View {
     @Environment(\.colorScheme) var colorScheme // darkMode
     @ObservedObject var nodeVm: NodeVm
     let icon: Icon
+    let runwayType: RunwayType
 
-    var title: String { nodeVm.node.title }
-    var named: String { nodeVm.node.icon.named }
+    var title: String {
+        switch runwayType {
+        case .x   : return "x"
+        case .y   : return "y"
+        case .z   : return "z"
+        default   : return nodeVm.node.title
+        }
+    }
+    var named: String { nodeVm.node.icon.icoName }
 
     var spotlight: Bool { nodeVm.spotlight }
     var stroke: Color { spotlight ? .white : Color(white: 0.7) }
     var fill = Color(white: 0.25) 
     var width: CGFloat { spotlight ? 3.0 : 1.0 }
     
+    init(_ nodeVm: NodeVm, 
+         _ icon: Icon,
+         _ runwayType: RunwayType) {
+        self.nodeVm = nodeVm
+        self.icon = icon
+        self.runwayType = runwayType
+    }
+
     var body: some View {
         ZStack {
             if icon.iconType != .cursor {
@@ -34,7 +50,7 @@ struct IconView: View {
             case .text: IconTextView(text: named, color: stroke)
             case .cursor:
 
-                if let uiImage = UIImage(named: nodeVm.node.icon.named) {
+                if let uiImage = UIImage(named: nodeVm.node.icon.icoName) {
                     Image(uiImage: uiImage).resizable() }
 
             case .image:
@@ -46,7 +62,7 @@ struct IconView: View {
                             .padding(geo.size.width * 0.1)
                     }
                 } else {
-                    IconTextView(text: nodeVm.node.title, color: stroke)
+                    IconTextView(text: title, color: stroke)
                 }
             case .svg:
 
@@ -59,17 +75,17 @@ struct IconView: View {
 
                     }
                 } else {
-                    IconTextView(text: nodeVm.node.title, color: stroke)
+                    IconTextView(text: title, color: stroke)
                         .shadow(color: .black, radius: 1)
                 }
             case .symbol:
 
                 if colorScheme == .dark {
-                    Image(systemName: nodeVm.node.icon.named)
+                    Image(systemName: nodeVm.node.icon.icoName)
                         .scaledToFit()
                         .padding(1)
                 } else {
-                    Image(systemName: nodeVm.node.icon.named)
+                    Image(systemName: nodeVm.node.icon.icoName)
                         .colorInvert()
                         .scaledToFit()
                         .padding(1)

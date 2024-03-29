@@ -58,14 +58,12 @@ public class LeafSegVm: LeafVm {
         panelVm.aspectSz = size
     }
 
-    var nearestTick: Double { return round(thumbVal[0]*count)/count }
-
     /// ticks above and below nearest tick,
     /// but never on panel border or thumb border
-    lazy var ticks: [CGSize] = {
+    func ticks() -> [CGSize] {
 
         var result = [CGSize]()
-        let runway = panelVm.runway
+        let runway = panelVm.runway(.xy)
         let radius = panelVm.thumbRadius
         let count = Float(range.upperBound - range.lowerBound)
         if count < 1 { return [] }
@@ -81,12 +79,7 @@ public class LeafSegVm: LeafVm {
             result.append (size)
         }
         return result
-    }()
-
-    /// normalized thumb radius
-    lazy var thumbRadius: CGFloat = {
-        Layout.diameter / max(runwayBounds.height,runwayBounds.width) / 2
-    }()
+    }
 
     /// `touchBegin` inside thumb will Not move thumb.
     /// So, determing delta from center at touchState.begin
@@ -109,15 +102,17 @@ public class LeafSegVm: LeafVm {
         syncVal(visit)
 
         func touchThumbBegin() {
+            guard let runwayBounds = runway(.xy) else { return }
             let thumbPrev = thumbVal[0]
             let touchDelta = touchState.pointNow - runwayBounds.origin
             let thumbDelta = normalizeTouch(touchDelta)
-            let touchedInsideThumb = abs(thumbDelta.distance(to: thumbPrev)) < thumbRadius
+            let touchedInsideThumb = abs(thumbDelta.distance(to: thumbPrev)) < thumbNormRadius()
             thumbBeginΔ = touchedInsideThumb ? thumbPrev - thumbDelta : .zero
             thumbVal[0] = thumbDelta + thumbBeginΔ
         }
         /// user touched control, translate to normalized thumb (0...1)
         func touchThumbNext() {
+            guard let runwayBounds = runway(.xy) else { return }
             if !runwayBounds.contains(touchState.pointNow) {
                 // slowly erode thumbBegin∆ when out of bounds
                 thumbBeginΔ = thumbBeginΔ * 0.85

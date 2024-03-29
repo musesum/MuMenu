@@ -16,7 +16,7 @@ struct CursorView: View {
 
     var body: some View {
         GeometryReader() { geo in
-            IconView(nodeVm: nodeVm, icon: nodeVm.node.icon)
+            IconView(nodeVm, nodeVm.node.icon, .none)
                 #if os(visionOS)
                 .onChange(of: geo.frame(in: .global)) { old, now in nodeVm.updateCenter(now) }
                 #else

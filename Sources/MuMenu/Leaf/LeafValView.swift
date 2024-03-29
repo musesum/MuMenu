@@ -7,7 +7,7 @@ struct LeafValView: View {
     @ObservedObject var leafVm: LeafVm
     var body: some View {
         LeafView(leafVm) {
-            LeafThumbSlideView(leafVm: leafVm)
+            LeafThumbSlideView(leafVm, .xy)
         }
     }
 }

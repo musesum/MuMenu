@@ -16,8 +16,8 @@ public class PanelVm {
     init(nodes: [FloNode],
          treeVm: TreeVm) {
 
-        self.nodes    = nodes
-        self.count    = CGFloat(nodes.count)
+        self.nodes = nodes
+        self.count = CGFloat(nodes.count)
         self.cornerAxis = treeVm.cornerAxis
         self.isVertical = treeVm.isVertical
         self.nodeType = (count > 1 ? .node : nodes.first?.nodeType ?? .node)
@@ -41,15 +41,17 @@ public class PanelVm {
     func setAspectFromType() {
 
         switch nodeType {
-            case .none : aspect(1.0, 1.0)
-            case .node : aspect(1.0, 1.0)
-            case .tog  : aspect(1.0, 1.0)
-            case .tap  : aspect(1.0, 1.0)
+        case .none : aspect(1.0, 1.0)
+        case .node : aspect(1.0, 1.0)
+        case .tog  : aspect(1.0, 1.0)
+        case .tap  : aspect(1.0, 1.0)
 
-            case .val  : aspect(1.0, 4.0)
-            case .vxy  : aspect(3.0, 3.0)
-            case .seg  : aspect(1.0, 4.0)
-            case .peer : aspect(6.0, 3.0)
+        case .val  : aspect(1.0, 4.0)
+        case .xy   : aspect(3.0, 3.0)
+        case .xyz  : aspect(4.0, 3.5)
+        case .seg  : aspect(1.0, 4.0)
+        case .peer : aspect(6.0, 3.0)
+        case .hand : aspect(4.0, 3.5)
         }
         func aspect(_ lo: CGFloat,_ hi: CGFloat) {
             aspectSz = isVertical || nodeType == .peer
@@ -59,21 +61,39 @@ public class PanelVm {
     }
 
     // changed by type
-    lazy var thumbRadius   : CGFloat = { Layout.radius - 1 }()
-    lazy var thumbDiameter : CGFloat = { thumbRadius * 2 }()
-    lazy var thumbSize     : CGSize = { CGSize(width: thumbRadius, height: thumbRadius) }()
+    var thumbRadius: Double { Double(Layout.radius - 1) }
 
-    var runway: CGFloat {
-        let result = isVertical
-        ? inner.height - thumbDiameter
-        : inner.width - thumbDiameter
-        return result
+    func thumbDiameter(_ runwayType: RunwayType) -> Double {
+        switch runwayType {
+        case .x,.y,.z : return thumbRadius
+        default       : return thumbRadius * 2
+        }
     }
 
-    lazy var runwayXY: CGPoint = {
-        CGPoint(x: inner.height - thumbDiameter,
-                y: inner.width - thumbDiameter)
-    }()
+    func runway(_ runwayType: RunwayType) -> Double {
+        let inner = inner(runwayType)
+        let diameter = thumbDiameter(runwayType)
+        let run: Double
+        switch runwayType {
+        case .x     : run = inner.width  - diameter
+        case .y,.z  : run = inner.height - diameter
+        default     : run = (isVertical
+                             ? inner.height - diameter
+                             : inner.width  - diameter)
+        }
+        return run
+    }
+
+    var runwayXY: CGPoint {
+        let innerXY = inner(.xy)
+        return CGPoint(x: innerXY.height - thumbDiameter(.xy),
+                       y: innerXY.width  - thumbDiameter(.xy))
+    }
+    var runwayXYZ: CGPoint {
+        let innerXYZ = inner(.xyz)
+        return CGPoint(x: innerXYZ.height - thumbDiameter(.xy),
+                       y: innerXYZ.width  - thumbDiameter(.xy))
+    }
 
     var inner: CGSize {
         
@@ -81,33 +101,46 @@ public class PanelVm {
         return result
     }
 
+    func inner(_ runwayType: RunwayType ) -> CGSize {
+        let d = Layout.diameter
+        switch runwayType {
+        case .x   : return CGSize(width: d * 2.5, height: d * 0.5)
+        case .y   : return CGSize(width: d * 0.5, height: d * 2.5)
+        case .xyz : return CGSize(width: d * 3.0, height: d * 3.0)
+        case .z   : return CGSize(width: d * 0.5, height: d * 2.5)
+        default   : return aspectSz * d
+        }
+    }
     var outer: CGSize {
 
         let result: CGSize
 
         switch nodeType {
 
-            case .val, .seg:
+        case .val, .seg:
 
-                result = inner + (
-                    isVertical
-                    ? CGSize(width: Layout.padding2,
-                             height: Layout.diameter2)
-                    : CGSize(width: Layout.diameter2,
-                             height: Layout.padding2))
+            result = inner + (
+                isVertical
+                ? CGSize(width: Layout.padding2 , height: Layout.diameter2)
+                : CGSize(width: Layout.diameter2, height: Layout.padding2))
 
-            case .vxy, .peer: // header is always on top
+        case .xyz:
 
-                result = inner + CGSize(width: Layout.padding2,
-                                        height: Layout.diameter2)
+            result = inner + CGSize(width: Layout.padding2*3,
+                                    height: Layout.diameter2 )
 
-            case .none, .node, .tog, .tap:
+        case .xy, .hand, .peer: // header is always on top
 
-                let length = Layout.diameter2 * min(count,maxNodes)
-                let width  = isVertical ? Layout.diameter2 : length
-                let height = isVertical ? length : Layout.diameter2
+            result = inner + CGSize(width: Layout.padding2,
+                                    height: Layout.diameter2)
 
-                result = CGSize(width: width, height: height)
+        case .none, .node, .tog, .tap:
+
+            let length = Layout.diameter2 * min(count,maxNodes)
+            let width  = isVertical ? Layout.diameter2 : length
+            let height = isVertical ? length : Layout.diameter2
+
+            result = CGSize(width: width, height: height)
         }
         return result
     }
@@ -115,7 +148,7 @@ public class PanelVm {
     var titleSize: CGSize {
         if isVertical ||
             (nodes.count == 1 &&
-             (nodes.first?.nodeType == .vxy ||
+             (nodes.first?.nodeType == .xy ||
               nodes.first?.nodeType == .peer)) {
 
             // title is always on top
@@ -126,8 +159,8 @@ public class PanelVm {
                           height: Layout.diameter - 8)
         }
     }
-
-    func normalizeTouch(xy: CGPoint) -> [Double] {
+    func normalizeTouch(xy: SIMD2<Double>) -> SIMD3<Double>{
+        let runway = runway(.xy)
         let xMax = (inner.width  - thumbRadius)
         let yMax = (inner.height - thumbRadius)
         let xRange = thumbRadius...xMax
@@ -136,11 +169,28 @@ public class PanelVm {
         let yClamp = xy.y.clamped(to: yRange)
         let xNormal = (xClamp - thumbRadius) / runway
         let yNormal = (yClamp - thumbRadius) / runway
-        return [xNormal, 1-yNormal]
+        return SIMD3<Double>(xNormal, 1-yNormal, 0)
+    }
+    func normalizeTouch(xyz: SIMD3<Double>) -> SIMD3<Double> {
+        let runway = runway(.xyz)
+        let xMax = (inner.width  - thumbRadius)
+        let yMax = (inner.height - thumbRadius)
+        let zMax = (inner.height - thumbRadius)
+        let xRange = thumbRadius...xMax
+        let yRange = thumbRadius...yMax
+        let zRange = thumbRadius...zMax
+        let xClamp = xyz.x.clamped(to: xRange)
+        let yClamp = xyz.y.clamped(to: yRange)
+        let zClamp = xyz.z.clamped(to: zRange)
+        let xNormal = (xClamp - thumbRadius) / runway
+        let yNormal = (yClamp - thumbRadius) / runway
+        let zNormal = (zClamp - thumbRadius) / runway
+        return SIMD3<Double>(xNormal, 1-yNormal, zNormal)
     }
 
     /// convert touch coordinates to 0...1
-    func normalizeTouch(v: CGFloat) -> Double {
+    func normalizeTouch(v: Double) -> Double {
+        let runway = runway(.xy)
         if isVertical {
             let yMax = (inner.height - thumbRadius)
             let yClamp = v.clamped(to: thumbRadius...yMax)
