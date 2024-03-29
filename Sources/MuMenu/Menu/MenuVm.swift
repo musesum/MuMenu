@@ -4,14 +4,32 @@ import SwiftUI
 import MuFlo
 import MuHand
 
+public struct CornerFlo {
+
+    let floNode: FloNode
+    let axis: Axis
+    let menu: String
+    let model: String
+
+    public init (_ floNode: FloNode,
+                 _ axis: Axis,
+                 _ menu: String,
+                 _ model: String) {
+
+        self.floNode = floNode
+        self.axis    = axis
+        self.menu    = menu
+        self.model   = model
+    }
+}
+
 open class MenuVm {
     let id: Int = Visitor.nextId()
-
     public var rootVm: RootVm
-
     public init(_ rootVm: RootVm) {
         self.rootVm = rootVm
     }
+
 
     /// one or two menus emanating from a corner
     ///
@@ -22,16 +40,20 @@ open class MenuVm {
     ///   - note: assuming maximum of two menues from corner,
     ///     with different axis
     ///
-    public init(_ corner: CornerOp,
-                _ rootAxis: [(FloNode, Axis)]) {
 
-        self.rootVm = RootVm(corner)
+    public init(_ cornerOp: CornerOp,
+                _ cornerFlos: [CornerFlo]) {
+
+        self.rootVm = RootVm(cornerOp)
         var skyTreeVms = [TreeVm]()
 
-        for (rootNode,axis) in rootAxis {
-            let cornerAxis = CornerAxis(corner,axis)
+        // for (root˚,axis) in floAxis {
+        for cornerFlo in cornerFlos {
+
+
+            let cornerAxis = CornerAxis(cornerOp,cornerFlo.axis)
             let skyTreeVm = TreeVm(rootVm, cornerAxis)
-            let skyNodes = MenuVm.skyNodes(rootNode, corner)
+            let skyNodes = MenuVm.skyNodes(cornerOp, cornerFlo)
 
             let skyBranchVm = BranchVm(nodes: skyNodes,
                                          treeVm: skyTreeVm,
@@ -46,33 +68,24 @@ open class MenuVm {
         Icon.altBundles.append(MuMenu.bundle)
     }
 
-    static func skyNodes(_ rootNode: FloNode,
-                         _ corner: CornerOp) -> [FloNode] {
+    static func skyNodes(_ corner: CornerOp,
+                         _ cornerFlo: CornerFlo) -> [FloNode] {
 
-        let rootFlo = rootNode.modelFlo
+        let rootFlo = cornerFlo.floNode.modelFlo
         Icon.altBundles.append(MuHand.bundle)
-        if let menuFlo = rootFlo.findPath("menu"),
-           let modelFlo = rootFlo.findPath("model") {
+        if let menuFlo = rootFlo.findPath(cornerFlo.menu),
+           let modelFlo = rootFlo.findPath(cornerFlo.model) {
 
-            let cornerStr = corner.str()
-
-            if let cornerFlo = menuFlo.findPath(cornerStr) {
-
-                let floNode = parseFloNode(modelFlo, rootNode)
-                mergeFloNode(cornerFlo, floNode)
-
-            } else {
-                // parse everything together
-                parseFloNode(menuFlo, rootNode)
-            }
-            return rootNode.children.first?.children ?? []
+            let floNode = parseFloNode(modelFlo, cornerFlo.floNode)
+            mergeFloNode(menuFlo, floNode)
+            return cornerFlo.floNode.children.first?.children ?? []
 
         } else {
 
             for child in rootFlo.children {
-                parseFloNode(child, rootNode)
+                parseFloNode(child, cornerFlo.floNode)
             }
-            return rootNode.children
+            return cornerFlo.floNode.children
         }
     }
 

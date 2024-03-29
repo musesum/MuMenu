@@ -15,9 +15,17 @@ public class CornerVm: ObservableObject {
     var ringNodeVm: NodeVm?  /// drag from root with duplicate node icon
     var touchState = TouchState() /// begin,moved,end state plus t count
 
-    private var rootNodeΔ = CGSize.zero /// offset between rootNode and touchNow
+    var rootNodeΔ = CGSize.zero /// offset between rootNode and touchNow
     private var spotNodeΔ = CGSize.zero /// offset between touch point and center in coord
-    var dragNodeΔ: CGSize = .zero /// weird kludge to compsate for small right offset
+    var dragNodeΔ: CGSize { /// weird kludge to compsate for small right offset
+        if let rootVm, rootVm.cornerOp.right,
+           ringIconXY != parkIconXY {
+            return CGSize(width: -Layout.padding2, height: 0)
+        } else {
+            return .zero
+        }
+
+    }
 
     public var corner: CornerOp
 
@@ -45,11 +53,6 @@ public class CornerVm: ObservableObject {
 
         branchVm.addNodeVm(logoNodeVm)
         branchVm.addNodeVm(ringNodeVm)
-
-        if rootVm.cornerOp.right {
-            let rightOffset: CGFloat = -(2 * Layout.padding)
-            dragNodeΔ = CGSize(width: rightOffset, height: 0)
-        }
     }
     
     public func updateDragXY(_ touchXY: CGPoint) {

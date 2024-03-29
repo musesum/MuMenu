@@ -6,6 +6,7 @@ import SwiftUI
 struct CornerView: View {
 
     @ObservedObject var cornerVm: CornerVm
+    var opacity: CGFloat { cornerVm.touchState.touching ? 1 : 0.25 }
 
     var body: some View {
 
@@ -32,8 +33,11 @@ struct CornerView: View {
 
                 CursorView(ringNodeVm, Layout.diameter2)
                     .position(cornerVm.ringIconXY)
-                    .animation(Layout.animateFast, value: cornerVm.ringIconXY)
                     .offset(cornerVm.dragNodeΔ) // .zero
+                    .animation(Layout.animateFast, value: cornerVm.ringIconXY)
+                    .opacity(opacity)
+                    .animation(Layout.animateSlow, value: opacity)
+
             }
         }
         //???.animation(Layout.animateFast, value: cornerVm.parkIconAlpha)

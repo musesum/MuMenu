@@ -13,11 +13,7 @@ public class BranchVm: Identifiable, ObservableObject {
     @Published var opacity: CGFloat = 1 /// branch may be partially occluded
 
     var branchShift: CGSize {
-        #if os(visionOS)
-        .zero
-        #else
-        treeVm.treeShift.clamped(to: shiftRange)
-        #endif
+            treeVm.treeShift.clamped(to: shiftRange)
     }
     var shiftRange: RangeXY = (0...1, 0...1)
     var titleShift: CGSize = .zero

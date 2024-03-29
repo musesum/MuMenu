@@ -9,13 +9,10 @@ struct LeafXyzView: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            if leafVm.panelVm.cornerAxis.corner.upper {
-                LeafBodyXyzView(leafVm)
-                LeafTitleView(leafVm)
-            } else {
+
                 LeafTitleView(leafVm)
                 LeafBodyXyzView(leafVm)
-            }
+
         }
     }
 }

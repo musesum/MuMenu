@@ -67,7 +67,7 @@ public class RootVm: ObservableObject, Equatable {
 
     func updateTreeOffsets() {
 
-        let margins = RenderDepth.state == .immer ? .zero : idiomMargins()
+        let margins = idiomMargins() //????? RenderDepth.state == .immer ? .zero : idiomMargins()
         // xy top left to bottom right corners
         let x0 = margins.width
         let y0 = margins.height
@@ -85,8 +85,8 @@ public class RootVm: ObservableObject, Equatable {
         switch cornerOp {
             case [.lower, .right]: v(-x0,-y1); h(-x1,-y0); r(0, 0)
             case [.lower, .left ]: v( x0,-y1); h( x1,-y0); r(0, 0)
-            case [.upper, .right]: v(-x0, y1); h(-x1, y0); r(0,y0)
-            case [.upper, .left ]: v( x0, y1); h( x1, y0); r(0,y0)
+            case [.upper, .right]: v(-x0, y1); h(-x1, y0); r(0, 0)
+            case [.upper, .left ]: v( x0, y1); h( x1, y0); r(0, 0)
             default: break
         }
         rootOffset = rs
