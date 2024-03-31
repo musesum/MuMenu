@@ -23,7 +23,6 @@ public class RootVm: ObservableObject, Equatable {
     /// `touchBegin` snapshot of viewElements.
     /// To prevent touchEnded from hiding elements that were shown during `touchBegin`
     var beginViewOps: Set<TouchType> = []
-    
     var cornerOp: CornerOp        /// corner where root begins, ex: `[south,west]`
     var treeVms = [TreeVm]()  /// vertical or horizontal stack of branches
     var treeSpotVm: TreeVm?   /// most recently used tree

@@ -70,9 +70,4 @@ extension TreeVm { // +Show
             return nil
         }
     }
-    var reverse: Bool { get {
-        self.isVertical
-        ? rootVm.cornerOp.lower ? true : false
-        : rootVm.cornerOp.right ? true : false
-    }}
 }

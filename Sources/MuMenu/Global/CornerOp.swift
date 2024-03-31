@@ -5,9 +5,12 @@ import SwiftUI
 public struct CornerOp: OptionSet {
 
     public let rawValue: Int
+    static func flipUpperLower(_ oldOp: Int) -> Int {
+        return oldOp ^ CornerOp([.upper,.lower]).rawValue
+    }
 
     var hAlign: HorizontalAlignment { self.left ? .leading : .trailing }
-    var vAlign: VerticalAlignment { self.upper ? .top : .bottom }
+    var vAlign: VerticalAlignment   { self.upper ? .top : .bottom }
     var alignment: Alignment { Alignment(horizontal: hAlign, vertical: vAlign) }
     
     public init(rawValue: Int) {
@@ -23,6 +26,8 @@ public struct CornerOp: OptionSet {
     var lower : Bool { contains(.lower)}
     var left  : Bool { contains(.left )}
     var right : Bool { contains(.right)}
+
+    var side  : Int { rawValue & CornerOp([.left,.right]).rawValue }
 
     static public var description: [(Self, String)] = [
         (.upper , "upper"),

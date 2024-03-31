@@ -66,7 +66,20 @@ public struct MenuLeafItem: Codable {
     }
 
     var treeVm: TreeVm? {
-        return CornerAxisTreeVm[cornax]
+        
+//        for key in CornerAxisTreeVm.keys {
+//            print(key, terminator: " ")
+//        }
+
+        if let vm = CornerAxisTreeVm[cornax] { return vm }
+
+        #if os(visionOS)
+
+        for vm in CornerAxisTreeVm.values {
+            return vm
+        }
+        #endif
+        return nil
     }
 
 }

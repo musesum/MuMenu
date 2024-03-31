@@ -167,7 +167,12 @@ public struct MenuItem: Codable {
          phase == UITouch.Phase.cancelled.rawValue)
     }
     var cornerVm: CornerVm? {
-        CornerOpVm[cornerOp]
+        if let vm = CornerOpVm[cornerOp] { return vm }
+        if let vm = CornerOpVm[CornerOp.flipUpperLower(cornerOp)] {
+            //????? print("*** yo")
+            return vm
+        }
+        return nil
     }
 
 }

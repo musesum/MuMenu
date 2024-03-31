@@ -1,7 +1,6 @@
 //  created by musesum on 4/20/23.
 
 import Foundation
-import MuPeer
 
 open class MuMenu {
 

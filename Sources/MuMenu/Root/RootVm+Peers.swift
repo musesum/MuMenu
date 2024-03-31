@@ -6,7 +6,7 @@ import MuPeer
 
 extension RootVm {
 
-    func sendItemToPeers(_ item: MenuItem) {
+    func  sendItemToPeers(_ item: MenuItem) {
 
         if let peers, peers.hasPeers {
             do {

@@ -114,9 +114,7 @@ fileprivate struct bodyV: View {
                 VStack {
                     BranchAxisView(panelVm) {
 
-                        ForEach(branchVm.treeVm.reverse
-                                ? branchVm.nodeVms.reversed()
-                                : branchVm.nodeVms) {
+                        ForEach(branchVm.nodeVms) {
                             NodeView(nodeVm: $0)
                         }
                     }

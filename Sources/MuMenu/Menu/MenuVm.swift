@@ -50,7 +50,6 @@ open class MenuVm {
         // for (root˚,axis) in floAxis {
         for cornerFlo in cornerFlos {
 
-
             let cornerAxis = CornerAxis(cornerOp,cornerFlo.axis)
             let skyTreeVm = TreeVm(rootVm, cornerAxis)
             let skyNodes = MenuVm.skyNodes(cornerOp, cornerFlo)
