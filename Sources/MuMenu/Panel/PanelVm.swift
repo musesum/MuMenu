@@ -7,7 +7,7 @@ public class PanelVm {
  
     var nodes: [FloNode]
     var nodeType: NodeType
-    var cornerAxis: CornerAxis
+    var cornerItem: CornerItem
     let isVertical: Bool
     var count: CGFloat
     let maxNodes = CGFloat(7)
@@ -18,7 +18,7 @@ public class PanelVm {
 
         self.nodes = nodes
         self.count = CGFloat(nodes.count)
-        self.cornerAxis = treeVm.cornerAxis
+        self.cornerItem = treeVm.cornerItem
         self.isVertical = treeVm.isVertical
         self.nodeType = (count > 1 ? .node : nodes.first?.nodeType ?? .node)
         setAspectFromType()

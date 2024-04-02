@@ -11,7 +11,7 @@ struct LeafPeerView: View {
 
     var body: some View {
         VStack {
-            if panelVm.cornerAxis.corner.upper {
+            if panelVm.cornerItem.corner.upper {
                 
                 LeafBezelView(leafVm, .none) {
                     PeersView(leafVm.peersVm)

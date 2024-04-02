@@ -192,7 +192,7 @@ public class BranchVm: Identifiable, ObservableObject {
         let pw = boundsPrior.width
         let ph = boundsPrior.height
 
-        switch treeVm.cornerAxis.bound {
+        switch treeVm.cornerItem.bound {
             case .lowX: shiftRange = (min(0,-pw)...0, 0...0)
             case .uprX: shiftRange = (0...max(0, pw), 0...0)
             case .lowY: shiftRange = (0...0, min(0,-ph)...0)
@@ -201,7 +201,7 @@ public class BranchVm: Identifiable, ObservableObject {
         shiftBranch()
 
         let rad = Layout.radius
-        switch treeVm.cornerAxis.cornax {
+        switch treeVm.cornerItem.cornerAxis {
             case .LLH,.ULH: titleShift = CGSize(width:  rad, height: 0)
             case .LRH,.URH: titleShift = CGSize(width: -rad, height: 0)
             case .LLV,.LRV: titleShift = .zero

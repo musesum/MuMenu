@@ -11,7 +11,7 @@ extension TreeVm { // + Shift
         var w = CGFloat.zero
         var h = CGFloat.zero
 
-        switch cornerAxis.bound {
+        switch cornerItem.bound {
             case .lowX:
                 for branchVm in branchVms {
                     let lowX = branchVm.shiftRange.0.lowerBound
@@ -78,7 +78,7 @@ extension TreeVm { // + Shift
 
         if index < branchVms.count, index >= 0 {
            let startBranchVm = branchVms[index]
-            treeShift = cornerAxis.outerLimit(of: startBranchVm.shiftRange)
+            treeShift = cornerItem.outerLimit(of: startBranchVm.shiftRange)
             treeShifted = treeShift
         }
     }

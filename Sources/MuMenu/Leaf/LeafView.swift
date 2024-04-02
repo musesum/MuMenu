@@ -31,7 +31,7 @@ struct LeafView<Content: View>: View {
             HStack {
                 // horizontal title is farthest away from root
                 // to allow control to be a bit more reachable
-                if panelVm.cornerAxis.corner.left {
+                if panelVm.cornerItem.corner.left {
                     LeafBezelView(leafVm, .xy, content)
                     LeafTitleView(leafVm)
                 } else {

@@ -10,16 +10,19 @@ public struct CornerFlo {
     let axis: Axis
     let menu: String
     let model: String
+    let key: String
 
     public init (_ floNode: FloNode,
                  _ axis: Axis,
                  _ menu: String,
-                 _ model: String) {
+                 _ model: String,
+                 _ key: String) {
 
         self.floNode = floNode
         self.axis    = axis
         self.menu    = menu
         self.model   = model
+        self.key     = key
     }
 }
 
@@ -50,8 +53,8 @@ open class MenuVm {
         // for (root˚,axis) in floAxis {
         for cornerFlo in cornerFlos {
 
-            let cornerAxis = CornerAxis(cornerOp,cornerFlo.axis)
-            let skyTreeVm = TreeVm(rootVm, cornerAxis)
+            let cornerItem = CornerItem(cornerOp, cornerFlo.axis, cornerFlo.key)
+            let skyTreeVm = TreeVm(rootVm, cornerItem)
             let skyNodes = MenuVm.skyNodes(cornerOp, cornerFlo)
 
             let skyBranchVm = BranchVm(nodes: skyNodes,

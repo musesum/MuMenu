@@ -12,7 +12,7 @@ struct BranchView: View {
         self.branchVm = branchVm
     }
     var body: some View {
-        switch treeVm.cornerAxis.cornax {
+        switch treeVm.cornerItem.cornerAxis {
             case .LLV, .LRV: VStack { titleV(branchVm); bodyV(branchVm)  }
             case .ULV, .URV: VStack { bodyV(branchVm) ; titleV(branchVm) }
             case .LLH, .ULH: HStack(alignment: .bottom) { bodyV(branchVm); titleV(branchVm) }
@@ -37,7 +37,7 @@ fileprivate struct titleV: View {
 
     var angle: Angle {
 
-        switch treeVm.cornerAxis.cornax {
+        switch treeVm.cornerItem.cornerAxis {
             case .LLV, .LRV, .ULV, .URV: return  Angle(degrees:0)
             case .URH, .ULH: return  Angle(degrees:270) //TODO: 90 later, tricky
             case .LLH, .LRH: return  Angle(degrees:270)
@@ -45,7 +45,7 @@ fileprivate struct titleV: View {
     }
 
     var anchor: UnitPoint {
-        switch treeVm.cornerAxis.cornax {
+        switch treeVm.cornerItem.cornerAxis {
             case .LLV, .LRV, .ULV, .URV: return .center
             case .LLH, .ULH: return .bottomLeading
             case .URH, .LRH: return .topTrailing
@@ -53,7 +53,7 @@ fileprivate struct titleV: View {
     }
 
     var frameAlign: Alignment {
-        switch treeVm.cornerAxis.cornax {
+        switch treeVm.cornerItem.cornerAxis {
             case .LLV, .LRV, .ULV, .URV: return .center
             case .LLH: return .bottomLeading
             case .ULH: return .bottomLeading

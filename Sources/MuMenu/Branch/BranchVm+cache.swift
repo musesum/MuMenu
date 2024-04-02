@@ -16,8 +16,8 @@ extension BranchVm {
         var nextHash: Int {
             var hasher = Hasher()
             hasher.combine(prevNodeVm?.hashValue ?? 0)
-            hasher.combine(treeVm.cornerAxis.corner.rawValue)
-            hasher.combine(treeVm.cornerAxis.axis.rawValue)
+            hasher.combine(treeVm.cornerItem.corner.rawValue)
+            hasher.combine(treeVm.cornerItem.axis.rawValue)
             hasher.combine(BranchVm.titleForNodes(nodes))
             let hash = hasher.finalize()
             return hash

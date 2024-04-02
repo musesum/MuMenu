@@ -2,12 +2,13 @@
 import SwiftUI
 import MuFlo
 
-public var CornerAxisTreeVm = [CornerAxisId: TreeVm]()
 
 public class TreeVm: Identifiable, Equatable, ObservableObject {
     
     public let id = Visitor.nextId()
     public static func == (lhs: TreeVm, rhs: TreeVm) -> Bool { return lhs.id == rhs.id }
+    public static var sideAxis = [SideAxisId: TreeVm]()
+
 
     @Published var branchVms = [BranchVm]()
 
@@ -19,7 +20,7 @@ public class TreeVm: Identifiable, Equatable, ObservableObject {
 
     var rootVm: RootVm
     var branchSpotVm: BranchVm?
-    var cornerAxis: CornerAxis
+    var cornerItem: CornerItem
     let isVertical: Bool
     var treeOffset = CGSize.zero // offset of menu tree from corner
     var depthShown = 0 // levels of branches shown
@@ -48,12 +49,12 @@ public class TreeVm: Identifiable, Equatable, ObservableObject {
     }
     
     public init(_ rootVm: RootVm,
-                _ cornerAxis: CornerAxis) {
+                _ cornerItem: CornerItem) {
 
         self.rootVm = rootVm
-        self.cornerAxis = cornerAxis
-        self.isVertical = cornerAxis.axis == .vertical
-        CornerAxisTreeVm[cornerAxis.cornax.rawValue] = self
+        self.cornerItem = cornerItem
+        self.isVertical = cornerItem.axis == .vertical
+        TreeVm.sideAxis[cornerItem.sideAxis.rawValue] = self
     }
     
     public func addBranchVms(_ branchVms: [BranchVm]) {

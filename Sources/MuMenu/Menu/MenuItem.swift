@@ -3,33 +3,34 @@
 import SwiftUI
 import MuFlo
 
-public typealias CornerAxisId = Int
+public typealias SideAxisId = Int
 
 public struct MenuTreeItem: Codable {
 
-    public var cornax : CornerAxisId //Int
+    public var sideAxis : SideAxisId //Int
     public var depth  : Int
     public var start  : Int
 
     public init(_ treeVm: TreeVm) {
-        self.cornax = treeVm.cornerAxis.cornax.rawValue
-        self.depth  = treeVm.depthShown
-        self.start  = treeVm.startIndex
+        self.sideAxis = treeVm.cornerItem.sideAxis.rawValue
+        self.depth = treeVm.depthShown
+        self.start = treeVm.startIndex
     }
 
     enum CodingKeys: String, CodingKey {
-        case cornax, depth, start
+        case sideAxis, depth, start
     }
 
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        try cornax = c.decode(Int.self, forKey: .cornax) // CornerAxisId
+        try sideAxis = c.decode(Int.self, forKey: .sideAxis)
         try depth  = c.decode(Int.self, forKey: .depth )
         try start  = c.decode(Int.self, forKey: .start )
     }
     var treeVm: TreeVm? {
-        return CornerAxisTreeVm[cornax]
+        return TreeVm.sideAxis[sideAxis]
     }
+    
     func showTree(_ fromRemote: Bool) {
         treeVm?.showTree(start: start,
                          depth: depth,
