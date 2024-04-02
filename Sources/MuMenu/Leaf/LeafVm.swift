@@ -6,7 +6,6 @@ import MuFlo
 
 public enum Toggle { case on, off }
 
-
 public enum RunwayType { case none, x, y, xy, xyz, z }
 
 /// extend MuNodeVm to show title and thumb position
