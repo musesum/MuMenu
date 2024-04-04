@@ -32,7 +32,7 @@ extension CornerVm {
                    let leafVm = leafItem.treeVm?.gotoLeafItem(leafItem),
                    let leafProto = leafVm.leafProto {
                     
-                    print("􀤆", terminator: "")
+                    //print("􀤆", terminator: "")
                     DispatchQueue.main.async {
                         leafProto.updateFromThumbs(leafItem.thumbs, Visitor(.remote))
                     }

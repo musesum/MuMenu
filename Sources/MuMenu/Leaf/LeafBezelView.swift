@@ -6,10 +6,9 @@ struct LeafBezelView<Content: View>: View {
 
     let leafVm: LeafVm
     let runwayType: RunwayType
-    var size: CGSize { leafVm.panelVm.inner(runwayType) }
-
     let content: (() -> Content)?
-
+    
+    var size: CGSize { leafVm.panelVm.inner(runwayType) }
     var strokeColor: Color   { Layout.strokeColor(leafVm.spotlight) }
     var strokeWidth: CGFloat { Layout.strokeWidth(leafVm.spotlight) }
 
@@ -31,14 +30,14 @@ struct LeafBezelView<Content: View>: View {
             content?()
                 .onAppear {
                     let now = geo.frame(in: .global)
-                    print("xyz appear \(leafVm.node.title)\(now.script)")
+                    //print("xyz appear \(leafVm.node.title)\(now.script)")
                     leafVm.updateRunway(runwayType, now) }
                 #if os(visionOS)
                 .onChange(of: geo.frame(in: .global)) { old, now in
                     leafVm.updateRunway(runwayType, now) }
                 #else
                 .onChange(of: geo.frame(in: .global)) {
-                    print("xyz change \(leafVm.node.title)\($0.script)")
+                    //print("xyz change \(leafVm.node.title)\($0.script)")
                     leafVm.updateRunway(runwayType,$0) }
                 #endif
         }

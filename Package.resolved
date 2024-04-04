@@ -6,7 +6,7 @@
       "location" : "https://github.com/musesum/MuExtensions.git",
       "state" : {
         "branch" : "main",
-        "revision" : "727e07bad8c1bd37a05be7a565856af902173c74"
+        "revision" : "c67d533063532f0ac9533bc8646f294f52b64498"
       }
     },
     {
@@ -15,7 +15,7 @@
       "location" : "https://github.com/musesum/MuFlo.git",
       "state" : {
         "branch" : "main",
-        "revision" : "c97fc49b50d64881c42385ed8f4545f90fc80591"
+        "revision" : "283cd16d1e7be14fd3db65405d39e87dfaa24860"
       }
     },
     {
@@ -24,7 +24,7 @@
       "location" : "https://github.com/musesum/MuHand.git",
       "state" : {
         "branch" : "main",
-        "revision" : "7f78526665d8a2a39dd26658cd2ec077b876c37c"
+        "revision" : "00a29a96e9f184708dd60fdb0fadd082acddbb95"
       }
     },
     {
@@ -33,7 +33,7 @@
       "location" : "https://github.com/musesum/MuMetal.git",
       "state" : {
         "branch" : "main",
-        "revision" : "da12bd040953cb520788ff7f49300d6376253982"
+        "revision" : "483dbdbe09486807cfa41e5f3381450584e0aebd"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/musesum/MuPeer.git",
       "state" : {
-        "revision" : "dfd053d91ec059e552c74d5fb419d89dbbdd6587",
-        "version" : "0.23.818"
+        "branch" : "main",
+        "revision" : "45a1b4850cfd8858d1e461cbdc4039740ea3cb9f"
       }
     },
     {
@@ -60,7 +60,7 @@
       "location" : "https://github.com/musesum/MuVision.git",
       "state" : {
         "branch" : "main",
-        "revision" : "0b33989f21c662faa90f0505a80b8a1cb3627fcb"
+        "revision" : "3eee3a0b3173632df596d9d9ca1bddcddee6044d"
       }
     },
     {
@@ -87,7 +87,7 @@
       "location" : "https://github.com/weichsel/ZIPFoundation.git",
       "state" : {
         "branch" : "development",
-        "revision" : "55ef1939d8d3a5e9b42c09ce6b725b80509aae13"
+        "revision" : "02b6abe5f6eef7e3cbd5f247c5cc24e246efcfe0"
       }
     }
   ],
