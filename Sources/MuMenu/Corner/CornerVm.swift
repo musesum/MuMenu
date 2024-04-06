@@ -2,7 +2,6 @@
 
 import SwiftUI
 import MuFlo
-import MuExtensions
 
 /// Corner node which follows touch
 public class CornerVm: ObservableObject {

@@ -2,7 +2,7 @@
 
 import SwiftUI
 import MuFlo
-import MuExtensions
+
 public class BranchVm: Identifiable, ObservableObject {
     
     public let id = Visitor.nextId()

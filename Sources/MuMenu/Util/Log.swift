@@ -2,7 +2,6 @@
 
 import SwiftUI
 import MuFlo
-import MuExtensions
 
 public func log(_ title: String,
                 format: String = "%.0f",

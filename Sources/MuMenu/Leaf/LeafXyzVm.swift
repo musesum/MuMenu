@@ -2,7 +2,6 @@
 
 import SwiftUI
 import MuFlo
-import MuExtensions
 
 /// 2d XY control
 public class LeafXyzVm: LeafVm {

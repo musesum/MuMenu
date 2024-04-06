@@ -2,7 +2,7 @@
 
 import SwiftUI
 import MuFlo
-import MuExtensions
+
 /// segmented control
 public class LeafSegVm: LeafVm {
 

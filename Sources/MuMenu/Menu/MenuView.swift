@@ -2,7 +2,6 @@
 
 import SwiftUI
 import MuFlo
-import MuExtensions
 
 public protocol MenuDelegate {
     func window(frame: CGRect, insets: EdgeInsets)

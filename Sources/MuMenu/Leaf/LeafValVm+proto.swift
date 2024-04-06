@@ -2,7 +2,7 @@
 
 import Foundation
 import MuFlo
-import MuExtensions
+
 extension LeafValVm: LeafProtocol {
 
     public func refreshValue(_ visit: Visitor) {

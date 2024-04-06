@@ -1,7 +1,6 @@
 //  created by musesum on 2/5/19.
 
 import UIKit
-import MuExtensions
 import MuPeer
 import MuMetal
 import MuHand

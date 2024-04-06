@@ -3,7 +3,6 @@
 import SwiftUI
 import MuPeer
 import MuFlo
-import MuExtensions
 import MuVision
 
 public class RootVm: ObservableObject, Equatable {
