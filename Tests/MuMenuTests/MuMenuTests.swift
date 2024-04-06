@@ -8,4 +8,4 @@ final class MuMenuTests: XCTestCase {
         // results.
         // XCTAssertEqual(MuMenu().text, "Hello, World!")
     }
-}
+ }

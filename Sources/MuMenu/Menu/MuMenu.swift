@@ -16,7 +16,7 @@ open class MuMenu {
         do {
             return try String(contentsOfFile: path) }
         catch {
-            print("⁉️ MuMenuSky:: error:\(error) loading contents of:\(path)")
+            print("⁉️ MuSky:: error:\(error) loading contents of:\(path)")
         }
         return nil
     }
