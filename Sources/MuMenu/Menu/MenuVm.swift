@@ -2,7 +2,7 @@
 
 import SwiftUI
 import MuFlo
-import MuHand
+import MuVision
 
 public struct CornerFlo {
 

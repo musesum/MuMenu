@@ -65,7 +65,7 @@ public class RootVm: ObservableObject, Equatable {
 
     func updateTreeOffsets() {
 
-        let margins = idiomMargins() //????? RenderDepth.state == .immer ? .zero : idiomMargins()
+        let margins = idiomMargins()
         // xy top left to bottom right corners
         let x0 = margins.width
         let y0 = margins.height

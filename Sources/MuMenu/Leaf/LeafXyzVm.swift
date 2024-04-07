@@ -43,9 +43,7 @@ public class LeafXyzVm: LeafVm {
    func ticks() -> [CGSize] {
         var result = [CGSize]()
         let runway = self.panelVm.runwayXYZ
-        let radius = self.panelVm.thumbRadius
         let span = CGFloat(0.25)
-        let margin = Layout.radius - 2
         
         for w in stride(from: CGFloat(0), through: 1, by: span) {
             for h in stride(from: CGFloat(0), through: 1, by: span) {
