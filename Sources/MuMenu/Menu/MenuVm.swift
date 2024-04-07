@@ -74,7 +74,7 @@ open class MenuVm {
                          _ cornerFlo: CornerFlo) -> [FloNode] {
 
         let rootFlo = cornerFlo.floNode.modelFlo
-        Icon.altBundles.append(MuHand.bundle)
+        Icon.altBundles.append(MuVision.bundle)
         if let menuFlo = rootFlo.findPath(cornerFlo.menu),
            let modelFlo = rootFlo.findPath(cornerFlo.model) {
 
