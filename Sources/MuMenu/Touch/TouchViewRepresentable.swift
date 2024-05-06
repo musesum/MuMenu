@@ -2,9 +2,9 @@
 
 import SwiftUI
 
-struct TouchViewRepresentable: UIViewRepresentable {
+public struct TouchViewRepresentable: UIViewRepresentable {
 
-    typealias Context = UIViewRepresentableContext<TouchViewRepresentable>
+    public typealias Context = UIViewRepresentableContext<TouchViewRepresentable>
     var cornerVms: [CornerVm]
     var touchesView: TouchesView
 
