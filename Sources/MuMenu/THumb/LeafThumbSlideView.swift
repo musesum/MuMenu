@@ -5,20 +5,19 @@ import SwiftUI
 public struct LeafThumbSlideView: View {
 
     @ObservedObject var leafVm: LeafVm
-    let runway: Runway
+    let runwayType: LeafRunwayType
 
     var spotlight: Bool { leafVm.spotlight }
     var valueColor: Color { Layout.tapColor(spotlight) }
     var tweenColor: Color { Layout.tweColor(spotlight) }
-    var proto: LeafProtocol? { leafVm.leafProto }
-    var thumbValueOffset: CGSize { proto?.thumbValueOffset(runway) ?? .zero }
-    var thumbTweenOffset: CGSize { proto?.thumbTweenOffset(runway) ?? .zero }
-    var thumbDiameter: Double { runway.thumbRadius - 2 }
+    var thumbValueOffset: CGSize { leafVm.thumbValueOffset(runwayType) }
+    var thumbTweenOffset: CGSize { leafVm.thumbTweenOffset(runwayType) }
+    var thumbDiameter: Double { runwayType.thumbRadius - 2 }
 
     public init(_ leafVm: LeafVm,
-                _ runway: Runway) {
+                _ runwayType: LeafRunwayType) {
         self.leafVm = leafVm
-        self.runway = runway
+        self.runwayType = runwayType
     }
     public var body: some View {
         ZStack {
@@ -34,7 +33,7 @@ public struct LeafThumbSlideView: View {
                 .offset(thumbValueOffset)
                 .allowsHitTesting(false)
 
-            IconView(leafVm, leafVm.menuTree.icon, runway)
+            IconView(leafVm, leafVm.menuTree.icon, runwayType)
                 .frame(width: thumbDiameter, height: thumbDiameter)
                 .offset(thumbValueOffset)
         }

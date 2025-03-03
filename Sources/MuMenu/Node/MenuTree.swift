@@ -11,7 +11,6 @@ open class MenuTree: Identifiable, Equatable {
     public var icon: Icon!
     public var parent: MenuTree?
     public var children = [MenuTree]()
-    public var leafProto: LeafProtocol?
     public var nodeType = NodeType.node
     public var model˚: Flo
     public var menu˚: Flo?
@@ -69,12 +68,6 @@ open class MenuTree: Identifiable, Equatable {
         self.parent = parent
         self.nodeType = nodeType
         parent?.children.append(self)
-
-        model˚.addClosure { flo, visit in
-            DispatchQueue.main.async {
-                self.leafProto?.updateFromModel(flo, visit)
-            }
-        }
     }
 
     public func touch() {

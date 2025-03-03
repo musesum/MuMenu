@@ -5,19 +5,25 @@ import SwiftUI
 struct LeafThumbTapView: View {
 
     @ObservedObject var leafVm: LeafVm
-    let runway: Runway
+    let runwayType: LeafRunwayType
 
     var panelVm: PanelVm { leafVm.panelVm }
     var color: Color { leafVm.spotlight ? .white : .gray }
-    var thumbOffset: CGSize { leafVm.leafProto?.thumbValueOffset(runway) ?? .zero }
-    var togColor: Color { Layout.togColor(leafVm.thumb.value[0] > 0) }
+    var thumbOffset: CGSize { leafVm.thumbValueOffset(runwayType) }
+    var togColor: Color {
+        if let thumb = leafVm.runways.thumb() {
+            return Layout.togColor(thumb.value[0] > 0)
+        } else {
+            return Layout.togColor(false)
+        }
+    }
     var diameter: Double { panelVm.thumbDiameter(.runXY) }
     var togOffset: CGSize { CGSize(width:  Layout.radius-6, height: Layout.radius-6)}
   
     init(_ leafVm: LeafVm,
-         _ runway: Runway) {
+         _ runwayType: LeafRunwayType) {
         self.leafVm = leafVm
-        self.runway = runway
+        self.runwayType = runwayType
     }
     var body: some View {
         ZStack {
@@ -27,7 +33,7 @@ struct LeafThumbTapView: View {
                 .offset(thumbOffset)
                 .allowsHitTesting(false)
 
-            IconView(leafVm, leafVm.menuTree.icon, runway)
+            IconView(leafVm, leafVm.menuTree.icon, runwayType)
                 .frame(width:  diameter, height: diameter)
                 .offset(thumbOffset)
 

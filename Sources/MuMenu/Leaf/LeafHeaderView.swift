@@ -37,7 +37,7 @@ struct LeafHeaderTitleView: View {
 
     @ObservedObject var leafVm: LeafVm
     let inset: CGFloat
-    var leafTitle: String { leafVm.leafProto?.leafTitle() ?? "??"}
+    var leafTitle: String { leafVm.leafTitle() }
     var size: CGSize { leafVm.panelVm.titleSize }
 
     init(_ leafVm: LeafVm,

@@ -18,8 +18,9 @@ struct LeafTogBodyView<Content: View>: View {
 
             content() // custom control thumb is here
                 .onAppear {
-                    leafVm.updateRunway(.runXY, geo.frame(in: .global)) }
-                .onChange(of: geo.frame(in: .global)) { leafVm.updateRunway(.runXY, $1) }
+                    let now = geo.frame(in: .global)
+                    leafVm.runways.updateBounds(.runXY, now) }
+                .onChange(of: geo.frame(in: .global)) { leafVm.runways.updateBounds(.runXY, $1) }
         }
         .frame(width: size.width, height: size.height)
     }

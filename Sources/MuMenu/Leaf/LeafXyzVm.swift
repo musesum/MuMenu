@@ -13,8 +13,6 @@ public class LeafXyzVm: LeafVm {
                    _ prevVm: NodeVm?) {
         
         super.init(menuTree, branchVm, prevVm)
-        super.leafProto = self
-        menuTree.leafProto = self // MuLeafProtocol for exchanging value
 
         // set ranges
         if let exprs = menuTree.model˚.exprs,
@@ -32,21 +30,23 @@ public class LeafXyzVm: LeafVm {
                 ranges[scalar.name] = scalar.range()
             }
         }
-        refreshValue(Visitor(0, .model))
+        let visit = Visitor(0, .bind) //.. .model
+        updateFromFlo(menuTree.model˚, visit)
+        syncVal(visit)
     }
 
     /// ticks above and below nearest tick,
     /// but never on panel border or thumb border
    func ticks() -> [CGSize] {
         var result = [CGSize]()
-        let lengthXYZ = self.panelVm.runwayXYZ
+        let lengthXY = self.panelVm.runwayXY
         let span = CGFloat(0.25)
         
         for w in stride(from: CGFloat(0), through: 1, by: span) {
             for h in stride(from: CGFloat(0), through: 1, by: span) {
 
-                let tick = CGSize(width:  w * lengthXYZ.x,
-                                  height: h * lengthXYZ.y)
+                let tick = CGSize(width:  w * lengthXY.x,
+                                  height: h * lengthXY.y)
                 result.append(tick)
             }
         }
@@ -64,55 +64,77 @@ public class LeafXyzVm: LeafVm {
     override public func touchLeaf(_ touchState: TouchState,
                                    _ visit: Visitor) {
 
-        let pointNow = touchState.pointNow
-
-        if touchState.phase == .began {
-            if touchState.touchBeginCount > 0 {
-                tapThumb()
-                editing = true
-            } else {
-                touchThumbBegin()
-                editing = true
-            }
-
-        } else if !touchState.phase.done {
-            touchThumbNext()
-            editing = true
-        } else {
-            editing = false
-        }
+        editing = runways.touchLeaf(touchState)
         syncVal(visit)
-
-        func tapThumb() {
-
-            let touchOffset = SIMD2<Double>(touchState.pointNow - bounds.origin)
-            let thumbPrior = panelVm.normalizeTouch(xy: touchOffset)
-            thumb.value = thumbPrior.quantize(4)
-            thumb.delta = touchOffset - thumbCenter(runway)
-            syncVal(visit)
-        }
-
-        func touchThumbBegin() {
-            updateRunway(touchState.pointNow)
-            let touchOffset = runway.offset(pointNow, bounds)
-            let oldCenter = thumbCenter(runway)
-            let deltaOffset = touchOffset - oldCenter
-            let insideThumb = deltaOffset.distance(SIMD2<Double>.zero) < runway.thumbRadius
-            thumb.delta = insideThumb ? deltaOffset : .zero
-            touchThumbNext()
-        }
-
-        /// user touched control, translate to normalized thumb (0...1)
-        func touchThumbNext() {
-            let touchOffset = runway.offset(pointNow, bounds)
-            let nextThumb = touchOffset - thumb.delta
-            thumb.value = panelVm.normalizeTouch(xy: nextThumb).clamped(to: 0...1)
-            PrintLog("touchThumbNext pointNow\(pointNow.digits(2))  \(runway.rawValue) \(thumb.value.digits(2)) ")
-        }
     }
     /// user double tapped a parent node
     override func tapLeaf() {
         resetOrigin()
     }
+    override public func leafTitle() -> String { return "" }
+    override public func treeTitle() -> String {
+        guard let thumb = runways.thumb() else { return "xyz??" }
+        let x = expand(named: "x", thumb.value.x).digits(-2)
+        let y = expand(named: "y", thumb.value.y).digits(-2)
+        let z = expand(named: "z", thumb.value.z).digits(-2)
+        return ("x:\(x) y:\(y) z:\(z)")
+    }
+    /// update from model - not touch
+    override public func updateFromFlo(_ flo: Flo, _ visit: Visitor) {
 
+        guard !visit.wasHere(leafHash) else { return }
+        guard let thumb = runways.thumb() else { return }
+
+        editing = true
+        if let exprs = flo.exprs,
+           let x = exprs.nameAny["x"] as? Scalar,
+           let y = exprs.nameAny["y"] as? Scalar,
+           let z = exprs.nameAny["z"] as? Scalar {
+
+            thumb.value = [x.normalized(.value),
+                           y.normalized(.value),
+                           z.normalized(.value)]
+            thumb.tween = (flo.hasPlugins
+                           ?  [x.normalized(.tween),
+                               y.normalized(.tween),
+                               z.normalized(.tween)]
+                           : thumb.value)
+        } else {
+            PrintLog("⁉️ unknown update type")
+        }
+        editing = false
+        syncVal(visit)
+    }
+
+    override public func thumbValueOffset(_ type: LeafRunwayType) -> CGSize {
+        guard let thumb = runways.thumb(type),
+              let bounds = runways.bounds(type) else { return .zero }
+        let size = runways.expandThumb(thumb.value, type, bounds)
+        return size
+    }
+
+    override public func thumbTweenOffset(_ type: LeafRunwayType) -> CGSize {
+        guard let thumb = runways.thumb(type),
+              let bounds = runways.bounds(type) else { return .zero }
+        let size = runways.expandThumb(thumb.tween, type, bounds)
+        return size
+    }
+    /// called via user touch or via model update
+    override public func syncVal(_ visit: Visitor) {
+        guard visit.newVisit(leafHash) else { return }
+        guard let thumb = runways.thumb() else { return }
+        if  !visit.type.tween,
+            !visit.type.bind {
+
+            let x = expand(named: "x", thumb.value.x)
+            let y = expand(named: "y", thumb.value.y)
+            let z = expand(named: "z", thumb.value.z)
+            menuTree.model˚.setAnyExprs([("x", x),("y", y), ("z", z)], .fire, visit)
+            updateLeafPeers(visit)
+        }
+        if !menuTree.model˚.hasPlugins {
+            thumb.tween = thumb.value
+        }
+        refreshView()
+    }
 }

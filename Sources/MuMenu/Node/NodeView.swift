@@ -6,7 +6,7 @@ struct NodeView: View {
 
     @ObservedObject var nodeVm: NodeVm
     var panelVm: PanelVm { nodeVm.panelVm }
-    var size: CGSize { panelVm.innerPanel(.runXY) }
+    var size: CGSize { panelVm.innerPanel(.none) }
 
     var body: some View {
         GeometryReader() { geo in

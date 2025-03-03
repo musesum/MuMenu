@@ -8,10 +8,10 @@ struct IconView: View {
     @Environment(\.colorScheme) var colorScheme // darkMode
     @ObservedObject var nodeVm: NodeVm
     let icon: Icon
-    let runway: Runway
+    let runwayType: LeafRunwayType
 
     var title: String {
-        switch runway {
+        switch runwayType {
         case .runX   : return "x"
         case .runY   : return "y"
         case .runZ   : return "z"
@@ -27,10 +27,10 @@ struct IconView: View {
     
     init(_ nodeVm: NodeVm, 
          _ icon: Icon,
-         _ runway: Runway) {
+         _ runwayType: LeafRunwayType) {
         self.nodeVm = nodeVm
         self.icon = icon
-        self.runway = runway
+        self.runwayType = runwayType
     }
 
     var body: some View {
@@ -44,7 +44,7 @@ struct IconView: View {
                     )
                     .shadow(color: .black, radius: 1)
             }
-            switch runway {
+            switch runwayType {
             case .runX:
                 IconTitleView(title: "x", color: stroke)
                     .shadow(color: .black, radius: 1)

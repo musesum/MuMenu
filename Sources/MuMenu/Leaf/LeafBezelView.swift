@@ -6,19 +6,19 @@ import MuFlo
 struct LeafBezelView<Content: View>: View {
 
     let leafVm: LeafVm
-    let runway: Runway
+    let runwayType: LeafRunwayType
     let content: (() -> Content)?
     
-    var size: CGSize { leafVm.panelVm.innerPanel(runway) }
+    var size: CGSize { leafVm.panelVm.innerPanel(runwayType) }
     var strokeColor: Color   { Layout.strokeColor(leafVm.spotlight) }
     var strokeWidth: CGFloat { Layout.strokeWidth(leafVm.spotlight) }
 
     init(_ leafVm: LeafVm,
-         _ runway: Runway,
+         _ runwayType: LeafRunwayType,
          _ content: (() -> Content)? = nil) {
 
         self.leafVm = leafVm
-        self.runway = runway
+        self.runwayType = runwayType
         self.content = content
     }
     var body: some View {
@@ -31,10 +31,9 @@ struct LeafBezelView<Content: View>: View {
             content?()
                 .onAppear {
                     let now = geo.frame(in: .global)
-                   
-                    leafVm.updateRunway(runway, now) }
+                    leafVm.runways.updateBounds(runwayType, now) }
                 .onChange(of: geo.frame(in: .global)) {
-                    leafVm.updateRunway(runway, $1) }
+                    leafVm.runways.updateBounds(runwayType, $1) }
         }
         .frame(width: size.width, height: size.height)
 

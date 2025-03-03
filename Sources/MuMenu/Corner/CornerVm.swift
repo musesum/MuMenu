@@ -147,7 +147,7 @@ import MuFlo
 
     func touchingRoot(_ touchNow: CGPoint) -> Bool {
         if let logoNodeVm,
-           logoNodeVm.runwayContains(touchNow) {
+           logoNodeVm.contains(touchNow) {
             return true
         }
         return false

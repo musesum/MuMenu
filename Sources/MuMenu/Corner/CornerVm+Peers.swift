@@ -9,7 +9,7 @@ extension CornerVm {
     /// called by UIKit to see if UITouchBegin hits a menu.
     /// If not, it will not call touch
     public func hitTest(_ touchNow: CGPoint) ->  NodeVm? {
-        if let logoNodeVm, logoNodeVm.runwayContains(touchNow) {
+        if let logoNodeVm, logoNodeVm.contains(touchNow) {
             return logoNodeVm // hits the root (home) node icon
         } else if let rootVm, let nodeVm = rootVm.hitTest(touchNow) {
             return nodeVm // hits one of the shown branches
@@ -22,25 +22,22 @@ extension CornerVm {
             case .node:
 
                 if let nodeItem = item.item as? MenuNodeItem {
-
                     _  = nodeItem.treeVm?.gotoNodeItem(nodeItem)
                 }
 
             case .leaf:
 
                 if let leafItem = item.item as? MenuLeafItem,
-                   let leafVm = leafItem.treeVm?.gotoLeafItem(leafItem),
-                   let leafProto = leafVm.leafProto {
-                    
+                   let leafVm = leafItem.treeVm?.gotoLeafItem(leafItem) {
+
                     //print("􀤆", terminator: "")
                     DispatchQueue.main.async {
-                        leafProto.remoteValTween(leafItem.valTween, Visitor(0, .remote))
+                        leafVm.remoteThumb(leafItem.leafThumb, Visitor(0, .remote))
                     }
                 }
             case .touch:
 
                 if let touchItem = item.item as? MenuTouchItem {
-
                     updateRemoteTouch(touchItem, item.phase)
                 }
 

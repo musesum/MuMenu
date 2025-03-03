@@ -113,7 +113,7 @@ public class BranchVm: Identifiable, ObservableObject {
     func nearestNode(_ touchNow: CGPoint) -> NodeVm? {
 
         if let nodeSpotVm {
-            if nodeSpotVm.runwayContains(touchNow) ||
+            if nodeSpotVm.contains(touchNow) ||
                 nodeSpotVm.nodeType.isControl {
                 return nodeSpotVm
             }

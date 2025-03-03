@@ -61,6 +61,9 @@ public class NodeVm: Identifiable, ObservableObject {
         return path
     }
 
+    public func treeTitle() -> String { menuTree.title  }
+    public func leafTitle() -> String { "" }
+
     public init (_ menuTree: MenuTree, // shared Menu Model
                  _ branchVm: BranchVm,
                  _ prevVm: NodeVm?) {
@@ -101,7 +104,7 @@ public class NodeVm: Identifiable, ObservableObject {
                          y: frame.origin.y + frame.size.height/2)
     }
     
-    func runwayContains(_ point: CGPoint) -> Bool {
+    func contains(_ point: CGPoint) -> Bool {
         center.distance(point) < (Layout.radius + Layout.padding)
     }
     

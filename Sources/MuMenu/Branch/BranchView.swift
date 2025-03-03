@@ -39,11 +39,10 @@ fileprivate struct titleV: View {
     var panelVm: PanelVm { branchVm.panelVm }
     var nodeSpotVm: NodeVm? { branchVm.nodeSpotVm }
     var offset: CGSize { branchVm.branchShift + branchVm.titleShift }
-    var title: String {
-        (nodeSpotVm as? LeafVm)?.leafProto?.treeTitle() ??
-        nodeSpotVm?.menuTree.title ?? "" }
+    var title: String { nodeSpotVm?.treeTitle() ?? "??" }
 
-    var size: CGSize { CGSize(width: branchVm.boundsNow.width, height: Layout.radius) }
+    var size: CGSize { CGSize(width: branchVm.boundsNow.width,
+                              height: Layout.radius) }
 
     var angle: Angle {
 

@@ -231,7 +231,7 @@ public class RootVm: ObservableObject, Equatable {
         func hoverLeafNode() -> Bool {
             guard let leafVm = nodeSpotVm as? LeafVm else { return false }
 
-            if leafVm.runwayContains(touchNow) {
+            if leafVm.runways.contains(touchNow) {
 
                 if touchState.phase == .ended,
                    leafVm.nodeType.isTogTap {
@@ -253,7 +253,7 @@ public class RootVm: ObservableObject, Equatable {
                 return true
             }
             if leafVm.nodeType.isTogTap {
-                if leafVm.runwayContains(touchNow) {
+                if leafVm.runways.contains(touchNow) {
                     editTog(leafVm)
                 } else if leafVm.branchVm.contains(touchNow) {
                     touchType = .node
@@ -424,7 +424,7 @@ public class RootVm: ObservableObject, Equatable {
         func editTog(_ nodeVm: NodeVm?) {
             guard let leafVm = nodeVm as? LeafVm else { return }
             if touchType == .tog,
-               !leafVm.runwayContains(touchNow) {
+               !leafVm.runways.contains(touchNow) {
                 // have moved off node
                 nodeSpotVm = nil
                 touchType = .none

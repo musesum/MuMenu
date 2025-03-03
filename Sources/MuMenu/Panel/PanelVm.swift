@@ -72,25 +72,25 @@ public class PanelVm {
     // changed by type
     var thumbRadius: Double { Double(Layout.radius - 1) }
 
-    func thumbDiameter(_ runway: Runway) -> Double {
-        switch runway {
+    func thumbDiameter(_ type: LeafRunwayType) -> Double {
+        switch type {
         case .runX,.runY,.runZ : return thumbRadius
-        default       : return thumbRadius * 2
+        default                : return thumbRadius * 2
         }
     }
 
-    func runLength(_ runway: Runway) -> Double {
-        let inner = innerPanel(runway)
-        let diameter = thumbDiameter(runway)
-        let run: Double
-        switch runway {
-        case .runX,.runT : run = inner.width  - diameter
-        case .runY,.runZ : run = inner.height - diameter
-        default          : run = (isVertical
+    func runLength(_ type: LeafRunwayType) -> Double {
+        let inner = innerPanel(type)
+        let diameter = thumbDiameter(type)
+        let length: Double
+        switch type {
+        case .runX,.runT : length = inner.width  - diameter
+        case .runY,.runZ : length = inner.height - diameter
+        default          : length = (isVertical
                                   ? inner.height - diameter
                                   : inner.width  - diameter)
         }
-        return run
+        return length
     }
 
     var runwayXY: CGPoint {
@@ -110,14 +110,15 @@ public class PanelVm {
         return result
     }
 
-    func innerPanel(_ runway: Runway) -> CGSize {
+    func innerPanel(_ runway: LeafRunwayType) -> CGSize {
         let d = Layout.diameter
         switch runway {
+        case .none       : return aspectSz * d
         case .runX,.runT : return CGSize(width: d * 2.5, height: d * 0.5)
         case .runY,.runZ : return CGSize(width: d * 0.5, height: d * 2.5)
-        case .runXYZ     : return CGSize(width: d * 3.0, height: d * 3.0)
-        default          : return aspectSz * d
+        default          : return CGSize(width: d * 3.0, height: d * 3.0)
         }
+        
     }
 
     var outerPanel: CGSize {
@@ -171,50 +172,7 @@ public class PanelVm {
                           height: Layout.diameter - 8)
         }
     }
-    func normalizeTouch(xy: SIMD2<Double>) -> SIMD3<Double>{
-        let length = runLength(.runXY)
-        let xMax = (inner.width  - thumbRadius)
-        let yMax = (inner.height - thumbRadius)
-        let xRange = thumbRadius...xMax
-        let yRange = thumbRadius...yMax
-        let xClamp = xy.x.clamped(to: xRange)
-        let yClamp = xy.y.clamped(to: yRange)
-        let xNormal = (xClamp - thumbRadius) / length
-        let yNormal = (yClamp - thumbRadius) / length
-        return SIMD3<Double>(xNormal, 1-yNormal, 0)
-    }
-    func normalizeTouch(xyz: SIMD3<Double>) -> SIMD3<Double> {
-        let length = runLength(.runXYZ)
-        let xMax = (inner.width  - thumbRadius)
-        let yMax = (inner.height - thumbRadius)
-        let zMax = (inner.height - thumbRadius)
-        let xRange = thumbRadius...xMax
-        let yRange = thumbRadius...yMax
-        let zRange = thumbRadius...zMax
-        let xClamp = xyz.x.clamped(to: xRange)
-        let yClamp = xyz.y.clamped(to: yRange)
-        let zClamp = xyz.z.clamped(to: zRange)
-        let xNormal = (xClamp - thumbRadius) / length
-        let yNormal = (yClamp - thumbRadius) / length
-        let zNormal = (zClamp - thumbRadius) / length
-        return SIMD3<Double>(xNormal, 1-yNormal, zNormal)
-    }
 
-    /// convert touch coordinates to 0...1
-    func normalizeTouch(v: Double) -> Double {
-        let length = runLength(.runXY)
-        if isVertical {
-            let yMax = (inner.height - thumbRadius)
-            let yClamp = v.clamped(to: thumbRadius...yMax)
-            let yNormal = (yClamp - thumbRadius) / length
-            return 1.0 - yNormal // invert so that 0 is on bottom
-        } else {
-            let xMax = (inner.width  - thumbRadius)
-            let xClamp = v.clamped(to: thumbRadius...xMax)
-            let xNormal = (xClamp - thumbRadius) / length
-            return xNormal
-        }
-    }
 
     func updatePanelBounds(_ bounds: CGRect) -> CGRect {
         var result = bounds

@@ -28,10 +28,10 @@ struct LeafXyzView: View {
                     LeafBezelView(leafVm, .runY) {
                         LeafThumbSlideView(leafVm, .runY)
                     }
-                    LeafBezelView(leafVm, .runXYZ)  {
+                    LeafBezelView(leafVm, .runXY)  {
                         ZStack {
                             LeafTicksView(leafVm.ticks())
-                            LeafThumbSlideView(leafVm, .runXYZ)
+                            LeafThumbSlideView(leafVm, .runXY)
                         }
                     }
                     LeafBezelView(leafVm, .runZ) {

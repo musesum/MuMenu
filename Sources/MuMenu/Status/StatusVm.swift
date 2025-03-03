@@ -15,7 +15,7 @@ import MuFlo
         var delim = "• "
         for vm in before {
             if let leafVm = vm as? LeafVm {
-                line += delim + (leafVm.leafProto?.leafTitle() ?? "??")
+                line += delim + (leafVm.leafTitle() )
             } else {
                 line += delim + vm.menuTree.title
             }
@@ -30,7 +30,7 @@ import MuFlo
         var delim = "• "
         for vm in after {
             if let leafVm = vm as? LeafVm {
-                line += delim + (leafVm.leafProto?.leafTitle() ?? "??")
+                line += delim + (leafVm.leafTitle() )
             } else {
                 line += delim + vm.menuTree.title
             }
@@ -57,7 +57,7 @@ import MuFlo
         }
     }
 
-    static func statusLine(_ tog: Toggle) {
+    static func statusLine(_ tog: OnOff) {
         switch tog {
             case .on:  shared.show = true
             case .off: shared.show = false
