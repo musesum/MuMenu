@@ -5,6 +5,11 @@ import Foundation
 import SwiftUI
 import MuFlo
 
+/// touching inside thumb maybe off center.
+/// So, instead of center jumping immediatly to new center
+/// it moves toward the center, catching up
+enum Offsetting { case none, begin, move }
+
 /// set of thumb runways for a leaf control.
 ///
 ///     1 runway for Val, horizonal x or y
@@ -16,25 +21,29 @@ public class LeafRunways {
     private var runwayThumbs = [LeafRunwayType: LeafThumb]()
     private var runwayType = LeafRunwayType.none
     private var panelVm: PanelVm
+    var touchState: TouchState?
+    var touching: Bool { touchState?.touching ?? false }
+    var centerOffset: CGPoint = .zero
 
-    init(_ panelVm: PanelVm) {
+    init(_ panelVm: PanelVm, _ runTypes: [LeafRunwayType]) {
         self.panelVm = panelVm
+        for runType in runTypes {
+            runwayThumbs[runType] = LeafThumb(runType)
+        }
     }
     func thumb(_ type: LeafRunwayType? = nil) -> LeafThumb? {
         let type = type ?? self.runwayType
-        if type != .none {
-            return runwayThumbs[type]
+        if let thumb = runwayThumbs[type] {
+            return thumb
         } else {
-            return nil
+            let thumb = LeafThumb(type)
+            runwayThumbs[type] = thumb
+            return thumb
         }
     }
     func bounds(_ type: LeafRunwayType? = nil) -> CGRect? {
         let type = type ?? self.runwayType
-        if type != .none {
-            return runwayBounds[type]
-        } else {
-            return nil
-        }
+        return runwayBounds[type]
     }
 
     var thumbNormRadius: Double {
@@ -44,14 +53,41 @@ public class LeafRunways {
             return 1/6 //... 
         }
     }
-    func updateThumb(_ type: LeafRunwayType,_ x: Double?,_ y:  Double?,_ z:  Double?) {
-        if let thumb = runwayThumbs[type] {
-            thumb.setValue(x,y,z)
-        } else {
-            let thumb = LeafThumb(type, x,y,z)
-            runwayThumbs[type] = thumb
+
+    func setThumbFlo(_ flo: Flo) {
+        guard let exprs = flo.exprs else { return }
+
+        // values found in flo exprs normalized
+        let vx = exprs.normalize("x", .value)
+        let vy = exprs.normalize("y", .value)
+        let vz = exprs.normalize("z", .value)
+        let tx = exprs.normalize("x", .tween)
+        let ty = exprs.normalize("y", .tween)
+        let tz = exprs.normalize("z", .tween)
+
+        // dispatch found values to each runway thumb
+        for (type,thumb) in runwayThumbs {
+            switch type { //  eligible          ___values___    ___tweens___
+            case .runX   : thumb.setValueTween( vx, nil, nil,   tx, nil, nil)
+            case .runY   : thumb.setValueTween(nil,  vy, nil,  nil,  ty, nil)
+            case .runZ   : thumb.setValueTween(nil, nil, vz,   nil, nil,  tz)
+            case .runXY  : thumb.setValueTween( vx,  vy, nil,   tx,  ty, nil)
+
+            case .runVal :
+                /// .runVal isVertical can set either x or y
+                /// for example:  `zoom(val, x 0…1~0, ...)`
+                /// even though zoom isVertical, x is vx,tx will set vy,ty
+                /// will still work for`zoom(val, y 0…1~0, ...)`
+                let vxy = vx ?? vy
+                let vyx = vy ?? vx
+                let txy = tx ?? ty
+                let tyx = ty ?? tx
+                thumb.setValueTween( vxy,  vyx, nil,   txy,  tyx, nil)
+            default: break
+            }
         }
     }
+
     /// dispatch point to thumb for each bounds
     ///
     ///     for example: Xyz control has 4 thumbs: x,y,z and xy
@@ -60,67 +96,69 @@ public class LeafRunways {
     ///     when touching z, it will change only z
     ///     when touchig xy, it will change x, y, and xy
     ///
-    func setThumbs(_ point: CGPoint,
-                   _ type: LeafRunwayType,
-                   _ bounds: CGRect,
-                   _ quantize: Double? = nil) {
+    ///     when touching val, isVertical will change x or y
+    ///
+    func setThumbPoint(_ point: CGPoint,
+                       _ type: LeafRunwayType,
+                       _ bounds: CGRect,
+                       _ quantize: Double? = nil,
+                       newOffset: Bool = false) {
+
+        var normPoint = normalizePoint(point, type, bounds).clamped(to: 0...1)
+        if let quantize { normPoint = normPoint.quantize(quantize) }
+        let offsetting: Offsetting = (newOffset
+                                      ? (thumb(type, contains: point)
+                                         ? .begin
+                                         : .none)
+                                        : .move)
         var x: Double?
         var y: Double?
         var z: Double?
-        var norm = normalizePoint(point, type, bounds).clamped(to: 0...1)
-        if let quantize = quantize {
-            norm = norm.quantize(quantize)
-        }
         switch self.runwayType {
-        case .runX: x = norm.x
-        case .runY: y = norm.y
-        case .runZ: z = norm.z
-        case .runXY: x = norm.x ; y = norm.y
+        case .runX   : x = normPoint.x
+        case .runY   : y = normPoint.y
+        case .runZ   : z = normPoint.z
+        case .runXY  : x = normPoint.x ; y = normPoint.y
+        case .runVal : x = normPoint.x ; y = normPoint.y
         default: break
         }
-        for type in runwayBounds.keys {
-            /// may make a new thumb
-            switch type {
-            case .runX  : updateThumb(type, x,nil,nil)
-            case .runY  : updateThumb(type, nil,y,nil)
-            case .runZ  : updateThumb(type, nil,nil,z)
-            case .runXY : updateThumb(type, x,y,nil)
+
+        for thumb in runwayThumbs.values {
+            switch type { // where user is touching leaf
+            case .runX   : thumb.setValue( x,  nil, nil, offsetting)
+            case .runY   : thumb.setValue(nil,   y, nil, offsetting)
+            case .runZ   : thumb.setValue(nil, nil,   z, offsetting)
+            case .runXY  : thumb.setValue(  x,   y, nil, offsetting)
+            case .runVal : (panelVm.isVertical
+                            ? thumb.setValue(nil,   y, nil, offsetting)
+                            : thumb.setValue( x,  nil, nil, offsetting))
             default: break
             }
         }
     }
     /// set new runway
-    @discardableResult
-    func beginRunway(_ point: CGPoint) -> (LeafRunwayType, LeafThumb, CGRect)? {
+    func beginRunway(_ point: CGPoint) {
         for (type, bounds) in runwayBounds {
             if bounds.contains(point) {
-                DebugLog { P("touchRunway \(type.rawValue)\(bounds.digits())") }
+                NoDebugLog { P("touchRunway \(type.rawValue)\(bounds.digits())") }
                 self.runwayType = type
-                setThumbs(point, type, bounds)
-                if let thumb = runwayThumbs[type] {
-                    return (runwayType, thumb, bounds)
-                }
+                return setThumbPoint(point, type, bounds, newOffset: true)
             }
         }
         self.runwayType = .none
-        return nil
     }
     /// continue moving current thumb & runway
-    @discardableResult
-    func nextRunway(_ point: CGPoint, quantize: Double? = nil) -> (LeafRunwayType, LeafThumb, CGRect)? {
-        if let thumb = runwayThumbs[runwayType],
-           let bounds = runwayBounds[runwayType]  {
-            setThumbs(point, runwayType, bounds, quantize)
-            return (runwayType, thumb, bounds)
+    func nextRunway(_ point: CGPoint, quantize: Double? = nil) {
+        if let bounds = runwayBounds[runwayType]  {
+            return setThumbPoint(point, runwayType, bounds, quantize)
         }
         self.runwayType = .none
-        return nil
     }
 
     /// updated by View after auto-layout
     func updateBounds(_ type: LeafRunwayType,
                       _ bounds: CGRect) {
-        DebugLog { P("updateRunway \(type.rawValue)\(bounds.digits())") }
+        NoDebugLog { P("updateRunway \(type.rawValue)\(bounds.digits())") }
         runwayBounds[type] = bounds
         if runwayThumbs[type] == nil {
             runwayThumbs[type] = LeafThumb(type)
@@ -141,16 +179,16 @@ public class LeafRunways {
         }
     }
 
-    public func thumbCenter(_ type: LeafRunwayType) -> SIMD2<Double> {
-        guard let thumb = thumb(type) else { return .zero }
-        guard let bounds = bounds(type) else { return .zero }
-        let center = SIMD2<Double>(
-            x: (  thumb.value.x) * bounds.minX + thumbRadius(type),
-            y: (1-thumb.value.y) * bounds.minY + thumbRadius(type))
-        DebugLog { P("thumb \(thumb.value.digits(-2)) center \(center.digits(-2))") }
-        return center
+    public func thumb(_ type: LeafRunwayType, contains point: CGPoint) -> Bool {
+        guard let thumb = thumb(type) ,
+              let bounds = bounds(type) else { return false }
+        let radius = thumbRadius(type)
+        let x = bounds.minX +    thumb.value.x  * bounds.width
+        let y = bounds.minY + (1-thumb.value.y) * bounds.height
+        let rect = CGRect(x: x, y: y, width: radius*2, height: radius*2)
+        let ret = rect.contains(point)
+        return ret
     }
-
     func normalizePoint(_ point: CGPoint, _ type: LeafRunwayType, _ bounds: CGRect) -> SIMD3<Double> {
         let radius = thumbRadius(type)
         let x = Double(point.x - bounds.origin.x)
@@ -160,51 +198,66 @@ public class LeafRunways {
 
         let xClamped = x.clamped(to: radius...xMax)
         let yClamped = y.clamped(to: radius...yMax)
-
-        let normalizedPoint = SIMD3<Double>(
-            (xClamped - radius) / (xMax - radius),
-            1 - (yClamped - radius) / (yMax - radius),
-            0
-        )
-        DebugLog { P("normalizePoint \(normalizedPoint.digits(-2)) \(type.rawValue)\(bounds.digits())") }
-        return normalizedPoint
+        let xn =   (xClamped - radius) / (xMax - radius)
+        let yn = 1-(yClamped - radius) / (yMax - radius)
+        let norm: SIMD3<Double>
+        switch type {
+        case .runZ: norm = SIMD3<Double>( 0,  0, yn)
+        case .runY: norm = SIMD3<Double>( 0, yn,  0)
+        case .runX: norm = SIMD3<Double>(xn,  0,  0)
+        default:    norm = SIMD3<Double>(xn, yn,  0)
+        }
+        NoDebugLog { P("normalizePoint \(norm.digits(-2)) \(type.rawValue)\(bounds.digits())") }
+        return norm
     }
-    func expandThumb(_ thumb: SIMD3<Double>,
-                     _ type: LeafRunwayType,
-                     _ bounds: CGRect) -> CGSize {
+    func valueOffset(_ type: LeafRunwayType) -> CGSize {
+        guard let thumb = thumb(type) else { return .zero }
+        return expandItem(type, thumb.value)
+    }
+    func tweenOffset(_ type: LeafRunwayType) -> CGSize {
+        guard let thumb = thumb(type) else { return .zero }
+        return expandItem(type, thumb.tween)
+    }
+    func expandItem(_ type: LeafRunwayType, _ item: SIMD3<Double>) -> CGSize {
+        guard let bounds = bounds(type) else { return .zero }
         let radius = thumbRadius(type)
         let xMax = max(radius, Double(bounds.width) - radius)
         let yMax = max(radius, Double(bounds.height) - radius)
 
+        let x: Double
+        let y: Double
+        switch type {
+        case .runZ: x = item.x; y = item.z
+        default:    x = item.x; y = item.y
+        }
+
         // Invert the normalization:
-        let xClamped =    thumb.x  * (xMax - radius)
-        let yClamped = (1-thumb.y) * (yMax - radius)
+        let xClamped =    x  * (xMax - radius)
+        let yClamped = (1-y) * (yMax - radius)
         let size = CGSize(width: xClamped, height: yClamped)
         return size
     }
 
     /// user touch gesture inside runway
-    public func touchLeaf(_ touchState: TouchState, quantize: Double? = nil) -> Bool {
+    public func touchLeaf(_ nodeVm: NodeVm, _ touchState: TouchState, quantize: Double? = nil) {
+
+        self.touchState = touchState
 
         let pointNow = touchState.pointNow
 
         switch touchState.phase { 
         case .began:
-            if touchState.touchBeginCount == 0 {
+            if touchState.touchBeginCount < 1 {
                 beginRunway(pointNow)
             } else {
-                // optional double tap quantize for xy control
                 nextRunway(pointNow, quantize: quantize)
             }
-            return true
+        case .moved, .stationary:
 
-        case .ended,.cancelled:
-            return false
-        default:
             nextRunway(pointNow)
-            return true
-        }
 
+        default: break
+        }
     }
 }
 

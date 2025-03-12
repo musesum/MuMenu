@@ -5,6 +5,4 @@ import MuFlo
 
 /// 2d XY control
 public class LeafHandVm: LeafXyzVm {
-    
-  
 }

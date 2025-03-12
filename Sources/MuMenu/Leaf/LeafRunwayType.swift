@@ -19,13 +19,12 @@ public enum LeafRunwayType: String, Codable {
     case runWZ  = "wz"
     case runUV  = "uv"
     case runST  = "st"
-    case runXYZ = "xyz"
+    case runVal = "val"
 
     var thumbRadius: Double {
         switch self {
-        case .none   : 20
         case .runX, .runY, .runU, .runV, .runW, .runZ, .runS, .runT: 20
-        case .runXY, .runWZ,  .runUV,  .runST, .runXYZ : 40
+        default: 40
         }
     }
     func offset(_ point: CGPoint,_ bounds: CGRect) -> SIMD2<Double> {

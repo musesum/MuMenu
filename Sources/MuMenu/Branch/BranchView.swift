@@ -39,7 +39,7 @@ fileprivate struct titleV: View {
     var panelVm: PanelVm { branchVm.panelVm }
     var nodeSpotVm: NodeVm? { branchVm.nodeSpotVm }
     var offset: CGSize { branchVm.branchShift + branchVm.titleShift }
-    var title: String { nodeSpotVm?.treeTitle() ?? "??" }
+    var title: String { nodeSpotVm?.treeTitle() ?? "" }
 
     var size: CGSize { CGSize(width: branchVm.boundsNow.width,
                               height: Layout.radius) }
@@ -91,7 +91,7 @@ fileprivate struct titleV: View {
             .rotationEffect(angle, anchor: anchor)
             .offset(offset)
             .opacity(opacity)
-            .animation(Layout.animateSlow, value: opacity)
+            .animation(Animate(0.50), value: opacity)
     }
 }
 
@@ -132,8 +132,8 @@ fileprivate struct gridV: View {
         .frame(width: outerWidth, height: outerHeight)
         .offset(branchVm.branchShift)
         .opacity(opacity)
-        .animation(Layout.animateFast, value: opacity)
-        .animation(Layout.animateSlow, value: branchVm.branchShift )
+        .animation(Animate(0.25), value: opacity)
+        .animation(Animate(0.50), value: branchVm.branchShift )
     }
 }
 
@@ -163,7 +163,11 @@ fileprivate struct bodyV: View {
                 VStack {
                     BranchAxisView(panelVm) {
                         ForEach(branchVm.nodeVms) {
-                            NodeView(nodeVm: $0)
+                            if $0.nodeType == .tog {
+                                NodeView(nodeVm: $0)
+                            } else {
+                                NodeView(nodeVm: $0)
+                            }
                         }
                     }
                 }
@@ -176,8 +180,8 @@ fileprivate struct bodyV: View {
 
         .offset(branchVm.branchShift)
         .opacity(opacity)
-        .animation(Layout.animateSlow, value: opacity)
-        .animation(Layout.animateFast, value: branchVm.branchShift )
+        .animation(Animate(0.50), value: opacity)
+        .animation(Animate(0.25), value: branchVm.branchShift )
     }
 }
 
@@ -198,11 +202,11 @@ struct BranchAxisView<Content: View>: View {
         // .horizonal scroll view shifts and truncates the inner views
         // so, perhaps there is a phantom space for indicators?
         
-        if panelVm.isVertical  ||
+        if panelVm.isVertical ||
             [.xy, .xyz, .arch, .peer].contains(panelVm.nodeType) {
 
             ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .leading, spacing: spacing, content: content)
+                VStack(alignment: .center, spacing: spacing, content: content)
             }
             .scrollDisabled(true)
         }

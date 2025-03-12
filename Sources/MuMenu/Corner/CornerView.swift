@@ -30,9 +30,9 @@ struct CornerView: View {
                 CursorView(ringNodeVm, Layout.diameter2)
                     .position(cornerVm.ringIconXY)
                     .offset(cornerVm.dragNodeΔ) // .zero
-                    .animation(Layout.animateFast, value: cornerVm.ringIconXY)
+                    .animation(Animate(0.25), value: cornerVm.ringIconXY)
                     .opacity(opacity)
-                    .animation(Layout.animateSlow, value: opacity)
+                    .animation(Animate(0.50), value: opacity)
             }
         }
     }

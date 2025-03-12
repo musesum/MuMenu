@@ -6,36 +6,31 @@ public struct LeafThumbSlideView: View {
 
     @ObservedObject var leafVm: LeafVm
     let runwayType: LeafRunwayType
-
-    var spotlight: Bool { leafVm.spotlight }
-    var valueColor: Color { Layout.tapColor(spotlight) }
-    var tweenColor: Color { Layout.tweColor(spotlight) }
-    var thumbValueOffset: CGSize { leafVm.thumbValueOffset(runwayType) }
-    var thumbTweenOffset: CGSize { leafVm.thumbTweenOffset(runwayType) }
-    var thumbDiameter: Double { runwayType.thumbRadius - 2 }
-
+    var diameter: Double { runwayType.thumbRadius - 2 }
+    var ticks: [CGSize]?
+    var hasPlugin: Bool { leafVm.menuTree.model˚.hasPlugins }
     public init(_ leafVm: LeafVm,
-                _ runwayType: LeafRunwayType) {
+                _ runwayType: LeafRunwayType,
+                _ ticks: [CGSize]? = nil) {
         self.leafVm = leafVm
         self.runwayType = runwayType
+        self.ticks = ticks
     }
     public var body: some View {
         ZStack {
-            Capsule() // thumb tween
-                .fill(tweenColor)
-                .frame(width: thumbDiameter, height: thumbDiameter)
-                .offset(thumbTweenOffset)
-                .allowsHitTesting(false)
-
-            Capsule() // thumb value
-                .fill(valueColor)
-                .frame(width: thumbDiameter, height: thumbDiameter)
-                .offset(thumbValueOffset)
-                .allowsHitTesting(false)
-
+            if let ticks {
+                LeafTicksView(ticks)
+            }
+            if hasPlugin {
+                Capsule() // thumb tween
+                    .fill(Layout.tweenColor(leafVm.spotlight ) )
+                    .frame(width: diameter, height: diameter)
+                    .offset(leafVm.runways.tweenOffset(runwayType))
+                    .allowsHitTesting(false)
+            }
             IconView(leafVm, leafVm.menuTree.icon, runwayType)
-                .frame(width: thumbDiameter, height: thumbDiameter)
-                .offset(thumbValueOffset)
+                .frame(width: diameter, height: diameter)
+                .offset(leafVm.runways.valueOffset(runwayType))
         }
     }
 }

@@ -9,7 +9,7 @@ public protocol MenuFrame {
 
 public struct MenuView: View {
 
-    static var menuFrames: [String: MenuFrame] = [:]
+    static var menuFrame: MenuFrame?
 
     var menuVms: [MenuVm]
     var cornerVms: [CornerVm] { menuVms.map { $0.rootVm.cornerVm } }
@@ -18,20 +18,20 @@ public struct MenuView: View {
                 _ menuFrame : MenuFrame) {
 
         self.menuVms = MenuVms(root).menuVms
-        MenuView.menuFrames["MenuView"] = menuFrame
+        MenuView.menuFrame = menuFrame
     }
 
     public init(_ menuVms   : [MenuVm],
                 _ menuFrame : MenuFrame) {
 
         self.menuVms = menuVms
-        MenuView.menuFrames["MenuView"] = menuFrame
+        MenuView.menuFrame = menuFrame
     }
     func geoFrame(_ geo: GeometryProxy, onAppear: Bool) {
 
         let frame = geo.frame(in: .global)
         let insets = geo.safeAreaInsets
-        for menuFrame in MenuView.menuFrames.values {
+        if let menuFrame = MenuView.menuFrame {
             menuFrame.menuFrame(frame, insets, onAppear: onAppear)
         }
     }

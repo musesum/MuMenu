@@ -2,37 +2,7 @@
 
 import SwiftUI
 
-/// title showing position of control
-struct LeafHeaderView: View {
 
-    @ObservedObject var leafVm: LeafVm
-
-    init(_ leafVm: LeafVm) {
-        self.leafVm = leafVm
-    }
-    var body: some View {
-
-        HStack(spacing: 0) {
-
-            switch leafVm.nodeType {
-
-            case .xy,.xyz:
-                Spacer()
-                LeafHeaderTitleView(leafVm, inset: -64)
-                LeafHeaderDeltaView(leafVm)
-
-
-            case .arch:
-                LeafHeaderPlusView(leafVm)
-                LeafHeaderTitleView(leafVm, inset: -64)
-                Spacer()
-
-            default:
-                LeafHeaderTitleView(leafVm)
-            }
-        }
-    }
-}
 struct LeafHeaderTitleView: View {
 
     @ObservedObject var leafVm: LeafVm
@@ -60,25 +30,6 @@ struct LeafHeaderTitleView: View {
     }
 }
 
-struct LeafHeaderPlusView: View {
-
-    let leafVm: LeafVm
-
-    init(_ leafVm: LeafVm) {
-        self.leafVm = leafVm
-    }
-    
-    var body: some View {
-        
-        Button {
-            leafVm.tapPlusButton()
-        } label: {
-            Image(systemName: "plus.circle")
-                .foregroundColor(.white)
-        }
-        .frame(width: 32, height: 32)
-    }
-}
 struct LeafHeaderDeltaView: View {
 
     let leafVm: LeafVm
@@ -131,8 +82,8 @@ struct LeafHeaderDeltaView: View {
             originRotate += .pi
         }
         .frame(width: 30, height: 30)
-        .animation(Layout.animateDebug, value: deltaOpacity)
-        .animation(Layout.animateDebug, value: originOpacity)
-        .animation(Layout.animateDebug, value: originRotate)
+        .animation(Animate(2.0), value: deltaOpacity)
+        .animation(Animate(2.0), value: originOpacity)
+        .animation(Animate(2.0), value: originRotate)
     }
 }

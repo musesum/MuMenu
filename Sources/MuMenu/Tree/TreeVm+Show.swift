@@ -5,6 +5,34 @@ import Foundation
 
 extension TreeVm { // +Show
 
+    func startHideAnimation(_ done: @escaping () -> Void) {
+
+
+        showTreeTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] timer in
+            guard let self else { return }
+
+            switch self.showTree {
+            case .show   : self.showTree = .canopy
+            case .canopy : self.showTree = .hide; done()
+            case .hide   : self.showTree = .show; timer.invalidate()
+            }
+            print("Current state: \(self.showTree.rawValue)")
+        }
+    }
+
+    func hideTree(_ fromRemote: Bool) {
+
+        startHideAnimation {
+            self.showTree(depth: 0, "hide", fromRemote)
+        }
+    }
+    func reshowTree(_ fromRemote: Bool) {
+        
+        showTreeTimer?.invalidate()
+        showTree = .show 
+        showTree(depth: 9, "reshow", fromRemote)
+    }
+
     func showTree(start: Int? = nil,
                   depth: Int? = nil,
                   _ via: String,
@@ -15,7 +43,7 @@ extension TreeVm { // +Show
         var newBranches = [BranchVm]()
         var index = 0
         var depthNow = 0
-        
+
         var branch: BranchVm! = branchVms.first
         while branch != nil {
             if depthNow < nextDepth {

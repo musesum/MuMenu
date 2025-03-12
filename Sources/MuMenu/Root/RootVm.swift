@@ -164,7 +164,7 @@ public class RootVm: ObservableObject, Equatable {
             updateSpot(nodeSpotVm, fromRemote)
         }
         touchTypeBegin = touchType
-        endAutoHide()
+        endAutoHide(fromRemote)
     }
     internal func touchMoved(_ touchState: TouchState, _ fromRemote: Bool) {
 
@@ -201,8 +201,9 @@ public class RootVm: ObservableObject, Equatable {
         }
         #endif
     }
-    private func endAutoHide() {
+    private func endAutoHide(_ fromRemote: Bool) {
         autoHideTimer?.invalidate()
+        reshowTree(fromRemote)
     }
     private func updateRoot(_ fromRemote: Bool) {
 
@@ -234,13 +235,15 @@ public class RootVm: ObservableObject, Equatable {
             if leafVm.runways.contains(touchNow) {
 
                 if touchState.phase == .ended,
-                   leafVm.nodeType.isTogTap {
+                   leafVm.nodeType == .tog {
                     editTog(leafVm)
                     return true
                 }
                 else if touchState.phase == .began {
                     updateTreeSpot(leafVm.branchVm.treeVm, leafVm, "edit")
-                    if leafVm.nodeType.isControl { editLeaf(leafVm) }
+                    if leafVm.nodeType.isControl {
+                        editLeaf(leafVm)
+                    }
                     return true
                 }
             }
@@ -250,17 +253,6 @@ public class RootVm: ObservableObject, Equatable {
                 
                 updateTreeSpot(leafVm.branchVm.treeVm, leafVm, "shift")
                 shiftBranches() // inside branch containing runway
-                return true
-            }
-            if leafVm.nodeType.isTogTap {
-                if leafVm.runways.contains(touchNow) {
-                    editTog(leafVm)
-                } else if leafVm.branchVm.contains(touchNow) {
-                    touchType = .node
-                } else {
-                    updateTreeSpot(leafVm.branchVm.treeVm, leafVm, "shift")
-                    shiftBranches() // inside branch containing runway
-                }
                 return true
             }
             return false
@@ -470,9 +462,14 @@ public class RootVm: ObservableObject, Equatable {
             }
         }
     }
+    func reshowTree(_ fromRemote: Bool) {
+        for treeVm in treeVms {
+            treeVm.reshowTree(fromRemote)
+        }
+    }
     func hideBranches(_ fromRemote: Bool) {
         for treeVm in treeVms {
-            treeVm.showTree(depth: 0, "hide", fromRemote)
+            treeVm.hideTree(fromRemote)
         }
         viewOps = [.root]
     }

@@ -6,20 +6,21 @@ extension NodeVm {
 
     static func makeNodeVm(_ menuTree: MenuTree,
                            _ branchVm: BranchVm,
-                           _ prevNodeVm: NodeVm?,
-                           icon: String = "") -> NodeVm {
+                           _ prevVm: NodeVm?) -> NodeVm {
+        let m = menuTree
+        let b = branchVm
+        let p = prevVm
         
-        switch menuTree.nodeType {
-        case .xy   : return LeafXyVm      (menuTree, branchVm, prevNodeVm)
-        case .xyz  : return LeafXyzVm     (menuTree, branchVm, prevNodeVm)
-        case .val  : return LeafValVm     (menuTree, branchVm, prevNodeVm)
-        case .seg  : return LeafSegVm     (menuTree, branchVm, prevNodeVm)
-        case .peer : return LeafPeerVm    (menuTree, branchVm, prevNodeVm)
-        case .arch : return LeafArchiveVm (menuTree, branchVm, prevNodeVm)
-        case .tog  : return LeafTogVm     (menuTree, branchVm, prevNodeVm)
-        case .tap  : return LeafTapVm     (menuTree, branchVm, prevNodeVm)
-        case .hand : return LeafHandVm    (menuTree, branchVm, prevNodeVm)
-        default    : return NodeVm        (menuTree, branchVm, prevNodeVm)
+        switch menuTree.nodeType { //              __________ runways _________
+        case .xy   : return LeafXyVm      (m,b,p, [.runX, .runY, .runXY])
+        case .xyz  : return LeafXyzVm     (m,b,p, [.runX, .runY, .runZ, .runXY])
+        case .val  : return LeafValVm     (m,b,p, [.runVal])
+        case .seg  : return LeafSegVm     (m,b,p, [.runVal])
+        case .tog  : return LeafTogVm     (m,b,p, [.none])
+        case .hand : return LeafHandVm    (m,b,p, [.runX, .runY, .runZ, .runXY])
+        case .peer : return LeafPeerVm    (m,b,p, [])
+        case .arch : return LeafArchiveVm (m,b,p, [])
+        default    : return NodeVm        (m,b,p)
         }
     }
 }

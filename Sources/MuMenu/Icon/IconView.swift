@@ -7,23 +7,16 @@ struct IconView: View {
 
     @Environment(\.colorScheme) var colorScheme // darkMode
     @ObservedObject var nodeVm: NodeVm
+
     let icon: Icon
     let runwayType: LeafRunwayType
-
-    var title: String {
-        switch runwayType {
-        case .runX   : return "x"
-        case .runY   : return "y"
-        case .runZ   : return "z"
-        default   : return nodeVm.menuTree.title
-        }
-    }
+    var title: String { nodeVm.menuTree.title }
     var named: String { nodeVm.menuTree.icon.icoName }
 
     var spotlight: Bool { nodeVm.spotlight }
-    var stroke: Color { spotlight ? .white : Color(white: 0.7) }
-    var fill = Color(white: 0.25) 
-    var width: CGFloat { spotlight ? 3.0 : 1.0 }
+    var fillColor = Color(white: 0.25)
+    var strokeColor: Color { spotlight ? .white : Color(white: 0.7) }
+    var strokeWidth: CGFloat { spotlight ? 3.0 : 1.0 }
     
     init(_ nodeVm: NodeVm, 
          _ icon: Icon,
@@ -37,28 +30,20 @@ struct IconView: View {
         ZStack {
             if icon.iconType != .cursor {
                 RoundedRectangle(cornerRadius: Layout.cornerRadius)
-                    .fill(fill)
+                    .fill(fillColor)
                     .overlay(RoundedRectangle(cornerRadius:  Layout.cornerRadius)
-                        .stroke(stroke, lineWidth: width)
+                        .stroke(strokeColor, lineWidth: strokeWidth)
                         .background(.clear)
                     )
                     .shadow(color: .black, radius: 1)
             }
             switch runwayType {
-            case .runX:
-                IconTitleView(title: "x", color: stroke)
-                    .shadow(color: .black, radius: 1)
-            case .runY:
-                IconTitleView(title: "y", color: stroke)
-                    .shadow(color: .black, radius: 1)
-            case .runZ:
-                IconTitleView(title: "z", color: stroke)
-                    .shadow(color: .black, radius: 1)
+            case .runX, .runY, .runU, .runV, .runW, .runZ, .runS, .runT:
+                IconSideView(runwayType, strokeColor)
             default:
-
                 switch icon.iconType {
-                case .none: IconTitleView(title: title, color: stroke)
-                case .text: IconTitleView(title: named, color: stroke)
+                case .none: IconTitleView(title: title, color: strokeColor)
+                case .text: IconTitleView(title: named, color: strokeColor)
                 case .cursor:
 
                     if let uiImage = UIImage(named: nodeVm.menuTree.icon.icoName) {
@@ -73,7 +58,7 @@ struct IconView: View {
                                 .padding(geo.size.width * 0.1)
                         }
                     } else {
-                        IconTitleView(title: title, color: stroke)
+                        IconTitleView(title: title, color: strokeColor)
                     }
                 case .svg:
 
@@ -85,7 +70,7 @@ struct IconView: View {
                                 .colorInvert()
                         }
                     } else {
-                        IconTitleView(title: title, color: stroke)
+                        IconTitleView(title: title, color: strokeColor)
                             .shadow(color: .black, radius: 1)
                     }
                 case .symbol:
@@ -119,5 +104,39 @@ private struct IconTitleView: View {
             .minimumScaleFactor(0.01)
             .foregroundColor(color)
             .animation(Layout.flashAnim, value: color)
+    }
+}
+
+private struct IconSideView: View {
+
+    let runwayType: LeafRunwayType
+    let color: Color
+    var title: String {
+        switch runwayType {
+        case .runX: "x"
+        case .runY: "y"
+        case .runU: "u"
+        case .runV: "v"
+        case .runW: "w"
+        case .runZ: "z"
+        case .runS: "s"
+        case .runT: "t"
+        default: "?"
+         }
+
+    }
+    init(_ runwayType: LeafRunwayType,
+         _ color: Color) {
+        self.runwayType = runwayType
+        self.color = color
+    }
+    var body: some View {
+        Text(title)
+            .scaledToFit()
+            .padding(1)
+            .minimumScaleFactor(0.01)
+            .foregroundColor(color)
+            .animation(Layout.flashAnim, value: color)
+            .shadow(color: .black, radius: 1)
     }
 }

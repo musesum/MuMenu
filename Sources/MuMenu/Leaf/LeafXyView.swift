@@ -27,10 +27,7 @@ public struct LeafXyView: View {
                         LeafThumbSlideView(leafVm, .runY)
                     }
                     LeafBezelView(leafVm, .runXY)  {
-                        ZStack {
-                            LeafTicksView(leafVm.ticks())
-                            LeafThumbSlideView(leafVm, .runXY)
-                        }
+                        LeafThumbSlideView(leafVm, .runXY, leafVm.ticks())
                     }
                 }
             }

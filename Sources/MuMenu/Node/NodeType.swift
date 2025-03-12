@@ -9,7 +9,6 @@ public enum NodeType: String {
     case xy   // 2-axis XY control
     case xyz  // 3-azis XYZ control
     case tog  // toggle on/off
-    case tap  // tap a button
     case seg  // segment control
     case peer // join a peer network
     case arch // list of archives
@@ -24,7 +23,6 @@ public enum NodeType: String {
         case .xyz  : return "xyz"
         case .tog  : return "tog"
         case .seg  : return "seg"
-        case .tap  : return "tap"
         case .peer : return "peer"
         case .arch : return "arch"
         case .hand : return "hand"
@@ -48,7 +46,6 @@ public enum NodeType: String {
         case "xyz"  : self = .xyz
         case "tog"  : self = .tog
         case "seg"  : self = .seg
-        case "tap"  : self = .tap
         case "peer" : self = .peer
         case "arch" : self = .arch
         default     : self = .none
@@ -56,20 +53,15 @@ public enum NodeType: String {
     }
     public var isLeaf: Bool {
         switch self {
-            case .node, .none: return false
-            default: return true
+        case .node, .none, .tog: return false
+        default: return true
         }
     }
+    /// control will create separate child leaf
     public var isControl: Bool {
         switch self {
-        case .node, .none, .tap, .tog: return false
+        case .node, .none, .tog: return false
         case .val,.seg,.xy,.xyz,.peer,.hand,.arch: return true
-        }
-    }
-    public var isTogTap: Bool {
-        switch self {
-        case .tog, .tap: return true
-        default: return false
         }
     }
 }

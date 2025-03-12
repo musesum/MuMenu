@@ -7,12 +7,15 @@ struct TreeView: View {
     @ObservedObject var treeVm: TreeVm
 
     var cornerOp: CornerOp { treeVm.rootVm.cornerOp }
+    var canopyOpacity: CGFloat { treeVm.showTree == .canopy ? 0.5 : 0 }
+    var treeOpacity: CGFloat { treeVm.showTree == .show ? 1 : 0 }
 
     var body: some View {
 
         ZStack(alignment: cornerOp.alignment) {
 
-            // TreeCanopyView(treeVm: treeVm) 
+            TreeCanopyView(treeVm: treeVm)
+                .opacity(canopyOpacity)
 
             if treeVm.isVertical {
                 HStack(alignment: cornerOp.vAlign)  {
@@ -24,6 +27,7 @@ struct TreeView: View {
                         .zIndex($0.zindex)
                     }
                 }
+                .opacity(treeOpacity)
             } else {
                 VStack(alignment: cornerOp.hAlign) {
                     ForEach(cornerOp.lower
@@ -34,8 +38,10 @@ struct TreeView: View {
                         .zIndex($0.zindex)
                     }
                 }
+                .opacity(treeOpacity)
             }
         }
+        .animation(Animate(2.0), value: canopyOpacity)
         .offset(treeVm.treeOffset)
     }
 }
@@ -53,7 +59,7 @@ struct TreeCanopyView: View {
         Rectangle()
             .background(.thinMaterial)
             .cornerRadius(cornerRadius)
-            .opacity(0.5)
+            .opacity(0.33)
             .frame(width: treeSize.width, height: treeSize.height)
     }
 }

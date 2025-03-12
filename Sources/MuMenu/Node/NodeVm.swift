@@ -9,8 +9,9 @@ public class NodeVm: Identifiable, ObservableObject {
     public static var IdNode = [Int: NodeVm]()
 
     public let menuTree: MenuTree /// maybe shared on other branches
-    public var nodeType: NodeType /// node, val, vxy, seg, tog, tap
+    public var nodeType: NodeType /// node, val, vxy, seg, tog
     public var branchVm: BranchVm /// branch that this node is on
+    public var center = CGPoint.zero /// current center position
 
     internal var nextBranchVm: BranchVm? /// branch this node generates
     internal var panelVm: PanelVm        /// the panel that this node belongs to
@@ -18,8 +19,10 @@ public class NodeVm: Identifiable, ObservableObject {
     internal var rootVm: RootVm
     private var chiral: Chiral
 
-    @Published var editing: Bool = false
-
+    @Published var refresh: Int = 0
+    @Published var zIndex: CGFloat = 0 /// stack current spotlight node on top of others
+    @Published var changed = false
+    
     /// publish when selected or is under cursor
     @Published var _spotlight: Bool = false
     var spotlight: Bool {
@@ -36,15 +39,12 @@ public class NodeVm: Identifiable, ObservableObject {
         }
     }
 
-    @Published var zIndex: CGFloat = 0 /// stack current spotlight node on top of others
-    @Published var changed = false
-
     func spot(on: Bool) {
         if on == spotlight { return }
         if on == true { menuTree.touch() }
     }
 
-    public var center = CGPoint.zero /// current position
+
 
     public var nodeHash: Int {
         let id = menuTree.path.strHash()
@@ -115,7 +115,7 @@ public class NodeVm: Identifiable, ObservableObject {
     }
 
     func refreshView() {
-        editing = editing // animated tween via published edit var
+        refresh += 1 // animated tween via published edit var
         branchVm.show = branchVm.show
     }
 
@@ -126,12 +126,9 @@ public class NodeVm: Identifiable, ObservableObject {
     func tapLeaf() {
         PrintLog("tap: \(nodeType.description)")
     }
-    func tapPlusButton() {
-        //print("+ button")
-    }
+
     func resetOrigin(activate: Bool = true) {
         switch nodeType {
-        case .tog: return tapLeaf()
         case .xy, .xyz: update(withPrior: true)
         default:        update(withPrior: false)
         }

@@ -5,9 +5,10 @@ import SwiftUI
 struct LeafValView: View {
 
     @ObservedObject var leafVm: LeafVm
+
     var body: some View {
-        LeafView(leafVm) {
-            LeafThumbSlideView(leafVm, .runXY)
+        LeafBezelView(leafVm, .runVal) {
+            LeafThumbSlideView(leafVm, .runVal)
         }
     }
 }

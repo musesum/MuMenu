@@ -14,13 +14,13 @@ struct LeafXyzView: View {
             VStack(alignment: .center, spacing: 0) {
 
                 HStack(alignment: .center, spacing: 4) {
-                    Spacer()
+
+                    LeafHeaderDeltaView(leafVm)
+                        .padding(EdgeInsets(top: 2, leading: 4, bottom: 0, trailing: 0))
                     LeafBezelView(leafVm, .runX) {
                         LeafThumbSlideView(leafVm, .runX)
                     }
-                    .padding(EdgeInsets(top: 2, leading: 2, bottom: -2, trailing: 0))
-                    LeafHeaderDeltaView(leafVm)
-                        .padding(EdgeInsets(top: 2, leading: 0, bottom: -2, trailing: 4))
+                    Spacer()
                 }
 
                 HStack(alignment: .center, spacing: 4) {
@@ -29,10 +29,7 @@ struct LeafXyzView: View {
                         LeafThumbSlideView(leafVm, .runY)
                     }
                     LeafBezelView(leafVm, .runXY)  {
-                        ZStack {
-                            LeafTicksView(leafVm.ticks())
-                            LeafThumbSlideView(leafVm, .runXY)
-                        }
+                        LeafThumbSlideView(leafVm, .runXY, leafVm.ticks())
                     }
                     LeafBezelView(leafVm, .runZ) {
                         LeafThumbSlideView(leafVm, .runZ)

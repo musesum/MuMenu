@@ -5,10 +5,12 @@ import Foundation
 import SwiftUI
 import MuFlo
 
+/// thumb values are normalized to 0...1
 public class LeafThumb: Codable {
-    /// normalized to 0...1
+
     var value: SIMD3<Double> = .zero /// destination value
     var tween: SIMD3<Double> = .zero /// current tween value
+    var offset: SIMD3<Double> = .zero /// touch offset from center
     var type: LeafRunwayType = .none
 
     /// bias was previously called "delta" for a touch
@@ -16,7 +18,6 @@ public class LeafThumb: Codable {
     /// to prevent any shifting of center during touchBegin.
     /// During subsequent touchMove, the delta decreases
     /// shifting the center to under the touch point.
-    //TODO: var bias: SIMD2<Double> = .zero
 
     init(_ type: LeafRunwayType = .none,
          _ x: Double? = nil,
@@ -37,7 +38,6 @@ public class LeafThumb: Codable {
         try type = c.decode(LeafRunwayType.self, forKey: .type )
     }
 
-
     // changed by type
     var thumbRadius: Double {
         switch type {
@@ -49,22 +49,47 @@ public class LeafThumb: Codable {
     func thumbDiameter() -> Double {
         return thumbRadius * 2
     }
-    func set(x: CGFloat? = nil, y: CGFloat? = nil, z: CGFloat? = nil) {
-        if let x { value.x = Double(x) }
-        if let y { value.y = Double(y) }
-        if let z { value.z = Double(z) }
+    
+    func setValueTween(_ vx: Double? = nil,
+                       _ vy: Double? = nil,
+                       _ vz: Double? = nil,
+                       _ tx: Double? = nil,
+                       _ ty: Double? = nil,
+                       _ tz: Double? = nil) {
+
+        value.x = vx ?? value.x
+        value.y = vy ?? value.y
+        value.z = vz ?? value.z
+
+        tween.x = tx ?? tween.x
+        tween.y = ty ?? tween.y
+        tween.z = tz ?? tween.z
     }
+
     func setValue(_ x: Double? = nil,
                   _ y: Double? = nil,
-                  _ z: Double? = nil) {
+                  _ z: Double? = nil,
+                  _ offsetting: Offsetting) {
 
-        if let x { value.x = x  }
-        if let y { value.y = y  }
-        if let z { value.z = z  }
-    }
-    func set(_ point: CGPoint) {
-        value = SIMD3(x: Double(point.x), y: Double(point.y), z: 0)
-        tween = value
+        switch offsetting {
+        case .none:
+            if let x { value.x = x }
+            if let y { value.y = y }
+            if let z { value.z = z }
+            offset = .zero
+
+        case .begin:
+            if let x { offset.x = x - value.x } else {  offset.x = 0 }
+            if let y { offset.y = y - value.y } else {  offset.y = 0 }
+            if let z { offset.z = z - value.z } else {  offset.z = 0 }
+
+        case .move:
+            if let x { value.x = x - offset.x }
+            if let y { value.y = y - offset.y }
+            if let z { value.z = z - offset.z }
+            offset *= 0.88 // reduce downto zero
+
+        }
     }
 
 }

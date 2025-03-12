@@ -2,6 +2,10 @@
 
 import SwiftUI
 
+func Animate(_ sec: TimeInterval) -> Animation {
+    .easeInOut(duration: sec)
+}
+
 struct Layout {
 
     static let diameter: CGFloat = 40
@@ -15,9 +19,6 @@ struct Layout {
     /// distance from center while inside node
     static let insideNode: CGFloat = 24
 
-    static let animateFast = Animation.easeInOut(duration: 0.25)
-    static let animateSlow = Animation.easeInOut(duration: 0.50)
-    static let animateDebug = Animation.easeInOut(duration: 2.00)
     static let iconRing = "icon.ring"
     static let iconLogo = "icon.logo"
     static let lagStep = TimeInterval(1.0/32.0) // sixteenth of a second
@@ -43,7 +44,7 @@ struct Layout {
                      : Color(white: 0.6, opacity: 0.8))
         return color
     }
-    static func tweColor(_ high: Bool) -> Color {
+    static func tweenColor(_ high: Bool) -> Color {
         let color = (high
                      ? Color(white: 0.8, opacity: 0.7)
                      : Color(white: 0.5, opacity: 0.7))

@@ -2,6 +2,7 @@
 import SwiftUI
 import MuFlo
 
+enum ShowTree: String { case hide, canopy, show }
 
 public class TreeVm: Identifiable, Equatable, ObservableObject {
     
@@ -16,6 +17,9 @@ public class TreeVm: Identifiable, Equatable, ObservableObject {
 
     @Published var treeBounds: CGRect = .zero
     var treeBoundsPad: CGRect = .zero
+
+    @Published var showTree: ShowTree = .show
+    var showTreeTimer: Timer?
 
     var rootVm: RootVm
     var branchSpotVm: BranchVm?

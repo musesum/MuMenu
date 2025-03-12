@@ -163,10 +163,10 @@ open class MenuVm {
                 menuTree.menu˚ = child
 
                 if menuTree.children.count == 1,
-                   let grandChild = menuTree.children.first,
-                   grandChild.nodeType.isControl {
+                   let onlyChild = menuTree.children.first,
+                   onlyChild.nodeType.isControl {
 
-                    grandChild.icon = icon
+                    onlyChild.icon = icon
                 }
                 mergeMenuFlo(child, menuTree)
             }

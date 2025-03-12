@@ -6,22 +6,12 @@ import MuPeer
 struct LeafPeerView: View {
 
     var leafVm: LeafPeerVm
-    var panelVm: PanelVm { leafVm.panelVm }
-
 
     var body: some View {
         VStack {
-            if panelVm.corner.cornerOp.upper {
-                
-                LeafBezelView(leafVm, .none) {
-                    PeersView(leafVm.peersVm)
-                }
-                LeafHeaderView(leafVm)
-            } else {
-                LeafHeaderView(leafVm)
-                LeafBezelView(leafVm, .none) {
-                    PeersView(leafVm.peersVm)
-                }
+            LeafHeaderTitleView(leafVm, inset: -64)
+            LeafBezelView(leafVm, .none) {
+                PeersView(leafVm.peersVm)
             }
         }
     }

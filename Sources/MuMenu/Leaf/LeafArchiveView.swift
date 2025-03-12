@@ -1,7 +1,7 @@
 // created by musesum on 10/7/24
 
 import SwiftUI
-import MuFlo
+import MuFlo // ArchivePickerView, NextFrame
 
 struct LeafArchiveView: View {
 
@@ -69,11 +69,9 @@ struct PickerModalView: View {
             }
             .navigationBarTitle("Create a Mū", displayMode: .inline)
             .navigationBarItems(leading: Button("Cancel") {
-                leafArchiveVm.editing = false
                 presentationMode.wrappedValue.dismiss()
                 NextFrame.shared.pause = false
             }, trailing: Button("Save") {
-                leafArchiveVm.editing = false
                 presentationMode.wrappedValue.dismiss()
                 NextFrame.shared.pause = false
                 ArchiveVm.shared.archiveProto?.saveArchive(title, description) {

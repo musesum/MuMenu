@@ -15,7 +15,6 @@ public class PanelVm {
     var aspectSz = CGSize(width: 1, height: 1) /// multiplier aspect ratio
     var columns: Int
 
-
     init(branchVm: BranchVm,
          menuTrees: [MenuTree],
          treeVm: TreeVm,
@@ -49,12 +48,15 @@ public class PanelVm {
 
         switch nodeType {
 
-        case .none, .node, .tog, .tap:
+        case .none, .node, .tog:
 
             aspect(1.0 * CGFloat(columns),
                    1.0 * CGFloat(columns))
 
-        case .val  : aspect(1.0, 4.0)
+        case .val  : (isVertical
+                      ? aspect(1.0, 4.0)
+                      : aspect(4.0, 1.0))
+
         case .xy   : aspect(4.0, 4.0)
         case .xyz  : aspect(4.5, 4.0)
         case .seg  : aspect(1.0, 4.0)
@@ -69,7 +71,6 @@ public class PanelVm {
         }
     }
 
-    // changed by type
     var thumbRadius: Double { Double(Layout.radius - 1) }
 
     func thumbDiameter(_ type: LeafRunwayType) -> Double {
@@ -79,11 +80,11 @@ public class PanelVm {
         }
     }
 
-    func runLength(_ type: LeafRunwayType) -> Double {
-        let inner = innerPanel(type)
-        let diameter = thumbDiameter(type)
+    func runLength(_ runwayType: LeafRunwayType) -> Double {
+        let inner = innerPanel(runwayType)
+        let diameter = thumbDiameter(runwayType)
         let length: Double
-        switch type {
+        switch runwayType {
         case .runX,.runT : length = inner.width  - diameter
         case .runY,.runZ : length = inner.height - diameter
         default          : length = (isVertical
@@ -98,24 +99,25 @@ public class PanelVm {
         return CGPoint(x: innerXY.height - thumbDiameter(.runXY),
                        y: innerXY.width  - thumbDiameter(.runXY))
     }
-    var runwayXYZ: CGPoint {
-        let innerXYZ = innerPanel(.runXYZ)
-        return CGPoint(x: innerXYZ.height - thumbDiameter(.runXY),
-                       y: innerXYZ.width  - thumbDiameter(.runXY))
-    }
 
-    var inner: CGSize {
-        
+    private var inner: CGSize {
         let result =  aspectSz * Layout.diameter
         return result
     }
 
-    func innerPanel(_ runway: LeafRunwayType) -> CGSize {
+    func innerPanel(_ runwayType: LeafRunwayType) -> CGSize {
         let d = Layout.diameter
-        switch runway {
+        switch runwayType {
+
         case .none       : return aspectSz * d
+
         case .runX,.runT : return CGSize(width: d * 2.5, height: d * 0.5)
         case .runY,.runZ : return CGSize(width: d * 0.5, height: d * 2.5)
+
+        case .runVal     : return (isVertical
+                                   ? CGSize(width: d * 1.0, height: d * 4.0)
+                                   : CGSize(width: d * 1.0, height: d * 4.0))
+
         default          : return CGSize(width: d * 3.0, height: d * 3.0)
         }
         
@@ -130,9 +132,8 @@ public class PanelVm {
 
         case .val, .seg:
 
-            return inner + (isVertical
-                            ? CGSize(width: pad, height: dia)
-                            : CGSize(width: dia, height: pad))
+            return inner + pad
+
         case .xyz, .xy:
 
             return inner
@@ -141,7 +142,7 @@ public class PanelVm {
 
             return inner + CGSize(width: pad, height: dia)
 
-        case .none, .node, .tog, .tap:
+        case .none, .node, .tog:
 
             if columns > 1 {
                 let rowi = (branchVm.nodeVms.count + 1) / columns
