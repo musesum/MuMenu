@@ -36,13 +36,13 @@ struct LeafHeaderDeltaView: View {
 
     @State var originRotate : Double
     var originImage  : UIImage { UIImage.named("icon.flip.original")! }
-    var originOpacity: Double  { leafVm.changed ? 0 : 1 }
+    var originOpacity: Double  { leafVm.origin ? 1 : 0 }
     var deltaImage   : UIImage { UIImage.named("icon.flip.delta")! }
-    var deltaOpacity : Double  { leafVm.changed ? 1 : 0 }
+    var deltaOpacity : Double  { leafVm.origin ? 0 : 1 }
 
     init(_ leafVm: LeafVm) {
         self.leafVm = leafVm
-        self.originRotate = leafVm.changed ? .pi : 0
+        self.originRotate = leafVm.origin ? .pi : 0
     }
 
     func image(_ name: String) -> UIImage? {
@@ -62,7 +62,7 @@ struct LeafHeaderDeltaView: View {
     var body: some View {
 
         Button {
-            leafVm.resetOrigin()
+            leafVm.touchedOrigin()
         } label: {
             ZStack {
                 Image(uiImage: deltaImage)
@@ -78,12 +78,12 @@ struct LeafHeaderDeltaView: View {
                     .rotationEffect(.radians(originRotate))
             }
         }
-        .onChange(of: leafVm.changed) {
+        .onChange(of: leafVm.origin) {
             originRotate += .pi
         }
         .frame(width: 30, height: 30)
-        .animation(Animate(2.0), value: deltaOpacity)
-        .animation(Animate(2.0), value: originOpacity)
-        .animation(Animate(2.0), value: originRotate)
+        .animation(Animate(1.0), value: deltaOpacity)
+        .animation(Animate(1.0), value: originOpacity)
+        .animation(Animate(1.0), value: originRotate)
     }
 }

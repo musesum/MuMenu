@@ -68,12 +68,13 @@ public class LeafRunways {
         // dispatch found values to each runway thumb
         for (type,thumb) in runwayThumbs {
             switch type { //  eligible          ___values___    ___tweens___
-            case .runX   : thumb.setValueTween( vx, nil, nil,   tx, nil, nil)
-            case .runY   : thumb.setValueTween(nil,  vy, nil,  nil,  ty, nil)
-            case .runZ   : thumb.setValueTween(nil, nil, vz,   nil, nil,  tz)
-            case .runXY  : thumb.setValueTween( vx,  vy, nil,   tx,  ty, nil)
+            case .runX  : thumb.setValueTween( vx, nil, nil,   tx, nil, nil)
+            case .runY  : thumb.setValueTween(nil,  vy, nil,  nil,  ty, nil)
+            case .runZ  : thumb.setValueTween(nil, nil, vz,   nil, nil,  tz)
+            case .runXY : thumb.setValueTween( vx,  vy, nil,   tx,  ty, nil)
+            case .none  : thumb.setValueTween( vx,  vy, vz,    tx,  ty,  tz)
 
-            case .runVal :
+            case .runVal:
                 /// .runVal isVertical can set either x or y
                 /// for example:  `zoom(val, x 0…1~0, ...)`
                 /// even though zoom isVertical, x is vx,tx will set vy,ty

@@ -36,20 +36,30 @@ public class LeafXyzVm: LeafVm {
     /// called via user touch or via model update
     override public func syncVal(_ visit: Visitor) {
         guard visit.newVisit(leafHash) else { return }
-        guard let thumb = runways.thumb() else { return  }
+        guard let thumb = runways.thumb(.runXY) else { return  }
 
-        switch visit.type {
-        case .tween: break
-        case .bind: break
-        default:
+        if !visit.type.has(.tween) {
+
             let x = expand(named: "x", thumb.value.x)
             let y = expand(named: "y", thumb.value.y)
             let z = expand(named: "z", thumb.value.z)
-            menuTree.model˚.setAnyExprs([("x", x),("y", y), ("z", z)], .fire, visit)
-            updateLeafPeers(visit)
-            if !menuTree.model˚.hasPlugins {
-                thumb.tween = thumb.value
+
+            if visit.type.has([.model,.bind,.midi,.remote]) {
+
+                menuTree.model˚.setAnyExprs([("x", x),("y", y), ("z", z)], .sneak, visit)
+
+            } else if visit.type.has([.user,.midi]) {
+
+                menuTree.model˚.setAnyExprs([("x", x),("y", y), ("z", z)], .fire, visit)
+                updateLeafPeers(visit)
+
+            } else {
+                print("🔺Xyz visit.type \(visit.type.description)")
             }
+        }
+
+        if !menuTree.model˚.hasPlugins {
+            thumb.tween = thumb.value
         }
         refreshView()
     }

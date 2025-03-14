@@ -3,18 +3,9 @@
 import SwiftUI
 import MuFlo
 
-
 /// 2d XY control
 public class LeafXyVm: LeafVm {
 
-
-    override init (_ menuTree: MenuTree,
-          _ branchVm: BranchVm,
-          _ prevVm: NodeVm?,
-          _ runTypes: [LeafRunwayType]) {
-
-        super.init(menuTree, branchVm, prevVm, runTypes)
-    }
 
     /// ticks above and below nearest tick,
     /// but never on panel border or thumb border
@@ -45,20 +36,25 @@ public class LeafXyVm: LeafVm {
     /// called via user touch or via model update
     override public func syncVal(_ visit: Visitor) {
         guard visit.newVisit(leafHash) else { return }
-        guard let thumb = runways.thumb() else { return  }
+        guard let thumb = runways.thumb(.runXY) else { return  }
 
-        switch visit.type {
-        case .tween: break
-        case .bind:
+        if !visit.type.has(.tween) {
+            
             let x = expand(named: "x", thumb.value.x)
             let y = expand(named: "y", thumb.value.y)
-            menuTree.model˚.setAnyExprs([("x", x),("y", y)], .sneak, visit)
-            //....xupdateLeafPeers(visit)
-        default:
-            let x = expand(named: "x", thumb.value.x)
-            let y = expand(named: "y", thumb.value.y)
-            menuTree.model˚.setAnyExprs([("x", x),("y", y)], .fire, visit)
-            updateLeafPeers(visit)
+            
+            if visit.type.has([.model,.bind,.midi,.remote]) {
+                
+                menuTree.model˚.setAnyExprs([("x", x),("y", y)], .sneak, visit)
+                
+            } else if visit.type.has([.user,.midi]) {
+                
+                menuTree.model˚.setAnyExprs([("x", x),("y", y)], .fire, visit)
+                updateLeafPeers(visit)
+                
+            } else {
+                print("🔺Xyz visit.type \(visit.type.description)")
+            }
         }
         if !menuTree.model˚.hasPlugins {
             thumb.tween = thumb.value

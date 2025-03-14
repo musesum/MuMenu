@@ -19,7 +19,9 @@ public class TreeVm: Identifiable, Equatable, ObservableObject {
     var treeBoundsPad: CGRect = .zero
 
     @Published var showTree: ShowTree = .show
-    var showTreeTimer: Timer?
+    var hideAnimationTimer: Timer?
+
+    @Published var interval: TimeInterval = 2.0
 
     var rootVm: RootVm
     var branchSpotVm: BranchVm?

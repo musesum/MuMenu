@@ -13,7 +13,6 @@ public class RootVm: ObservableObject, Equatable {
     /// is the finger touching
     @Published var touchType = TouchType.none
     var touchTypeBegin = TouchType.none
-    
     /// captures touch events to dispatch to this root
     public let cornerVm: CornerVm
     
@@ -172,8 +171,9 @@ public class RootVm: ObservableObject, Equatable {
         updateRoot(fromRemote)
     }
     internal func touchEnded(_ touchState: TouchState, _ fromRemote: Bool) {
-
+        
         self.touchState = touchState
+        startAutoHide(fromRemote)
         updateRoot(fromRemote)
         
         /// turn off spotlight for leaf after edit
@@ -191,17 +191,17 @@ public class RootVm: ObservableObject, Equatable {
             let menuItem = MenuItem(node: nodeItem, cornerOp, touchState.phase)
             sendItemToPeers(menuItem)
         }
-        startAutoHide(fromRemote)
+
     }
     public func startAutoHide(_ fromRemote: Bool) {
         #if os(visionOS)
         #else
         autoHideTimer = Timer.scheduledTimer(withTimeInterval: autoHideInterval, repeats: false) { timer in
-            self.hideBranches(fromRemote)
+            self.hideBranches(.none, fromRemote)
         }
         #endif
     }
-    private func endAutoHide(_ fromRemote: Bool) {
+    public func endAutoHide(_ fromRemote: Bool) {
         autoHideTimer?.invalidate()
         reshowTree(fromRemote)
     }
@@ -291,7 +291,7 @@ public class RootVm: ObservableObject, Equatable {
             case 1:
                 touchType = .none
                 let wasShown = beginViewOps.hasAny([.branch,.trunks])
-                if  wasShown { hideBranches(fromRemote) }
+                if  wasShown { hideBranches(.root, fromRemote) }
                 else         { spotBranches() }
             case 2:
                 let wasShown = beginViewOps.hasAny([.branch,.trunks])
@@ -467,9 +467,10 @@ public class RootVm: ObservableObject, Equatable {
             treeVm.reshowTree(fromRemote)
         }
     }
-    func hideBranches(_ fromRemote: Bool) {
+    func hideBranches(_ touchType: TouchType, _ fromRemote: Bool) {
+        autoHideTimer?.invalidate()
         for treeVm in treeVms {
-            treeVm.hideTree(fromRemote)
+            treeVm.hideTree(touchType, fromRemote)
         }
         viewOps = [.root]
     }

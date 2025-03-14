@@ -5,10 +5,13 @@ import Foundation
 
 extension TreeVm { // +Show
 
-    func startHideAnimation(_ done: @escaping () -> Void) {
+    func startHideAnimation(_ interval: TimeInterval,
+                            _ done: @escaping () -> Void) {
+        if showTree != .show { return }
+        self.showTree = .canopy
 
-
-        showTreeTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] timer in
+        hideAnimationTimer = Timer.scheduledTimer(withTimeInterval: interval,
+                                                  repeats: true) { [weak self] timer in
             guard let self else { return }
 
             switch self.showTree {
@@ -16,19 +19,20 @@ extension TreeVm { // +Show
             case .canopy : self.showTree = .hide; done()
             case .hide   : self.showTree = .show; timer.invalidate()
             }
-            print("Current state: \(self.showTree.rawValue)")
+            //print("\(#function) \(self.showTree.rawValue) interval: \(interval)")
         }
     }
 
-    func hideTree(_ fromRemote: Bool) {
+    func hideTree(_ touchType: TouchType,
+                  _ fromRemote: Bool) {
 
-        startHideAnimation {
+        self.interval = touchType == .root ? 0.5 : 2.0
+        startHideAnimation(interval) {
             self.showTree(depth: 0, "hide", fromRemote)
         }
     }
     func reshowTree(_ fromRemote: Bool) {
-        
-        showTreeTimer?.invalidate()
+        hideAnimationTimer?.invalidate()
         showTree = .show 
         showTree(depth: 9, "reshow", fromRemote)
     }

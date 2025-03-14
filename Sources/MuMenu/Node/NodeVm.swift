@@ -21,8 +21,8 @@ public class NodeVm: Identifiable, ObservableObject {
 
     @Published var refresh: Int = 0
     @Published var zIndex: CGFloat = 0 /// stack current spotlight node on top of others
-    @Published var changed = false
-    
+    @Published var origin = true
+
     /// publish when selected or is under cursor
     @Published var _spotlight: Bool = false
     var spotlight: Bool {
@@ -115,8 +115,10 @@ public class NodeVm: Identifiable, ObservableObject {
     }
 
     func refreshView() {
-        refresh += 1 // animated tween via published edit var
-        branchVm.show = branchVm.show
+        Task { @MainActor in
+            refresh += 1 // animated tween via published edit var
+            branchVm.show = branchVm.show
+        }
     }
 
     func lastShownNodeVm() -> NodeVm? {
@@ -127,30 +129,46 @@ public class NodeVm: Identifiable, ObservableObject {
         PrintLog("tap: \(nodeType.description)")
     }
 
-    func resetOrigin(activate: Bool = true) {
+    func touchedOrigin() {
+        rootVm.endAutoHide(false)
         switch nodeType {
         case .xy, .xyz: update(withPrior: true)
         default:        update(withPrior: false)
         }
         func update(withPrior: Bool) {
+            guard let exprs = menuTree.model˚.exprs else { return }
             let visit = Visitor(0, .user)
+            let state = menuTree.model˚.scalarState
 
-            if withPrior {
-                if menuTree.model˚.hasPrior() || menuTree.model˚.hasChanged() {
-                    update()
-                    changed = !changed // flip header icon origin/changed
+            if origin { // button showing O for origin
+                if state.onOrigin {
+                    if state.hasPrior {
+                        // moved from prior to origin to revert prior
+                        exprs.setPrior(visit)
+                        origin = false
+                    } else {
+                        // ignore button when on origin and no prior
+                    }
+                } else if state.offOrigin {
+                    // this should never happen, return to origin
+                    exprs.setOrigin(visit)
+                    origin = true
+                } else if state.hasPrior {
+                    exprs.setPrior(visit)
+                    origin = false
                 }
-            } else if menuTree.model˚.hasChanged() {
-                update()
-                changed = false // change header icon to origin
-            } else if activate {
-                menuTree.model˚.activate(visit)
-            }
-            func update() {
-                menuTree.model˚.setFloDefaults(visit, withPrior)
-                // activate will call leafProto?.updateFromModel
-                // for each tween change
-                menuTree.model˚.activate(visit)
+            } else { // showing ∆ for delta
+                if state.onOrigin {
+                    exprs.setOrigin(visit)
+                    origin = true
+                } else if state.offOrigin {
+                    // this should never happen, return to origin
+                    exprs.setOrigin(visit)
+                    origin = true
+                } else if state.hasPrior {
+                    exprs.setPrior(visit)
+                    origin = true
+                }
             }
         }
     }

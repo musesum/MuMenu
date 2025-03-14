@@ -22,13 +22,16 @@ public class LeafTogVm: LeafVm {
         guard visit.newVisit(leafHash) else { return }
         guard let thumb = runways.thumb() else { return  }
 
-        switch visit.type {
-        case .tween: break
-        //.... case .bind: thumb.value.x = menuTree.model˚.double
-        default:
+        if visit.type.has([.model,.bind,.midi,.remote]) {
+
+            menuTree.model˚.setAnyExprs([("x", thumb.value.x)], .sneak, visit)
+
+        } else if visit.type.has([.user,.midi]) {
+
             menuTree.model˚.setAnyExprs(("x", thumb.value.x), .fire, visit)
             updateLeafPeers(visit)
         }
+        // no tweens for Tog
         refreshView()
     }
 }

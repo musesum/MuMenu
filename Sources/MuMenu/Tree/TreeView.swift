@@ -41,7 +41,7 @@ struct TreeView: View {
                 .opacity(treeOpacity)
             }
         }
-        .animation(Animate(2.0), value: canopyOpacity)
+        .animation(Animate(treeVm.interval), value: canopyOpacity)
         .offset(treeVm.treeOffset)
     }
 }

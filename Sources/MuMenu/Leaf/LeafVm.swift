@@ -52,7 +52,7 @@ public class LeafVm: NodeVm {
     /// user double tapped a parent node
     override func tapLeaf() {
         DebugLog { P("􀥲􀝰 tapLeaf") }
-        resetOrigin()
+        touchedOrigin()
     }
     
     public func spot(_ tog: OnOff) {

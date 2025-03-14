@@ -48,19 +48,24 @@ public class LeafValVm: LeafVm {
 
     override public func syncVal(_ visit: Visitor) {
         guard visit.newVisit(leafHash) else { return }
-        guard let thumb = runways.thumb() else { return  }
+        guard let thumb = runways.thumb(.runVal) else { return  }
 
-        switch visit.type {
-        case .tween: break
-        case .bind:
-            thumb.value.x = menuTree.model˚.val("x") ?? 0
-            thumb.value.y = menuTree.model˚.val("y") ?? 0
-        default:
-            // only differnce with LeafSegVm
-            let v = panelVm.isVertical ? thumb.value.y : thumb.value.x
-            let expanded = scale(v, from: 0...1, to: range)
-            menuTree.model˚.setAnyExprs(expanded, .fire, visit)
-            updateLeafPeers(visit)
+        if !visit.type.has(.tween) {
+
+            let x = expand(named: "x", thumb.value.x)
+            let y = expand(named: "y", thumb.value.y)
+
+            if visit.type.has([.model,.bind,.midi,.remote]) {
+
+                menuTree.model˚.setAnyExprs([("x", x),("y", y)], .sneak, visit)
+
+            } else if visit.type.has([.user,.midi]) {
+
+                // only differnce with LeafSegVm
+                let v = panelVm.isVertical ? y : x
+                menuTree.model˚.setAnyExprs([("x", v),("y",v)], .fire, visit)
+                updateLeafPeers(visit)
+            }
         }
         if !menuTree.model˚.hasPlugins {
             thumb.tween = thumb.value
