@@ -6,25 +6,16 @@ import MuFlo
 /// 1d slider control
 public class LeafValVm: LeafVm {
 
-    var range: ClosedRange<Double> = 0...1
-    
-    /// normalize to and from scalar range
-    override public func setRanges() {
-        if let exprs = menuTree.model˚.exprs {
-            if let x = exprs.nameAny["x"] as? Scalar {
-                range = x.range()
-            } else if let y = exprs.nameAny["y"] as? Scalar {
-                range = y.range()
-            } else if let scalar = exprs.nameAny.values.first as? Scalar {
-                range = scalar.range()
-            }
-        }
-    }
+    lazy var range: ClosedRange<Double> = {
+        ranges.values.first ?? 0...1
+    }()
 
     /// scale up normalized to defined range
     var expanded: Double {
-        guard let thumb = runways.thumb() else { return 0 }
-        return scale(thumb.value.x, from: 0...1, to: range)
+        guard let thumb = runways.thumb(.runVal) else { return 0 }
+        let v = panelVm.isVertical ? thumb.value.y : thumb.value.x
+        let double = scale(v, from: 0...1, to: range)
+        return double
     }
 
     /// user touch gesture inside runway
@@ -52,17 +43,14 @@ public class LeafValVm: LeafVm {
 
         if !visit.type.has(.tween) {
 
-            let x = expand(named: "x", thumb.value.x)
-            let y = expand(named: "y", thumb.value.y)
+            let v = expanded
 
             if visit.type.has([.model,.bind,.midi,.remote]) {
 
-                menuTree.model˚.setAnyExprs([("x", x),("y", y)], .sneak, visit)
+                menuTree.model˚.setAnyExprs([("x", v),("y", v)], .sneak, visit)
 
             } else if visit.type.has([.user,.midi]) {
 
-                // only differnce with LeafSegVm
-                let v = panelVm.isVertical ? y : x
                 menuTree.model˚.setAnyExprs([("x", v),("y",v)], .fire, visit)
                 updateLeafPeers(visit)
             }
