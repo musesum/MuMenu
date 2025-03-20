@@ -44,8 +44,6 @@ public class NodeVm: Identifiable, ObservableObject {
         if on == true { menuTree.touch() }
     }
 
-
-
     public var nodeHash: Int {
         let id = menuTree.path.strHash()
         NodeVm.IdNode[id] = self
@@ -178,5 +176,23 @@ extension NodeVm: Equatable {
     public static func == (lhs: NodeVm, rhs: NodeVm) -> Bool {
         return lhs.nodeHash == rhs.nodeHash
     }
+
+}
+extension NodeVm { // log visitor
+    static public func logVisits(_ visitor: Visitor) {
+        for visit in visitor.visited {
+            if let any = FloIdAny[visit] {
+                switch any {
+                case let flo as Flo:  print ("\(visit): Flo \(flo.name)")
+                case let nodeVm as NodeVm:  print ("\(visit): NodeVm \(nodeVm.treeTitle()))")
+                case let pipeNode as PipeNode:  print ("\(visit): PipeNode \(pipeNode.pipeFlo.name)")
+                case let edge as MuFlo.Edge:  print ("\(visit): Edge \(edge.script())")
+                case let exprs as Exprs:  print ("\(visit): Exprs \(exprs.name)")
+                default : print ("\(visit): ??")
+                }
+            }
+        }
+    }
+
 
 }

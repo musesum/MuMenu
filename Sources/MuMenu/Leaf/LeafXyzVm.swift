@@ -38,17 +38,19 @@ public class LeafXyzVm: LeafVm {
         guard visit.newVisit(leafHash) else { return }
         guard let thumb = runways.thumb(.runXY) else { return  }
 
-        if !visit.type.has(.tween) {
-
+        if visit.type == .tween {
+            // ignore
+        } else {
+        
             let x = expand(named: "x", thumb.value.x)
             let y = expand(named: "y", thumb.value.y)
             let z = expand(named: "z", thumb.value.z)
 
-            if visit.type.has([.model,.bind,.midi,.remote]) {
+            if visit.type.has([.model,.bind,.remote]) {
 
                 menuTree.model˚.setAnyExprs([("x", x),("y", y), ("z", z)], .sneak, visit)
 
-            } else if visit.type.has([.user,.midi]) {
+            } else if visit.type.has([.user]) {
 
                 menuTree.model˚.setAnyExprs([("x", x),("y", y), ("z", z)], .fire, visit)
                 updateLeafPeers(visit)

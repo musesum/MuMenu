@@ -4,8 +4,7 @@ import SwiftUI
 import MuFlo
 import MuVision
 
-open class MenuTree: Identifiable, Equatable {
-    public let id = Visitor.nextId()
+open class MenuTree: FloId, Identifiable, Equatable {
 
     public var title: String
     public var icon: Icon!
@@ -51,6 +50,8 @@ open class MenuTree: Identifiable, Equatable {
         self.model˚ = model˚
         self.title =  model˚.name
         self.parent = parent
+        super.init()
+
         parent?.children.append(self)
         icon = makeFloIcon(model˚)
         makeOptionalControl()
@@ -67,6 +68,7 @@ open class MenuTree: Identifiable, Equatable {
         self.icon = icon
         self.parent = parent
         self.nodeType = nodeType
+        super.init()
         parent?.children.append(self)
     }
 

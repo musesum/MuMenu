@@ -7,7 +7,6 @@ import MuFlo
 
     static var shared = StatusVm()
 
-    var id = Visitor.nextId()
     var before = [NodeVm]()
     var after  = [NodeVm]()
     var beforeStr: String {

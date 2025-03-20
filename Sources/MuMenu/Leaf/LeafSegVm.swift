@@ -41,7 +41,10 @@ public class LeafSegVm: LeafValVm {
         guard visit.newVisit(leafHash) else { return }
         guard let thumb = runways.thumb(.runVal) else { return  }
 
-        if !visit.type.has(.tween) {
+        if visit.type == .tween {
+            // ignore
+        } else {
+
             // quantize is only differnce with LeafSegVm
             let v = expanded.quantize(count)
 
@@ -49,7 +52,7 @@ public class LeafSegVm: LeafValVm {
 
                 menuTree.model˚.setAnyExprs([("x", v),("y", v)], .sneak, visit)
 
-            } else if visit.type.has([.user,.midi]) {
+            } else if visit.type.has([.user]) {
 
                 menuTree.model˚.setAnyExprs([("x", v),("y",v)], .fire, visit)
                 updateLeafPeers(visit)

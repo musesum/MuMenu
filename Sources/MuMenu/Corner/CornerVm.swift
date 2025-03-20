@@ -6,7 +6,6 @@ import MuFlo
 /// corner node which follows touch
 @Observable public class CornerVm: Identifiable {
 
-    public var id = Visitor.nextId()
     var ringIconXY = CGPoint.zero /// current position
     var parkIconXY = CGPoint.zero     /// fixed position of icon
 

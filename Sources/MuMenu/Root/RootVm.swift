@@ -5,16 +5,15 @@ import MuPeer
 import MuFlo
 import MuVision
 
-public class RootVm: ObservableObject, Equatable {
+public class RootVm: FloId, ObservableObject, Equatable {
 
-    let id = Visitor.nextId()
     public static func == (lhs: RootVm, rhs: RootVm) -> Bool { return lhs.id == rhs.id }
     
     /// is the finger touching
     @Published var touchType = TouchType.none
     var touchTypeBegin = TouchType.none
     /// captures touch events to dispatch to this root
-    public let cornerVm: CornerVm
+    public let cornerVm: CornerVm!
     
     /// which menu elements are shown on View
     var viewOps: Set<TouchType> = [.root, .trunks]
@@ -51,10 +50,11 @@ public class RootVm: ObservableObject, Equatable {
     }
 
     public init(_ cornerOp: CornerOp) {
-        
+
         self.cornerOp = cornerOp
         self.cornerVm = CornerVm(cornerOp)
         self.peers = PeersController.shared
+        super.init()
         PeersController.shared.peersDelegates.append(self)
     }
 

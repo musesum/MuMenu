@@ -4,13 +4,10 @@ import SwiftUI
 import MuFlo
 import MuVision
 
-open class MenuVm {
-
-    let id: Int = Visitor.nextId()
+open class MenuVm: FloId {
 
     public var rootVm: RootVm
     public var menuTree: MenuTree? // top node of menu tree
-
 
     /// one or two menus emanating from a corner
     ///
@@ -22,12 +19,14 @@ open class MenuVm {
     ///
     public init?(_ corners: [Corner]) {
 
+
         guard corners.count > 0 else { print("corners < 1") ; return nil }
 
         var treeVms = [TreeVm]()
 
         // both veritical and horizontal menu will share the same root
         self.rootVm = RootVm(corners.first!.cornerOp)
+        super.init()
 
         // for (root˚,axis) in floAxis {
         for corner in corners {

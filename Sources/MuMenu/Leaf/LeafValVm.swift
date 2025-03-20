@@ -41,8 +41,10 @@ public class LeafValVm: LeafVm {
         guard visit.newVisit(leafHash) else { return }
         guard let thumb = runways.thumb(.runVal) else { return  }
 
-        if !visit.type.has(.tween) {
-
+        if visit.type == .tween {
+            // ignore
+        } else {
+    
             let v = expanded
 
             if visit.type.has([.model,.bind,.midi,.remote]) {

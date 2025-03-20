@@ -6,7 +6,6 @@ import MuFlo
 /// 2d XY control
 public class LeafXyVm: LeafVm {
 
-
     /// ticks above and below nearest tick,
     /// but never on panel border or thumb border
     func ticks() -> [CGSize] {
@@ -38,16 +37,18 @@ public class LeafXyVm: LeafVm {
         guard visit.newVisit(leafHash) else { return }
         guard let thumb = runways.thumb(.runXY) else { return  }
 
-        if !visit.type.has(.tween) {
+        if visit.type == .tween {
+            // ignore
+        } else {
             
             let x = expand(named: "x", thumb.value.x)
             let y = expand(named: "y", thumb.value.y)
             
-            if visit.type.has([.model,.bind,.midi,.remote]) {
-                
+            if visit.type.has([.model,.bind,.remote]) {
+
                 menuTree.model˚.setAnyExprs([("x", x),("y", y)], .sneak, visit)
                 
-            } else if visit.type.has([.user,.midi]) {
+            } else if visit.type.has([.user]) {
                 
                 menuTree.model˚.setAnyExprs([("x", x),("y", y)], .fire, visit)
                 updateLeafPeers(visit)

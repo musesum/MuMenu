@@ -4,9 +4,8 @@ import SwiftUI
 import MuFlo
 import MuVision
 
-public class BranchVm: Identifiable, ObservableObject {
+public class BranchVm: FloId, Identifiable, ObservableObject {
 
-    public let id = Visitor.nextId()
     static func == (lhs: BranchVm, rhs: BranchVm)  -> Bool { lhs.id == rhs.id }
     static func == (lhs: BranchVm, rhs: BranchVm?) -> Bool { lhs.id == (rhs?.id ?? -1) }
 
@@ -57,11 +56,12 @@ public class BranchVm: Identifiable, ObservableObject {
         self.branchPrev = branchPrev
         self.zindex = zindex
         self.columns = prevNodeVm?.menuTree.model˚.intVal("columns") ?? 1
-        
+        super.init()
         self.panelVm = PanelVm(branchVm: self,
                                menuTrees: menuTrees,
                                treeVm: treeVm,
                                columns: columns)
+
 
         buildNodeVms(menuTrees: menuTrees,
                      prevNodeVm: prevNodeVm)
