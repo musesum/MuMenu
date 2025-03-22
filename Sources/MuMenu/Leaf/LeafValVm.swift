@@ -49,15 +49,15 @@ public class LeafValVm: LeafVm {
 
             if visit.type.has([.model,.bind,.midi,.remote]) {
 
-                menuTree.model˚.setAnyExprs([("x", v),("y", v)], .sneak, visit)
+                menuTree.flo.setAnyExprs([("x", v),("y", v)], .sneak, visit)
 
             } else if visit.type.has([.user,.midi]) {
 
-                menuTree.model˚.setAnyExprs([("x", v),("y",v)], .fire, visit)
+                menuTree.flo.setAnyExprs([("x", v),("y",v)], .fire, visit)
                 updateLeafPeers(visit)
             }
         }
-        if !menuTree.model˚.hasPlugins {
+        if !menuTree.flo.hasPlugins {
             thumb.tween = thumb.value
         }
         refreshView()

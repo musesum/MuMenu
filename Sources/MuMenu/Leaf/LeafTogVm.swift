@@ -24,11 +24,11 @@ public class LeafTogVm: LeafVm {
 
         if visit.type.has([.model,.bind,.midi,.remote]) {
 
-            menuTree.model˚.setAnyExprs([("x", thumb.value.x)], .sneak, visit)
+            menuTree.flo.setAnyExprs([("x", thumb.value.x)], .sneak, visit)
 
         } else if visit.type.has([.user,.midi]) {
 
-            menuTree.model˚.setAnyExprs(("x", thumb.value.x), .fire, visit)
+            menuTree.flo.setAnyExprs(("x", thumb.value.x), .fire, visit)
             updateLeafPeers(visit)
         }
         // no tweens for Tog

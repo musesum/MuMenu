@@ -48,11 +48,11 @@ public class LeafXyzVm: LeafVm {
 
             if visit.type.has([.model,.bind,.remote]) {
 
-                menuTree.model˚.setAnyExprs([("x", x),("y", y), ("z", z)], .sneak, visit)
+                menuTree.flo.setAnyExprs([("x", x),("y", y), ("z", z)], .sneak, visit)
 
             } else if visit.type.has([.user]) {
 
-                menuTree.model˚.setAnyExprs([("x", x),("y", y), ("z", z)], .fire, visit)
+                menuTree.flo.setAnyExprs([("x", x),("y", y), ("z", z)], .fire, visit)
                 updateLeafPeers(visit)
 
             } else {
@@ -60,7 +60,7 @@ public class LeafXyzVm: LeafVm {
             }
         }
 
-        if !menuTree.model˚.hasPlugins {
+        if !menuTree.flo.hasPlugins {
             thumb.tween = thumb.value
         }
         refreshView()

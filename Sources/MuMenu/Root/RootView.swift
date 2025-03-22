@@ -1,16 +1,52 @@
 import SwiftUI
 
+public struct MainContentKey: EnvironmentKey {
+    public static let defaultValue: AnyView = AnyView(EmptyView())
+}
+
+extension EnvironmentValues {
+    public var mainContent: AnyView {
+        get { self[MainContentKey.self] }
+        set { self[MainContentKey.self] = newValue }
+    }
+}
+#if false
+public struct CornerOrnament: View {
+    @EnvironmentObject var rootVm: RootVm
+
+    public var body: some View {
+        switch rootVm.cornerOp {
+        case [.lower, .right]: return LowerRightView()
+        case [.lower, .left]:  return LowerLeftView()
+        case [.upper, .right]: return UpperRightView()
+        case [.upper, .left]:  return UpperLeftView()
+        default:               return EmptyView()
+        }
+    }
+}
+#endif
 /// four posible corners
 public struct RootView: View {
     @EnvironmentObject var rootVm: RootVm
-    public var body: some View {
-        
+    //@Environment(\.mainContent) var mainContent: AnyView
+    #if os(visionOS)
+    func anchor() -> OrnamentAttachmentAnchor {
         switch rootVm.cornerOp {
-            case [.lower, .right]: LowerRightView()
-            case [.lower, .left ]: LowerLeftView()
-            case [.upper, .right]: UpperRightView()
-            case [.upper, .left ]: UpperLeftView()
-            default:               LowerRightView()
+        case [.lower, .right]: return .scene(.trailing)
+        case [.lower, .left]:  return .scene(.leading )
+        case [.upper, .right]: return .scene(.trailing)
+        case [.upper, .left]:  return .scene(.leading )
+        default:               return .scene(.trailing)
+        }
+    }
+    #endif
+    public var body: some View {
+        switch rootVm.cornerOp {
+        case [.lower, .right]: LowerRightView()
+        case [.lower, .left ]: LowerLeftView()
+        case [.upper, .right]: UpperRightView()
+        case [.upper, .left ]: UpperLeftView()
+        default:               LowerRightView()
         }
     }
 }

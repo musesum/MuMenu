@@ -21,7 +21,7 @@ public class RootVm: FloId, ObservableObject, Equatable {
     /// `touchBegin` snapshot of viewElements.
     /// To prevent touchEnded from hiding elements that were shown during `touchBegin`
     var beginViewOps: Set<TouchType> = []
-    var cornerOp: CornerOp /// corner where root begins, ex: `[south,west]`
+    public var cornerOp: CornerOp /// corner where root begins, ex: `[south,west]`
     var treeVms = [TreeVm]() /// vertical or horizontal stack of branches
     var treeSpotVm: TreeVm? /// most recently used tree
     var rootOffset: CGSize = .zero
@@ -62,8 +62,8 @@ public class RootVm: FloId, ObservableObject, Equatable {
         PeersController.shared.remove(peersDelegate: self)
     }
 
-    public func updateTreeVms(_ treeVms: [TreeVm]) {
-        self.treeVms.append(contentsOf: treeVms)
+    public func updateTreeVms(_ treeVm: TreeVm) {
+        self.treeVms.append(treeVm)
         cornerVm.setRoot(self)
         updateTreeOffsets()
     }

@@ -41,7 +41,7 @@ public class NodeVm: Identifiable, ObservableObject {
 
     func spot(on: Bool) {
         if on == spotlight { return }
-        if on == true { menuTree.touch() }
+        if on == true { menuTree.flo.updateTime() }
     }
 
     public var nodeHash: Int {
@@ -59,7 +59,7 @@ public class NodeVm: Identifiable, ObservableObject {
         return path
     }
 
-    public func treeTitle() -> String { menuTree.title  }
+    public func treeTitle() -> String { menuTree.flo.name  }
     public func leafTitle() -> String { "" }
 
     public init (_ menuTree: MenuTree, // shared Menu Model
@@ -124,19 +124,24 @@ public class NodeVm: Identifiable, ObservableObject {
     }
 
     func tapLeaf() {
-        PrintLog("tap: \(nodeType.description)")
+        PrintLog("􀝰􀥲 tapLeaf: \(nodeType.description)")
+        touchedOrigin()
     }
 
     func touchedOrigin() {
         rootVm.endAutoHide(false)
         switch nodeType {
         case .xy, .xyz: update(withPrior: true)
+        case .val, .seg: updateDefault()
         default:        update(withPrior: false)
         }
+        func updateDefault() {
+            menuTree.flo.activate(Visitor(0, .user))
+        }
         func update(withPrior: Bool) {
-            guard let exprs = menuTree.model˚.exprs else { return }
+            guard let exprs = menuTree.flo.exprs else { return }
             let visit = Visitor(0, .user)
-            let state = menuTree.model˚.scalarState
+            let state = menuTree.flo.scalarState
 
             if origin { // button showing O for origin
                 if state.onOrigin {

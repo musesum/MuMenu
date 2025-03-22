@@ -6,23 +6,21 @@ import MuVision
 
 open class MenuTree: FloId, Identifiable, Equatable {
 
-    public var title: String
+    public var flo: Flo
     public var icon: Icon!
-    public var parent: MenuTree?
+    public var parentTree: MenuTree?
     public var children = [MenuTree]()
     public var nodeType = NodeType.node
-    public var model˚: Flo
-    public var menu˚: Flo?
     public var chiralSpot: [Chiral: Flo] = [:]
 
     var axis: Axis = .vertical
     /// path and hash get updated through MuNodeDispatch::bindDispatch
     public lazy var path: String = {
-        if let parent {
-           let parentPath = parent.path
-            return parentPath + "." + title
+        if let parentTree {
+           let parentPath = parentTree.path
+            return parentPath + "." + flo.name
         } else {
-            return title
+            return flo.name
         }
     }()
 
@@ -35,7 +33,7 @@ open class MenuTree: FloId, Identifiable, Equatable {
     }()
 
     public lazy var hashPath: [Int] = {
-        var _hashPath = parent?.hashPath ?? []
+        var _hashPath = parentTree?.hashPath ?? []
         _hashPath.append(hash)
         return _hashPath
     }()
@@ -44,44 +42,39 @@ open class MenuTree: FloId, Identifiable, Equatable {
         return lhs.hash == rhs.hash
     }
 
-    public init(_ model˚: Flo,
-                parent: MenuTree? = nil) {
+    public init(_ flo: Flo,
+                parentTree: MenuTree? = nil) {
 
-        self.model˚ = model˚
-        self.title =  model˚.name
-        self.parent = parent
+        self.flo = flo
+        self.parentTree = parentTree
         super.init()
-
-        parent?.children.append(self)
-        icon = makeFloIcon(model˚)
+        self.icon = makeFloIcon(flo)
+        parentTree?.children.append(self)
         makeOptionalControl()
     }
 
     /// this is a leaf node
-    init(_ model˚: Flo,
+    init(_ flo: Flo,
          _ nodeType: NodeType,
          _ icon: Icon,
-         parent: MenuTree? = nil) {
-        
-        self.model˚ = model˚
-        self.title = model˚.name
+         parentTree: MenuTree? = nil) {
+
+        self.flo = flo
         self.icon = icon
-        self.parent = parent
+        self.parentTree = parentTree
         self.nodeType = nodeType
         super.init()
-        parent?.children.append(self)
-    }
-
-    public func touch() {
-        menu˚?.updateTime()
+        parentTree?.children.append(self)
     }
 
     /// optional leaf node for changing values
-    func makeOptionalControl() { 
+    func makeOptionalControl() {
+
         if children.count > 0 { return }
         let nodeType = getNodeType()
         if nodeType.isControl {
-            _ = MenuTree(model˚, nodeType, icon, parent: self)
+
+            _ = MenuTree(flo, nodeType, icon, parentTree: self)
         } else {
             self.nodeType = nodeType
         }
@@ -90,7 +83,7 @@ open class MenuTree: FloId, Identifiable, Equatable {
     /// expression parameters: val vxy tog seg tap x,y indicates a leaf node
     public func getNodeType() -> NodeType {
 
-        if let comp = model˚.exprs?.flo.components() {
+        if let comp = flo.exprs?.flo.components() {
             for key in comp.keys {
                 if let type = NodeType(rawValue: key) {
                     return type

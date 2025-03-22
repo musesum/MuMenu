@@ -8,7 +8,7 @@ public struct LeafThumbSlideView: View {
     let runwayType: LeafRunwayType
     var diameter: Double { runwayType.thumbRadius - 2 }
     var ticks: [CGSize]?
-    var hasPlugin: Bool { leafVm.menuTree.model˚.hasPlugins }
+    var hasPlugin: Bool { leafVm.menuTree.flo.hasPlugins }
     public init(_ leafVm: LeafVm,
                 _ runwayType: LeafRunwayType,
                 _ ticks: [CGSize]? = nil) {

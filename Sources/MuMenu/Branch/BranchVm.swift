@@ -33,15 +33,15 @@ public class BranchVm: FloId, Identifiable, ObservableObject {
     var columns = 1
 
     var title: String {
-        let nameFirst = nodeVms.first?.menuTree.title ?? ""
-        let nameLast  = nodeVms.last?.menuTree.title ?? ""
+        let nameFirst = nodeVms.first?.menuTree.flo.name ?? ""
+        let nameLast  = nodeVms.last?.menuTree.flo.name ?? ""
         return nameFirst + "…" + nameLast
     }
     var chiral: Chiral { treeVm.corner.chiral }
 
     static func titleForNodes(_ menuTrees: [MenuTree]) -> String {
-        let nameFirst = menuTrees.first?.title ?? ""
-        let nameLast  = menuTrees.last?.title ?? ""
+        let nameFirst = menuTrees.first?.flo.name ?? ""
+        let nameLast  = menuTrees.last?.flo.name ?? ""
         return nameFirst + "…" + nameLast
     }
 
@@ -55,7 +55,7 @@ public class BranchVm: FloId, Identifiable, ObservableObject {
         self.treeVm = treeVm
         self.branchPrev = branchPrev
         self.zindex = zindex
-        self.columns = prevNodeVm?.menuTree.model˚.intVal("columns") ?? 1
+        self.columns = prevNodeVm?.menuTree.flo.intVal("columns") ?? 1
         super.init()
         self.panelVm = PanelVm(branchVm: self,
                                menuTrees: menuTrees,

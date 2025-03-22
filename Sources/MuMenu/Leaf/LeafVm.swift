@@ -22,23 +22,23 @@ public class LeafVm: NodeVm {
         super.init(menuTree, branchVm, prevVm)
         runways = LeafRunways(panelVm, runTypes)
         // callback when flo is activated
-        menuTree.model˚.addClosure { flo, visit in
+        menuTree.flo.addClosure { flo, visit in
             self.updateFromFlo(flo, visit)
         }
         setRanges()
-        updateFromFlo(menuTree.model˚, Visitor(0, .bind))
+        updateFromFlo(menuTree.flo, Visitor(0, .bind))
     }
 
     public func setRanges() {
         // set ranges
-        if let exprs = menuTree.model˚.exprs {
+        if let exprs = menuTree.flo.exprs {
             for name in ["x","y","z"] {
                 if let scalar = exprs.nameAny[name] as? Scalar {
                     ranges[name] = scalar.range()
                 }
             }
         } else {
-            let scalars = menuTree.model˚.scalars()
+            let scalars = menuTree.flo.scalars()
             for scalar in scalars {
                 ranges[scalar.name] = scalar.range()
             }
@@ -47,12 +47,6 @@ public class LeafVm: NodeVm {
     public func touchLeaf(_ touchState: TouchState, _ visit: Visitor) {
         runways.touchLeaf(self, touchState, quantize: 4)
         syncVal(visit)
-    }
-
-    /// user double tapped a parent node
-    override func tapLeaf() {
-        DebugLog { P("􀥲􀝰 tapLeaf") }
-        touchedOrigin()
     }
     
     public func spot(_ tog: OnOff) {
@@ -71,7 +65,7 @@ public class LeafVm: NodeVm {
     public func remoteThumb(_ remoteThumb: LeafThumb, _ visit: Visitor) {
         guard let thumb = runways.thumb(remoteThumb.type) else { return }
         thumb.value = remoteThumb.value
-        if !menuTree.model˚.hasPlugins {
+        if !menuTree.flo.hasPlugins {
             thumb.tween = thumb.value
         }
         syncVal(visit)

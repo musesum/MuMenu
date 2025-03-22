@@ -13,27 +13,22 @@ public struct MenuVms {
         Icon.altBundles.append(MuVision.bundle) //??
 
         let menuTree = MenuTree(root˚)
-#if os(visionOS)
-        if let vm = MenuVm([Corner(menuTree, .vertical, .left, [.upper, .left ])]) {
-            menuVms.append(vm)
-        }
-        if let vm = MenuVm([Corner(menuTree, .vertical, .right, [.upper, .right])]) {
-            menuVms.append(vm)
-        }
 
-#else
-        if let vm = MenuVm([Corner(menuTree, .vertical, .left,  [.lower, .left ]),
-                          // Corner(menuTree, .horizontal, "hands", [.lower, .left ])
-                         ]) {
-            menuVms.append(vm)
-        }
+        #if os(visionOS)
 
+        let floNames = ["canvas", "plato", "cell", "more"]
+        let cornerLeft  = Corner(menuTree, .vertical, .left,  [.upper, .left])
+        let cornerRight = Corner(menuTree, .vertical, .right, [.upper, .right])
+        if let menu = MenuVm([cornerLeft], floNames) { menuVms.append(menu) }
+        if let menu = MenuVm([cornerRight],floNames) { menuVms.append(menu) }
 
-        if let vm = MenuVm([Corner(menuTree, .vertical, .right, [.lower, .right]),
-                            //Corner(menuTree, .horizontal, "hands", [.lower, .right])
-                           ]) {
-            menuVms.append(vm)
-        }
+        #else
+        let floNames = ["canvas", "plato", "cell", "camera", "more"]
+        let cornerLeft  = Corner(menuTree, .vertical, .left,  [.lower, .left])
+        let cornerRight = Corner(menuTree, .vertical, .right, [.lower, .right])
+
+        if let menu = MenuVm([cornerLeft], floNames) { menuVms.append(menu) }
+        if let menu = MenuVm([cornerRight],floNames) { menuVms.append(menu) }
 
         #endif
 

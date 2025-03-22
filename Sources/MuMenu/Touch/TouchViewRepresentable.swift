@@ -12,10 +12,10 @@ public struct TouchViewRepresentable: UIViewRepresentable {
     var cornerVms: [CornerVm]
     var touchesView: TouchesView
 
-    public init(_ cornerVms: [CornerVm],
+    public init(_ menuVms: [MenuVm],
                 _ touchesView: TouchesView) {
 
-        self.cornerVms = cornerVms
+        self.cornerVms = menuVms.map { $0.rootVm.cornerVm }
         self.touchesView = touchesView
         touchesView.translatesAutoresizingMaskIntoConstraints = true
         for cornerVm in cornerVms {
@@ -27,10 +27,12 @@ public struct TouchViewRepresentable: UIViewRepresentable {
         return touchesView
     }
     public func updateUIView(_ touchesView: TouchesView, context: Context) {
-        let aspect = touchesView.frame.size.aspect
-        TouchViewRepresentable.aspect = aspect
-        for callAspect in TouchViewRepresentable.callAspects {
-            callAspect(aspect)
+        if touchesView.frame != .zero {
+            let aspect = touchesView.frame.size.aspect
+            TouchViewRepresentable.aspect = aspect
+            for callAspect in TouchViewRepresentable.callAspects {
+                callAspect(aspect)
+            }
         }
         DebugLog { P("📋 updateUIView touchesView\(touchesView.frame.digits(0))") }
     }

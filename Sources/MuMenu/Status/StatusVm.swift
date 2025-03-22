@@ -16,7 +16,7 @@ import MuFlo
             if let leafVm = vm as? LeafVm {
                 line += delim + (leafVm.leafTitle() )
             } else {
-                line += delim + vm.menuTree.title
+                line += delim + vm.menuTree.flo.name
             }
             delim = " • "
         }
@@ -31,7 +31,7 @@ import MuFlo
             if let leafVm = vm as? LeafVm {
                 line += delim + (leafVm.leafTitle() )
             } else {
-                line += delim + vm.menuTree.title
+                line += delim + vm.menuTree.flo.name
             }
             delim = " • "
         }

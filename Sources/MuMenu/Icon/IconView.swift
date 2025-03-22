@@ -10,7 +10,7 @@ struct IconView: View {
 
     let icon: Icon
     let runwayType: LeafRunwayType
-    var title: String { nodeVm.menuTree.title }
+    var title: String { nodeVm.menuTree.flo.name }
     var named: String { nodeVm.menuTree.icon.icoName }
 
     var spotlight: Bool { nodeVm.spotlight }

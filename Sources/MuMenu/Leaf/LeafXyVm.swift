@@ -46,18 +46,18 @@ public class LeafXyVm: LeafVm {
             
             if visit.type.has([.model,.bind,.remote]) {
 
-                menuTree.model˚.setAnyExprs([("x", x),("y", y)], .sneak, visit)
+                menuTree.flo.setAnyExprs([("x", x),("y", y)], .sneak, visit)
                 
             } else if visit.type.has([.user]) {
                 
-                menuTree.model˚.setAnyExprs([("x", x),("y", y)], .fire, visit)
+                menuTree.flo.setAnyExprs([("x", x),("y", y)], .fire, visit)
                 updateLeafPeers(visit)
                 
             } else {
                 print("🔺Xyz visit.type \(visit.type.description)")
             }
         }
-        if !menuTree.model˚.hasPlugins {
+        if !menuTree.flo.hasPlugins {
             thumb.tween = thumb.value
         }
         refreshView()
