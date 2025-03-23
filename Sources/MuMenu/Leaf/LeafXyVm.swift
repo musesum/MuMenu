@@ -44,11 +44,11 @@ public class LeafXyVm: LeafVm {
             let x = expand(named: "x", thumb.value.x)
             let y = expand(named: "y", thumb.value.y)
             
-            if visit.type.has([.model,.bind,.remote]) {
+            if visit.type.has([.model,.bind,.midi]) {
 
                 menuTree.flo.setAnyExprs([("x", x),("y", y)], .sneak, visit)
-                
-            } else if visit.type.has([.user]) {
+
+            } else if visit.type.has([.user, .remote]) {
                 
                 menuTree.flo.setAnyExprs([("x", x),("y", y)], .fire, visit)
                 updateLeafPeers(visit)

@@ -50,7 +50,7 @@ public class LeafRunways {
         if let bounds = runwayBounds[runwayType]  {
             return runwayType.thumbRadius / max(bounds.height,bounds.width) / 2.0
         } else {
-            return 1/6 //... 
+            return 1/6 
         }
     }
 

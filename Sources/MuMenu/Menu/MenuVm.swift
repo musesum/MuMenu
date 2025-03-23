@@ -7,7 +7,6 @@ import MuVision
 open class MenuVm: FloId {
 
     public var rootVm: RootVm
-    //.... public var menuTreeRoot: MenuTree? // root node of menu tree
     public var floNames: [String] = []
 
     /// one or two menus emanating from a corner
