@@ -95,7 +95,7 @@ open class MenuVm: FloId {
         }
 
         func err(_ msg: String) {
-            PrintLog("𐂷 MenuVm::updateSpotTree err: \(msg)")
+            //.... PrintLog("𐂷 MenuVm::updateSpotTree err: \(msg)")
         }
 
         func makeSpotTree(_ menuTree: MenuTree) -> Flo? {
