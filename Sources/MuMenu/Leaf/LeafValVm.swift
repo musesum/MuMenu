@@ -10,14 +10,6 @@ public class LeafValVm: LeafVm {
         ranges.values.first ?? 0...1
     }()
 
-    /// scale up normalized to defined range
-    var expanded: Double {
-        guard let thumb = runways.thumb(.runVal) else { return 0 }
-        let v = panelVm.isVertical ? thumb.value.y : thumb.value.x
-        let double = scale(v, from: 0...1, to: range)
-        return double
-    }
-
     /// user touch gesture inside runway
     override public func touchLeaf(_ touchState: TouchState, _ visit: Visitor) {
         runways.touchLeaf(self,touchState) // no quantize
@@ -45,15 +37,16 @@ public class LeafValVm: LeafVm {
             // ignore
         } else {
     
-            let v = expanded
+            let x = expand(named: "x", thumb.value.x)
+            let y = expand(named: "y", thumb.value.y)
 
-            if visit.type.has([.model,.bind, .midi]) {
+            if visit.type.has([.model, .bind]) {
 
-                menuTree.flo.setAnyExprs([("x", v),("y", v)], .sneak, visit)
+                menuTree.flo.setAnyExprs([("x", x),("y", y)], .sneak, visit)
 
-            } else if visit.type.has([.user,.remote]) {
+            } else if visit.type.has([.user, .remote]) {
 
-                menuTree.flo.setAnyExprs([("x", v),("y",v)], .fire, visit)
+                menuTree.flo.setAnyExprs([("x", x),("y", y)], .fire, visit)
                 updateLeafPeers(visit)
             }
         }

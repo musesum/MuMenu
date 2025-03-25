@@ -5,17 +5,17 @@ import MuFlo
 
 /// 2d XY control
 public class LeafXyVm: LeafVm {
-
+    
     /// ticks above and below nearest tick,
     /// but never on panel border or thumb border
     func ticks() -> [CGSize] {
         var result = [CGSize]()
         let lengthXY = self.panelVm.runwayXY
         let span = CGFloat(0.25)
-
+        
         for w in stride(from: CGFloat(0), through: 1, by: span) {
             for h in stride(from: CGFloat(0), through: 1, by: span) {
-
+                
                 let tick = CGSize(width:  w * lengthXY.x,
                                   height: h * lengthXY.y)
                 result.append(tick)
@@ -34,6 +34,7 @@ public class LeafXyVm: LeafVm {
 
     /// called via user touch or via model update
     override public func syncVal(_ visit: Visitor) {
+        
         guard visit.newVisit(leafHash) else { return }
         guard let thumb = runways.thumb(.runXY) else { return  }
 
@@ -44,7 +45,7 @@ public class LeafXyVm: LeafVm {
             let x = expand(named: "x", thumb.value.x)
             let y = expand(named: "y", thumb.value.y)
             
-            if visit.type.has([.model,.bind,.midi]) {
+            if visit.type.has([.model, .bind]) {
 
                 menuTree.flo.setAnyExprs([("x", x),("y", y)], .sneak, visit)
 

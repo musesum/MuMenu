@@ -17,7 +17,7 @@ public class NodeVm: Identifiable, ObservableObject {
     internal var panelVm: PanelVm        /// the panel that this node belongs to
     private var prevNodeVm: NodeVm?     /// parent nodeVm in hierarchy
     internal var rootVm: RootVm
-    private var chiral: Chiral
+    public var chiral: Chiral
 
     @Published var refresh: Int = 0
     @Published var zIndex: CGFloat = 0 /// stack current spotlight node on top of others

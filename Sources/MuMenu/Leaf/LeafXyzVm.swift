@@ -8,14 +8,14 @@ public class LeafXyzVm: LeafVm {
 
     /// ticks above and below nearest tick,
     /// but never on panel border or thumb border
-   func ticks() -> [CGSize] {
+    func ticks() -> [CGSize] {
         var result = [CGSize]()
         let lengthXY = self.panelVm.runwayXY
         let span = CGFloat(0.25)
         
         for w in stride(from: CGFloat(0), through: 1, by: span) {
             for h in stride(from: CGFloat(0), through: 1, by: span) {
-
+                
                 let tick = CGSize(width:  w * lengthXY.x,
                                   height: h * lengthXY.y)
                 result.append(tick)
@@ -35,6 +35,7 @@ public class LeafXyzVm: LeafVm {
 
     /// called via user touch or via model update
     override public func syncVal(_ visit: Visitor) {
+        
         guard visit.newVisit(leafHash) else { return }
         guard let thumb = runways.thumb(.runXY) else { return  }
 
@@ -46,11 +47,11 @@ public class LeafXyzVm: LeafVm {
             let y = expand(named: "y", thumb.value.y)
             let z = expand(named: "z", thumb.value.z)
 
-            if visit.type.has([.model,.bind,.remote]) {
+            if visit.type.has([.model,.bind]) {
 
                 menuTree.flo.setAnyExprs([("x", x),("y", y), ("z", z)], .sneak, visit)
 
-            } else if visit.type.has([.user]) {
+            } else if visit.type.has([.user, .remote]) {
 
                 menuTree.flo.setAnyExprs([("x", x),("y", y), ("z", z)], .fire, visit)
                 updateLeafPeers(visit)

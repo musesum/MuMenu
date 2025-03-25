@@ -38,30 +38,7 @@ public class LeafSegVm: LeafValVm {
     }
 
     override public func syncVal(_ visit: Visitor) {
-        guard visit.newVisit(leafHash) else { return }
-        guard let thumb = runways.thumb(.runVal) else { return  }
-
-        if visit.type == .tween {
-            // ignore
-        } else {
-
-            // quantize is only differnce with LeafSegVm
-            let v = expanded.quantize(count)
-
-            if visit.type.has([.model,.bind,.midi,.remote]) {
-
-                menuTree.flo.setAnyExprs([("x", v),("y", v)], .sneak, visit)
-
-            } else if visit.type.has([.user]) {
-
-                menuTree.flo.setAnyExprs([("x", v),("y",v)], .fire, visit)
-                updateLeafPeers(visit)
-            }
-        }
-        if !menuTree.flo.hasPlugins {
-            thumb.tween = thumb.value
-        }
-        refreshView()
+        super.syncVal(visit)
     }
 
 
