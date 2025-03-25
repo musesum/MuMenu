@@ -33,7 +33,7 @@ public class LeafValVm: LeafVm {
         guard visit.newVisit(leafHash) else { return }
         guard let thumb = runways.thumb(.runVal) else { return  }
 
-        if visit.type == .tween {
+        if visit.type.has([.tween, .midi]) {
             // ignore
         } else {
     
