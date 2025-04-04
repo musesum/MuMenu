@@ -4,6 +4,7 @@ import SwiftUI
 import MuFlo
 
 /// toggle control
+@MainActor
 public class LeafTogVm: LeafVm {
 
     /// user touches tog

@@ -4,10 +4,11 @@ import MuFlo
 
 enum ShowTree: String { case hide, canopy, show }
 
-public class TreeVm: FloId, Identifiable, Equatable, ObservableObject {
-
-    public static func == (lhs: TreeVm, rhs: TreeVm) -> Bool { return lhs.id == rhs.id }
-    public static var sideAxis = [SideAxisId: TreeVm]()
+@MainActor
+public class TreeVm: Identifiable, Equatable, ObservableObject {
+    public let id = Visitor.nextId()
+    nonisolated public static func == (lhs: TreeVm, rhs: TreeVm) -> Bool { return lhs.id == rhs.id }
+    nonisolated(unsafe) public static var sideAxis = [SideAxisId: TreeVm]()
 
     @Published var branchVms = [BranchVm]()
 
@@ -20,7 +21,7 @@ public class TreeVm: FloId, Identifiable, Equatable, ObservableObject {
     @Published var showTree: ShowTree = .show
     var hideAnimationTimer: Timer?
 
-    @Published var interval: TimeInterval = 2.0
+    var interval: TimeInterval = 2.0
 
     var rootVm: RootVm
     var branchSpotVm: BranchVm?
@@ -58,8 +59,6 @@ public class TreeVm: FloId, Identifiable, Equatable, ObservableObject {
         self.rootVm = rootVm
         self.corner = corner
         self.isVertical = (corner.axis == .vertical)
-        super.init()
-        
         TreeVm.sideAxis[corner.sideAxis.rawValue] = self
     }
     

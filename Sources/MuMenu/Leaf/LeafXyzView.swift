@@ -6,7 +6,6 @@ import MuFlo
 struct LeafXyzView: View {
 
     @ObservedObject var leafVm: LeafXyzVm
-
     var size: CGSize { leafVm.panelVm.outerPanel }
 
     public var body: some View {

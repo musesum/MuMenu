@@ -3,125 +3,67 @@
 import SwiftUI
 import MuFlo
 
-public typealias SideAxisId = Int
+nonisolated(unsafe) public var CornerOpVm = [Int: CornerVm]()
 
-public struct MenuTreeItem: Codable {
-
-    public var sideAxis : SideAxisId //Int
-    public var depth  : Int
-    public var start  : Int
-
-    public init(_ treeVm: TreeVm) {
-        self.sideAxis = treeVm.corner.sideAxis.rawValue
-        self.depth = treeVm.depthShown
-        self.start = treeVm.startIndex
-    }
-
-    enum CodingKeys: String, CodingKey {
-        case sideAxis, depth, start
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        try sideAxis = container.decode(Int.self, forKey: .sideAxis)
-        try depth    = container.decode(Int.self, forKey: .depth )
-        try start    = container.decode(Int.self, forKey: .start )
-    }
-    var treeVm: TreeVm? {
-        return TreeVm.sideAxis[sideAxis]
-    }
-    
-    func showTree(_ fromRemote: Bool) {
-        treeVm?.showTree(start: start,
-                         depth: depth,
-                         "item",fromRemote)
-    }
-
-}
-
-public struct MenuRootItem: Codable {
-
-    public var trees    : [MenuTreeItem]
-    public var cornerOp : Int
-    public var phase    : Int // UITouch.Phase
-
-    public init(_ rootVm: RootVm) {
-        var trees = [MenuTreeItem]()
-        for treeVm in rootVm.treeVms {
-            trees.append(MenuTreeItem(treeVm))
-        }
-        self.trees = trees
-        self.cornerOp = rootVm.cornerOp.rawValue
-        self.phase = rootVm.touchState.phase.rawValue
-    }
-
-    enum CodingKeys: String, CodingKey { case trees, cornerOp, phase }
-
-    public init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        try trees    = c.decode([MenuTreeItem].self, forKey: .trees )
-        try cornerOp = c.decode(Int.self, forKey: .cornerOp)
-        try phase    = c.decode(Int.self, forKey: .phase )
-    }
-}
-
-public enum MenuType: String, CodingKey {
+public enum MenuType: String, Codable, Sendable {
     case root, node, leaf, touch }
 
-public struct MenuItem: Codable {
+public enum MenuItemContent: Codable, Sendable {
+    case root(MenuRootItem)
+    case node(MenuNodeItem)
+    case leaf(MenuLeafItem)
+    case touch(MenuTouchItem)
+}
+public struct MenuItem: Codable, Sendable {
 
-    public var type     : MenuType
-    public var time     : TimeInterval
-    public var cornerOp : Int
-    public let phase    : Int // UITouch.Phase
-    public let item     : Any?
+    public let type     : MenuType
+    public let time     : TimeInterval
+    public let cornerOp : Int
+    public let phase    : Int // UITouch.Phase.rawValue
+    public let item     : MenuItemContent
 
     public init(root: MenuRootItem) {
 
         self.type   = .root
-        self.item   = root
-
+        self.item   = .root(root)
         self.time   = Date().timeIntervalSince1970
         self.cornerOp = root.cornerOp
         self.phase  = root.phase
 
-        // log("MenuRootItem", [self.phase])
+        // log("MenuItem", [self.phase])
     }
 
     public init(node: MenuNodeItem,
                 _ cornerOp: CornerOp,
-                _ phase : UITouch.Phase) {
+                _ phase : Int) {
 
         self.type   = .node
-        self.item   = node
-
+        self.item   = .node(node)
         self.time   = Date().timeIntervalSince1970
         self.cornerOp = cornerOp.rawValue
-        self.phase  = phase.rawValue
+        self.phase  = phase
 
         // log("MenuNodeItem", [self.phase])
     }
 
     public init(leaf: MenuLeafItem,
                 _ corner: CornerOp,
-                _ phase : UITouch.Phase) {
+                _ phase : Int) {
 
         self.type   = .leaf
-        self.item   = leaf
-
+        self.item   = .leaf(leaf)
         self.time   = Date().timeIntervalSince1970
         self.cornerOp = corner.rawValue
-        self.phase  = phase.rawValue
+        self.phase  = phase
 
         // log("MenuNodeItem", [self.phase])
     }
 
-    public init(_ touch: UITouch,
+    public init(_ touch: SendTouch,
                 _ corner: CornerOp) {
-        
-        self.type   = .touch
-        self.item   = MenuTouchItem(touch)
 
+        self.type   = .touch
+        self.item   = .touch(MenuTouchItem(touch))
         self.time   = Date().timeIntervalSince1970
         self.cornerOp = corner.rawValue
         self.phase  = touch.phase.rawValue
@@ -131,36 +73,28 @@ public struct MenuItem: Codable {
         case type, time, cornerOp, phase, item }
 
     public func encode(to encoder: Encoder) throws {
-        var c = encoder.container(keyedBy: CodingKeys.self)
-        try c.encode(type.stringValue, forKey: .type)
-        try c.encode(time,      forKey: .time    )
-        try c.encode(cornerOp,  forKey: .cornerOp)
-        try c.encode(phase,     forKey: .phase   )
-        switch type {
-        case .root : try c.encode(item as? MenuRootItem,  forKey: .item)
-        case .node : try c.encode(item as? MenuNodeItem,  forKey: .item)
-        case .leaf : try c.encode(item as? MenuLeafItem,  forKey: .item)
-        case .touch: try c.encode(item as? MenuTouchItem, forKey: .item)
-        }
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(type, forKey: .type)
+        try container.encode(time, forKey: .time)
+        try container.encode(cornerOp, forKey: .cornerOp)
+        try container.encode(phase, forKey: .phase)
+        try container.encode(item, forKey: .item)
     }
     public init(from decoder: Decoder) throws {
-        let c  = try decoder.container(keyedBy: CodingKeys.self)
-        type = MenuType(rawValue: try c.decode(String.self, forKey: .type)) ?? .node
-        try time     = c.decode(Double.self, forKey: .time    )
-        try cornerOp = c.decode(Int   .self, forKey: .cornerOp)
-        try phase    = c.decode(Int   .self, forKey: .phase   )
-        switch type {
-        case .root : try item = c.decode(MenuRootItem .self, forKey: .item)
-        case .node : try item = c.decode(MenuNodeItem .self, forKey: .item)
-        case .leaf : try item = c.decode(MenuLeafItem .self, forKey: .item)
-        case .touch: try item = c.decode(MenuTouchItem.self, forKey: .item)
-        }
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        type = try container.decode(MenuType.self, forKey: .type)
+        time = try container.decode(TimeInterval.self, forKey: .time)
+        cornerOp = try container.decode(Int.self, forKey: .cornerOp)
+        phase = try container.decode(Int.self, forKey: .phase)
+        item = try container.decode(MenuItemContent.self, forKey: .item)
     }
 
     var key: Int {
-        switch type {
-            case .touch: return (item as? MenuTouchItem)?.finger ?? type.rawValue.hash
-            default: return type.rawValue.hash
+        switch item {
+        case .touch(let touchItem):
+            return touchItem.finger
+        default:
+            return type.rawValue.hash
         }
     }
     var isDone: Bool {

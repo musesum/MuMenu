@@ -14,14 +14,14 @@ struct BranchView: View {
     }
     var body: some View {
         if branchVm.columns > 1 {
-            switch treeVm.corner.cornerAxis {
+            switch branchVm.treeVm.corner.cornerAxis {
             case .LLV, .LRV: VStack                     { titleV(branchVm); gridV(branchVm)  }
             case .ULV, .URV: VStack                     { gridV(branchVm) ; titleV(branchVm) }
             case .LLH, .ULH: HStack(alignment: .bottom) { gridV(branchVm) ; titleV(branchVm) }
             case .URH, .LRH: HStack(alignment: .top)    { titleV(branchVm); gridV(branchVm)  }
             }
         } else {
-            switch treeVm.corner.cornerAxis {
+            switch branchVm.treeVm.corner.cornerAxis {
             case .LLV, .LRV: VStack                     { titleV(branchVm); bodyV(branchVm)  }
             case .ULV, .URV: VStack                     { bodyV(branchVm) ; titleV(branchVm) }
             case .LLH, .ULH: HStack(alignment: .bottom) { bodyV(branchVm) ; titleV(branchVm) }

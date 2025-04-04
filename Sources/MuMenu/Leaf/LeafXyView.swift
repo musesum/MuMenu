@@ -5,7 +5,6 @@ import SwiftUI
 public struct LeafXyView: View {
 
     @ObservedObject var leafVm: LeafXyVm
-
     var size: CGSize { leafVm.panelVm.outerPanel }
 
     public var body: some View {

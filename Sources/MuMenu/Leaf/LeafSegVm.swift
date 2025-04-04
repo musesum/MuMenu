@@ -4,9 +4,10 @@ import SwiftUI
 import MuFlo
 
 /// segmented LeafValVm control
+@MainActor
 public class LeafSegVm: LeafValVm {
 
-    lazy var count: Double = { range.upperBound - range.lowerBound }()
+    var count: Double { range.upperBound - range.lowerBound }
 
     /// ticks above and below nearest tick,
     /// but never on panel border or thumb border

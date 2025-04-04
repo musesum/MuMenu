@@ -2,6 +2,7 @@
 
 import Foundation
 
+@MainActor
 extension TreeVm { // + Peers
 
     func gotoNodeItem(_ nodeItem: MenuNodeItem) -> NodeVm? {

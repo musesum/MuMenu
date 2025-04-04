@@ -11,7 +11,6 @@ public struct MenuRootView_OLD: View {
     let menuVm: MenuVm
     var cornerVm: CornerVm { menuVm.rootVm.cornerVm }
 
-
     public init(menuVm: MenuVm) {
         self.menuVm = menuVm
     }

@@ -3,9 +3,7 @@ import SwiftUI
 
 /// hierarchical menu of horizontal or vertical branches
 struct TreeView: View {
-
     @ObservedObject var treeVm: TreeVm
-
     var cornerOp: CornerOp { treeVm.rootVm.cornerOp }
     var canopyOpacity: CGFloat { treeVm.showTree == .canopy ? 0.5 : 0 }
     var treeOpacity: CGFloat { treeVm.showTree == .show ? 1 : 0 }

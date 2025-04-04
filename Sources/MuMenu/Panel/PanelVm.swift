@@ -3,6 +3,7 @@
 import SwiftUI
 import MuFlo
 
+@MainActor
 public class PanelVm {
 
     let branchVm: BranchVm

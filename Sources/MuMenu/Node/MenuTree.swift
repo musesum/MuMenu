@@ -4,8 +4,9 @@ import SwiftUI
 import MuFlo
 import MuVision
 
-open class MenuTree: FloId, Identifiable, Equatable {
-
+@MainActor //_____
+open class MenuTree: Identifiable, Equatable {
+    public let id = Visitor.nextId()
     public var flo: Flo
     public var icon: Icon!
     public var parentTree: MenuTree?
@@ -38,7 +39,7 @@ open class MenuTree: FloId, Identifiable, Equatable {
         return _hashPath
     }()
 
-    public static func == (lhs: MenuTree, rhs: MenuTree) -> Bool {
+    nonisolated public static func == (lhs: MenuTree, rhs: MenuTree) -> Bool {
         return lhs.hash == rhs.hash
     }
 
@@ -47,7 +48,6 @@ open class MenuTree: FloId, Identifiable, Equatable {
 
         self.flo = flo
         self.parentTree = parentTree
-        super.init()
         self.icon = makeFloIcon(flo)
         parentTree?.children.append(self)
         makeOptionalControl()
@@ -63,7 +63,6 @@ open class MenuTree: FloId, Identifiable, Equatable {
         self.icon = icon
         self.parentTree = parentTree
         self.nodeType = nodeType
-        super.init()
         parentTree?.children.append(self)
     }
 

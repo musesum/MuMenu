@@ -4,6 +4,7 @@ import SwiftUI
 import MuFlo
 
 /// 1d slider control
+@MainActor
 public class LeafValVm: LeafVm {
 
     lazy var range: ClosedRange<Double> = {

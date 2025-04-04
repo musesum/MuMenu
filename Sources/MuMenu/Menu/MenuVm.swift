@@ -4,8 +4,9 @@ import SwiftUI
 import MuFlo
 import MuVision
 
-open class MenuVm: FloId {
-
+@MainActor
+open class MenuVm {
+    let id = Visitor.nextId()
     public var rootVm: RootVm
     public var floNames: [String] = []
 
@@ -25,7 +26,6 @@ open class MenuVm: FloId {
 
         // both veritical and horizontal menu will share the same root
         self.rootVm = RootVm(corners.first!.cornerOp)
-        super.init()
 
         for corner in corners {
             let cornerTreeVm = TreeVm(rootVm, corner)
@@ -159,10 +159,11 @@ open class MenuVm: FloId {
     }
 
 }
+@MainActor
 extension MenuVm: Hashable {
 
-    public static func == (lhs: MenuVm, rhs: MenuVm) -> Bool { lhs.id == rhs.id }
-    public func hash(into hasher: inout Hasher) { hasher.combine(id) }
+    nonisolated public static func == (lhs: MenuVm, rhs: MenuVm) -> Bool { lhs.id == rhs.id }
+    nonisolated public func hash(into hasher: inout Hasher) { hasher.combine(id) }
 
 }
 

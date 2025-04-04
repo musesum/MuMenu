@@ -4,7 +4,7 @@ import SwiftUI
 
 public struct LeafThumbSlideView: View {
 
-    @ObservedObject var leafVm: LeafVm
+    var leafVm: LeafVm
     let runwayType: LeafRunwayType
     var diameter: Double { runwayType.thumbRadius - 2 }
     var ticks: [CGSize]?

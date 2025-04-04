@@ -4,17 +4,16 @@ import SwiftUI
 import MuFlo
 import MuVision
 
-public class BranchVm: FloId, Identifiable, ObservableObject {
-
+@MainActor
+public class BranchVm: Identifiable, ObservableObject {
+    public let id = Visitor.nextId()
     static func == (lhs: BranchVm, rhs: BranchVm)  -> Bool { lhs.id == rhs.id }
     static func == (lhs: BranchVm, rhs: BranchVm?) -> Bool { lhs.id == (rhs?.id ?? -1) }
 
     @Published var show: Bool = false
     @Published var opacity: CGFloat = 1 /// branch may be partially occluded
 
-    var branchShift: CGSize {
-            treeVm.treeShift.clamped(to: shiftRange)
-    }
+    var branchShift: CGSize { treeVm.treeShift.clamped(to: shiftRange) }
     var shiftRange: RangeXY = (0...1, 0...1)
     var titleShift: CGSize = .zero
 
@@ -56,7 +55,7 @@ public class BranchVm: FloId, Identifiable, ObservableObject {
         self.branchPrev = branchPrev
         self.zindex = zindex
         self.columns = prevNodeVm?.menuTree.flo.intVal("columns") ?? 1
-        super.init()
+
         self.panelVm = PanelVm(branchVm: self,
                                menuTrees: menuTrees,
                                treeVm: treeVm,
@@ -69,15 +68,13 @@ public class BranchVm: FloId, Identifiable, ObservableObject {
         updateTree(treeVm)
     }
 
-    private func buildNodeVms(menuTrees: [MenuTree],
+    public func buildNodeVms(menuTrees: [MenuTree],
                               prevNodeVm: NodeVm?) {
 
         for menuTree in menuTrees {
             let nodeVm = NodeVm.makeNodeVm(menuTree, self, prevNodeVm)
             nodeVms.append(nodeVm)
-            if nodeVm.spotlight || menuTree.nodeType.isControl {
-                nodeSpotVm = nodeVm
-            }
+            
         }
     }
    

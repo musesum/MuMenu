@@ -2,6 +2,7 @@
 
 import SwiftUI
 
+@MainActor
 extension NodeVm {
 
     static func makeNodeVm(_ menuTree: MenuTree,
@@ -22,14 +23,7 @@ extension NodeVm {
         case .arch : return LeafArchiveVm (m,b,p, [])
         default    : return NodeVm        (m,b,p)
         }
+        
     }
 }
 
-extension NodeVm: Hashable {
-
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(nodeHash)
-        _ = hasher.finalize()
-        //print(path + String(format: ": %i", result))
-    }
-}

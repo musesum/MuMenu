@@ -3,6 +3,7 @@
 import Foundation
 import MuFlo
 
+@MainActor
 extension TreeVm { // + Shift
 
     public func shiftNearest() {

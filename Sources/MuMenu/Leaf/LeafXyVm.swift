@@ -4,8 +4,9 @@ import SwiftUI
 import MuFlo
 
 /// 2d XY control
+@MainActor
 public class LeafXyVm: LeafVm {
-    
+
     /// ticks above and below nearest tick,
     /// but never on panel border or thumb border
     func ticks() -> [CGSize] {

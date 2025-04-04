@@ -3,7 +3,9 @@
 import SwiftUI
 import MuFlo
 
-@Observable class StatusVm: Identifiable {
+@Observable
+@MainActor
+class StatusVm: Identifiable {
 
     static var shared = StatusVm()
 

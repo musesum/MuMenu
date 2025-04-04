@@ -4,6 +4,7 @@ import SwiftUI
 import MuPeer
 import MuFlo
 
+@MainActor
 public class LeafArchiveVm: LeafVm {
     
     override public func touchLeaf(_: TouchState, _: Visitor) {}

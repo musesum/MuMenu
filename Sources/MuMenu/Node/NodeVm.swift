@@ -4,33 +4,32 @@ import SwiftUI
 import MuFlo // strHash
 import MuVision // Chiral
 
-public class NodeVm: Identifiable, ObservableObject {
-
-    public static var IdNode = [Int: NodeVm]()
+@MainActor
+public class NodeVm: Identifiable, ObservableObject,
+                     @preconcurrency Hashable,
+                     @preconcurrency Equatable {
 
     public let menuTree: MenuTree /// maybe shared on other branches
     public var nodeType: NodeType /// node, val, vxy, seg, tog
     public var branchVm: BranchVm /// branch that this node is on
     public var center = CGPoint.zero /// current center position
-
+    
     internal var nextBranchVm: BranchVm? /// branch this node generates
     internal var panelVm: PanelVm        /// the panel that this node belongs to
     private var prevNodeVm: NodeVm?     /// parent nodeVm in hierarchy
     internal var rootVm: RootVm
     public var chiral: Chiral
-
+    
     @Published var refresh: Int = 0
     @Published var zIndex: CGFloat = 0 /// stack current spotlight node on top of others
     @Published var origin = true
-
+    
     /// publish when selected or is under cursor
-    @Published var _spotlight: Bool = false
-    var spotlight: Bool {
-        get { self._spotlight }
-        set { _spotlight = newValue
-            if let spotFlo = menuTree.chiralSpot[chiral]  { 
-                let oldVal: Double = spotFlo.val("on") ?? -1
-                let newVal: Double = newValue ? 1 : 0
+    @Published final var spotlight: Bool = false {
+        didSet {
+            if let spotFlo = menuTree.chiralSpot[chiral]  {
+                let oldVal: Double = oldValue ? 1 : 0
+                let newVal: Double = spotlight ? 1 : 0
                 if oldVal != newVal {
                     //DebugLog { P("🔦 \(spotFlo.path(99))(on \(newVal.digits(0)))") }
                     spotFlo.setVal("on", newVal, .sneak)
@@ -38,18 +37,26 @@ public class NodeVm: Identifiable, ObservableObject {
             }
         }
     }
-
+    
     func spot(on: Bool) {
         if on == spotlight { return }
         if on == true { menuTree.flo.updateTime() }
     }
-
-    public var nodeHash: Int {
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(nodeHash)
+        _ = hasher.finalize()
+        //print(path + String(format: ": %i", result))
+    }
+    
+    var nodeHash: Int {
         let id = menuTree.path.strHash()
-        NodeVm.IdNode[id] = self
         return id
     }
-
+    public static func == (lhs: NodeVm, rhs: NodeVm) -> Bool {
+        return lhs.nodeHash == rhs.nodeHash
+    }
+    
     public var nodeVmPath: [NodeVm] {
         var path = [NodeVm]()
         if let prevNodeVm {
@@ -58,10 +65,10 @@ public class NodeVm: Identifiable, ObservableObject {
         path.append(self)
         return path
     }
-
+    
     public func treeTitle() -> String { menuTree.flo.name  }
     public func leafTitle() -> String { "" }
-
+    
     public init (_ menuTree: MenuTree, // shared Menu Model
                  _ branchVm: BranchVm,
                  _ prevVm: NodeVm?) {
@@ -72,12 +79,12 @@ public class NodeVm: Identifiable, ObservableObject {
         self.branchVm = branchVm
         self.chiral = branchVm.chiral
         self.prevNodeVm = prevVm
-
+        
         self.panelVm = PanelVm(branchVm  : branchVm,
                                menuTrees : [menuTree],
                                treeVm    : branchVm.treeVm,
                                columns   : 1)
-
+        
         prevVm?.nextBranchVm = branchVm
     }
     
@@ -102,7 +109,7 @@ public class NodeVm: Identifiable, ObservableObject {
                          y: frame.origin.y + frame.size.height/2)
     }
     
-    func contains(_ point: CGPoint) -> Bool {
+    public func contains(_ point: CGPoint) -> Bool {
         center.distance(point) < (Layout.radius + Layout.padding)
     }
     
@@ -111,23 +118,23 @@ public class NodeVm: Identifiable, ObservableObject {
         superSpotlight()
         branchVm.expandBranch()
     }
-
+    
     func refreshView() {
         Task { @MainActor in
             refresh += 1 // animated tween via published edit var
             branchVm.show = branchVm.show
         }
     }
-
+    
     func lastShownNodeVm() -> NodeVm? {
         return branchVm.treeVm.branchVms.last?.nodeSpotVm
     }
-
+    
     func tapLeaf() {
         PrintLog("􀝰􀥲 tapLeaf: \(nodeType.description)")
         touchedOrigin()
     }
-
+    
     func touchedOrigin() {
         rootVm.endAutoHide(false)
         switch nodeType {
@@ -142,7 +149,7 @@ public class NodeVm: Identifiable, ObservableObject {
             guard let exprs = menuTree.flo.exprs else { return }
             let visit = Visitor(0, .user)
             let state = menuTree.flo.scalarState
-
+            
             if origin { // button showing O for origin
                 if state.onOrigin {
                     if state.hasPrior {
@@ -175,15 +182,12 @@ public class NodeVm: Identifiable, ObservableObject {
             }
         }
     }
+    
+    
 }
-
-extension NodeVm: Equatable {
-    public static func == (lhs: NodeVm, rhs: NodeVm) -> Bool {
-        return lhs.nodeHash == rhs.nodeHash
-    }
-
-}
+#if false //... issue with sendable, this is an unused convenience
 extension NodeVm { // log visitor
+    
     static public func logVisits(_ visitor: Visitor) {
         for visit in visitor.visited {
             if let any = FloIdAny[visit] {
@@ -198,6 +202,5 @@ extension NodeVm { // log visitor
             }
         }
     }
-
-
 }
+#endif

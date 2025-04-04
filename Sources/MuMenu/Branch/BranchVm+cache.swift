@@ -2,8 +2,9 @@
 
 import Foundation
 
-var BranchCache = [Int: BranchVm]()
+nonisolated(unsafe) var BranchCache = [Int: BranchVm]()
 
+@MainActor
 extension BranchVm {
     @discardableResult
     static func cached(menuTrees: [MenuTree] = [],

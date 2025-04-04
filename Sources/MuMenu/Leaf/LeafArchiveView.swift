@@ -5,7 +5,7 @@ import MuFlo // ArchivePickerView, NextFrame
 
 struct LeafArchiveView: View {
 
-    @ObservedObject var leafVm: LeafArchiveVm
+    var leafVm: LeafArchiveVm
     
     var panelVm: PanelVm { leafVm.panelVm }
     @State private var showSettings = false

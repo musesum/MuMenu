@@ -7,6 +7,7 @@ import MuFlo
 public enum OnOff { case on, off }
 
 /// extend MuNodeVm to show title and thumb position
+@MainActor
 public class LeafVm: NodeVm {
     var runways: LeafRunways!
     var ranges = [String : ClosedRange<Double>]()
@@ -85,7 +86,7 @@ public class LeafVm: NodeVm {
            let thumb = runways.thumb() {
 
             let leafItem = MenuLeafItem(self, thumb)
-            let menuItem = MenuItem(leaf: leafItem, rootVm.cornerOp, .moved)
+            let menuItem = MenuItem(leaf: leafItem, rootVm.cornerOp, SendTouch.Phase.moved.rawValue)
             rootVm.sendItemToPeers(menuItem)
         }
     }

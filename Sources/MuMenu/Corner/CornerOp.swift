@@ -2,7 +2,7 @@
 
 import SwiftUI
 
-public struct CornerOp: OptionSet {
+public struct CornerOp: OptionSet, Sendable {
 
     public let rawValue: Int
     static func flipUpperLower(_ oldOp: Int) -> Int {
@@ -17,10 +17,10 @@ public struct CornerOp: OptionSet {
         self.rawValue = rawValue
     }
 
-    public static let upper = CornerOp(rawValue: 1 << 0) // 1
-    public static let lower = CornerOp(rawValue: 1 << 1) // 2
-    public static let left  = CornerOp(rawValue: 1 << 2) // 4
-    public static let right = CornerOp(rawValue: 1 << 3) // 8
+    static let upper = CornerOp(rawValue: 1 << 0) // 1
+    static let lower = CornerOp(rawValue: 1 << 1) // 2
+    static let left  = CornerOp(rawValue: 1 << 2) // 4
+    static let right = CornerOp(rawValue: 1 << 3) // 8
 
     var upper : Bool { contains(.upper)}
     var lower : Bool { contains(.lower)}
@@ -29,7 +29,7 @@ public struct CornerOp: OptionSet {
 
     var side  : Int { rawValue & CornerOp([.left,.right]).rawValue }
 
-    static public var description: [(Self, String)] = [
+    static public let description: [(Self, String)] = [
         (.upper,  "upper"),
         (.lower,  "lower"),
         (.left,   "left"),

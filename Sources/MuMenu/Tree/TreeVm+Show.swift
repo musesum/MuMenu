@@ -3,24 +3,25 @@
 
 import Foundation
 
+@MainActor
 extension TreeVm { // +Show
 
     func startHideAnimation(_ interval: TimeInterval,
                             _ done: @escaping () -> Void) {
-        if showTree != .show { return }
-        self.showTree = .canopy
-
-        hideAnimationTimer = Timer.scheduledTimer(withTimeInterval: interval,
-                                                  repeats: true) { [weak self] timer in
-            guard let self else { return }
-
-            switch self.showTree {
-            case .show   : self.showTree = .canopy
-            case .canopy : self.showTree = .hide; done()
-            case .hide   : self.showTree = .show; timer.invalidate()
-            }
-            //print("\(#function) \(self.showTree.rawValue) interval: \(interval)")
-        }
+//....        if showTree != .show { return }
+//        self.showTree = .canopy
+//
+//        hideAnimationTimer = Timer.scheduledTimer(withTimeInterval: interval,
+//                                                  repeats: true) { [weak self] timer in
+//            guard let self else { return }
+//
+//            switch self.showTree {
+//            case .show   : self.showTree = .canopy
+//            case .canopy : self.showTree = .hide; done()
+//            case .hide   : self.showTree = .show; timer.invalidate()
+//            }
+//            //print("\(#function) \(self.showTree.rawValue) interval: \(interval)")
+//        }
     }
 
     func hideTree(_ touchType: TouchType,

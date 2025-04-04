@@ -5,6 +5,7 @@ import SwiftUI
 import MuPeer
 import MuFlo
 
+@MainActor
 public class LeafPeerVm: LeafVm {
     
     public var peersVm = PeersVm.shared

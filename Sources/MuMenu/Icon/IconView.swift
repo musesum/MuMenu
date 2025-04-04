@@ -6,7 +6,7 @@ import SwiftUI
 struct IconView: View {
 
     @Environment(\.colorScheme) var colorScheme // darkMode
-    @ObservedObject var nodeVm: NodeVm
+    var nodeVm: NodeVm
 
     let icon: Icon
     let runwayType: LeafRunwayType

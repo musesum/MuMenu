@@ -4,7 +4,7 @@ import SwiftUI
 
 struct CursorView: View {
 
-    @ObservedObject var nodeVm: NodeVm
+    var nodeVm: NodeVm
     var diameter: CGFloat
     var panelVm: PanelVm { nodeVm.panelVm }
 

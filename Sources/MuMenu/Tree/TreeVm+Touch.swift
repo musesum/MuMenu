@@ -2,6 +2,7 @@
 
 import Foundation
 
+@MainActor
 extension TreeVm {
 
     func nearestTrunk(_ touchNow: CGPoint) -> BranchVm? {

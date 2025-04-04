@@ -4,6 +4,7 @@ import SwiftUI
 import MuFlo
 
 /// 2d XY control
+@MainActor
 public class LeafXyzVm: LeafVm {
 
     /// ticks above and below nearest tick,

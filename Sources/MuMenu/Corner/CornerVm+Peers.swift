@@ -4,47 +4,37 @@ import Foundation
 import MuFlo
 import UIKit
 
+@MainActor
 extension CornerVm {
 
     /// called by UIKit to see if UITouchBegin hits a menu.
     /// If not, it will not call touch
-    public func hitTest(_ touchNow: CGPoint) ->  NodeVm? {
+    public func hitTest(_ touchNow: CGPoint) -> NodeVm? {
         if let logoNodeVm, logoNodeVm.contains(touchNow) {
             return logoNodeVm // hits the root (home) node icon
         } else if let rootVm, let nodeVm = rootVm.hitTest(touchNow) {
-            return nodeVm // hits one of the shown branches
+            return nodeVm // hits one of the shown branches
         }
         return nil // does NOT hit menu
     }
 
     public func gotoMenuItem(_ item: MenuItem) {
-        switch item.type {
-            case .node:
+        switch item.item {
+        case .node(let nodeItem):
+            _ = nodeItem.treeVm?.gotoNodeItem(nodeItem)
 
-                if let nodeItem = item.item as? MenuNodeItem {
-                    _  = nodeItem.treeVm?.gotoNodeItem(nodeItem)
-                }
+        case .leaf(let leafItem):
+            if let leafVm = leafItem.treeVm?.gotoLeafItem(leafItem) {
+                leafVm.remoteThumb(leafItem.leafThumb, Visitor(0, .remote))
+            }
 
-            case .leaf:
+        case .touch(let touchItem):
+            updateRemoteTouch(touchItem, item.phase)
 
-                if let leafItem = item.item as? MenuLeafItem,
-                   let leafVm = leafItem.treeVm?.gotoLeafItem(leafItem) {
-
-                    //print("􀤆", terminator: "")
-                    DispatchQueue.main.async {
-                        leafVm.remoteThumb(leafItem.leafThumb, Visitor(0, .remote))
-                    }
-                }
-            case .touch:
-
-                if let touchItem = item.item as? MenuTouchItem {
-                    updateRemoteTouch(touchItem, item.phase)
-                }
-
-            default: break
+        default:
+            break
         }
     }
-
     /// current not called, useful for shared screen where teacher controls the students root cursor
     public func updateRemoteTouch(_ touchItem: MenuTouchItem,
                                   _ phase: Int) {

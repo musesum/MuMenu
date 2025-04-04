@@ -3,6 +3,7 @@
 import MuFlo
 import MuVision
 
+@MainActor
 public struct MenuVms {
 
     public var menuVms = [MenuVm]()

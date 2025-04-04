@@ -5,9 +5,10 @@ import MuPeer
 import MuFlo
 import MuVision
 
-public class RootVm: FloId, ObservableObject, Equatable {
-
-    public static func == (lhs: RootVm, rhs: RootVm) -> Bool { return lhs.id == rhs.id }
+@MainActor
+public class RootVm: ObservableObject, Equatable {
+    let id = Visitor.nextId()
+    nonisolated public static func == (lhs: RootVm, rhs: RootVm) -> Bool { return lhs.id == rhs.id }
     
     /// is the finger touching
     @Published var touchType = TouchType.none
@@ -32,7 +33,7 @@ public class RootVm: FloId, ObservableObject, Equatable {
 
     public var nodeSpotVm: NodeVm?   /// current last touched or hovered node
 
-    var peers: PeersController?
+    var peers: Peers?
 
     /// update tree from new spot
     func updateSpot(_ newSpotVm: NodeVm,
@@ -44,7 +45,7 @@ public class RootVm: FloId, ObservableObject, Equatable {
         if !fromRemote {
             let phase = touchState.phase
             let nodeItem = MenuNodeItem(newSpotVm)
-            let menuItem = MenuItem(node: nodeItem, cornerOp, phase)
+            let menuItem = MenuItem(node: nodeItem, cornerOp, phase.rawValue)
             sendItemToPeers(menuItem)
         }
     }
@@ -53,13 +54,11 @@ public class RootVm: FloId, ObservableObject, Equatable {
 
         self.cornerOp = cornerOp
         self.cornerVm = CornerVm(cornerOp)
-        self.peers = PeersController.shared
-        super.init()
-        PeersController.shared.peersDelegates.append(self)
+        self.peers = Peers.shared
+        Peers.shared.delegates["RootVm"] = self
     }
-
     deinit {
-        PeersController.shared.remove(peersDelegate: self)
+        Peers.shared.removeDelegate("RootVm")
     }
 
     public func updateTreeVms(_ treeVm: TreeVm) {
@@ -188,7 +187,7 @@ public class RootVm: FloId, ObservableObject, Equatable {
 
         if !fromRemote, let nodeSpotVm {
             let nodeItem = MenuNodeItem(nodeSpotVm)
-            let menuItem = MenuItem(node: nodeItem, cornerOp, touchState.phase)
+            let menuItem = MenuItem(node: nodeItem, cornerOp, touchState.phase.rawValue)
             sendItemToPeers(menuItem)
         }
 
@@ -196,8 +195,11 @@ public class RootVm: FloId, ObservableObject, Equatable {
     public func startAutoHide(_ fromRemote: Bool) {
         #if os(visionOS)
         #else
+
         autoHideTimer = Timer.scheduledTimer(withTimeInterval: autoHideInterval, repeats: false) { timer in
-            self.hideBranches(.none, fromRemote)
+            Task { @MainActor in
+                self.hideBranches(.none, fromRemote)
+            }
         }
         #endif
     }

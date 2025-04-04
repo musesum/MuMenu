@@ -5,6 +5,7 @@ import Foundation
 import SwiftUI
 import MuFlo
 
+@MainActor
 public enum LeafRunwayType: String, Codable {
     case none   = "none"
     case runX   = "x"

@@ -21,20 +21,19 @@ extension RootVm {
 
 }
 
-extension RootVm: PeersControllerDelegate {
+@MainActor
+extension RootVm: PeersDelegate {
 
-    public func didChange() {
-    }
+    nonisolated public func didChange() {}
 
-    public func received(data: Data,
-                         viaStream: Bool) -> Bool {
+    nonisolated public func received(data: Data, viaStream: Bool) {
 
         let decoder = JSONDecoder()
         if let item = try? decoder.decode(MenuItem.self, from: data) {
-            MenuTouch.remoteItem(item)
-            return true
+            Task { @MainActor in
+                MenuTouchRemote.remoteItem(item)
+            }
         }
-        return false
     }
 
 }

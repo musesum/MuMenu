@@ -1,13 +1,13 @@
 //  created by musesum on 9/26/22.
 
 import SwiftUI
+@MainActor
+public struct MenuNodeItem: Codable, Sendable {
 
-public struct MenuNodeItem: Codable {
-
-    public var type     : String
-    public var sideAxis : SideAxisId
-    public var hashPath : [Int] // last shown item on tree
-    public var hashNow  : Int // hash of currently selected item
+    public let type     : String
+    public let sideAxis : SideAxisId
+    public let hashPath : [Int] // last shown item on tree
+    public let hashNow  : Int // hash of currently selected item
 
     public init(_ nodeVm : NodeVm) {
 
@@ -17,28 +17,17 @@ public struct MenuNodeItem: Codable {
         self.hashNow  = nodeVm.menuTree.hash
     } 
 
-    enum CodingKeys: String, CodingKey {
-        case type, sideAxis, hashPath, hashNow }
-    
-    public init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        try type     = c.decode(String.self, forKey: .type    )
-        try sideAxis = c.decode(Int   .self, forKey: .sideAxis)
-        try hashPath = c.decode([Int] .self, forKey: .hashPath)
-        try hashNow  = c.decode(Int   .self, forKey: .hashNow )
-    }
-
     var treeVm: TreeVm? {
         return TreeVm.sideAxis[sideAxis]
     }
 }
+@MainActor
+public struct MenuLeafItem: Codable, Sendable {
 
-public struct MenuLeafItem: Codable {
-
-    public var type      : String
-    public var sideAxis  : Int
-    public var hashPath  : [Int] // last shown item on tree
-    public var hashNow   : Int // hash of currently selected item
+    public let type      : String
+    public let sideAxis  : Int
+    public let hashPath  : [Int] // last shown item on tree
+    public let hashNow   : Int // hash of currently selected item
     public let leafThumb : LeafThumb
 
     public init(_ leafVm    : LeafVm,
@@ -53,7 +42,7 @@ public struct MenuLeafItem: Codable {
 
     enum CodingKeys: String, CodingKey { case type, sideAxis, hashPath, hashNow, leafThumb }
 
-    public init(from decoder: Decoder) throws {
+    nonisolated public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         try type      = c.decode(String   .self, forKey: .type    )
         try sideAxis  = c.decode(Int      .self, forKey: .sideAxis)

@@ -13,7 +13,8 @@ public struct MenuView: View {
 
     var menuVms: [MenuVm]
     var cornerVms: [CornerVm] { menuVms.map { $0.rootVm.cornerVm } }
-    
+    var oldFrame: CGRect = .zero
+
     public init(_ root: Flo,
                 _ menuFrame: MenuFrame) {
 
@@ -44,8 +45,10 @@ public struct MenuView: View {
                 }
             }
             .background(.clear)
-            .onAppear { geoFrame(geo, onAppear: true) }
-            .onChange(of: geo.frame(in: .global)) { geoFrame(geo, onAppear: false) }
+            .onAppear {
+                geoFrame(geo, onAppear: true) }
+            .onChange(of: geo.frame(in: .global)) {
+                geoFrame(geo, onAppear: false) }
             .statusBar(hidden: true)
         }
     }

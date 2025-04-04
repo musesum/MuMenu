@@ -3,10 +3,10 @@
 import SwiftUI
 
 struct NodeView: View {
-
+    
     @ObservedObject var nodeVm: NodeVm
     var size: CGSize { nodeVm.panelVm.innerPanel(.none) }
-
+    
     var body: some View {
         GeometryReader() { geo in
             Group {
@@ -30,6 +30,3 @@ struct NodeView: View {
         .hoverEffect()
     }
 }
-
-
-

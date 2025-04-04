@@ -6,7 +6,8 @@ import SwiftUI
 import MuFlo
 
 /// thumb values are normalized to 0...1
-public class LeafThumb: Codable {
+@MainActor
+public class LeafThumb: ObservableObject, @preconcurrency Codable {
 
     var value: SIMD3<Double> = .zero /// destination value
     var tween: SIMD3<Double> = .zero /// current tween value
@@ -23,20 +24,59 @@ public class LeafThumb: Codable {
          _ x: Double? = nil,
          _ y: Double? = nil,
          _ z: Double? = nil) {
+
         self.type = type
         if let x { value.x = x ; tween.x = x }
         if let y { value.y = y ; tween.y = y }
         if let z { value.z = z ; tween.z = z }
         self.tween = value
     }
-    enum CodingKeys: String, CodingKey { case value, tween, type }
-
-    required public init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        try value = c.decode(SIMD3<Double>.self, forKey: .value )
-        try tween = c.decode(SIMD3<Double>.self, forKey: .tween )
-        try type = c.decode(LeafRunwayType.self, forKey: .type )
+    enum CodingKeys: String, CodingKey {
+        case valueX, valueY, valueZ
+        case tweenX, tweenY, tweenZ
+        case offsetX, offsetY, offsetZ
+        case type
     }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        let vx = try container.decode(Double.self, forKey: .valueX)
+        let vy = try container.decode(Double.self, forKey: .valueY)
+        let vz = try container.decode(Double.self, forKey: .valueZ)
+        value = SIMD3(vx, vy, vz)
+
+        let tx = try container.decode(Double.self, forKey: .tweenX)
+        let ty = try container.decode(Double.self, forKey: .tweenY)
+        let tz = try container.decode(Double.self, forKey: .tweenZ)
+        tween = SIMD3(tx, ty, tz)
+
+        let ox = try container.decode(Double.self, forKey: .offsetX)
+        let oy = try container.decode(Double.self, forKey: .offsetY)
+        let oz = try container.decode(Double.self, forKey: .offsetZ)
+        offset = SIMD3(ox, oy, oz)
+
+        type = try container.decode(LeafRunwayType.self, forKey: .type)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encode(value.x, forKey: .valueX)
+        try container.encode(value.y, forKey: .valueY)
+        try container.encode(value.z, forKey: .valueZ)
+
+        try container.encode(tween.x, forKey: .tweenX)
+        try container.encode(tween.y, forKey: .tweenY)
+        try container.encode(tween.z, forKey: .tweenZ)
+
+        try container.encode(offset.x, forKey: .offsetX)
+        try container.encode(offset.y, forKey: .offsetY)
+        try container.encode(offset.z, forKey: .offsetZ)
+
+        try container.encode(type, forKey: .type)
+    }
+
 
     // changed by type
     var thumbRadius: Double {
