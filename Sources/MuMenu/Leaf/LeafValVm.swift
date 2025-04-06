@@ -25,9 +25,8 @@ public class LeafValVm: LeafVm {
             for name in ["x","y","z"] {
                 if let scalar = exprs.nameAny[name] as? Scalar {
                     let range = scalar.range()
-                    ranges["x"] = range
-                    ranges["y"] = range
-                    ranges["z"] = range
+                    ranges[name] = range
+                    break
                 }
             }
         } else {
@@ -36,6 +35,7 @@ public class LeafValVm: LeafVm {
                 ranges[scalar.name] = scalar.range()
             }
         }
+
     }
 
     override public func treeTitle() -> String {
@@ -55,19 +55,25 @@ public class LeafValVm: LeafVm {
         guard visit.newVisit(leafHash) else { return }
         guard let thumb = runways.thumb(.runVal) else { return  }
 
+        // value of thumb on either vertical or horizonal axis
+        let val = panelVm.isVertical ? thumb.value.y : thumb.value.x
+        syncVal2(visit, thumb, val)
+
+    }
+    func syncVal2(_ visit: Visitor, _ thumb: LeafThumb, _ val: Double) {
         if visit.type.has([.tween, .midi]) {
             // ignore
         } else {
-    
-            let x = expand(named: "x", thumb.value.x)
-            let y = expand(named: "y", thumb.value.y)
-            // for val and seg, both x and y are the same value
-            let v = panelVm.isVertical ? y : x
+            var nameVals = [(String, Double)]()
+            for name in ranges.keys {
+                let nameVal = (name, expand(named: name, val))
+                nameVals.append(nameVal)
+            }
 
             if visit.type.has([.model, .bind]) {
-                menuTree.flo.setAnyExprs([("x", v),("y", v)], .sneak, visit)
+                menuTree.flo.setAnyExprs(nameVals, .sneak, visit)
             } else if visit.type.has([.user, .remote]) {
-                menuTree.flo.setAnyExprs([("x", v),("y", v)], .fire, visit)
+                menuTree.flo.setAnyExprs(nameVals, .fire, visit)
                 updateLeafPeers(visit)
             }
         }

@@ -11,7 +11,6 @@ public class LeafSegVm: LeafValVm {
     /// ticks above and below nearest tick,
     /// but never on panel border or thumb border
     func ticks() -> [CGSize] {
-
         var result = [CGSize]()
         let length = self.panelVm.runLength(.runVal)
 
@@ -28,7 +27,6 @@ public class LeafSegVm: LeafValVm {
         return result
     }
 
-    
     override public func treeTitle() -> String {
         guard let thumb = runways.thumb() else { return "" }
         let value = panelVm.isVertical ? thumb.value.y : thumb.value.x
@@ -39,7 +37,12 @@ public class LeafSegVm: LeafValVm {
     }
 
     override public func syncVal(_ visit: Visitor) {
-        super.syncVal(visit)
+        guard visit.newVisit(leafHash) else { return }
+        guard let thumb = runways.thumb(.runVal) else { return  }
+
+        // value of thumb on either vertical or horizonal axis
+        let val = (panelVm.isVertical ? thumb.value.y : thumb.value.x).quantize(count)
+        syncVal2(visit, thumb, val)
     }
 
 
