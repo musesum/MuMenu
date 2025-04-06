@@ -28,6 +28,7 @@ public class LeafSegVm: LeafValVm {
         return result
     }
 
+    
     override public func treeTitle() -> String {
         guard let thumb = runways.thumb() else { return "" }
         let value = panelVm.isVertical ? thumb.value.y : thumb.value.x

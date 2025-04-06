@@ -15,6 +15,28 @@ public class LeafValVm: LeafVm {
         runways.touchLeaf(self,touchState) // no quantize
         syncVal(visit)
     }
+    /// for one dimensional slider, the user has a choice
+    /// to label x,y,z which is passed on elsewhere
+    /// so take the first occurance of x,y,z
+    /// and set all ranges to that value
+    override public func setRanges() {
+        // set ranges
+        if let exprs = menuTree.flo.exprs {
+            for name in ["x","y","z"] {
+                if let scalar = exprs.nameAny[name] as? Scalar {
+                    let range = scalar.range()
+                    ranges["x"] = range
+                    ranges["y"] = range
+                    ranges["z"] = range
+                }
+            }
+        } else {
+            let scalars = menuTree.flo.scalars()
+            for scalar in scalars {
+                ranges[scalar.name] = scalar.range()
+            }
+        }
+    }
 
     override public func treeTitle() -> String {
         guard let thumb = runways.thumb() else { return "" }
@@ -39,14 +61,13 @@ public class LeafValVm: LeafVm {
     
             let x = expand(named: "x", thumb.value.x)
             let y = expand(named: "y", thumb.value.y)
+            // for val and seg, both x and y are the same value
+            let v = panelVm.isVertical ? y : x
 
             if visit.type.has([.model, .bind]) {
-
-                menuTree.flo.setAnyExprs([("x", x),("y", y)], .sneak, visit)
-
+                menuTree.flo.setAnyExprs([("x", v),("y", v)], .sneak, visit)
             } else if visit.type.has([.user, .remote]) {
-
-                menuTree.flo.setAnyExprs([("x", x),("y", y)], .fire, visit)
+                menuTree.flo.setAnyExprs([("x", v),("y", v)], .fire, visit)
                 updateLeafPeers(visit)
             }
         }
