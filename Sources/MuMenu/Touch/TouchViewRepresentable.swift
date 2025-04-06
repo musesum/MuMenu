@@ -27,12 +27,10 @@ public struct TouchViewRepresentable: UIViewRepresentable {
         return touchesView
     }
     public func updateUIView(_ touchesView: TouchesView, context: Context) {
-        if touchesView.frame != .zero {
-            let aspect = touchesView.frame.size.aspect
-            TouchViewRepresentable.aspect = aspect
-            for callAspect in TouchViewRepresentable.callAspects {
-                callAspect(aspect)
-            }
+        let aspect = touchesView.frame.size.aspect
+        TouchViewRepresentable.aspect = aspect
+        for callAspect in TouchViewRepresentable.callAspects {
+            callAspect(aspect)
         }
         DebugLog { P("📋 updateUIView touchesView\(touchesView.frame.digits(0))") }
     }
