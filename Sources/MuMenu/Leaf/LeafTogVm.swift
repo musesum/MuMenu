@@ -31,7 +31,7 @@ public class LeafTogVm: LeafVm {
             menuTree.flo.setAnyExprs(("x", thumb.value.x), .fire, visit)
             updateLeafPeers(visit)
         }
-        // no tweens for Tog
+        thumb.tween = thumb.value
         refreshView()
     }
 }

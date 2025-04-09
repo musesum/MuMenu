@@ -44,7 +44,5 @@ public class LeafSegVm: LeafValVm {
         let val = (panelVm.isVertical ? thumb.value.y : thumb.value.x).quantize(count)
         syncVal2(visit, thumb, val)
     }
-
-
 }
 
