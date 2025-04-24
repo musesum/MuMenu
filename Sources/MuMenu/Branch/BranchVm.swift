@@ -13,7 +13,7 @@ public class BranchVm: Identifiable, ObservableObject {
     @Published var opacity: CGFloat = 1 /// branch may be partially occluded
 
     var branchShift: CGSize {
-            treeVm.treeShift.clamped(to: shiftRange)
+        treeVm.treeShift.clamped(to: shiftRange)
     }
     var shiftRange: RangeXY = (0...1, 0...1)
     var titleShift: CGSize = .zero
@@ -61,7 +61,6 @@ public class BranchVm: Identifiable, ObservableObject {
                                treeVm: treeVm,
                                columns: columns)
 
-
         buildNodeVms(menuTrees: menuTrees,
                      prevNodeVm: prevNodeVm)
 
@@ -82,7 +81,6 @@ public class BranchVm: Identifiable, ObservableObject {
    
     /// add a branch to selected node and follow next node
     func expandBranch() {
-
         guard let nodeSpotVm else { return }
         
         if nodeSpotVm.menuTree.children.count > 0 {

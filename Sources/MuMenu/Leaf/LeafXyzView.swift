@@ -7,8 +7,6 @@ struct LeafXyzView: View {
 
     @ObservedObject var leafVm: LeafXyzVm
 
-    var size: CGSize { leafVm.panelVm.outerPanel }
-
     public var body: some View {
         GeometryReader { geo in
             VStack(alignment: .center, spacing: 0) {
@@ -37,7 +35,6 @@ struct LeafXyzView: View {
                 }
             }
         }
-        .frame(width: size.width, height: size.height)
     }
 }
 

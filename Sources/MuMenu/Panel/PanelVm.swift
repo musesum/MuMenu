@@ -130,13 +130,9 @@ public class PanelVm {
 
         switch nodeType {
 
-        case .val, .seg:
+        case .val, .seg, .xyz, .xy:
 
             return inner + pad
-
-        case .xyz, .xy:
-
-            return inner
 
         case .hand, .peer, .arch: // header is always on top
 

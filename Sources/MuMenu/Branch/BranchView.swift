@@ -29,7 +29,6 @@ struct BranchView: View {
             }
         }
     }
-    
 }
 
 /// title showing position of control
@@ -42,10 +41,9 @@ fileprivate struct titleV: View {
     var title: String { nodeSpotVm?.treeTitle() ?? "" }
 
     var size: CGSize { CGSize(width: branchVm.boundsNow.width,
-                              height: Layout.radius) }
-
+                              height: Layout.radius)
+    }
     var angle: Angle {
-
         switch treeVm.corner.cornerAxis {
             case .LLV, .LRV, .ULV, .URV: return  Angle(degrees:0)
             case .URH, .ULH: return  Angle(degrees:270) //TODO: 90 later, tricky
