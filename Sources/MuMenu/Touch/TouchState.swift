@@ -10,8 +10,8 @@ public class TouchState {
     let speedThreshold = CGFloat(300) /// test to skip branches
     let moveThreshold = CGFloat(5)   /// move distance to reset touchEndCount
 
-    var touchBeginCount = 0  /// count `touchBegin`s within tapThreshold
-    var touchEndedCount = 0    /// count `touchEnd`s within tapThreshold
+    var touchBeginCount = 0 /// count `touchBegin`s within tapThreshold
+    var touchEndedCount = 0 /// count `touchEnd`s within tapThreshold
     var isFast = false  /// is moving fast to skip branches
     var pointNow = CGPoint.zero /// current position of touch
     var phase = UITouch.Phase.ended
@@ -43,7 +43,6 @@ public class TouchState {
         updateTouchBeginCount()
     }
     func longPoint(_ pointNow: CGPoint) {
-
         movedPoint(pointNow)
     }
 
@@ -55,7 +54,6 @@ public class TouchState {
         }
     }
     func ended() {
-
         phase = .ended
         updateTimePoint(pointNow)
         logTouchState(timeBeginΔ, "🛑")

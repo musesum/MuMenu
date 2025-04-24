@@ -21,6 +21,8 @@ public class LeafRunways {
     private var runwayThumbs = [LeafRunwayType: LeafThumb]()
     private var runwayType = LeafRunwayType.none
     private var panelVm: PanelVm
+    private var lastType: LeafRunwayType?
+
     var touchState: TouchState?
     var touching: Bool { touchState?.touching ?? false }
     var centerOffset: CGPoint = .zero
@@ -99,11 +101,11 @@ public class LeafRunways {
     ///
     ///     when touching val, isVertical will change x or y
     ///
-    func setThumbPoint(_ point: CGPoint,
-                       _ type: LeafRunwayType,
-                       _ bounds: CGRect,
-                       _ quantize: Double? = nil,
-                       newOffset: Bool = false) {
+    func setThumbPoint(_ point    : CGPoint,
+                       _ type     : LeafRunwayType,
+                       _ bounds   : CGRect,
+                       _ quantize : Double? = nil,
+                       newOffset  : Bool = false) {
 
         var normPoint = normalizePoint(point, type, bounds).clamped(to: 0...1)
         if let quantize { normPoint = normPoint.quantize(quantize) }
@@ -111,7 +113,7 @@ public class LeafRunways {
                                       ? (thumb(type, contains: point)
                                          ? .begin
                                          : .none)
-                                        : .move)
+                                      : .move)
         var x: Double?
         var y: Double?
         var z: Double?
@@ -137,24 +139,6 @@ public class LeafRunways {
             }
         }
     }
-    /// set new runway
-    func beginRunway(_ point: CGPoint) {
-        for (type, bounds) in runwayBounds {
-            if bounds.contains(point) {
-                NoDebugLog { P("touchRunway \(type.rawValue)\(bounds.digits())") }
-                self.runwayType = type
-                return setThumbPoint(point, type, bounds, newOffset: true)
-            }
-        }
-        self.runwayType = .none
-    }
-    /// continue moving current thumb & runway
-    func nextRunway(_ point: CGPoint, quantize: Double? = nil) {
-        if let bounds = runwayBounds[runwayType]  {
-            return setThumbPoint(point, runwayType, bounds, quantize)
-        }
-        self.runwayType = .none
-    }
 
     /// updated by View after auto-layout
     func updateBounds(_ type: LeafRunwayType,
@@ -179,7 +163,6 @@ public class LeafRunways {
         default                : return Double(Layout.radius - 1)
         }
     }
-
     public func thumb(_ type: LeafRunwayType, contains point: CGPoint) -> Bool {
         guard let thumb = thumb(type) ,
               let bounds = bounds(type) else { return false }
@@ -240,24 +223,41 @@ public class LeafRunways {
     }
 
     /// user touch gesture inside runway
-    public func touchLeaf(_ nodeVm: NodeVm, _ touchState: TouchState, quantize: Double? = nil) {
+    public func touchLeaf(_ nodeVm: NodeVm,
+                          _ touchState: TouchState,
+                          quantize: Double? = nil) {
 
         self.touchState = touchState
 
-        let pointNow = touchState.pointNow
+        let point = touchState.pointNow
 
         switch touchState.phase { 
-        case .began:
-            if touchState.touchBeginCount < 1 {
-                beginRunway(pointNow)
-            } else {
-                nextRunway(pointNow, quantize: quantize)
-            }
-        case .moved, .stationary:
-
-            nextRunway(pointNow)
-
+        case .began:              beginRunway()
+        case .moved, .stationary: nextRunway()
+        case .cancelled,.ended:   endRunway()
         default: break
+        }
+        /// set new runway
+        func beginRunway() {
+            let count = touchState.touchBeginCount
+            for (type, bounds) in runwayBounds {
+                if bounds.contains(point) {
+                    self.runwayType = type
+                    setThumbPoint(point, runwayType, bounds, quantize, newOffset: true)
+                    return
+                }
+            }
+            print ("[.none]")
+        }
+        /// continue moving current thumb & runway
+        func nextRunway() {
+            if let bounds = runwayBounds[runwayType]  {
+                setThumbPoint(point, runwayType, bounds, quantize, newOffset: false)
+            }
+        }
+        func endRunway()  {
+            nextRunway()
+            //.... runwayType = .none
         }
     }
 }

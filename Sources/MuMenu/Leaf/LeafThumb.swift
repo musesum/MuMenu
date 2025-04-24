@@ -13,7 +13,7 @@ public class LeafThumb: Codable {
     var offset: SIMD3<Double> = .zero /// touch offset from center
     var type: LeafRunwayType = .none
 
-    /// bias was previously called "delta" for a touch
+    /// offset was previously called "delta" for a touch
     /// inside an xy thumb, but not perfectly cnetered,
     /// to prevent any shifting of center during touchBegin.
     /// During subsequent touchMove, the delta decreases
@@ -66,6 +66,7 @@ public class LeafThumb: Codable {
         tween.z = tz ?? tween.z
     }
 
+
     func setValue(_ x: Double? = nil,
                   _ y: Double? = nil,
                   _ z: Double? = nil,
@@ -73,20 +74,20 @@ public class LeafThumb: Codable {
 
         switch offsetting {
         case .none:
-            if let x { value.x = x }
-            if let y { value.y = y }
-            if let z { value.z = z }
+            if let x { value.x = x.clamped(to: 0...1) }
+            if let y { value.y = y.clamped(to: 0...1) }
+            if let z { value.z = z.clamped(to: 0...1) }
             offset = .zero
 
         case .begin:
-            if let x { offset.x = x - value.x } else {  offset.x = 0 }
-            if let y { offset.y = y - value.y } else {  offset.y = 0 }
-            if let z { offset.z = z - value.z } else {  offset.z = 0 }
+            if let x { offset.x = (x - value.x).clamped(to: 0...1) } else { offset.x = 0 }
+            if let y { offset.y = (y - value.y).clamped(to: 0...1) } else { offset.y = 0 }
+            if let z { offset.z = (z - value.z).clamped(to: 0...1) } else { offset.z = 0 }
 
         case .move:
-            if let x { value.x = x - offset.x }
-            if let y { value.y = y - offset.y }
-            if let z { value.z = z - offset.z }
+            if let x { value.x = (x - offset.x).clamped(to: 0...1) }
+            if let y { value.y = (y - offset.y).clamped(to: 0...1) }
+            if let z { value.z = (z - offset.z).clamped(to: 0...1) }
             offset *= 0.88 // reduce downto zero
 
         }

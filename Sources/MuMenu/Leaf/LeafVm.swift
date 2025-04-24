@@ -45,7 +45,7 @@ public class LeafVm: NodeVm {
         }
     }
     public func touchLeaf(_ touchState: TouchState, _ visit: Visitor) {
-        runways.touchLeaf(self, touchState, quantize: 4)
+        runways.touchLeaf(self, touchState) //....  , quantize: 4
         syncVal(visit)
     }
     
