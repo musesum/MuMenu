@@ -4,11 +4,11 @@ import MuFlo
 
 enum ShowTree: String { case hide, canopy, show }
 
-public class TreeVm: FloId, Identifiable, Equatable, ObservableObject {
+public class TreeVm: Identifiable, Equatable, ObservableObject {
 
     public static func == (lhs: TreeVm, rhs: TreeVm) -> Bool { return lhs.id == rhs.id }
     public static var sideAxis = [SideAxisId: TreeVm]()
-
+    public var id = Visitor.nextId()
     @Published var branchVms = [BranchVm]()
 
     @Published var treeShift = CGSize.zero { didSet { updateTreeBounds() } }
@@ -58,8 +58,6 @@ public class TreeVm: FloId, Identifiable, Equatable, ObservableObject {
         self.rootVm = rootVm
         self.corner = corner
         self.isVertical = (corner.axis == .vertical)
-        super.init()
-        
         TreeVm.sideAxis[corner.sideAxis.rawValue] = self
     }
     

@@ -5,10 +5,10 @@ import MuPeer
 import MuFlo
 import MuVision
 
-public class RootVm: FloId, ObservableObject, Equatable {
+public class RootVm: ObservableObject, Equatable {
 
     public static func == (lhs: RootVm, rhs: RootVm) -> Bool { return lhs.id == rhs.id }
-    
+    var id = Visitor.nextId()
     /// is the finger touching
     @Published var touchType = TouchType.none
     var touchTypeBegin = TouchType.none
@@ -54,7 +54,6 @@ public class RootVm: FloId, ObservableObject, Equatable {
         self.cornerOp = cornerOp
         self.cornerVm = CornerVm(cornerOp)
         self.peers = PeersController.shared
-        super.init()
         PeersController.shared.peersDelegates.append(self)
     }
 

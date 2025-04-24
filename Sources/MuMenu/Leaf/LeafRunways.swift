@@ -232,14 +232,11 @@ public class LeafRunways {
         let point = touchState.pointNow
 
         switch touchState.phase { 
-        case .began:              beginRunway()
-        case .moved, .stationary: nextRunway()
-        case .cancelled,.ended:   endRunway()
-        default: break
+        case .began:  beginRunway()
+        default:      nextRunway()
         }
         /// set new runway
         func beginRunway() {
-            let count = touchState.touchBeginCount
             for (type, bounds) in runwayBounds {
                 if bounds.contains(point) {
                     self.runwayType = type
@@ -254,10 +251,6 @@ public class LeafRunways {
             if let bounds = runwayBounds[runwayType]  {
                 setThumbPoint(point, runwayType, bounds, quantize, newOffset: false)
             }
-        }
-        func endRunway()  {
-            nextRunway()
-            //.... runwayType = .none
         }
     }
 }

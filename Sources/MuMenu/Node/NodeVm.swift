@@ -6,8 +6,6 @@ import MuVision // Chiral
 
 public class NodeVm: Identifiable, ObservableObject {
 
-    public static var IdNode = [Int: NodeVm]()
-
     public let menuTree: MenuTree /// maybe shared on other branches
     public var nodeType: NodeType /// node, val, vxy, seg, tog
     public var branchVm: BranchVm /// branch that this node is on
@@ -23,8 +21,7 @@ public class NodeVm: Identifiable, ObservableObject {
     @Published var zIndex: CGFloat = 0 /// stack current spotlight node on top of others
     @Published var origin = true
 
-    /// publish when selected or is under cursor
-    @Published var _spotlight: Bool = false
+    @Published var _spotlight: Bool = false /// publish when selected or is under cursor
     var spotlight: Bool {
         get { self._spotlight }
         set { _spotlight = newValue
@@ -46,7 +43,6 @@ public class NodeVm: Identifiable, ObservableObject {
 
     public var nodeHash: Int {
         let id = menuTree.path.strHash()
-        NodeVm.IdNode[id] = self
         return id
     }
 
@@ -183,6 +179,7 @@ extension NodeVm: Equatable {
     }
 
 }
+#if false
 extension NodeVm { // log visitor
     static public func logVisits(_ visitor: Visitor) {
         for visit in visitor.visited {
@@ -198,6 +195,5 @@ extension NodeVm { // log visitor
             }
         }
     }
-
-
 }
+#endif

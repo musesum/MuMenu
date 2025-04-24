@@ -7,23 +7,22 @@ import MuFlo
 @Observable public class CornerVm: Identifiable {
 
     var ringIconXY = CGPoint.zero /// current position
-    var parkIconXY = CGPoint.zero     /// fixed position of icon
+    var parkIconXY = CGPoint.zero /// fixed position of icon
 
     var rootVm: RootVm?
-    var logoNodeVm: NodeVm?  /// fixed root node in corner in which to drag from
-    var ringNodeVm: NodeVm?  /// drag from root with duplicate node icon
+    var logoNodeVm: NodeVm? /// fixed root node in corner in which to drag from
+    var ringNodeVm: NodeVm? /// drag from root with duplicate node icon
     var touchState = TouchState() /// begin,moved,end state plus t count
 
     var rootNodeΔ = CGSize.zero /// offset between rootNode and touchNow
     private var spotNodeΔ = CGSize.zero /// offset between touch point and center in coord
-    var dragNodeΔ: CGSize { /// weird kludge to compsate for small right offset
+    var dragNodeΔ: CGSize { /// weird kludge to compensate for small right offset
         if let rootVm, rootVm.cornerOp.right,
            ringIconXY != parkIconXY {
             return CGSize(width: -Layout.padding2, height: 0)
         } else {
             return .zero
         }
-
     }
 
     public var corner: CornerOp

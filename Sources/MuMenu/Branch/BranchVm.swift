@@ -4,11 +4,11 @@ import SwiftUI
 import MuFlo
 import MuVision
 
-public class BranchVm: FloId, Identifiable, ObservableObject {
+public class BranchVm: Identifiable, ObservableObject {
 
     static func == (lhs: BranchVm, rhs: BranchVm)  -> Bool { lhs.id == rhs.id }
     static func == (lhs: BranchVm, rhs: BranchVm?) -> Bool { lhs.id == (rhs?.id ?? -1) }
-
+    public var id = Visitor.nextId()
     @Published var show: Bool = false
     @Published var opacity: CGFloat = 1 /// branch may be partially occluded
 
@@ -56,7 +56,6 @@ public class BranchVm: FloId, Identifiable, ObservableObject {
         self.branchPrev = branchPrev
         self.zindex = zindex
         self.columns = prevNodeVm?.menuTree.flo.intVal("columns") ?? 1
-        super.init()
         self.panelVm = PanelVm(branchVm: self,
                                menuTrees: menuTrees,
                                treeVm: treeVm,
