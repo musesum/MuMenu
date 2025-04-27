@@ -31,5 +31,11 @@ struct NodeView: View {
     }
 }
 
+extension NodeVm: Hashable {
 
-
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(nodeHash)
+        _ = hasher.finalize()
+        //print(path + String(format: ": %i", result))
+    }
+}

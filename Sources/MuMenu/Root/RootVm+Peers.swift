@@ -8,7 +8,7 @@ extension RootVm {
 
     func  sendItemToPeers(_ item: MenuItem) {
 
-        if let peers, peers.hasPeers {
+        if peers.hasPeers {
             do {
                 let encoder = JSONEncoder()
                 let data = try encoder.encode(item)
@@ -17,24 +17,6 @@ extension RootVm {
                 print(error)
             }
         }
-    }
-
-}
-
-extension RootVm: PeersControllerDelegate {
-
-    public func didChange() {
-    }
-
-    public func received(data: Data,
-                         viaStream: Bool) -> Bool {
-
-        let decoder = JSONDecoder()
-        if let item = try? decoder.decode(MenuItem.self, from: data) {
-            MenuTouch.remoteItem(item)
-            return true
-        }
-        return false
     }
 
 }

@@ -71,12 +71,31 @@ public class BranchVm: Identifiable, ObservableObject {
                               prevNodeVm: NodeVm?) {
 
         for menuTree in menuTrees {
-            let nodeVm = NodeVm.makeNodeVm(menuTree, self, prevNodeVm)
+            let nodeVm = makeNodeVm(menuTree)
             nodeVms.append(nodeVm)
             if nodeVm.spotlight || menuTree.nodeType.isControl {
                 nodeSpotVm = nodeVm
             }
         }
+
+        func makeNodeVm(_ menuTree: MenuTree) -> NodeVm {
+            let m = menuTree
+            let b = self
+            let p = prevNodeVm
+
+            switch menuTree.nodeType { //              __________ runways _________
+            case .xy   : return LeafXyVm      (m,b,p, [.runX, .runY, .runXY])
+            case .xyz  : return LeafXyzVm     (m,b,p, [.runX, .runY, .runZ, .runXY])
+            case .val  : return LeafValVm     (m,b,p, [.runVal])
+            case .seg  : return LeafSegVm     (m,b,p, [.runVal])
+            case .tog  : return LeafTogVm     (m,b,p, [.none])
+            case .hand : return LeafHandVm    (m,b,p, [.runX, .runY, .runZ, .runXY])
+            case .peer : return LeafPeerVm    (m,b,p, [])
+            case .arch : return LeafArchiveVm (m,b,p, [])
+            default    : return NodeVm        (m,b,p)
+            }
+        }
+
     }
    
     /// add a branch to selected node and follow next node

@@ -5,7 +5,7 @@ import MuPeer
 import MuFlo
 import MuVision
 
-public class RootVm: ObservableObject, Equatable {
+public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
 
     public static func == (lhs: RootVm, rhs: RootVm) -> Bool { return lhs.id == rhs.id }
     var id = Visitor.nextId()
@@ -32,7 +32,7 @@ public class RootVm: ObservableObject, Equatable {
 
     public var nodeSpotVm: NodeVm?   /// current last touched or hovered node
 
-    var peers: PeersController?
+    let peers: Peers
 
     /// update tree from new spot
     func updateSpot(_ newSpotVm: NodeVm,
@@ -49,16 +49,17 @@ public class RootVm: ObservableObject, Equatable {
         }
     }
 
-    public init(_ cornerOp: CornerOp) {
+    public init(_ cornerOp: CornerOp,
+                _ peers: Peers) {
 
         self.cornerOp = cornerOp
         self.cornerVm = CornerVm(cornerOp)
-        self.peers = PeersController.shared
-        PeersController.shared.peersDelegates.append(self)
+        self.peers = Peers.shared
+        peers.delegates["RootVm"] = self
     }
 
     deinit {
-        PeersController.shared.remove(peersDelegate: self)
+        peers.removeDelegate("RootVm")
     }
 
     public func updateTreeVms(_ treeVm: TreeVm) {
@@ -478,6 +479,21 @@ public class RootVm: ObservableObject, Equatable {
             treeSpotVm = treeVm
             treeVm.showTree(depth: 9, "solo", fromRemote)
             viewOps = [.root,.branch]
+        }
+    }
+
+}
+
+extension RootVm: PeersDelegate {
+
+    public func didChange() {
+    }
+
+    public func received(data: Data, viaStream: Bool) {
+
+        let decoder = JSONDecoder()
+        if let item = try? decoder.decode(MenuItem.self, from: data) {
+            MenuTouch.remoteItem(item)
         }
     }
 

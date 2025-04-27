@@ -2,6 +2,7 @@
 
 import SwiftUI
 import MuFlo
+import MuPeer
 
 public protocol MenuFrame {
     func menuFrame(_ frame: CGRect,  _ insets: EdgeInsets, onAppear: Bool)
@@ -15,9 +16,10 @@ public struct MenuView: View {
     var cornerVms: [CornerVm] { menuVms.map { $0.rootVm.cornerVm } }
     
     public init(_ root: Flo,
+                _ peers: Peers,
                 _ menuFrame: MenuFrame) {
 
-        self.menuVms = MenuVms(root).menuVms
+        self.menuVms = MenuVms(root, peers).menuVms
         MenuView.menuFrame = menuFrame
     }
 

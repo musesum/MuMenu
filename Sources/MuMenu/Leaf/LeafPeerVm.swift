@@ -7,7 +7,7 @@ import MuFlo
 
 public class LeafPeerVm: LeafVm {
     
-    public var peersVm = PeersVm.shared
+    public var peersVm = PeersVm()
 
     override public func touchLeaf(_ : TouchState, _ : Visitor) {}
     override public func treeTitle() -> String { "" }
