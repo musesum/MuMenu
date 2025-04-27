@@ -4,7 +4,7 @@ import MuPeer
 import MuVision
 import MultipeerConnectivity
 
-open class TouchesView: UIView, UIGestureRecognizerDelegate {
+open class TouchView: UIView, UIGestureRecognizerDelegate {
 
     var safeBounds: CGRect { frame.pad(-4) }
     var touchBeganFromEdge = [Int: Bool]()
@@ -14,13 +14,16 @@ open class TouchesView: UIView, UIGestureRecognizerDelegate {
         super.init(coder: aDecoder)
     }
 
-    public init(_ size: CGSize,
+    public init(_ pipeline: Pipeline,
                 _ touchCanvas: TouchCanvas) {
-
-        DebugLog { P("🧭 TouchesView::init size \(size.digits())") }
+        let size = pipeline.pipeSize
+        DebugLog { P("🧭 TouchView::init size \(size.digits())") }
         super.init(frame: .zero)
         self.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
         self.touchCanvas = touchCanvas
+        self.backgroundColor = .clear
+        self.isOpaque = false
+        self.layer.addSublayer(pipeline.layer)
         isMultipleTouchEnabled = true
     }
 
