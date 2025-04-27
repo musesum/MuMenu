@@ -21,7 +21,7 @@ public struct MenuTreeItem: Codable {
         case sideAxis, depth, start
     }
 
-    public init(from decoder: Decoder) throws {
+    nonisolated public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         try sideAxis = container.decode(Int.self, forKey: .sideAxis)
         try depth    = container.decode(Int.self, forKey: .depth )

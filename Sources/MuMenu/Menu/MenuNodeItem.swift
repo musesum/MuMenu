@@ -20,7 +20,7 @@ public struct MenuNodeItem: Codable {
     enum CodingKeys: String, CodingKey {
         case type, sideAxis, hashPath, hashNow }
     
-    public init(from decoder: Decoder) throws {
+    nonisolated public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         try type     = c.decode(String.self, forKey: .type    )
         try sideAxis = c.decode(Int   .self, forKey: .sideAxis)
@@ -53,7 +53,7 @@ public struct MenuLeafItem: Codable {
 
     enum CodingKeys: String, CodingKey { case type, sideAxis, hashPath, hashNow, leafThumb }
 
-    public init(from decoder: Decoder) throws {
+    nonisolated public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         try type      = c.decode(String   .self, forKey: .type    )
         try sideAxis  = c.decode(Int      .self, forKey: .sideAxis)
