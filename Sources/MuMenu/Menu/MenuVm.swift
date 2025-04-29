@@ -18,14 +18,14 @@ open class MenuVm {
     ///   - note: assuming maximum of two menues from corner
     ///     with complementary horizontal/vertical axis
     ///
-    public init?(_ corners: [Corner], _ floNames: [String], _ peers: Peers) {
+    public init?(_ corners: [Corner], _ floNames: [String], _ archiveVm: ArchiveVm,_ peers: Peers) {
 
         guard corners.count > 0 else { print("corners < 1") ; return nil }
         self.floNames = floNames
         var treeVms = [TreeVm]()
 
         // both veritical and horizontal menu will share the same root
-        self.rootVm = RootVm(corners.first!.cornerOp, peers)
+        self.rootVm = RootVm(corners.first!.cornerOp, archiveVm, peers)
 
         for corner in corners {
             let cornerTreeVm = TreeVm(rootVm, corner)

@@ -187,7 +187,7 @@ extension NodeVm { // log visitor
                 switch any {
                 case let flo as Flo:  print ("\(visit): Flo \(flo.name)")
                 case let nodeVm as NodeVm:  print ("\(visit): NodeVm \(nodeVm.treeTitle()))")
-                case let pipeNode as PipeNode:  print ("\(visit): PipeNode \(pipeNode.pipeFlo.name)")
+                case let pipeNode as PipeNode:  print ("\(visit): PipeNode \(pipeNode.pipeNode˚.name)")
                 case let edge as MuFlo.Edge:  print ("\(visit): Edge \(edge.script())")
                 case let exprs as Exprs:  print ("\(visit): Exprs \(exprs.name)")
                 default : print ("\(visit): ??")

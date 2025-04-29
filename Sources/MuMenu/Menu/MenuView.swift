@@ -16,10 +16,11 @@ public struct MenuView: View {
     var cornerVms: [CornerVm] { menuVms.map { $0.rootVm.cornerVm } }
     
     public init(_ root: Flo,
+                _ archiveVm: ArchiveVm,
                 _ peers: Peers,
                 _ menuFrame: MenuFrame) {
 
-        self.menuVms = MenuVms(root, peers).menuVms
+        self.menuVms = MenuVms(root, archiveVm, peers).menuVms
         MenuView.menuFrame = menuFrame
     }
 

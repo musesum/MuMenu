@@ -8,7 +8,10 @@ import MuVision
 public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
 
     public static func == (lhs: RootVm, rhs: RootVm) -> Bool { return lhs.id == rhs.id }
-    var id = Visitor.nextId()
+    let id = Visitor.nextId()
+    let archiveVm: ArchiveVm
+    let peers: Peers
+
     /// is the finger touching
     @Published var touchType = TouchType.none
     var touchTypeBegin = TouchType.none
@@ -32,8 +35,6 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
 
     public var nodeSpotVm: NodeVm?   /// current last touched or hovered node
 
-    let peers: Peers
-
     /// update tree from new spot
     func updateSpot(_ newSpotVm: NodeVm,
                     _ fromRemote: Bool) {
@@ -50,10 +51,12 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
     }
 
     public init(_ cornerOp: CornerOp,
+                _ archiveVm: ArchiveVm,
                 _ peers: Peers) {
 
         self.cornerOp = cornerOp
         self.cornerVm = CornerVm(cornerOp)
+        self.archiveVm = archiveVm
         self.peers = peers
         peers.delegates["RootVm"] = self
     }

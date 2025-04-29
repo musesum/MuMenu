@@ -91,7 +91,7 @@ public class BranchVm: Identifiable, ObservableObject {
             case .tog  : return LeafTogVm     (m,b,p, [.none])
             case .hand : return LeafHandVm    (m,b,p, [.runX, .runY, .runZ, .runXY])
             case .peer : return LeafPeerVm    (m,b,p, [])
-            case .arch : return LeafArchiveVm (m,b,p, [])
+            case .arch : return LeafArchiveVm (m,b,p, [], treeVm.rootVm.archiveVm)
             default    : return NodeVm        (m,b,p)
             }
         }

@@ -6,8 +6,8 @@ import MuFlo // ArchivePickerView, NextFrame
 struct LeafArchiveView: View {
 
     @ObservedObject var leafVm: LeafArchiveVm
-    
     var panelVm: PanelVm { leafVm.panelVm }
+
     @State private var showSettings = false
     @State private var settingsDetent = PresentationDetent.medium
     @State var title: String = "Title"
@@ -29,7 +29,7 @@ struct LeafArchiveView: View {
                     Spacer()
                 }
                 LeafBezelView(leafVm, .none) {
-                    ArchivePickerView()
+                    ArchivePickerView(leafVm.archiveVm)
                 }
             }
         }
@@ -45,14 +45,20 @@ struct LeafArchiveView: View {
 
 struct PickerModalView: View {
 
-    var leafArchiveVm: LeafArchiveVm
+    let leafArchiveVm: LeafArchiveVm
+    let archiveVm: ArchiveVm
+    let nextFrame: NextFrame
+
     @State var title: String = ""
     @State var description: String = ""
     @Environment(\.presentationMode) var presentationMode
 
     init(_ leafArchiveVm: LeafArchiveVm) {
+
         self.leafArchiveVm = leafArchiveVm
-        NextFrame.shared.pause = true
+        self.archiveVm = leafArchiveVm.archiveVm
+        self.nextFrame = archiveVm.nextFrame
+        nextFrame.pause = true
         let date = Date().description.titleCase()
         self.title = "My Snapshot \(date)"
         self.description = date
@@ -70,11 +76,11 @@ struct PickerModalView: View {
             .navigationBarTitle("Create a Mū", displayMode: .inline)
             .navigationBarItems(leading: Button("Cancel") {
                 presentationMode.wrappedValue.dismiss()
-                NextFrame.shared.pause = false
+                nextFrame.pause = false
             }, trailing: Button("Save") {
                 presentationMode.wrappedValue.dismiss()
-                NextFrame.shared.pause = false
-                ArchiveVm.shared.archiveProto?.saveArchive(title, description) {
+                nextFrame.pause = false
+                leafArchiveVm.archiveVm.archiveProto?.saveArchive(title, description) {
                     print("saved\n archive: \(title)\n description: \(description)")
                 }
             })
