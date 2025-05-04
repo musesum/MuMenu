@@ -8,7 +8,9 @@ public class BranchVm: Identifiable, ObservableObject {
 
     static func == (lhs: BranchVm, rhs: BranchVm)  -> Bool { lhs.id == rhs.id }
     static func == (lhs: BranchVm, rhs: BranchVm?) -> Bool { lhs.id == (rhs?.id ?? -1) }
+
     public var id = Visitor.nextId()
+
     @Published var show: Bool = false
     @Published var opacity: CGFloat = 1 /// branch may be partially occluded
 
@@ -103,13 +105,12 @@ public class BranchVm: Identifiable, ObservableObject {
         guard let nodeSpotVm else { return }
         
         if nodeSpotVm.menuTree.children.count > 0 {
-            BranchVm
-                .cached(menuTrees: nodeSpotVm.menuTree.children,
-                        treeVm: treeVm,
-                        branchPrev: self,
-                        prevNodeVm: nodeSpotVm,
-                        zindex: zindex+1)
-                .expandBranch()
+            BranchVm.cached(menuTrees: nodeSpotVm.menuTree.children,
+                   treeVm: treeVm,
+                   branchPrev: self,
+                   prevNodeVm: nodeSpotVm,
+                   zindex: zindex+1)
+            .expandBranch()
         }
     }
 

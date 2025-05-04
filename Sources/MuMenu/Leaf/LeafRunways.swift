@@ -78,9 +78,9 @@ public class LeafRunways {
 
             case .runVal:
                 /// .runVal isVertical can set either x or y
-                /// for example:  `zoom(val, x 0…1~0, ...)`
+                /// for example:  `zoom(val, x 0…1=0, ...)`
                 /// even though zoom isVertical, x is vx,tx will set vy,ty
-                /// will still work for`zoom(val, y 0…1~0, ...)`
+                /// will still work for`zoom(val, y 0…1=0, ...)`
                 let vxy = vx ?? vy
                 let vyx = vy ?? vx
                 let txy = tx ?? ty

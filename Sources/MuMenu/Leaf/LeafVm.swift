@@ -91,7 +91,7 @@ public class LeafVm: NodeVm {
     }
 
     /// convert normalized `0...1` to Flo range
-    /// such as  `x`, `y` in `repeat (xy, x -1…1~0, y -1…1~0)`
+    /// such as  `x`, `y` in `repeat (xy, x -1…1=0, y -1…1=0)`
     func expand(named: String, _ value: CGFloat) -> Double {
         let range = ranges[named] ?? 0...1
         let result = scale(Double(value), from: 0...1, to: range)

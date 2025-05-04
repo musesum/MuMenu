@@ -58,7 +58,6 @@ public class LeafValVm: LeafVm {
         // value of thumb on either vertical or horizonal axis
         let val = panelVm.isVertical ? thumb.value.y : thumb.value.x
         syncVal2(visit, thumb, val)
-
     }
     func syncVal2(_ visit: Visitor, _ thumb: LeafThumb, _ val: Double) {
         if visit.type.has([.tween, .midi]) {
