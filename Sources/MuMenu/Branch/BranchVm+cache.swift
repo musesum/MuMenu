@@ -27,8 +27,7 @@ extension BranchVm {
             let hash = hasher.finalize()
             let oldBranch = BranchCache[hash]
 
-            PrintLog("*** prevHash: \(prevHash), cornerHash: \(cornerHash), axisHash: \(axisHash), title: \(title), hash: \(hash) old \(oldBranch == nil ? "_" : "🧺")")
-
+            //PrintLog("*** prevHash: \(prevHash), cornerHash: \(cornerHash), axisHash: \(axisHash), title: \(title), hash: \(hash) old \(oldBranch == nil ? "_" : "🧺")")
             return (hash,oldBranch)
         }
 

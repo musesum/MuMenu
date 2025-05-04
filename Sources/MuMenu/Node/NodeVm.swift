@@ -132,7 +132,7 @@ public class NodeVm: Identifiable, ObservableObject {
         default:        update(withPrior: false)
         }
         func updateDefault() {
-            menuTree.flo.activate(Visitor(0, .user))
+            menuTree.flo.activate([], Visitor(0, .user))
         }
         func update(withPrior: Bool) {
             guard let exprs = menuTree.flo.exprs else { return }
@@ -143,29 +143,29 @@ public class NodeVm: Identifiable, ObservableObject {
                 if state.onOrigin {
                     if state.hasPrior {
                         // moved from prior to origin to revert prior
-                        exprs.setPrior(visit)
+                        exprs.setPrior([], visit)
                         origin = false
                     } else {
                         // ignore button when on origin and no prior
                     }
                 } else if state.offOrigin {
                     // this should never happen, return to origin
-                    exprs.setOrigin(visit)
+                    exprs.setOrigin([], visit)
                     origin = true
                 } else if state.hasPrior {
-                    exprs.setPrior(visit)
+                    exprs.setPrior([], visit)
                     origin = false
                 }
             } else { // showing ∆ for delta
                 if state.onOrigin {
-                    exprs.setOrigin(visit)
+                    exprs.setOrigin([], visit)
                     origin = true
                 } else if state.offOrigin {
                     // this should never happen, return to origin
-                    exprs.setOrigin(visit)
+                    exprs.setOrigin([], visit)
                     origin = true
                 } else if state.hasPrior {
-                    exprs.setPrior(visit)
+                    exprs.setPrior([], visit)
                     origin = true
                 }
             }

@@ -97,7 +97,6 @@ public class BranchVm: Identifiable, ObservableObject {
             default    : return NodeVm        (m,b,p)
             }
         }
-
     }
    
     /// add a branch to selected node and follow next node
