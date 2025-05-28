@@ -1,7 +1,7 @@
 //  created by musesum on 12/1/22.
 
 import MuFlo
-import MuPeer
+import MuPeers
 import MuVision
 
 public struct MenuVms {

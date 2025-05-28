@@ -1,7 +1,7 @@
 //  created by musesum on 12/5/22.
 
 import SwiftUI
-import MuPeer
+import MuPeers
 
 struct LeafPeerView: View {
 

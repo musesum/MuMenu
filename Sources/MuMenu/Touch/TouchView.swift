@@ -1,6 +1,6 @@
 import SwiftUI
 import MuFlo
-import MuPeer
+import MuPeers
 import MuVision
 import MultipeerConnectivity
 

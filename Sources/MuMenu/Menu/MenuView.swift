@@ -2,7 +2,7 @@
 
 import SwiftUI
 import MuFlo
-import MuPeer
+import MuPeers
 
 public protocol MenuFrame {
     func menuFrame(_ frame: CGRect,  _ insets: EdgeInsets, onAppear: Bool)

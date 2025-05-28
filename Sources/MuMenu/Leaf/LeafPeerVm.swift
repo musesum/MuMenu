@@ -2,7 +2,7 @@
 
 
 import SwiftUI
-import MuPeer
+import MuPeers
 import MuFlo
 
 public class LeafPeerVm: LeafVm {

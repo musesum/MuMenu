@@ -2,7 +2,7 @@
 
 
 import UIKit
-import MuPeer
+import MuPeers
 
 extension RootVm {
 

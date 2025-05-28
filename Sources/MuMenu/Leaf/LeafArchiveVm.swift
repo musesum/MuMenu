@@ -1,7 +1,7 @@
 // created by musesum on 10/6/24
 
 import SwiftUI
-import MuPeer
+import MuPeers
 import MuFlo
 
 public class LeafArchiveVm: LeafVm {

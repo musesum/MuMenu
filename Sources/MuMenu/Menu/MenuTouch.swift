@@ -2,7 +2,7 @@
 
 import UIKit
 import MuFlo // double buffer
-import MuPeer
+import MuPeers
 
 public var CornerOpVm = [Int: CornerVm]()
 

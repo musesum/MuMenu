@@ -1,7 +1,7 @@
 // created by musesum 10/13/21.
 
 import SwiftUI
-import MuPeer
+import MuPeers
 import MuFlo
 import MuVision
 
@@ -489,10 +489,9 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
 
 extension RootVm: PeersDelegate {
 
-    public func didChange() {
-    }
+    public func didChange() {}
 
-    public func received(data: Data, viaStream: Bool) {
+    public func received(data: Data) {
 
         let decoder = JSONDecoder()
         if let item = try? decoder.decode(MenuItem.self, from: data) {
