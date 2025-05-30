@@ -58,7 +58,7 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
         self.cornerVm = CornerVm(cornerOp)
         self.archiveVm = archiveVm
         self.peers = peers
-        peers.delegates["RootVm"] = self
+        peers.setDelegate(self, for: "RootVm")
     }
 
     deinit {

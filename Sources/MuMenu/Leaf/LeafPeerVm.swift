@@ -6,11 +6,20 @@ import MuPeers
 import MuFlo
 
 public class LeafPeerVm: LeafVm {
-    
-    public var peersVm = PeersVm()
 
+    let peers: Peers
     override public func touchLeaf(_ : TouchState, _ : Visitor) {}
     override public func treeTitle() -> String { "" }
-    override public func leafTitle() -> String { "Peers" }
+    override public func leafTitle() -> String { "Peers for: \(peers.peerId)" }
     override public func syncVal(_ : Visitor) {}
+
+    override init (_ menuTree: MenuTree,
+                   _ branchVm: BranchVm,
+                   _ prevVm: NodeVm?,
+                   _ runTypes: [LeafRunwayType]) {
+
+        self.peers = branchVm.treeVm.rootVm.peers
+        super.init(menuTree, branchVm, prevVm, runTypes)
+    }
+
 }

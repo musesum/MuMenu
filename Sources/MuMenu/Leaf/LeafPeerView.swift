@@ -5,13 +5,13 @@ import MuPeers
 
 struct LeafPeerView: View {
 
-    var leafVm: LeafPeerVm
+    public var leafVm: LeafPeerVm
 
     var body: some View {
         VStack {
             LeafHeaderTitleView(leafVm, inset: -64)
             LeafBezelView(leafVm, .none) {
-                PeersView(leafVm.peersVm)
+                PeersView(leafVm.peers)
             }
         }
     }

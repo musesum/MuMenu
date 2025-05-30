@@ -8,15 +8,15 @@ extension RootVm {
 
     func sendItemToPeers(_ item: MenuItem) {
 
-        if peers.hasPeers {
-            do {
-                let encoder = JSONEncoder()
-                let data = try encoder.encode(item)
-                peers.sendMessage(data, viaStream: true)
-            } catch {
-                print(error)
+        Task {
+            await peers.sendItem() {
+                do {
+                    return try JSONEncoder().encode(item)
+                } catch {
+                    print(error)
+                    return nil
+                }
             }
         }
     }
-
 }
