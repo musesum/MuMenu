@@ -9,7 +9,7 @@ extension RootVm {
     func sendItemToPeers(_ item: MenuItem) {
 
         Task {
-            await peers.sendItem() {
+            await peers.sendItem(.menu) {
                 do {
                     return try JSONEncoder().encode(item)
                 } catch {

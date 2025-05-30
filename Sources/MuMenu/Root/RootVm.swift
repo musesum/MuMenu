@@ -58,11 +58,11 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
         self.cornerVm = CornerVm(cornerOp)
         self.archiveVm = archiveVm
         self.peers = peers
-        peers.setDelegate(self, for: "RootVm")
+        peers.setDelegate(self, for: .menu)
     }
 
     deinit {
-        peers.removeDelegate("RootVm")
+        peers.removeDelegate(self)
     }
 
     public func updateTreeVms(_ treeVm: TreeVm) {
