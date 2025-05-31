@@ -7,7 +7,7 @@ public class TouchMenuLocal {
     
     static var menuKey = [Int: TouchMenuLocal]()
 
-    private let buffer = DoubleBuffer<MenuItem>(internalLoop: true)
+    private let buffer = TripleBuffer<MenuItem>(internalLoop: true)
     private let cornerVm: CornerVm
     private let isRemote: Bool
     private let nodeVm: NodeVm?
@@ -59,7 +59,7 @@ public class TouchMenuLocal {
     }
 }
 
-extension TouchMenuLocal: DoubleBufferDelegate {
+extension TouchMenuLocal: TripleBufferDelegate {
 
     public typealias Item = MenuItem
 

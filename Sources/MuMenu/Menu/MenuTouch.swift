@@ -9,7 +9,7 @@ public var CornerOpVm = [Int: CornerVm]()
 public class MenuTouch {
 
     static var menuKey = [Int: MenuTouch]()
-    private let buffer = DoubleBuffer<MenuItem>(internalLoop: true)
+    private let buffer = TripleBuffer<MenuItem>(internalLoop: true)
     private let isRemote: Bool
 
     public init(isRemote: Bool) {
@@ -20,7 +20,7 @@ public class MenuTouch {
 
 }
 
-extension MenuTouch: DoubleBufferDelegate {
+extension MenuTouch: TripleBufferDelegate {
 
     public typealias Item = MenuItem
 
