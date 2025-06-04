@@ -9,7 +9,7 @@ public var CornerOpVm = [Int: CornerVm]()
 public class MenuTouch {
 
     static var menuKey = [Int: MenuTouch]()
-    private let buffer = TripleBuffer<MenuItem>(internalLoop: true)
+    private let buffer = CircleBuffer<MenuItem>(capacity: 3, internalLoop: true)
     private let isRemote: Bool
 
     public init(isRemote: Bool) {
@@ -20,11 +20,11 @@ public class MenuTouch {
 
 }
 
-extension MenuTouch: TripleBufferDelegate {
+extension MenuTouch: CircleBufferDelegate {
 
     public typealias Item = MenuItem
 
-    public func flushItem<Item>(_ item: Item) -> Bool {
+    public func flushItem<Item>(_ item: Item, _ type: BufferType) -> FlushState {
         let item = item as! MenuItem
 
         if isRemote {
@@ -43,18 +43,18 @@ extension MenuTouch: TripleBufferDelegate {
         } else if let touch = item.item as? MenuTouchItem {
             item.cornerVm?.updateTouchXY(touch.cgPoint, item.phase)
         }
-        return false // never invalidate internal timer
+        return .continue // never invalidate internal timer
     }
 }
 extension MenuTouch {
 
     public static func remoteItem(_ item: MenuItem) {
         if let menu = menuKey[item.key] {
-            menu.buffer.append(item)
+            menu.buffer.addItem(item, bufferType: .remote)
         } else {
             let touchMenu = MenuTouch(isRemote: true)
             menuKey[item.key] = touchMenu
-            touchMenu.buffer.append(item)
+            touchMenu.buffer.addItem(item, bufferType: .remote)
         }
     }
 }

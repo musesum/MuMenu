@@ -7,7 +7,7 @@ public class TouchMenuLocal {
     
     static var menuKey = [Int: TouchMenuLocal]()
 
-    private let buffer = TripleBuffer<MenuItem>(internalLoop: true)
+    private let buffer = CircleBuffer<MenuItem>(capacity: 3, internalLoop: true)
     private let cornerVm: CornerVm
     private let isRemote: Bool
     private let nodeVm: NodeVm?
@@ -39,7 +39,7 @@ public class TouchMenuLocal {
             func addMenu(_ nodeVm: NodeVm? = nil) -> Bool {
                 let touchMenu = TouchMenuLocal(cornerVm, nodeVm, isRemote: false)
                 let menuItem = MenuItem(touch, cornerVm.corner)
-                touchMenu.buffer.append(menuItem)
+                touchMenu.buffer.addItem(menuItem, bufferType: .local)
                 let key = touch.hash
                 menuKey[key] = touchMenu
                 return true
@@ -52,25 +52,25 @@ public class TouchMenuLocal {
         
         if let touchMenu = menuKey[touch.hash] {
             let corner = touchMenu.cornerVm.corner
-            touchMenu.buffer.append(MenuItem(touch, corner))
+            touchMenu.buffer.addItem(MenuItem(touch, corner), bufferType: .local)
             return true
         }
         return false
     }
 }
 
-extension TouchMenuLocal: TripleBufferDelegate {
+extension TouchMenuLocal: CircleBufferDelegate {
 
     public typealias Item = MenuItem
 
-    public func flushItem<Item>(_ item: Item) -> Bool {
+    public func flushItem<Item>(_ item: Item, _ type: BufferType) -> FlushState {
         let item = item as! MenuItem
         if let touch = item.item as? MenuTouchItem,
            let cornerVm = CornerOpVm[item.cornerOp] {
 
             cornerVm.updateTouchXY(touch.cgPoint, item.phase)
         }
-        return item.isDone
+        return item.isDone ? .done : .continue
     }
 }
 
