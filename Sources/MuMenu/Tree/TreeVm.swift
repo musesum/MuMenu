@@ -67,5 +67,5 @@ public class TreeVm: Identifiable, Equatable, ObservableObject {
             branchVm.updateTree(self)
         }
     }
-
+    
 }

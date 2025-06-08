@@ -4,13 +4,13 @@ import SwiftUI
 import MuFlo
 import MuPeers
 
-public protocol MenuFrame {
-    func menuFrame(_ frame: CGRect,  _ insets: EdgeInsets, onAppear: Bool)
+public protocol MenuRect {
+    func menuRect(_ frame: CGRect,  _ insets: EdgeInsets, onAppear: Bool)
 }
 
 public struct MenuView: View {
 
-    static var menuFrame: MenuFrame?
+    static var menuRect: MenuRect?
 
     var menuVms: [MenuVm]
     var cornerVms: [CornerVm] { menuVms.map { $0.rootVm.cornerVm } }
@@ -18,24 +18,24 @@ public struct MenuView: View {
     public init(_ root: Flo,
                 _ archiveVm: ArchiveVm,
                 _ peers: Peers,
-                _ menuFrame: MenuFrame) {
+                _ menuRect: MenuRect) {
 
         self.menuVms = MenuVms(root, archiveVm, peers).menuVms
-        MenuView.menuFrame = menuFrame
+        MenuView.menuRect = menuRect
     }
 
     public init(_ menuVms: [MenuVm],
-                _ menuFrame: MenuFrame) {
+                _ menuRect: MenuRect) {
 
         self.menuVms = menuVms
-        MenuView.menuFrame = menuFrame
+        MenuView.menuRect = menuRect
     }
     func geoFrame(_ geo: GeometryProxy, onAppear: Bool) {
 
         let frame = geo.frame(in: .global)
         let insets = geo.safeAreaInsets
-        if let menuFrame = MenuView.menuFrame {
-            menuFrame.menuFrame(frame, insets, onAppear: onAppear)
+        if let menuRect = MenuView.menuRect {
+            menuRect.menuRect(frame, insets, onAppear: onAppear)
         }
     }
     public var body: some View {

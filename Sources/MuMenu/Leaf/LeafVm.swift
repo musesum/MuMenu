@@ -62,12 +62,15 @@ public class LeafVm: NodeVm {
         }
     }
     /// value from another device, not direct touch
-    public func remoteThumb(_ remoteThumb: LeafThumb, _ visit: Visitor) {
+    public func remoteThumb(_ leafItem: MenuLeafItem, _ visit: Visitor) {
+        let remoteThumb = leafItem.leafThumb
+        let remoteOrigin = leafItem.origin
         guard let thumb = runways.thumb(remoteThumb.type) else { return }
         thumb.value = remoteThumb.value
         if !menuTree.flo.hasPlugins {
             thumb.tween = thumb.value
         }
+        origin = remoteOrigin
         syncVal(visit)
     }
     /// update from flo, including tweens -- not touch
@@ -84,7 +87,7 @@ public class LeafVm: NodeVm {
         if visit.isLocal(),
            let thumb = runways.thumb() {
 
-            let leafItem = MenuLeafItem(self, thumb)
+            let leafItem = MenuLeafItem(self, thumb, origin)
             let menuItem = MenuItem(leaf: leafItem, rootVm.cornerOp, .moved)
             rootVm.sendItemToPeers(menuItem)
         }
@@ -97,4 +100,5 @@ public class LeafVm: NodeVm {
         let result = scale(Double(value), from: 0...1, to: range)
         return result
     }
+    
 }

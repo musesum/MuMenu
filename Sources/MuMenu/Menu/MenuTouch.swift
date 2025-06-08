@@ -39,7 +39,6 @@ extension MenuTouch: CircleBufferDelegate {
                     }
                 default: break
             }
-
         } else if let touch = item.item as? MenuTouchItem {
             item.cornerVm?.updateTouchXY(touch.cgPoint, item.phase)
         }

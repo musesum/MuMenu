@@ -32,7 +32,7 @@ extension CornerVm {
 
                     //print("􀤆", terminator: "")
                     DispatchQueue.main.async {
-                        leafVm.remoteThumb(leafItem.leafThumb, Visitor(0, .remote))
+                        leafVm.remoteThumb(leafItem, Visitor(0, .remote))
                     }
                 }
             case .touch:

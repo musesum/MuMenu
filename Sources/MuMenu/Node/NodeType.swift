@@ -2,7 +2,7 @@
 
 import SwiftUI
 
-public enum NodeType: String {
+public enum NodeType: String, Codable {
     case none // no defined type
     case node // either icon or text
     case val  // value control

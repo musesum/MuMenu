@@ -29,14 +29,6 @@ public class LeafThumb: Codable {
         if let z { value.z = z ; tween.z = z }
         self.tween = value
     }
-    enum CodingKeys: String, CodingKey { case value, tween, type }
-
-    required public init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        try value = c.decode(SIMD3<Double>.self, forKey: .value )
-        try tween = c.decode(SIMD3<Double>.self, forKey: .tween )
-        try type = c.decode(LeafRunwayType.self, forKey: .type )
-    }
 
     // changed by type
     var thumbRadius: Double {

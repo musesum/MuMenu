@@ -1,7 +1,7 @@
 // created by musesum on 3/27/24
 
 import SwiftUI
-
+import MuFlo 
 
 struct LeafHeaderTitleView: View {
 
@@ -62,7 +62,7 @@ struct LeafHeaderDeltaView: View {
     var body: some View {
 
         Button {
-            leafVm.touchedOrigin()
+            leafVm.updateNodeValue(Visitor(0,.user))
         } label: {
             ZStack {
                 Image(uiImage: deltaImage)

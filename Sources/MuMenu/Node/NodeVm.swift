@@ -119,17 +119,18 @@ public class NodeVm: Identifiable, ObservableObject {
         return branchVm.treeVm.branchVms.last?.nodeSpotVm
     }
 
-    func tapLeaf() {
-        PrintLog("􀝰􀥲 tapLeaf: \(nodeType.description)")
-        touchedOrigin()
-    }
-
-    func touchedOrigin() {
+   
+    func updateNodeValue(_ visit: Visitor = Visitor(0,.user)) {
         rootVm.endAutoHide(false)
+
         switch nodeType {
-        case .xy, .xyz: update(withPrior: true)
-        case .val, .seg: updateDefault()
-        default:        update(withPrior: false)
+        case .xy, .xyz  : update(withPrior: true)
+        case .val, .seg : updateDefault()
+        default         : update(withPrior: false)
+        }
+        if visit.isLocal(), let leafVm = self as? LeafVm {
+            leafVm.runways.setThumbFlo(menuTree.flo)
+            leafVm.updateLeafPeers(visit)
         }
         func updateDefault() {
             menuTree.flo.activate([], Visitor(0, .user))
@@ -143,29 +144,29 @@ public class NodeVm: Identifiable, ObservableObject {
                 if state.onOrigin {
                     if state.hasPrior {
                         // moved from prior to origin to revert prior
-                        exprs.setPrior([], visit)
+                        exprs.setPrior(visit)
                         origin = false
                     } else {
                         // ignore button when on origin and no prior
                     }
                 } else if state.offOrigin {
                     // this should never happen, return to origin
-                    exprs.setOrigin([], visit)
+                    exprs.setOrigin(visit)
                     origin = true
                 } else if state.hasPrior {
-                    exprs.setPrior([], visit)
+                    exprs.setPrior(visit)
                     origin = false
                 }
             } else { // showing ∆ for delta
                 if state.onOrigin {
-                    exprs.setOrigin([], visit)
+                    exprs.setOrigin(visit)
                     origin = true
                 } else if state.offOrigin {
                     // this should never happen, return to origin
-                    exprs.setOrigin([], visit)
+                    exprs.setOrigin(visit)
                     origin = true
                 } else if state.hasPrior {
-                    exprs.setPrior([], visit)
+                    exprs.setPrior(visit)
                     origin = true
                 }
             }
@@ -177,8 +178,18 @@ extension NodeVm: Equatable {
     public static func == (lhs: NodeVm, rhs: NodeVm) -> Bool {
         return lhs.nodeHash == rhs.nodeHash
     }
-
 }
+extension NodeVm { // + Spotlight
+
+    /// update only chain of spotlight nodes
+    public func updateSpotNodes() {
+        if spotlight || nodeType.isLeaf {
+            updateNodeValue()
+        }
+        nextBranchVm?.nodeSpotVm?.updateSpotNodes()
+    }
+}
+
 #if false
 extension NodeVm { // log visitor
     static public func logVisits(_ visitor: Visitor) {

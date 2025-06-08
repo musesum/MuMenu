@@ -271,7 +271,7 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
                 } else {
                     touchType = .node
                     if touchState.touchEndedCount == 2 {
-                        nodeSpotVm?.tapNode(touchState)
+                        nodeSpotVm?.updateSpotNodes()
                     }
                 }
                 return true
@@ -299,7 +299,7 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
             case 2:
                 let wasShown = beginViewOps.hasAny([.branch,.trunks])
                 if  wasShown { spotBranches() }
-                nodeSpotVm?.tapNode(touchState)
+                nodeSpotVm?.updateSpotNodes()
 
             default:
                 if touchType != .root {

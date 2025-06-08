@@ -18,6 +18,11 @@ extension TreeVm { // + Peers
         }
         return nil 
     }
+    func gotoOriginItem(_ originItem: MenuOriginItem) -> NodeVm? {
+        let hashPath = originItem.hashPath
+        let hashNow = originItem.hashNow
+        return followHashPath(hashPath, hashNow)
+    }
     func followHashPath(_ hashPath: [Int],
                         _ hashNow: Int) -> NodeVm? {
 
