@@ -115,11 +115,6 @@ public class NodeVm: Identifiable, ObservableObject {
         }
     }
 
-    func lastShownNodeVm() -> NodeVm? {
-        return branchVm.treeVm.branchVms.last?.nodeSpotVm
-    }
-
-   
     func updateNodeValue(_ visit: Visitor = Visitor(0,.user)) {
         rootVm.endAutoHide(false)
 
