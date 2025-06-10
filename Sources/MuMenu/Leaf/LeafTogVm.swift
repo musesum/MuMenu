@@ -26,7 +26,7 @@ public class LeafTogVm: LeafVm {
 
             menuTree.flo.setAnyExprs([("x", thumb.value.x)], .sneak, visit)
 
-        } else if visit.type.has([.user,.midi,.remote]) {
+        } else if visit.type.has([.user,.remote]) {
 
             menuTree.flo.setAnyExprs(("x", thumb.value.x), .fire, visit)
             updateLeafPeers(visit)
