@@ -86,15 +86,15 @@ public class BranchVm: Identifiable, ObservableObject {
             let p = prevNodeVm
 
             switch menuTree.nodeType { //              __________ runways _________
-            case .xy   : return LeafXyVm      (m,b,p, [.runX, .runY, .runXY])
-            case .xyz  : return LeafXyzVm     (m,b,p, [.runX, .runY, .runZ, .runXY])
-            case .val  : return LeafValVm     (m,b,p, [.runVal])
-            case .seg  : return LeafSegVm     (m,b,p, [.runVal])
-            case .tog  : return LeafTogVm     (m,b,p, [.none])
-            case .hand : return LeafHandVm    (m,b,p, [.runX, .runY, .runZ, .runXY])
-            case .peer : return LeafPeerVm    (m,b,p, [])
-            case .arch : return LeafArchiveVm (m,b,p, [], treeVm.rootVm.archiveVm)
-            default    : return NodeVm        (m,b,p)
+            case .xy    : return LeafXyVm      (m,b,p, [.runX, .runY, .runXY])
+            case .xyz   : return LeafXyzVm     (m,b,p, [.runX, .runY, .runZ, .runXY])
+            case .val   : return LeafValVm     (m,b,p, [.runVal])
+            case .seg   : return LeafSegVm     (m,b,p, [.runVal])
+            case .tog   : return LeafTogVm     (m,b,p, [.none])
+            case .hand  : return LeafHandVm    (m,b,p, [.runX, .runY, .runZ, .runXY])
+            case .peer  : return LeafPeerVm    (m,b,p, [])
+            case .arch  : return LeafArchiveVm (m,b,p, [], treeVm.rootVm.archiveVm)
+            default     : return NodeVm        (m,b,p)
             }
         }
     }

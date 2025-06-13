@@ -57,12 +57,13 @@ public class PanelVm {
                       ? aspect(1.0, 4.0)
                       : aspect(4.0, 1.0))
 
-        case .xy   : aspect(4.0, 4.0)
-        case .xyz  : aspect(4.5, 4.0)
-        case .seg  : aspect(1.0, 4.0)
-        case .peer : aspect(6.0, 3.0)
-        case .arch : aspect(6.0, 6.0)
-        case .hand : aspect(4.0, 3.5)
+        case .xy     : aspect(4.0, 4.0)
+        case .xyz    : aspect(4.5, 4.0)
+        case .seg    : aspect(1.0, 4.0)
+        case .peer   : aspect(6.0, 3.0)
+        case .search : aspect(6.0, 3.0)
+        case .arch   : aspect(6.0, 6.0)
+        case .hand   : aspect(4.0, 3.5)
         }
         func aspect(_ lo: CGFloat,_ hi: CGFloat  ) {
             aspectSz = isVertical || nodeType == .peer
@@ -134,7 +135,7 @@ public class PanelVm {
 
             return inner + pad
 
-        case .hand, .peer, .arch: // header is always on top
+        case .hand, .peer, .arch, .search: // header is always on top
 
             return inner + CGSize(width: pad, height: dia)
 

@@ -8,7 +8,6 @@ import MuVision
 open class MenuVm {
     var id = Visitor.nextId()
     public var rootVm: RootVm
-    public var floNames: [String] = []
 
     /// one or two menus emanating from a corner
     ///
@@ -21,7 +20,6 @@ open class MenuVm {
     public init?(_ corners: [Corner], _ floNames: [String], _ archiveVm: ArchiveVm,_ peers: Peers) {
 
         guard corners.count > 0 else { print("corners < 1") ; return nil }
-        self.floNames = floNames
         var treeVms = [TreeVm]()
 
         // both veritical and horizontal menu will share the same root
@@ -42,6 +40,36 @@ open class MenuVm {
         func updateBranches(_ menuTrees: [MenuTree],
                             _ treeVm: TreeVm) {
 
+            let branchVm = BranchVm(menuTrees: menuTrees,
+                                    treeVm: treeVm,
+                                    prevNodeVm: nil)
+
+            treeVm.addBranchVms([branchVm])
+            treeVms.append(treeVm)
+
+            rootVm.updateTreeVms(treeVm)
+            rootVm.showSoloTree(false)
+            rootVm.startAutoHide(false)
+        }
+    }
+    public init(_ rootVm: RootVm,
+                _ corner: Corner,
+                _ floNames: [String]) {
+
+        var treeVms = [TreeVm]()
+
+        // both veritical and horizontal menu will share the same root
+        self.rootVm = rootVm
+        var menuTrees = [MenuTree]()
+
+        for floName in floNames {
+            if let menuTree = updateMenuTree(corner, floName) {
+                menuTrees.append(menuTree)
+            }
+            updateBranches(menuTrees)
+        }
+        func updateBranches(_ menuTrees: [MenuTree]) {
+            let treeVm = TreeVm(rootVm, corner)
             let branchVm = BranchVm(menuTrees: menuTrees,
                                     treeVm: treeVm,
                                     prevNodeVm: nil)

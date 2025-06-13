@@ -3,7 +3,7 @@
 import SwiftUI
 import MuFlo
 import MuPeers
-
+@MainActor
 public protocol MenuRect {
     func menuRect(_ frame: CGRect,  _ insets: EdgeInsets, onAppear: Bool)
 }

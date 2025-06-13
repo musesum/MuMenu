@@ -45,7 +45,7 @@ public class TreeVm: Identifiable, Equatable, ObservableObject {
                 branchVm.show == false) {
                 continue
             }
-            // print(branchVm.title.pad(10) + (isVertical?" V":" H"), terminator: " ")
+            //print(branchVm.title.pad(10) + (isVertical ? " V" : " H"), terminator: " ") 
             rect = rect.extend(branchVm.boundsNow)
         }
         treeBounds = rect
