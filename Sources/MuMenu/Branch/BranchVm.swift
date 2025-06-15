@@ -39,7 +39,6 @@ public class BranchVm: Identifiable, ObservableObject {
         let nameLast  = nodeVms.last?.menuTree.flo.name ?? ""
         return nameFirst + "…" + nameLast
     }
-    var chiral: Chiral { treeVm.corner.chiral }
 
     static func titleForNodes(_ menuTrees: [MenuTree]) -> String {
         let nameFirst = menuTrees.first?.flo.name ?? ""
@@ -50,7 +49,7 @@ public class BranchVm: Identifiable, ObservableObject {
     public init(menuTrees: [MenuTree] = [],
                 treeVm: TreeVm,
                 branchPrev: BranchVm? = nil,
-                prevNodeVm: NodeVm?,
+                prevNodeVm: NodeVm? = nil,
                 zindex: CGFloat = 0) {
 
         self.nodeVms = []
@@ -126,6 +125,18 @@ public class BranchVm: Identifiable, ObservableObject {
         nodeVms.append(nodeVm)
     }
 
+    func nearestBranchNode(_ touchNow: CGPoint) -> NodeVm? {
+        var nearestNode: NodeVm?
+        var nearestDistance = CGFloat.infinity
+        for nodeVm in nodeVms {
+            let distance = nodeVm.center.distance(touchNow)
+            if nearestDistance > distance {
+                nearestDistance = distance
+                nearestNode = nodeVm
+            }
+        }
+        return nearestNode
+    }
     func nearestNode(_ touchNow: CGPoint) -> NodeVm? {
 
         if let nodeSpotVm {
@@ -137,7 +148,7 @@ public class BranchVm: Identifiable, ObservableObject {
         var candidate: NodeVm?
         for nodeVm in nodeVms {
             let distance = nodeVm.center.distance(touchNow)
-            if distance < Layout.radius {
+            if distance < Layout.diameter {
                 if distance < candidate?.center.distance(touchNow) ?? .infinity {
                     candidate = nodeVm
                 }
@@ -210,7 +221,7 @@ public class BranchVm: Identifiable, ObservableObject {
         let pw = boundsPrior.width
         let ph = boundsPrior.height
 
-        switch treeVm.corner.bound {
+        switch treeVm.trunk.bound {
             case .lowerX: shiftRange = (min(0,-pw)...0, 0...0)
             case .upperX: shiftRange = (0...max(0, pw), 0...0)
             case .lowerY: shiftRange = (0...0, min(0,-ph)...0)
@@ -219,11 +230,12 @@ public class BranchVm: Identifiable, ObservableObject {
         shiftBranch()
 
         let rad = Layout.radius
-        switch treeVm.corner.cornerAxis {
-            case .LLH,.ULH: titleShift = CGSize(width:  rad, height: 0)
-            case .LRH,.URH: titleShift = CGSize(width: -rad, height: 0)
-            case .LLV,.LRV: titleShift = .zero
-            case .ULV,.URV: titleShift = .zero
+        switch treeVm.trunk.menuOp.cornerAxis {
+        case .DLH,.ULH: titleShift = CGSize(width:  rad, height: 0)
+        case .DRH,.URH: titleShift = CGSize(width: -rad, height: 0)
+        case .DLV,.DRV: titleShift = .zero
+        case .ULV,.URV: titleShift = .zero
+        case .none    : titleShift = .zero
         }
     }
 

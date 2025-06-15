@@ -14,38 +14,62 @@ public struct MenuVms {
         Icon.altBundles.append(MuVision.bundle)
 
         let menuTree = MenuTree(root˚)
-
+        let vertiMenu = ["canvas", "plato", "cell", "camera"]
+        let horiMenu = ["more.bonjour", "more.archive", "more.search"]
         #if os(visionOS)
-        let floNames = ["canvas", "plato", "cell", "more"]
-        //let UL = CornerOp([.upper, .left])
-        //let UR = CornerOp([.upper, .right])
-        let VUL = Corner(menuTree, .vertical, .left,  [.upper, .left])
-        let VUR = Corner(menuTree, .vertical, .right, [.upper, .right])
-        if let m = MenuVm([VUL], floNames, archiveVm, peers) { menuVms.append(m) }
-        if let m = MenuVm([VUR], floNames, archiveVm, peers) { menuVms.append(m) }
-        #elseif true // legacy
-        let floNames = ["canvas", "plato", "cell", "camera", "more"]
-        let cornerLeft  = Corner(menuTree, .vertical, .left,  [.lower, .left])
-        let cornerRight = Corner(menuTree, .vertical, .right, [.lower, .right])
-        if let m = MenuVm([cornerLeft], floNames, archiveVm, peers) { menuVms.append(m) }
-        if let m = MenuVm([cornerRight],floNames, archiveVm, peers) { menuVms.append(m) }
-        #else // dual vertical/horizontal corner version -- some issues
-        let LL = CornerOp([.lower, .left])
-        let LR = CornerOp([.lower, .right])
-        let rootLL = RootVm(LL, archiveVm, peers)
-        let rootLR = RootVm(LR, archiveVm, peers)
+        let UL = CornerOp([.upper, .left])
+        let UR = CornerOp([.upper, .right])
+        let rootLL = RootVm(UL, archiveVm, peers)
+        let rootLR = RootVm(UR, archiveVm, peers)
 
-        let vNames = ["canvas", "plato", "cell", "camera", "more"]
-        let VLL = Corner(menuTree, .vertical, .left,  LL)
-        let VLR = Corner(menuTree, .vertical, .right, LR)
-        menuVms.append(MenuVm(rootLL, VLL, vNames))
-        menuVms.append(MenuVm(rootLR, VLR, vNames))
+        // vertical menu
+        let VUL = Corner(menuTree, .vertical, UL)
+        let VUR = Corner(menuTree, .vertical, UR)
+        menuVms.append(MenuVm(rootLL, VUL, vertiMenu))
+        menuVms.append(MenuVm(rootLR, VUR, vertiMenu))
 
-        let hNames = ["search"]
-        let HLR = Corner(menuTree, .horizontal, .right, LR)
-        let HLL = Corner(menuTree, .horizontal, .left,  LL)
-        menuVms.append(MenuVm(rootLL, HLL, hNames))
-        menuVms.append(MenuVm(rootLR, HLR, hNames))
+        //..... horizonal menu
+        let HUL = Corner(menuTree, .horizontal, UL)
+        let HUR = Corner(menuTree, .horizontal, UR)
+        menuVms.append(MenuVm(rootLL, HUL, horiMenu))
+        menuVms.append(MenuVm(rootLR, HUR, horiMenu))
+
+        #elseif true // dual vertical/horizontal menu
+        // 
+        let DLV = MenuOp("DLV")
+        let DRV = MenuOp("DRV")
+        let rootDLV = RootVm(DLV, archiveVm, peers)
+        let rootDRV = RootVm(DRV, archiveVm, peers)
+
+        let trunkDLV = Trunk(menuTree, DLV)
+        let trunkDRV = Trunk(menuTree, DRV)
+        menuVms.append(MenuVm(rootDLV, trunkDLV, vertiMenu))
+        menuVms.append(MenuVm(rootDRV, trunkDRV, vertiMenu))
+
+        //..... horizonal menu
+        let DLH = MenuOp("DLH")
+        let DRH = MenuOp("DRH")
+        let rootDLH = RootVm(DLH, archiveVm, peers)
+        let rootDRH = RootVm(DRH, archiveVm, peers)
+
+        let trunkDLH = Trunk(menuTree, DLH)
+        let trunkDRH = Trunk(menuTree, DRH)
+        menuVms.append(MenuVm(rootDLH, trunkDLH, horiMenu))
+        menuVms.append(MenuVm(rootDRH, trunkDRH, horiMenu))
+
+        #else
+        // vertical menu
+        let DLV = MenuOp("DLV")
+        let DRV = MenuOp("DRV")
+        menuVms.append(MenuVm(DLV), Trunk(menuTree, DLV), vertiMenu)
+        menuVms.append(MenuVm(DRV), Trunk(menuTree, DRV), vertiMenu)
+
+        //..... horizonal menu
+        let DLH = MenuOp("DLH")
+        let DRH = MenuOp("DRH")
+        menuVms.append(MenuVm(DLH), Trunk(menuTree, DLH),horiMenu)
+        menuVms.append(MenuVm(DRH), Trunk(menuTree, DRH),horiMenu)
+
 
         #endif
     }

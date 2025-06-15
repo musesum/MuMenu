@@ -16,13 +16,11 @@ extension BranchVm {
         var nextHash: (Int, BranchVm?) {
             var hasher = Hasher()
             let prevHash = prevNodeVm?.hashValue ?? 0
-            let cornerHash = treeVm.corner.cornerOp.rawValue
-            let axisHash = treeVm.corner.axis.rawValue
+            let menuOpHash = treeVm.trunk.menuOp.rawValue
             let title = BranchVm.titleForNodes(menuTrees)
 
             hasher.combine(prevHash)
-            hasher.combine(cornerHash)
-            hasher.combine(axisHash)
+            hasher.combine(menuOpHash)
             hasher.combine(title)
             let hash = hasher.finalize()
             let oldBranch = BranchCache[hash]

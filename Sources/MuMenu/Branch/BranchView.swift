@@ -13,22 +13,27 @@ struct BranchView: View {
         self.branchVm = branchVm
     }
     var body: some View {
+        let cornerAxis = treeVm.trunk.menuOp.cornerAxis
         if branchVm.columns > 1 {
-            switch treeVm.corner.cornerAxis {
-            case .LLV, .LRV: VStack                     { titleV(branchVm); gridV(branchVm)  }
+            switch cornerAxis {
+            case .DLV, .DRV: VStack                     { titleV(branchVm); gridV(branchVm)  }
             case .ULV, .URV: VStack                     { gridV(branchVm) ; titleV(branchVm) }
-            case .LLH, .ULH: HStack(alignment: .bottom) { gridV(branchVm) ; titleV(branchVm) }
-            case .URH, .LRH: HStack(alignment: .top)    { titleV(branchVm); gridV(branchVm)  }
+            case .DLH, .ULH: HStack(alignment: .bottom) { gridV(branchVm) ; titleV(branchVm) }
+            case .URH, .DRH: HStack(alignment: .top)    { titleV(branchVm); gridV(branchVm)  }
+            case .none     : VStack                     { titleV(branchVm); gridV(branchVm)  }
             }
         } else {
-            switch treeVm.corner.cornerAxis {
-            case .LLV, .LRV: VStack                     { titleV(branchVm); bodyV(branchVm)  }
+            switch cornerAxis {
+            case .DLV, .DRV: VStack                     { titleV(branchVm); bodyV(branchVm)  }
             case .ULV, .URV: VStack                     { bodyV(branchVm) ; titleV(branchVm) }
-            case .LLH, .ULH: HStack(alignment: .bottom) { bodyV(branchVm) ; titleV(branchVm) }
-            case .URH, .LRH: HStack(alignment: .top)    { titleV(branchVm); bodyV(branchVm)  }
+            case .DLH, .ULH: HStack(alignment: .bottom) { bodyV(branchVm) ; titleV(branchVm) }
+            case .URH, .DRH: HStack(alignment: .top)    { titleV(branchVm); bodyV(branchVm)  }
+            case .none     : VStack                     { titleV(branchVm); bodyV(branchVm)  }
             }
         }
     }
+
+    
 }
 
 /// title showing position of control
@@ -44,28 +49,28 @@ fileprivate struct titleV: View {
                               height: Layout.radius)
     }
     var angle: Angle {
-        switch treeVm.corner.cornerAxis {
-            case .LLV, .LRV, .ULV, .URV: return  Angle(degrees:0)
-            case .URH, .ULH: return  Angle(degrees:270) //TODO: 90 later, tricky
-            case .LLH, .LRH: return  Angle(degrees:270)
+        switch treeVm.trunk.menuOp.cornerAxis {
+        case .DLV, .DRV, .ULV, .URV, .none: return  Angle(degrees:0)
+        case .URH, .ULH: return  Angle(degrees:270) //TODO: 90 later, tricky
+        case .DLH, .DRH: return  Angle(degrees:270)
         }
     }
 
     var anchor: UnitPoint {
-        switch treeVm.corner.cornerAxis {
-            case .LLV, .LRV, .ULV, .URV: return .center
-            case .LLH, .ULH: return .bottomLeading
-            case .URH, .LRH: return .topTrailing
+        switch treeVm.trunk.menuOp.cornerAxis {
+        case .DLV, .DRV, .ULV, .URV, .none: return .center
+        case .DLH, .ULH: return .bottomLeading
+        case .URH, .DRH: return .topTrailing
         }
     }
 
     var frameAlign: Alignment {
-        switch treeVm.corner.cornerAxis {
-            case .LLV, .LRV, .ULV, .URV: return .center
-            case .LLH: return .bottomLeading
-            case .ULH: return .bottomLeading
-            case .URH: return .topTrailing
-            case .LRH: return .topTrailing
+        switch treeVm.trunk.menuOp.cornerAxis {
+        case .DLV, .DRV, .ULV, .URV, .none: return .center
+        case .DLH: return .bottomLeading
+        case .ULH: return .bottomLeading
+        case .URH: return .topTrailing
+        case .DRH: return .topTrailing
         }
     }
 
@@ -200,7 +205,7 @@ struct BranchAxisView<Content: View>: View {
         // .horizonal scroll view shifts and truncates the inner views
         // so, perhaps there is a phantom space for indicators?
         
-        if panelVm.isVertical ||
+        if panelVm.trunk.menuOp.vertical ||
             [.xy, .xyz, .arch, .peer].contains(panelVm.nodeType) {
 
             ScrollView(.vertical, showsIndicators: false) {

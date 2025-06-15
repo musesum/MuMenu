@@ -13,6 +13,7 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
     let peers: Peers
 
     /// is the finger touching
+
     @Published var touchType = TouchType.none
     var touchTypeBegin = TouchType.none
     /// captures touch events to dispatch to this root
@@ -24,11 +25,13 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
     /// `touchBegin` snapshot of viewElements.
     /// To prevent touchEnded from hiding elements that were shown during `touchBegin`
     var beginViewOps: Set<TouchType> = []
-    public var cornerOp: CornerOp /// corner where root begins, ex: `[south,west]`
+    
+    public var menuOp: MenuOp /// corner where root begins, ex: `[south,west]`
     var treeVms = [TreeVm]() /// vertical or horizontal stack of branches
     var treeSpotVm: TreeVm? /// most recently used tree
     var rootOffset: CGSize = .zero
 
+    var autoHideMenu = true
     var autoHideTimer: Timer?
     var autoHideInterval = TimeInterval(12)
     var touchState = TouchState()
@@ -45,32 +48,29 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
         if !fromRemote {
             let phase = touchState.phase
             let nodeItem = MenuNodeItem(newSpotVm)
-            let menuItem = MenuItem(node: nodeItem, cornerOp, phase)
+            let menuItem = MenuItem(node: nodeItem, menuOp, phase)
             sendItemToPeers(menuItem)
         }
     }
 
-    public init(_ cornerOp: CornerOp,
+    public init(_ menuOp: MenuOp,
                 _ archiveVm: ArchiveVm,
                 _ peers: Peers) {
 
-        self.cornerOp = cornerOp
-        self.cornerVm = CornerVm(cornerOp)
+        self.menuOp = menuOp
+        self.cornerVm = CornerVm(menuOp)
         self.archiveVm = archiveVm
         self.peers = peers
         peers.setDelegate(self, for: .menuFrame)
     }
-
     deinit {
         peers.removeDelegate(self)
     }
-
-    public func updateTreeVms(_ treeVm: TreeVm) {
+    public func addTreeVm(_ treeVm: TreeVm) {
         self.treeVms.append(treeVm)
         cornerVm.setRoot(self)
         updateTreeOffsets()
     }
-
     private func updateTreeOffsets() {
 
         let margins = idiomMargins()
@@ -88,16 +88,16 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
         func h(_ w:CGFloat,_ h:CGFloat) { hs = CGSize(width:w,height:h) }
         func r(_ w:CGFloat,_ h:CGFloat) { rs = CGSize(width:w,height:h) }
 
-        switch cornerOp {
-            case [.lower, .right]: v(-x0,-y1); h(-x1,-y0); r(0, 0)
-            case [.lower, .left ]: v( x0,-y1); h( x1,-y0); r(0, 0)
-            case [.upper, .right]: v(-x0, y1); h(-x1, y0); r(0, 0)
-            case [.upper, .left ]: v( x0, y1); h( x1, y0); r(0, 0)
-            default: break
+        switch menuOp.corner {
+        case .downRight: v(-x0,-y1); h(-x1,-y0); r(0, 0)
+        case .downLeft: v( x0,-y1); h( x1,-y0); r(0, 0)
+        case .upRight: v(-x0, y1); h(-x1, y0); r(0, 0)
+        case .upLeft: v( x0, y1); h( x1, y0); r(0, 0)
+        default: break
         }
         rootOffset = rs
         for treeVm in treeVms {
-            treeVm.treeOffset = (treeVm.isVertical ? vs : hs)
+            treeVm.treeOffset = (treeVm.trunk.menuOp.vertical ? vs : hs)
         }
     }
     private func idiomMargins() -> CGSize {
@@ -114,8 +114,8 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
 
         let h: CGFloat
         switch idiom {
-        case .pad    : h = cornerOp.lower ? padding2 : 0
-        case .phone  : h = cornerOp.upper ? padding2 : 0
+        case .pad    : h = menuOp.down ? padding2 : 0
+        case .phone  : h = menuOp.up   ? padding2 : 0
         case .vision : h = padding2 * 2
         default      : h = 0
         }
@@ -132,12 +132,12 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
         let s = Layout.padding
         let r = Layout.diameter / 2
         
-        switch cornerOp {
-            case [.lower, .right]: return CGPoint(x: w-x-r-s, y: h-y-r-s)
-            case [.lower, .left ]: return CGPoint(x:   x+r+s, y: h-y-r-s)
-            case [.upper, .right]: return CGPoint(x: w-x-r-s, y:   y+r+s)
-            case [.upper, .left ]: return CGPoint(x:   x+r+s, y:   y+r+s)
-            default: return .zero
+        switch menuOp.corner {
+        case .downRight: return CGPoint(x: w-x-r-s, y: h-y-r-s)
+        case .downLeft : return CGPoint(x:   x+r+s, y: h-y-r-s)
+        case .upRight: return CGPoint(x: w-x-r-s, y:   y+r+s)
+        case .upLeft: return CGPoint(x:   x+r+s, y:   y+r+s)
+        default: return .zero
         }
     }
     internal func hitTest(_ point: CGPoint) -> NodeVm? {
@@ -157,82 +157,52 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
         }
         return nil
     }
-    internal func touchBegin(_ touchState: TouchState, _ fromRemote: Bool) {
-
-        self.touchState = touchState
-        beginViewOps = viewOps
-        updateRoot(fromRemote)
-        if let nodeSpotVm {
-            updateSpot(nodeSpotVm, fromRemote)
-        }
-        touchTypeBegin = touchType
-        endAutoHide(fromRemote)
-    }
-    internal func touchMoved(_ touchState: TouchState, _ fromRemote: Bool) {
-
-        self.touchState = touchState
-        updateRoot(fromRemote)
-    }
-    internal func touchEnded(_ touchState: TouchState, _ fromRemote: Bool) {
-        
-        self.touchState = touchState
-        startAutoHide(fromRemote)
-        updateRoot(fromRemote)
-        
-        /// turn off spotlight for leaf after edit
-        /// keep on for .tog, .tap so that double tapping on root will repeat
-        if let nodeSpotVm {
-            if nodeSpotVm.nodeType.isControl {
-                nodeSpotVm.spotlight = false
-            }
-        }
-        treeSpotVm?.branchSpotVm = nil
-        touchType = .none
-
-        if !fromRemote, let nodeSpotVm {
-            let nodeItem = MenuNodeItem(nodeSpotVm)
-            let menuItem = MenuItem(node: nodeItem, cornerOp, touchState.phase)
-            sendItemToPeers(menuItem)
-        }
-
-    }
-    public func startAutoHide(_ fromRemote: Bool) {
-        #if os(visionOS)
-        #else
-        autoHideTimer = Timer.scheduledTimer(withTimeInterval: autoHideInterval, repeats: false) { timer in
-            self.hideBranches(.none, fromRemote)
-        }
-        #endif
-    }
-    public func endAutoHide(_ fromRemote: Bool) {
-        autoHideTimer?.invalidate()
-        reshowTree(fromRemote)
-    }
-    private func updateRoot(_ fromRemote: Bool) {
+    
+    internal func updateRoot(_ fromRemote: Bool) {
 
         let touchNow = touchState.pointNow
 
         // stay exclusively on .leaf or .edit mode
         switch touchType {
-            case .canopy : logRoot("􀝰"); return shiftCanopy()
-            case .shift  : logRoot("􀝰"); return shiftBranches()
-            case .leaf   : logRoot("􀝰"); return editLeaf(nodeSpotVm)
-            case .tog    : logRoot("􀝰"); return editTog(nodeSpotVm)
-            default      : break
+        case .canopy : logRoot("shift Canopy"); return shiftCanopy()
+        case .shift  : logRoot("shift Branch"); return shiftBranches()
+        case .leaf   : logRoot("edit Leaf"   ); return editLeaf(nodeSpotVm)
+        case .tog    : logRoot("edit Tog"    ); return editTog(nodeSpotVm)
+        default      : break // logRoot(menuOp.description)
+        }
+        if      touchLeaf() { logRoot("touch Leaf 🍁") } // new node on same tree
+        else if hoverLeaf() { logRoot("hover Leaf 🍁") } // new node on same tree
+        else if hoverSpot() { logRoot("hover Node ⚪️") } // over the spot node
+        else if hoverRoot() { logRoot("hover Root 🫚") } // over the root node
+
+        else if hoverTree() { logRoot("hover Tree 🌳") } // new node on same tree
+        else if hoverAlt()  { logRoot("hover Alt  🌴") } // alternate tree
+        else {  hoverSpace(); logRoot("hover Space 🪐") } // hovering over canvas
+
+        func logRoot(_ msg: String = "",_ t: String = "") {
+            let symbol = touchType.symbol
+
+            //if ["􀄭"].contains(symbol) { return }
+
+            MuLog.TimeLog(symbol, interval: 1) {
+                P("\(symbol)  \(msg)")
+            }
         }
 
-        if      hoverNodeSpot() { logRoot("N") } // over the same branch node
-        else if hoverRootNode() { logRoot("R") } // over the root (home) node
-        else if hoverTreeNow()  { logRoot("T") } // new node on same tree
-        else if hoverTreeAlts() { logRoot("A") } // alternate tree
-        else {  hoverSpace()    ; logRoot("S") } // hovering over canvas
+        func touchLeaf() -> Bool {
+            if touchState.phase == .began,
+               let treeSpotVm,
+               let branchVm = treeSpotVm.nearestBranch(touchNow),
+               let leafVm = branchVm.nearestNode(touchNow) as? LeafVm {
 
-        func logRoot(_ s: String = "") {
-            //MuLog.RunPrint( touchType.symbol+s, terminator: " ")
+                nodeSpotVm = leafVm
+                updateTreeSpot(treeSpotVm, leafVm, "leaf") //....
+                shiftCanopy()
+                return true
+            }
+            return false
         }
-
-        // ⓝL
-        func hoverLeafNode() -> Bool {
+        func hoverLeaf() -> Bool {
             guard let leafVm = nodeSpotVm as? LeafVm else { return false }
 
             if leafVm.runways.contains(touchNow) {
@@ -261,24 +231,19 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
             return false
         }
 
-        func hoverNodeSpot() -> Bool {
-
+        func hoverSpot() -> Bool {
             if let center = nodeSpotVm?.center,
                center.distance(touchNow) < Layout.insideNode {
 
-                if hoverLeafNode() {
-                    // touchType set of .leaf or .tog
-                } else {
-                    touchType = .node
-                    if touchState.touchEndedCount == 2 {
-                        nodeSpotVm?.updateSpotNodes()
-                    }
+                touchType = .node
+                if touchState.touchEndedCount == 2 {
+                    nodeSpotVm?.updateSpotNodes()
                 }
                 return true
             }
             return false
         }
-        func hoverRootNode() -> Bool {
+        func hoverRoot() -> Bool {
 
             if !cornerVm.touchingRoot(touchNow) {
                 if touchTypeBegin == .root {
@@ -311,33 +276,14 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
             }
             return true
         }
-        func hoverTreeNow() -> Bool {
-            for treeVm in treeVms {
-                
-                if let branchVm = treeVm.nearestBranch(touchNow),
-                   let nodeVm = branchVm.nearestNode(touchNow) {
 
-                    updateTreeSpot(treeVm, nodeVm, "tree")
+        func hoverTree() -> Bool {
 
-                    if hoverLeafNode() {
-                        // already set touchElement
-                    } else if !viewOps.contains(.branch) {
-
-                        viewOps = [.root,.branch]
-                        touchType = .branch
-                    }
-                    return true
-                }
-            }
-            if touchState.phase == .began {
-                for treeVm in treeVms {
-                    if treeVm.treeBoundsPad.contains(touchNow) {
-                        nodeSpotVm = nil
-                        treeSpotVm = treeVm
-                        shiftCanopy()
-                        return true
-                    }
-                }
+            if let treeSpotVm,
+               let branchVm = treeSpotVm.nearestBranch(touchNow),
+               let nodeVm = branchVm.nearestNode(touchNow) {
+                updateTreeSpot(treeSpotVm, nodeVm, "tree")
+                return true
             }
             return false
         }
@@ -349,25 +295,25 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
             
             for treeVm in treeVms {
                 if treeVm == treeSpotVm {
-                    treeVm.showTree(depth: 9, via+"+", fromRemote)
+                    treeVm.showTree(depth: 9, via + "+", fromRemote)
                 } else {
-                    treeVm.showTree(depth: 0, via+"-", fromRemote)
+                    treeVm.showTree(depth: 0, via + "-", fromRemote)
                 }
             }
             updateSpot(nearestNode, fromRemote)
         }
-        func hoverTreeAlts() -> Bool {
+        func hoverAlt() -> Bool {
             // hovering over hidden trunk of another tree?
             for treeVm in treeVms {
-                if treeVm != treeSpotVm,
-                   let nearestTrunk = treeVm.nearestTrunk(touchNow),
-                   let nearestNode = nearestTrunk.nearestNode(touchNow) {
-                    
-                    updateTreeSpot(treeVm, nearestNode, "alt")
-                    
-                    viewOps = [.root,.branch]
-                    touchType = .branch
-                    return true
+                if treeVm != treeSpotVm {
+                    if let branchVm = treeVm.branchVms.first,
+                       branchVm.contains(touchNow),
+                       let nearestNode = branchVm.nearestBranchNode(touchNow) {
+                        updateTreeSpot(treeVm, nearestNode, "alt")
+                        viewOps = [.root,.branch]
+                        touchType = .branch
+                        return true
+                    }
                 }
             }
             return false
@@ -440,7 +386,7 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
         
         func showTrunks() {
             if treeVms.count == 1 {
-                showSoloTree(fromRemote)
+                showSoloTree(fromRemote: true)
             } else {
                 for treeVm in treeVms {
                     treeVm.showTree(depth: 1, "trunk", fromRemote)
@@ -477,7 +423,7 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
         }
         viewOps = [.root]
     }
-    func showSoloTree(_ fromRemote: Bool) {
+    func showSoloTree(fromRemote: Bool = false) {
         if let treeVm = treeVms.first {
             treeSpotVm = treeVm
             treeVm.showTree(depth: 9, "solo", fromRemote)
@@ -500,3 +446,4 @@ extension RootVm: PeersDelegate {
     }
 
 }
+

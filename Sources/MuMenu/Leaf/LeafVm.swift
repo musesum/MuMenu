@@ -11,7 +11,7 @@ public class LeafVm: NodeVm {
     var runways: LeafRunways!
     var ranges = [String : ClosedRange<Double>]()
 
-    lazy var leafPath: String = { branchVm.chiral.icon + "." + menuTree.path }()
+    lazy var leafPath: String = { branchVm.treeVm.trunk.menuOp.key + "." + menuTree.path }()
     public lazy var leafHash: Int = { leafPath.strHash() }()
 
     init (_ menuTree: MenuTree,
@@ -88,7 +88,7 @@ public class LeafVm: NodeVm {
            let thumb = runways.thumb() {
 
             let leafItem = MenuLeafItem(self, thumb, origin)
-            let menuItem = MenuItem(leaf: leafItem, rootVm.cornerOp, .moved)
+            let menuItem = MenuItem(leaf: leafItem, rootVm.menuOp, .moved)
             rootVm.sendItemToPeers(menuItem)
         }
     }

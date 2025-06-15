@@ -17,18 +17,17 @@ import MuFlo
     var rootNodeΔ = CGSize.zero /// offset between rootNode and touchNow
     private var spotNodeΔ = CGSize.zero /// offset between touch point and center in coord
     var dragNodeΔ: CGSize { /// weird kludge to compsate for small right offset
-        if let rootVm, rootVm.cornerOp.right,
+        if let rootVm, rootVm.menuOp.right,
            ringIconXY != parkIconXY {
             return CGSize(width: -Layout.padding2, height: 0)
         } else {
             return .zero
         }
-
     }
 
-    public var corner: CornerOp
+    public var corner: MenuOp
 
-    init(_ corner: CornerOp) {
+    init(_ corner: MenuOp) {
         self.corner = corner
     }
 
@@ -39,8 +38,7 @@ import MuFlo
         self.rootVm = rootVm
 
         let branchVm = BranchVm.cached(treeVm: treeVm)
-        let name = rootVm.cornerOp.indicator()
-        let cornerFlo = Flo(name)
+        let cornerFlo = Flo(rootVm.menuOp.key)
 
         let iconLogo = Icon(.cursor, Layout.iconLogo)
         let cornerLogo = MenuTree(cornerFlo, .none, iconLogo)

@@ -25,8 +25,7 @@ struct LeafHeaderTitleView: View {
             .foregroundColor(.white)
             .shadow(color: .black, radius: 1.0)
             .frame(width:  size.width + inset,
-                   height: size.height,
-                   alignment: .center)
+                   height: size.height, alignment: .center)
     }
 }
 

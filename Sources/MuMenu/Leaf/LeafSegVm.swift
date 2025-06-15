@@ -19,7 +19,7 @@ public class LeafSegVm: LeafValVm {
 
         for i in stride(from: CGFloat(0), through: 1, by: span) {
             let offset = i * length
-            let tick = (panelVm.isVertical
+            let tick = (panelVm.trunk.menuOp.vertical
                         ? CGSize(width:  0, height: offset)
                         : CGSize(width: offset,  height: 0))
             result.append(tick)
@@ -29,7 +29,9 @@ public class LeafSegVm: LeafValVm {
 
     override public func treeTitle() -> String {
         guard let thumb = runways.thumb() else { return "" }
-        let value = panelVm.isVertical ? thumb.value.y : thumb.value.x
+        let value = (panelVm.trunk.menuOp.vertical
+                     ? thumb.value.y
+                     : thumb.value.x)
 
         return (range.upperBound > 1
                 ? String(format: "%.f", scale(value, from: 0...1, to: range))
@@ -41,7 +43,9 @@ public class LeafSegVm: LeafValVm {
         guard let thumb = runways.thumb(.runVal) else { return  }
 
         // value of thumb on either vertical or horizonal axis
-        let val = (panelVm.isVertical ? thumb.value.y : thumb.value.x).quantize(count)
+        let val = (panelVm.trunk.menuOp.vertical
+                   ? thumb.value.y
+                   : thumb.value.x).quantize(count)
         syncVal2(visit, thumb, val)
     }
 }

@@ -66,7 +66,7 @@ extension TouchMenuLocal: CircleBufferDelegate {
     public func flushItem<Item>(_ item: Item, _ type: BufType) -> BufState {
         let item = item as! MenuItem
         if let touch = item.item as? MenuTouchItem,
-           let cornerVm = CornerOpVm[item.cornerOp] {
+           let cornerVm = CornerOpVm[item.menuOp] {
 
             cornerVm.updateTouchXY(touch.cgPoint, item.phase)
         }

@@ -6,117 +6,63 @@ import MuPeers
 import MuVision
 
 open class MenuVm {
+
     var id = Visitor.nextId()
+
     public var rootVm: RootVm
 
-    /// one or two menus emanating from a corner
-    ///
-    ///  - parameters:
-    ///     - corners: vertical and/or horizonal menu(s)
-    ///
-    ///   - note: assuming maximum of two menues from corner
-    ///     with complementary horizontal/vertical axis
-    ///
-    public init?(_ corners: [Corner], _ floNames: [String], _ archiveVm: ArchiveVm,_ peers: Peers) {
-
-        guard corners.count > 0 else { print("corners < 1") ; return nil }
-        var treeVms = [TreeVm]()
-
-        // both veritical and horizontal menu will share the same root
-        self.rootVm = RootVm(corners.first!.cornerOp, archiveVm, peers)
-
-        for corner in corners {
-            let cornerTreeVm = TreeVm(rootVm, corner)
-            var menuTrees = [MenuTree]()
-
-            for floName in floNames {
-                if let menuTree = updateMenuTree(corner, floName) {
-                    menuTrees.append(menuTree)
-
-                }
-            }
-            updateBranches(menuTrees, cornerTreeVm)
-        }
-        func updateBranches(_ menuTrees: [MenuTree],
-                            _ treeVm: TreeVm) {
-
-            let branchVm = BranchVm(menuTrees: menuTrees,
-                                    treeVm: treeVm,
-                                    prevNodeVm: nil)
-
-            treeVm.addBranchVms([branchVm])
-            treeVms.append(treeVm)
-
-            rootVm.updateTreeVms(treeVm)
-            rootVm.showSoloTree(false)
-            rootVm.startAutoHide(false)
-        }
-    }
     public init(_ rootVm: RootVm,
-                _ corner: Corner,
+                _ trunk: Trunk,
                 _ floNames: [String]) {
-
-        var treeVms = [TreeVm]()
 
         // both veritical and horizontal menu will share the same root
         self.rootVm = rootVm
-        var menuTrees = [MenuTree]()
 
+        var menuTrees = [MenuTree]()
         for floName in floNames {
-            if let menuTree = updateMenuTree(corner, floName) {
+            if let menuTree = makeMenuTree(trunk, floName) {
                 menuTrees.append(menuTree)
             }
-            updateBranches(menuTrees)
         }
-        func updateBranches(_ menuTrees: [MenuTree]) {
-            let treeVm = TreeVm(rootVm, corner)
-            let branchVm = BranchVm(menuTrees: menuTrees,
-                                    treeVm: treeVm,
-                                    prevNodeVm: nil)
-
-            treeVm.addBranchVms([branchVm])
-            treeVms.append(treeVm)
-
-            rootVm.updateTreeVms(treeVm)
-            rootVm.showSoloTree(false)
-            rootVm.startAutoHide(false)
-        }
+        // updateBranches
+        let treeVm = TreeVm(rootVm, trunk)
+        let branchVm = BranchVm(menuTrees: menuTrees, treeVm: treeVm)
+        treeVm.addBranchVm(branchVm)
+        rootVm.addTreeVm(treeVm)
+        rootVm.showSoloTree()
+        rootVm.startAutoHide()
     }
-    func updateMenuTree(_ corner: Corner,
-                        _ floName: String) -> MenuTree? {
+    func makeMenuTree(_ trunk: Trunk,
+                      _ floName: String) -> MenuTree? {
 
-        let cornerRoot˚ = corner.rootMenu.flo
+        let cornerRoot˚ = trunk.rootMenu.flo
 
         if let namedFlo = cornerRoot˚.findPath(floName) {
-
-            let menuTree = makeMenuTree(from: namedFlo,
-                                        parentTree: corner.rootMenu)
-
-            updateSpotTree(corner, floName, menuTree)
+            let menuTree = makeMenuTree(from: namedFlo, parentTree: trunk.rootMenu)
+            updateSpotTree(trunk, floName, menuTree)
             return menuTree
         }
         return nil
     }
 
-    func updateSpotTree(_ corner: Corner,
+    func updateSpotTree(_ trunk: Trunk,
                         _ floName: String,
-                        _ menuTreeRoot: MenuTree?) {
+                        _ menuTree: MenuTree?) {
 
-        guard let menuTreeRoot else { return }
+        guard let menuTree else { return }
 
-        let root˚ = corner.rootMenu.flo
-        let chiral = corner.chiral
+        let root˚ = trunk.rootMenu.flo
 
         // two separate spotTrees for left and right sides
-        if let spotTree = root˚.findPath(chiral.name + ".spot") {
+        if let spotTree = root˚.findPath(trunk.menuOp.key + ".spot") {
 
             //DebugLog("𐂷 found: \(chiral.name) {\n\(spotTree.scriptFull)\n}\n")
-            mergeSpotMenu(chiral, spotTree, menuTreeRoot)
+            mergeSpotMenu(trunk.menuOp, spotTree, menuTree)
 
-        } else if let spotTree = makeSpotTree(menuTreeRoot) {
+        } else if let spotTree = makeSpotTree(menuTree, trunk) {
 
             //DebugLog { P("𐂷 make:  \(chiral.name) {\n\(spotTree.scriptFull)\n}\n") }
-            mergeSpotMenu(chiral, spotTree, menuTreeRoot)
+            mergeSpotMenu(trunk.menuOp, spotTree, menuTree)
 
         } else {
            err("no spotTree")
@@ -126,11 +72,11 @@ open class MenuVm {
             //... PrintLog("𐂷 MenuVm::updateSpotTree err: \(msg)")
         }
 
-        func makeSpotTree(_ menuTree: MenuTree) -> Flo? {
+        func makeSpotTree(_ menuTree: MenuTree, _ trunk: Trunk) -> Flo? {
 
             guard let menuFlo = root˚.findPath("menu") else { return nil }
 
-            let chiralFlo = Flo(chiral.name, parent: root˚)
+            let chiralFlo = Flo(trunk.menuOp.key, parent: root˚)
             let spotFlo = Flo("spot", parent: chiralFlo)
 
             /// make `on 0` expression and decorate shadow-clone of
@@ -140,15 +86,14 @@ open class MenuVm {
                 _ = Flo(decorate: menuChild, parent: spotFlo, exprs: spotExpress)
             }
             NoDebugLog { P("\(chiralFlo.name) { \n\(chiralFlo.scriptFull) \n} ") }
-            mergeSpotMenu(chiral, spotFlo, menuTree)
+            mergeSpotMenu(trunk.menuOp, spotFlo, menuTree)
             return spotFlo
         }
 }
 
     /// recursively parse flo hierachy
     @discardableResult
-    func makeMenuTree(from: Flo,
-                      parentTree: MenuTree) -> MenuTree {
+    func makeMenuTree(from: Flo, parentTree: MenuTree) -> MenuTree {
         let menuTree = MenuTree(from, parentTree: parentTree)
         for child in from.children {
             if child.name.first != "_" {
@@ -159,14 +104,14 @@ open class MenuVm {
     }
 
     /// merge menu.view with with model
-    func mergeSpotMenu(_ chiral   : Chiral,
+    func mergeSpotMenu(_ menuOp   : MenuOp,
                        _ spotFlo  : Flo,
                        _ menuTree : MenuTree) {
 
         for spotChild in spotFlo.children {
             if let menuTree = findMenuNode(spotChild, menuTree) {
-                menuTree.chiralSpot[chiral] = spotFlo
-                mergeSpotMenu(chiral, spotChild, menuTree)
+                menuTree.chiralSpot[menuOp.chiral] = spotFlo
+                mergeSpotMenu(menuOp, spotChild, menuTree)
             }
         }
     }

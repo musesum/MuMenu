@@ -6,20 +6,19 @@ struct TreeView: View {
 
     @ObservedObject var treeVm: TreeVm
 
-    var cornerOp: CornerOp { treeVm.rootVm.cornerOp }
+    var menuOp: MenuOp { treeVm.rootVm.menuOp }
     var canopyOpacity: CGFloat { treeVm.showTree == .canopy ? 0.5 : 0 }
     var treeOpacity: CGFloat { treeVm.showTree == .show ? 1 : 0 }
 
     var body: some View {
 
-        ZStack(alignment: cornerOp.alignment) {
+        ZStack(alignment: menuOp.alignment) {
 
-            TreeCanopyView(treeVm: treeVm)
-                .opacity(canopyOpacity)
+            //..... TreeCanopyView(treeVm: treeVm) .opacity(canopyOpacity)
 
-            if treeVm.isVertical {
-                HStack(alignment: cornerOp.vAlign)  {
-                    ForEach(cornerOp.right
+            if treeVm.trunk.menuOp.vertical {
+                HStack(alignment: menuOp.vAlign)  {
+                    ForEach(menuOp.right
                             ? treeVm.branchVms.reversed()
                             : treeVm.branchVms) {
 
@@ -29,8 +28,8 @@ struct TreeView: View {
                 }
                 .opacity(treeOpacity)
             } else {
-                VStack(alignment: cornerOp.hAlign) {
-                    ForEach(cornerOp.lower
+                VStack(alignment: menuOp.hAlign) {
+                    ForEach(menuOp.down
                             ? treeVm.branchVms.reversed()
                             : treeVm.branchVms) {
 

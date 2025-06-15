@@ -7,28 +7,28 @@ public typealias SideAxisId = Int
 
 public struct MenuTreeItem: Codable {
 
-    public var sideAxis : SideAxisId //Int
+    public var menuOp : MenuOp
     public var depth  : Int
     public var start  : Int
 
     public init(_ treeVm: TreeVm) {
-        self.sideAxis = treeVm.corner.sideAxis.rawValue
+        self.menuOp = treeVm.trunk.menuOp
         self.depth = treeVm.depthShown
         self.start = treeVm.startIndex
     }
 
-    enum CodingKeys: String, CodingKey {
-        case sideAxis, depth, start
-    }
-
-    nonisolated public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        try sideAxis = container.decode(Int.self, forKey: .sideAxis)
-        try depth    = container.decode(Int.self, forKey: .depth )
-        try start    = container.decode(Int.self, forKey: .start )
-    }
+//.....    enum CodingKeys: String, CodingKey {
+//        case menuOp, depth, start
+//    }
+//
+//    nonisolated public init(from decoder: Decoder) throws {
+//        let container = try decoder.container(keyedBy: CodingKeys.self)
+//        try menuOp = container.decode(MenuOp.self, forKey: .menuOp)
+//        try depth  = container.decode(Int.self, forKey: .depth )
+//        try start  = container.decode(Int.self, forKey: .start )
+//    }
     var treeVm: TreeVm? {
-        return TreeVm.sideAxis[sideAxis]
+        return TreeVm.sideAxis[menuOp.key]
     }
     
     func showTree(_ fromRemote: Bool) {
@@ -42,7 +42,7 @@ public struct MenuTreeItem: Codable {
 public struct MenuRootItem: Codable {
 
     public var trees    : [MenuTreeItem]
-    public var cornerOp : Int
+    public var menuOp : Int
     public var phase    : Int // UITouch.Phase
 
     public init(_ rootVm: RootVm) {
@@ -51,16 +51,16 @@ public struct MenuRootItem: Codable {
             trees.append(MenuTreeItem(treeVm))
         }
         self.trees = trees
-        self.cornerOp = rootVm.cornerOp.rawValue
+        self.menuOp = rootVm.menuOp.rawValue
         self.phase = rootVm.touchState.phase.rawValue
     }
 
-    enum CodingKeys: String, CodingKey { case trees, cornerOp, phase }
+    enum CodingKeys: String, CodingKey { case trees, menuOp, phase }
 
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         try trees    = c.decode([MenuTreeItem].self, forKey: .trees )
-        try cornerOp = c.decode(Int.self, forKey: .cornerOp)
+        try menuOp = c.decode(Int.self, forKey: .menuOp)
         try phase    = c.decode(Int.self, forKey: .phase )
     }
 }
@@ -72,7 +72,7 @@ public struct MenuItem: Codable {
 
     public var type     : MenuType
     public var time     : TimeInterval
-    public var cornerOp : Int
+    public var menuOp : Int
     public let phase    : Int // UITouch.Phase
     public let item     : Any?
 
@@ -82,59 +82,59 @@ public struct MenuItem: Codable {
         self.item   = root
 
         self.time   = Date().timeIntervalSince1970
-        self.cornerOp = root.cornerOp
+        self.menuOp = root.menuOp
         self.phase  = root.phase
 
         // log("MenuRootItem", [self.phase])
     }
 
     public init(node: MenuNodeItem,
-                _ cornerOp: CornerOp,
+                _ menuOp: MenuOp,
                 _ phase : UITouch.Phase) {
 
         self.type   = .node
         self.item   = node
 
         self.time   = Date().timeIntervalSince1970
-        self.cornerOp = cornerOp.rawValue
+        self.menuOp = menuOp.rawValue
         self.phase  = phase.rawValue
 
         // log("MenuNodeItem", [self.phase])
     }
 
     public init(leaf: MenuLeafItem,
-                _ corner: CornerOp,
+                _ corner: MenuOp,
                 _ phase : UITouch.Phase) {
 
         self.type   = .leaf
         self.item   = leaf
 
         self.time   = Date().timeIntervalSince1970
-        self.cornerOp = corner.rawValue
+        self.menuOp = corner.rawValue
         self.phase  = phase.rawValue
 
         // log("MenuNodeItem", [self.phase])
     }
 
     public init(_ touch: UITouch,
-                _ corner: CornerOp) {
+                _ corner: MenuOp) {
         
         self.type   = .touch
         self.item   = MenuTouchItem(touch)
 
         self.time   = Date().timeIntervalSince1970
-        self.cornerOp = corner.rawValue
+        self.menuOp = corner.rawValue
         self.phase  = touch.phase.rawValue
     }
 
     enum CodingKeys: String, CodingKey {
-        case type, time, cornerOp, phase, item }
+        case type, time, menuOp, phase, item }
 
     public func encode(to encoder: Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
         try c.encode(type.stringValue, forKey: .type)
         try c.encode(time,      forKey: .time    )
-        try c.encode(cornerOp,  forKey: .cornerOp)
+        try c.encode(menuOp,  forKey: .menuOp)
         try c.encode(phase,     forKey: .phase   )
         switch type {
         case .root : try c.encode(item as? MenuRootItem,  forKey: .item)
@@ -147,7 +147,7 @@ public struct MenuItem: Codable {
         let c  = try decoder.container(keyedBy: CodingKeys.self)
         type = MenuType(rawValue: try c.decode(String.self, forKey: .type)) ?? .node
         try time     = c.decode(Double.self, forKey: .time    )
-        try cornerOp = c.decode(Int   .self, forKey: .cornerOp)
+        try menuOp = c.decode(Int   .self, forKey: .menuOp)
         try phase    = c.decode(Int   .self, forKey: .phase   )
         switch type {
         case .root : try item = c.decode(MenuRootItem .self, forKey: .item)
@@ -168,7 +168,7 @@ public struct MenuItem: Codable {
          phase == UITouch.Phase.cancelled.rawValue)
     }
     var cornerVm: CornerVm? {
-        if let vm = CornerOpVm[cornerOp] ?? CornerOpVm[CornerOp.flipUpperLower(cornerOp)] {
+        if let vm = CornerOpVm[menuOp] ?? CornerOpVm[MenuOp.flipUpperLower(menuOp)] {
             return vm
         }
         return nil

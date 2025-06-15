@@ -8,8 +8,7 @@ public class PanelVm {
     let branchVm: BranchVm
     var menuTrees: [MenuTree]
     var nodeType: NodeType
-    var corner: Corner
-    let isVertical: Bool
+    var trunk: Trunk
     var count: CGFloat
     let maxNodes = CGFloat(7)
     var aspectSz = CGSize(width: 1, height: 1) /// multiplier aspect ratio
@@ -24,8 +23,7 @@ public class PanelVm {
         self.menuTrees = menuTrees
         self.columns = columns
         self.count = CGFloat(menuTrees.count)
-        self.corner = treeVm.corner
-        self.isVertical = treeVm.isVertical
+        self.trunk = treeVm.trunk
         self.nodeType = (count > 1 ? .node : menuTrees.first?.nodeType ?? .node)
         setAspectFromType()
     }
@@ -36,8 +34,10 @@ public class PanelVm {
             // the last node always is in the same place on a panel
             // so, calculate the spacing of the prior nodes
             let nodeLen = Layout.diameter2 // node length
-            let panelLen = (isVertical ? outerPanel.height : outerPanel.width)
-            let priorLen = panelLen - nodeLen 
+            let panelLen = (trunk.menuOp.vertical
+                            ? outerPanel.height
+                            : outerPanel.width)
+            let priorLen = panelLen - nodeLen
             let nodeSpace = priorLen / (count-1)
             let space = nodeSpace - nodeLen
             return space
@@ -53,7 +53,7 @@ public class PanelVm {
             aspect(1.0 * CGFloat(columns),
                    1.0 * CGFloat(columns))
 
-        case .val  : (isVertical
+        case .val  : (trunk.menuOp.vertical
                       ? aspect(1.0, 4.0)
                       : aspect(4.0, 1.0))
 
@@ -66,7 +66,7 @@ public class PanelVm {
         case .hand   : aspect(4.0, 3.5)
         }
         func aspect(_ lo: CGFloat,_ hi: CGFloat  ) {
-            aspectSz = isVertical || nodeType == .peer
+            aspectSz = (trunk.menuOp.vertical || nodeType == .peer)
             ? CGSize(width: lo, height: hi)
             : CGSize(width: hi, height: lo)
         }
@@ -88,7 +88,7 @@ public class PanelVm {
         switch runwayType {
         case .runX,.runT : length = inner.width  - diameter
         case .runY,.runZ : length = inner.height - diameter
-        default          : length = (isVertical
+        default          : length = (trunk.menuOp.vertical
                                   ? inner.height - diameter
                                   : inner.width  - diameter)
         }
@@ -115,7 +115,7 @@ public class PanelVm {
         case .runX,.runT : return CGSize(width: d * 2.5, height: d * 0.5)
         case .runY,.runZ : return CGSize(width: d * 0.5, height: d * 2.5)
 
-        case .runVal     : return (isVertical
+        case .runVal     : return (trunk.menuOp.vertical
                                    ? CGSize(width: d * 1.0, height: d * 4.0)
                                    : CGSize(width: d * 1.0, height: d * 4.0))
 
@@ -149,15 +149,16 @@ public class PanelVm {
                               height: dia * rows) + pad
             } else {
                 let length = dia * min(count,maxNodes)
-                let width  = isVertical ? dia : length
-                let height = isVertical ? length : dia
+                let vertical = trunk.menuOp.vertical
+                let width  = vertical ? dia : length
+                let height = vertical ? length : dia
                 return CGSize(width: width, height: height)
             }
         }
     }
 
     var titleSize: CGSize {
-        if isVertical ||
+        if trunk.menuOp.vertical ||
             (menuTrees.count == 1 &&
              (menuTrees.first?.nodeType == .xy ||
               menuTrees.first?.nodeType == .peer)) {
@@ -174,7 +175,7 @@ public class PanelVm {
 
     func updatePanelBounds(_ bounds: CGRect) -> CGRect {
         var result = bounds
-        if isVertical {
+        if trunk.menuOp.vertical {
             if bounds.minY < 0 {
                 result.size.height += bounds.minY
                 result.origin.y = 0

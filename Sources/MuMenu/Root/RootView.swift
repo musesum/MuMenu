@@ -15,11 +15,11 @@ public struct CornerOrnament: View {
     @EnvironmentObject var rootVm: RootVm
 
     public var body: some View {
-        switch rootVm.cornerOp {
-        case [.lower, .right]: return LowerRightView()
-        case [.lower, .left]:  return LowerLeftView()
-        case [.upper, .right]: return UpperRightView()
-        case [.upper, .left]:  return UpperLeftView()
+        switch rootVm.menuOp {
+        case [.lower, .right]: return DownRightView()
+        case [.lower, .left]:  return DownLeftView()
+        case [.upper, .right]: return UpRightView()
+        case [.upper, .left]:  return UpLeftView()
         default:               return EmptyView()
         }
     }
@@ -31,22 +31,16 @@ public struct RootView: View {
     //@Environment(\.mainContent) var mainContent: AnyView
     #if os(visionOS)
     func anchor() -> OrnamentAttachmentAnchor {
-        switch rootVm.cornerOp {
-        case [.lower, .right]: return .scene(.trailing)
-        case [.lower, .left]:  return .scene(.leading )
-        case [.upper, .right]: return .scene(.trailing)
-        case [.upper, .left]:  return .scene(.leading )
-        default:               return .scene(.trailing)
-        }
+        return rootVm.menuOp.left ? .leading : .trailing
     }
     #endif
     public var body: some View {
-        switch rootVm.cornerOp {
-        case [.lower, .right]: LowerRightView()
-        case [.lower, .left ]: LowerLeftView()
-        case [.upper, .right]: UpperRightView()
-        case [.upper, .left ]: UpperLeftView()
-        default:               LowerRightView()
+        switch rootVm.menuOp.corner {
+        case .downRight: DownRightView()
+        case .downLeft: DownLeftView()
+        case .upRight: UpRightView()
+        case .upLeft: UpLeftView()
+        default: DownRightView()
         }
     }
 }
@@ -63,7 +57,7 @@ private struct ForestView: View {
 }
 
 /// lower right corner of space
-private struct LowerRightView: View {
+private struct DownRightView: View {
     @EnvironmentObject var rootVm: RootVm
     var body: some View {
         HStack(alignment: .bottom) {
@@ -76,7 +70,7 @@ private struct LowerRightView: View {
 }
 
 /// upper right corner of space
-private struct UpperRightView: View {
+private struct UpRightView: View {
     var body: some View {
         VStack(alignment: .trailing) {
             HStack(alignment: .top) {
@@ -92,7 +86,7 @@ private struct UpperRightView: View {
 }
 
 /// lower left corner of space
-private struct LowerLeftView: View {
+private struct DownLeftView: View {
     var body: some View {
         HStack(alignment: .bottom) {
             ZStack(alignment: .bottomLeading) {
@@ -104,7 +98,7 @@ private struct LowerLeftView: View {
 }
 
 /// upper left corner of space
-private struct UpperLeftView: View {
+private struct UpLeftView: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .top) {

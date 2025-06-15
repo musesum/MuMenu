@@ -7,7 +7,7 @@ enum ShowTree: String { case hide, canopy, show }
 public class TreeVm: Identifiable, Equatable, ObservableObject {
 
     public static func == (lhs: TreeVm, rhs: TreeVm) -> Bool { return lhs.id == rhs.id }
-    public static var sideAxis = [SideAxisId: TreeVm]()
+    public static var sideAxis = [String: TreeVm]()
     public var id = Visitor.nextId()
     @Published var branchVms = [BranchVm]()
 
@@ -24,8 +24,7 @@ public class TreeVm: Identifiable, Equatable, ObservableObject {
 
     var rootVm: RootVm
     var branchSpotVm: BranchVm?
-    var corner: Corner
-    let isVertical: Bool
+    var trunk: Trunk
     var treeOffset = CGSize.zero // offset of menu tree from corner
     var depthShown = 0 // levels of branches shown
     var startIndex = 0
@@ -53,16 +52,15 @@ public class TreeVm: Identifiable, Equatable, ObservableObject {
     }
     
     public init(_ rootVm: RootVm,
-                _ corner: Corner) {
+                _ trunk: Trunk) {
 
         self.rootVm = rootVm
-        self.corner = corner
-        self.isVertical = (corner.axis == .vertical)
-        TreeVm.sideAxis[corner.sideAxis.rawValue] = self
+        self.trunk = trunk
+        TreeVm.sideAxis[trunk.menuOp.key] = self
     }
     
-    public func addBranchVms(_ branchVms: [BranchVm]) {
-        self.branchVms.append(contentsOf: branchVms)
+    public func addBranchVm(_ branchVm: BranchVm) {
+        self.branchVms.append(branchVm)
         for branchVm in branchVms {
             branchVm.updateTree(self)
         }

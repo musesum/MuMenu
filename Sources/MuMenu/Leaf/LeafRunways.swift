@@ -132,7 +132,7 @@ public class LeafRunways {
             case .runY   : thumb.setValue(nil,   y, nil, offsetting)
             case .runZ   : thumb.setValue(nil, nil,   z, offsetting)
             case .runXY  : thumb.setValue(  x,   y, nil, offsetting)
-            case .runVal : (panelVm.isVertical
+            case .runVal : (panelVm.trunk.menuOp.vertical
                             ? thumb.setValue(nil,   y, nil, offsetting)
                             : thumb.setValue( x,  nil, nil, offsetting))
             default: break
