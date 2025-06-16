@@ -40,7 +40,7 @@ public class LeafValVm: LeafVm {
 
     override public func treeTitle() -> String {
         guard let thumb = runways.thumb() else { return "" }
-        let vertical = panelVm.trunk.menuOp.vertical
+        let vertical = panelVm.menuType.vertical
         let value = vertical ? thumb.value.y : thumb.value.x
         let tween = vertical ? thumb.tween.y : thumb.tween.x
         return (range.upperBound > 1
@@ -57,7 +57,7 @@ public class LeafValVm: LeafVm {
         guard let thumb = runways.thumb(.runVal) else { return  }
 
         // value of thumb on either vertical or horizonal axis
-        let val = (panelVm.trunk.menuOp.vertical
+        let val = (panelVm.menuType.vertical
                    ? thumb.value.y
                    : thumb.value.x)
         

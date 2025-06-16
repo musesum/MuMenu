@@ -17,7 +17,7 @@ import MuFlo
     var rootNodeΔ = CGSize.zero /// offset between rootNode and touchNow
     private var spotNodeΔ = CGSize.zero /// offset between touch point and center in coord
     var dragNodeΔ: CGSize { /// weird kludge to compsate for small right offset
-        if let rootVm, rootVm.menuOp.right,
+        if let rootVm, rootVm.cornerType.right,
            ringIconXY != parkIconXY {
             return CGSize(width: -Layout.padding2, height: 0)
         } else {
@@ -25,10 +25,10 @@ import MuFlo
         }
     }
 
-    public var corner: MenuOp
+    public var menuType: MenuType
 
-    init(_ corner: MenuOp) {
-        self.corner = corner
+    init(_ menuType: MenuType) {
+        self.menuType = menuType
     }
 
     public func setRoot(_ rootVm: RootVm) {
@@ -38,7 +38,7 @@ import MuFlo
         self.rootVm = rootVm
 
         let branchVm = BranchVm.cached(treeVm: treeVm)
-        let cornerFlo = Flo(rootVm.menuOp.key)
+        let cornerFlo = Flo(rootVm.cornerType.key)
 
         let iconLogo = Icon(.cursor, Layout.iconLogo)
         let cornerLogo = MenuTree(cornerFlo, .none, iconLogo)

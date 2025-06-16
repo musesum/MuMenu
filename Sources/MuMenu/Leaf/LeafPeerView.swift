@@ -9,7 +9,7 @@ struct LeafPeerView: View {
 
     var body: some View {
         VStack {
-            LeafHeaderTitleView(leafVm, inset: -64)
+            LeafHeaderTitleView(leafVm, inset: 0)
             LeafBezelView(leafVm, .none) {
                 PeersView(leafVm.peers)
             }

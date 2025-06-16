@@ -26,7 +26,7 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
     /// To prevent touchEnded from hiding elements that were shown during `touchBegin`
     var beginViewOps: Set<TouchType> = []
     
-    public var menuOp: MenuOp /// corner where root begins, ex: `[south,west]`
+    public var cornerType: MenuType /// corner where root begins, ex: `[down,left]`
     var treeVms = [TreeVm]() /// vertical or horizontal stack of branches
     var treeSpotVm: TreeVm? /// most recently used tree
     var rootOffset: CGSize = .zero
@@ -48,17 +48,17 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
         if !fromRemote {
             let phase = touchState.phase
             let nodeItem = MenuNodeItem(newSpotVm)
-            let menuItem = MenuItem(node: nodeItem, menuOp, phase)
+            let menuItem = MenuItem(node: nodeItem, phase)
             sendItemToPeers(menuItem)
         }
     }
 
-    public init(_ menuOp: MenuOp,
-                _ archiveVm: ArchiveVm,
-                _ peers: Peers) {
+    public init(_ cornerType : MenuType  ,
+                _ archiveVm  : ArchiveVm ,
+                _ peers      : Peers     ) {
 
-        self.menuOp = menuOp
-        self.cornerVm = CornerVm(menuOp)
+        self.cornerType = cornerType
+        self.cornerVm = CornerVm(cornerType)
         self.archiveVm = archiveVm
         self.peers = peers
         peers.setDelegate(self, for: .menuFrame)
@@ -71,93 +71,8 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
         cornerVm.setRoot(self)
         updateTreeOffsets()
     }
-    private func updateTreeOffsets() {
 
-        let margins = idiomMargins()
-        // xy top left to bottom right corners
-        let x0 = margins.width
-        let y0 = margins.height
-        let x1 = x0 + Layout.diameter + Layout.padding * 3
-        let y1 = y0 + Layout.diameter + Layout.padding * 3
 
-        // setup vertical, horizontal, and root offsets
-        var vs = CGSize.zero // vertical offset
-        var hs = CGSize.zero // horizontal offset
-        var rs = CGSize.zero // root icon offset
-        func v(_ w:CGFloat,_ h:CGFloat) { vs = CGSize(width:w,height:h) }
-        func h(_ w:CGFloat,_ h:CGFloat) { hs = CGSize(width:w,height:h) }
-        func r(_ w:CGFloat,_ h:CGFloat) { rs = CGSize(width:w,height:h) }
-
-        switch menuOp.corner {
-        case .downRight: v(-x0,-y1); h(-x1,-y0); r(0, 0)
-        case .downLeft: v( x0,-y1); h( x1,-y0); r(0, 0)
-        case .upRight: v(-x0, y1); h(-x1, y0); r(0, 0)
-        case .upLeft: v( x0, y1); h( x1, y0); r(0, 0)
-        default: break
-        }
-        rootOffset = rs
-        for treeVm in treeVms {
-            treeVm.treeOffset = (treeVm.trunk.menuOp.vertical ? vs : hs)
-        }
-    }
-    private func idiomMargins() -> CGSize {
-        let idiom = UIDevice.current.userInterfaceIdiom
-        let padding2 = Layout.padding2
-
-        let w: CGFloat
-        switch idiom {
-        case .pad    : w = padding2
-        case .phone  : w = 0
-        case .vision : w = padding2 * 2
-        default      : w = 0
-        }
-
-        let h: CGFloat
-        switch idiom {
-        case .pad    : h = menuOp.down ? padding2 : 0
-        case .phone  : h = menuOp.up   ? padding2 : 0
-        case .vision : h = padding2 * 2
-        default      : h = 0
-        }
-        return CGSize(width: w, height: h)
-    }
-    internal func cornerXY(in frame: CGRect) -> CGPoint {
-
-        let margins = idiomMargins()
-        let x = margins.width
-        let y = margins.height
-
-        let w = frame.size.width
-        let h = frame.size.height
-        let s = Layout.padding
-        let r = Layout.diameter / 2
-        
-        switch menuOp.corner {
-        case .downRight: return CGPoint(x: w-x-r-s, y: h-y-r-s)
-        case .downLeft : return CGPoint(x:   x+r+s, y: h-y-r-s)
-        case .upRight: return CGPoint(x: w-x-r-s, y:   y+r+s)
-        case .upLeft: return CGPoint(x:   x+r+s, y:   y+r+s)
-        default: return .zero
-        }
-    }
-    internal func hitTest(_ point: CGPoint) -> NodeVm? {
-        for treeVm in treeVms {
-            if treeVm.treeBoundsPad.contains(point) {
-                for branchVm in treeVm.branchVms {
-                    if branchVm.show, branchVm.contains(point) {
-                        if let nodeVm =  branchVm.nearestNode(point) {
-                            return nodeVm
-                        }
-                    }
-                }
-                if let nodeVm = treeVm.branchSpotVm?.nodeSpotVm {
-                    return nodeVm
-                }
-            }
-        }
-        return nil
-    }
-    
     internal func updateRoot(_ fromRemote: Bool) {
 
         let touchNow = touchState.pointNow
@@ -168,57 +83,47 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
         case .shift  : logRoot("shift Branch"); return shiftBranches()
         case .leaf   : logRoot("edit Leaf"   ); return editLeaf(nodeSpotVm)
         case .tog    : logRoot("edit Tog"    ); return editTog(nodeSpotVm)
-        default      : break // logRoot(menuOp.description)
+        default      : break // logRoot(menuType.description)
         }
-        if      touchLeaf() { logRoot("touch Leaf 🍁") } // new node on same tree
-        else if hoverLeaf() { logRoot("hover Leaf 🍁") } // new node on same tree
+        if      hoverLeaf() { logRoot("hover Leaf 🍁") } // new node on same tree
         else if hoverSpot() { logRoot("hover Node ⚪️") } // over the spot node
         else if hoverRoot() { logRoot("hover Root 🫚") } // over the root node
-
         else if hoverTree() { logRoot("hover Tree 🌳") } // new node on same tree
         else if hoverAlt()  { logRoot("hover Alt  🌴") } // alternate tree
         else {  hoverSpace(); logRoot("hover Space 🪐") } // hovering over canvas
 
         func logRoot(_ msg: String = "",_ t: String = "") {
-            let symbol = touchType.symbol
-
-            //if ["􀄭"].contains(symbol) { return }
-
-            MuLog.TimeLog(symbol, interval: 1) {
-                P("\(symbol)  \(msg)")
+            MuLog.TimeLog(touchType.symbol, interval: 1) {
+                P("\(self.touchType.symbol)  \(msg)")
             }
         }
 
-        func touchLeaf() -> Bool {
+        func hoverLeaf() -> Bool {
+
+            guard let treeSpotVm else { return false }
+
             if touchState.phase == .began,
-               let treeSpotVm,
                let branchVm = treeSpotVm.nearestBranch(touchNow),
                let leafVm = branchVm.nearestNode(touchNow) as? LeafVm {
 
                 nodeSpotVm = leafVm
-                updateTreeSpot(treeSpotVm, leafVm, "leaf") //....
-                shiftCanopy()
+                updateTreeSpot(treeSpotVm, leafVm, "leaf")
+                //?? shiftCanopy()
+                updateTreeSpot(leafVm.branchVm.treeVm, leafVm, "edit")
+                if leafVm.nodeType.isControl {
+                    editLeaf(leafVm)
+                }
                 return true
             }
-            return false
-        }
-        func hoverLeaf() -> Bool {
+
             guard let leafVm = nodeSpotVm as? LeafVm else { return false }
 
-            if leafVm.runways.contains(touchNow) {
-
-                if touchState.phase == .ended,
+            if leafVm.runways.contains(touchNow),
+               touchState.phase == .ended,
                    leafVm.nodeType == .tog {
+
                     editTog(leafVm)
                     return true
-                }
-                else if touchState.phase == .began {
-                    updateTreeSpot(leafVm.branchVm.treeVm, leafVm, "edit")
-                    if leafVm.nodeType.isControl {
-                        editLeaf(leafVm)
-                    }
-                    return true
-                }
             }
             if leafVm.nodeType.isControl,
                touchType.isNotIn([.node, .space]),

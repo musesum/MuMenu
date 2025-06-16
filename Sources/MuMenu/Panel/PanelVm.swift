@@ -8,7 +8,7 @@ public class PanelVm {
     let branchVm: BranchVm
     var menuTrees: [MenuTree]
     var nodeType: NodeType
-    var trunk: Trunk
+    var menuType: MenuType
     var count: CGFloat
     let maxNodes = CGFloat(7)
     var aspectSz = CGSize(width: 1, height: 1) /// multiplier aspect ratio
@@ -23,8 +23,8 @@ public class PanelVm {
         self.menuTrees = menuTrees
         self.columns = columns
         self.count = CGFloat(menuTrees.count)
-        self.trunk = treeVm.trunk
         self.nodeType = (count > 1 ? .node : menuTrees.first?.nodeType ?? .node)
+        self.menuType = treeVm.menuType
         setAspectFromType()
     }
     var spacing: CGFloat {
@@ -34,7 +34,7 @@ public class PanelVm {
             // the last node always is in the same place on a panel
             // so, calculate the spacing of the prior nodes
             let nodeLen = Layout.diameter2 // node length
-            let panelLen = (trunk.menuOp.vertical
+            let panelLen = (branchVm.treeVm.menuType.vertical
                             ? outerPanel.height
                             : outerPanel.width)
             let priorLen = panelLen - nodeLen
@@ -53,20 +53,20 @@ public class PanelVm {
             aspect(1.0 * CGFloat(columns),
                    1.0 * CGFloat(columns))
 
-        case .val  : (trunk.menuOp.vertical
+        case .val  : (menuType.vertical
                       ? aspect(1.0, 4.0)
                       : aspect(4.0, 1.0))
 
         case .xy     : aspect(4.0, 4.0)
         case .xyz    : aspect(4.5, 4.0)
         case .seg    : aspect(1.0, 4.0)
-        case .peer   : aspect(6.0, 3.0)
+        case .peer   : aspect(6.0, 6.0)
         case .search : aspect(6.0, 3.0)
         case .arch   : aspect(6.0, 6.0)
         case .hand   : aspect(4.0, 3.5)
         }
         func aspect(_ lo: CGFloat,_ hi: CGFloat  ) {
-            aspectSz = (trunk.menuOp.vertical || nodeType == .peer)
+            aspectSz = (menuType.vertical || nodeType == .peer)
             ? CGSize(width: lo, height: hi)
             : CGSize(width: hi, height: lo)
         }
@@ -88,7 +88,7 @@ public class PanelVm {
         switch runwayType {
         case .runX,.runT : length = inner.width  - diameter
         case .runY,.runZ : length = inner.height - diameter
-        default          : length = (trunk.menuOp.vertical
+        default          : length = (menuType.vertical
                                   ? inner.height - diameter
                                   : inner.width  - diameter)
         }
@@ -115,7 +115,7 @@ public class PanelVm {
         case .runX,.runT : return CGSize(width: d * 2.5, height: d * 0.5)
         case .runY,.runZ : return CGSize(width: d * 0.5, height: d * 2.5)
 
-        case .runVal     : return (trunk.menuOp.vertical
+        case .runVal     : return (menuType.vertical
                                    ? CGSize(width: d * 1.0, height: d * 4.0)
                                    : CGSize(width: d * 1.0, height: d * 4.0))
 
@@ -149,7 +149,7 @@ public class PanelVm {
                               height: dia * rows) + pad
             } else {
                 let length = dia * min(count,maxNodes)
-                let vertical = trunk.menuOp.vertical
+                let vertical = menuType.vertical
                 let width  = vertical ? dia : length
                 let height = vertical ? length : dia
                 return CGSize(width: width, height: height)
@@ -158,7 +158,7 @@ public class PanelVm {
     }
 
     var titleSize: CGSize {
-        if trunk.menuOp.vertical ||
+        if menuType.vertical ||
             (menuTrees.count == 1 &&
              (menuTrees.first?.nodeType == .xy ||
               menuTrees.first?.nodeType == .peer)) {
@@ -172,10 +172,9 @@ public class PanelVm {
         }
     }
 
-
     func updatePanelBounds(_ bounds: CGRect) -> CGRect {
         var result = bounds
-        if trunk.menuOp.vertical {
+        if menuType.vertical {
             if bounds.minY < 0 {
                 result.size.height += bounds.minY
                 result.origin.y = 0

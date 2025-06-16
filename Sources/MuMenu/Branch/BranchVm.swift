@@ -221,21 +221,21 @@ public class BranchVm: Identifiable, ObservableObject {
         let pw = boundsPrior.width
         let ph = boundsPrior.height
 
-        switch treeVm.trunk.bound {
-            case .lowerX: shiftRange = (min(0,-pw)...0, 0...0)
-            case .upperX: shiftRange = (0...max(0, pw), 0...0)
-            case .lowerY: shiftRange = (0...0, min(0,-ph)...0)
-            case .upperY: shiftRange = (0...0, 0...max(0, ph))
+        switch treeVm.menuType.progression {
+        case .VL: shiftRange = (min(0,-pw)...0, 0...0)
+        case .VR: shiftRange = (0...max(0, pw), 0...0)
+        case .HU: shiftRange = (0...0, min(0,-ph)...0)
+        case .HD: shiftRange = (0...0, 0...max(0, ph))
         }
         shiftBranch()
 
         let rad = Layout.radius
-        switch treeVm.trunk.menuOp.cornerAxis {
+        switch treeVm.menuType {
         case .DLH,.ULH: titleShift = CGSize(width:  rad, height: 0)
         case .DRH,.URH: titleShift = CGSize(width: -rad, height: 0)
         case .DLV,.DRV: titleShift = .zero
         case .ULV,.URV: titleShift = .zero
-        case .none    : titleShift = .zero
+        default       : titleShift = .zero
         }
     }
 

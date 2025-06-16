@@ -5,27 +5,27 @@ import SwiftUI
 public struct MenuNodeItem: Codable {
 
     public var type     : String
-    public var menuOp   : MenuOp
+    public var menuType : MenuType
     public var hashPath : [Int] // last shown item on tree
     public var hashNow  : Int // hash of currently selected item
 
     public init(_ nodeVm : NodeVm) {
 
         self.type     = nodeVm.nodeType.rawValue
-        self.menuOp   = nodeVm.branchVm.treeVm.trunk.menuOp
+        self.menuType = nodeVm.branchVm.treeVm.menuType
         self.hashPath = nodeVm.menuTree.hashPath
         self.hashNow  = nodeVm.menuTree.hash
     }
     
     var treeVm: TreeVm? {
-        return TreeVm.sideAxis[menuOp.key]
+        return TreeVm.sideAxis[menuType.key]
     }
 }
 
 public struct MenuLeafItem: Codable {
 
     public var type      : String
-    public var menuOp    : MenuOp
+    public var menuType  : MenuType
     public var hashPath  : [Int] // last shown item on tree
     public var hashNow   : Int // hash of currently selected item
     public let leafThumb : LeafThumb
@@ -36,7 +36,7 @@ public struct MenuLeafItem: Codable {
                 _ origin    : Bool) {
 
         self.type      = leafVm.nodeType.rawValue
-        self.menuOp    = leafVm.branchVm.treeVm.trunk.menuOp
+        self.menuType  = leafVm.branchVm.treeVm.menuType
         self.hashPath  = leafVm.menuTree.hashPath
         self.hashNow   = leafVm.menuTree.hash
         self.leafThumb = leafThumb
@@ -48,7 +48,7 @@ public struct MenuLeafItem: Codable {
     }
 
     var treeVm: TreeVm? {
-        return TreeVm.sideAxis[menuOp.key]
+        return TreeVm.sideAxis[menuType.key]
     }
 
 }

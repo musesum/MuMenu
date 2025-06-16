@@ -4,42 +4,64 @@ import SwiftUI
 public enum MenuCorner {
     case none, upLeft, upRight, downLeft, downRight
 }
-public enum MenuCornerAxis {
+public enum MenuCornerAxis: String {
     case none, ULV, ULH, URV, URH, DLV, DLH, DRV, DRH
 }
 
+public enum MenuProgression {
+    case VL, // vertical leftward
+         VR, // vertical rightward
+         HU, // horiontal upward
+         HD  // horizontal downward
+}
 
-public struct MenuOp: OptionSet, Codable, Hashable {
+public struct MenuType: OptionSet, Codable, Hashable {
     public let rawValue: Int
     public init(rawValue: Int) { self.rawValue = rawValue }
 
     public init(_ names: String) {
         var value = 0
         for char in names {
-            if let op = MenuOp.charOp[char] {
+            if let op = MenuType.charOp[char] {
                 value |= op.rawValue
             }
         }
         self.init(rawValue: value)
     }
 
-    public static let U  = MenuOp(rawValue: 1 << 0) // up
-    public static let D  = MenuOp(rawValue: 1 << 1) // down
-    public static let L  = MenuOp(rawValue: 1 << 2) // left
-    public static let R  = MenuOp(rawValue: 1 << 3) // right
-    public static let Z0 = MenuOp(rawValue: 1 << 4) // near
-    public static let Z1 = MenuOp(rawValue: 1 << 5) // far
-    public static let H  = MenuOp(rawValue: 1 << 6) // hori
-    public static let V  = MenuOp(rawValue: 1 << 7) // vert
+    public static let U  = MenuType(rawValue: 1 << 0) // up
+    public static let D  = MenuType(rawValue: 1 << 1) // down
+    public static let L  = MenuType(rawValue: 1 << 2) // left
+    public static let R  = MenuType(rawValue: 1 << 3) // right
+    public static let Z0 = MenuType(rawValue: 1 << 4) // near
+    public static let Z1 = MenuType(rawValue: 1 << 5) // far
+    public static let H  = MenuType(rawValue: 1 << 6) // hori
+    public static let V  = MenuType(rawValue: 1 << 7) // vert
 
-    var _U  : Int { self.rawValue & MenuOp.U .rawValue }
-    var _D  : Int { self.rawValue & MenuOp.D .rawValue }
-    var _L  : Int { self.rawValue & MenuOp.L .rawValue }
-    var _R  : Int { self.rawValue & MenuOp.R .rawValue }
-    var _Z0 : Int { self.rawValue & MenuOp.Z0.rawValue }
-    var _Z1 : Int { self.rawValue & MenuOp.Z1.rawValue }
-    var _H  : Int { self.rawValue & MenuOp.H .rawValue }
-    var _V  : Int { self.rawValue & MenuOp.V .rawValue }
+    public static let UL = MenuType("UL")
+    public static let UR = MenuType("UR")
+    public static let DL = MenuType("DL")
+    public static let DR = MenuType("DR")
+
+    public static let ULV = MenuType("ULV")
+    public static let ULH = MenuType("ULH")
+    public static let URV = MenuType("URV")
+    public static let URH = MenuType("URH")
+    public static let DLV = MenuType("DLV")
+    public static let DLH = MenuType("DLH")
+    public static let DRV = MenuType("DRV")
+    public static let DRH = MenuType("DRH")
+
+    public static let VHLR = MenuType("VHLR")
+
+    var _U  : Int { self.rawValue & MenuType.U .rawValue }
+    var _D  : Int { self.rawValue & MenuType.D .rawValue }
+    var _L  : Int { self.rawValue & MenuType.L .rawValue }
+    var _R  : Int { self.rawValue & MenuType.R .rawValue }
+    var _Z0 : Int { self.rawValue & MenuType.Z0.rawValue }
+    var _Z1 : Int { self.rawValue & MenuType.Z1.rawValue }
+    var _H  : Int { self.rawValue & MenuType.H .rawValue }
+    var _V  : Int { self.rawValue & MenuType.V .rawValue }
 
     public var up       : Bool { self.contains(.U ) }
     public var down     : Bool { self.contains(.D ) }
@@ -50,14 +72,14 @@ public struct MenuOp: OptionSet, Codable, Hashable {
     public var horizon  : Bool { self.contains(.H ) }
     public var vertical : Bool { self.contains(.V ) }
 
-    public var chiral: MenuOp { MenuOp(rawValue: self.rawValue & (MenuOp.L.rawValue | MenuOp.R.rawValue))}
+    public var chiral: MenuType { MenuType(rawValue: self.rawValue & (MenuType.L.rawValue | MenuType.R.rawValue))}
 
-    public static let UDLR = MenuOp([.U,.D,.L,.R]).rawValue
-    public static let UDLRVH = MenuOp([.U,.D,.L,.R,.V,.H]).rawValue
+    public static let UDLR = MenuType([.U,.D,.L,.R]).rawValue
+    public static let UDLRVH = MenuType([.U,.D,.L,.R,.V,.H]).rawValue
 
     public var corner: MenuCorner {
         
-        switch self.rawValue & MenuOp.UDLR {
+        switch self.rawValue & MenuType.UDLR {
         case (_U + _R) : return .upRight
         case (_U + _L) : return .upLeft
         case (_D + _R) : return .downRight
@@ -67,7 +89,7 @@ public struct MenuOp: OptionSet, Codable, Hashable {
     }
     public var cornerAxis: MenuCornerAxis {
 
-        switch self.rawValue & MenuOp.UDLRVH {
+        switch self.rawValue & MenuType.UDLRVH {
         case (_U + _L + _V) : return .ULV
         case (_U + _L + _H) : return .ULH
         case (_U + _R + _V) : return .URV
@@ -80,7 +102,12 @@ public struct MenuOp: OptionSet, Codable, Hashable {
         }
     }
 
-    public static let charOp: [Character: MenuOp] = [
+    public var progression: MenuProgression {
+        return (vertical
+                ? (left ? .VL : .VR)
+                : (up ? .HU : .HD))
+    }
+    public static let charOp: [Character: MenuType] = [
         "U": .U  , "D": .D  ,
         "L": .L  , "R": .R  ,
         "H": .H  , "V": .V  ,
@@ -88,12 +115,12 @@ public struct MenuOp: OptionSet, Codable, Hashable {
     ]
 
     public var key: String {
-        MenuOp.charOp.compactMap { (char, op) in
+        MenuType.charOp.compactMap { (char, op) in
             self.contains(op) ? String(char) : nil
         }.joined()
     }
     public var description: String {
-        let mapping: [(MenuOp, String)] = [
+        let mapping: [(MenuType, String)] = [
             (.U  , "up"     ), (.D  , "down"     ),
             (.L  , "left"   ), (.R  , "right"    ),
             (.Z0 , "near"   ), (.Z1 , "far"      ),
@@ -115,7 +142,7 @@ public struct MenuOp: OptionSet, Codable, Hashable {
     
     public func contains(_ names: String) -> Bool {
         for char in names {
-            guard let op = MenuOp.charOp[char], self.contains(op) else {
+            guard let op = MenuType.charOp[char], self.contains(op) else {
                 return false
             }
         }
@@ -124,7 +151,7 @@ public struct MenuOp: OptionSet, Codable, Hashable {
 
     static func flipUpperLower(_ oldOp: Int) -> Int {
 
-        return oldOp ^ MenuOp([.U, .D]).rawValue
+        return oldOp ^ MenuType([.U, .D]).rawValue
     }
 
     var hAlign: HorizontalAlignment { self.left ? .leading : .trailing }

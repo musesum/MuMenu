@@ -24,7 +24,7 @@ public class TreeVm: Identifiable, Equatable, ObservableObject {
 
     var rootVm: RootVm
     var branchSpotVm: BranchVm?
-    var trunk: Trunk
+    var menuType: MenuType
     var treeOffset = CGSize.zero // offset of menu tree from corner
     var depthShown = 0 // levels of branches shown
     var startIndex = 0
@@ -52,11 +52,11 @@ public class TreeVm: Identifiable, Equatable, ObservableObject {
     }
     
     public init(_ rootVm: RootVm,
-                _ trunk: Trunk) {
+                _ menuType: MenuType) {
 
         self.rootVm = rootVm
-        self.trunk = trunk
-        TreeVm.sideAxis[trunk.menuOp.key] = self
+        self.menuType = menuType
+        TreeVm.sideAxis[menuType.key] = self
     }
     
     public func addBranchVm(_ branchVm: BranchVm) {

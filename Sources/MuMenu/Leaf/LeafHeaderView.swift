@@ -8,10 +8,15 @@ struct LeafHeaderTitleView: View {
     @ObservedObject var leafVm: LeafVm
     let inset: CGFloat
     var leafTitle: String { leafVm.leafTitle() }
-    var size: CGSize { leafVm.panelVm.titleSize }
+    var size: CGSize {
+        let w = leafVm.panelVm.titleSize.width + inset
+        let h = leafVm.panelVm.titleSize.width
+        //if w<0 || w>10000000 || h < 0 || h > 1000000 { print("oy!") }
+        return CGSize(width: max(0,w), height: max(0,h))
+    }
 
     init(_ leafVm: LeafVm,
-         inset: CGFloat = 0) {
+         inset: CGFloat) {
         self.leafVm = leafVm
         self.inset = inset
     }

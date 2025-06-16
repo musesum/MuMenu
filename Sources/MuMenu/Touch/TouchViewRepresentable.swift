@@ -19,7 +19,7 @@ public struct TouchViewRepresentable: UIViewRepresentable {
         self.touchView = touchView
         touchView.translatesAutoresizingMaskIntoConstraints = true
         for cornerVm in cornerVms {
-            CornerOpVm[cornerVm.corner.rawValue] = cornerVm
+            CornerOpVm[cornerVm.menuType.rawValue] = cornerVm
         }
     }
     public func makeUIView(context: Context) -> TouchView {

@@ -6,19 +6,19 @@ struct TreeView: View {
 
     @ObservedObject var treeVm: TreeVm
 
-    var menuOp: MenuOp { treeVm.rootVm.menuOp }
-    var canopyOpacity: CGFloat { treeVm.showTree == .canopy ? 0.5 : 0 }
+    var menuType: MenuType { treeVm.rootVm.cornerType }
+    var canopyAlpha: CGFloat { treeVm.showTree == .canopy ? 0.5 : 0 }
     var treeOpacity: CGFloat { treeVm.showTree == .show ? 1 : 0 }
 
     var body: some View {
 
-        ZStack(alignment: menuOp.alignment) {
+        ZStack(alignment: menuType.alignment) {
 
-            //..... TreeCanopyView(treeVm: treeVm) .opacity(canopyOpacity)
+            // TreeCanopyView(treeVm: treeVm) .opacity(canopyOpacity) //.....
 
-            if treeVm.trunk.menuOp.vertical {
-                HStack(alignment: menuOp.vAlign)  {
-                    ForEach(menuOp.right
+            if treeVm.menuType.vertical {
+                HStack(alignment: menuType.vAlign)  {
+                    ForEach(menuType.right
                             ? treeVm.branchVms.reversed()
                             : treeVm.branchVms) {
 
@@ -28,8 +28,8 @@ struct TreeView: View {
                 }
                 .opacity(treeOpacity)
             } else {
-                VStack(alignment: menuOp.hAlign) {
-                    ForEach(menuOp.down
+                VStack(alignment: menuType.hAlign) {
+                    ForEach(menuType.down
                             ? treeVm.branchVms.reversed()
                             : treeVm.branchVms) {
 
@@ -40,7 +40,7 @@ struct TreeView: View {
                 .opacity(treeOpacity)
             }
         }
-        .animation(Animate(treeVm.interval), value: canopyOpacity)
+        .animation(Animate(treeVm.interval), value: canopyAlpha)
         .offset(treeVm.treeOffset)
     }
 }

@@ -14,7 +14,6 @@ enum TouchType  {
     case leaf   /// editing area inside a leaf
     case canopy /// shift tree from whole canopy
     case shift  /// shifting branches by dragging header for leaf
-
     case space  /// hovering over canvas while on menu
     
     public var symbol: String {
@@ -28,7 +27,7 @@ enum TouchType  {
             case .leaf   : return "􀥲"
             case .canopy : return "􁝯"
             case .shift  : return "􀄭"
-            case .space  : return "􁁺"
+            case .space  : return "∞⃣"
         }
     }
     public var description: String {

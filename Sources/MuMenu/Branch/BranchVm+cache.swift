@@ -16,7 +16,7 @@ extension BranchVm {
         var nextHash: (Int, BranchVm?) {
             var hasher = Hasher()
             let prevHash = prevNodeVm?.hashValue ?? 0
-            let menuOpHash = treeVm.trunk.menuOp.rawValue
+            let menuOpHash = treeVm.menuType.rawValue
             let title = BranchVm.titleForNodes(menuTrees)
 
             hasher.combine(prevHash)

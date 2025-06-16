@@ -13,7 +13,7 @@ struct BranchView: View {
         self.branchVm = branchVm
     }
     var body: some View {
-        let cornerAxis = treeVm.trunk.menuOp.cornerAxis
+        let cornerAxis = treeVm.menuType.cornerAxis
         if branchVm.columns > 1 {
             switch cornerAxis {
             case .DLV, .DRV: VStack                     { titleV(branchVm); gridV(branchVm)  }
@@ -49,7 +49,7 @@ fileprivate struct titleV: View {
                               height: Layout.radius)
     }
     var angle: Angle {
-        switch treeVm.trunk.menuOp.cornerAxis {
+        switch treeVm.menuType.cornerAxis {
         case .DLV, .DRV, .ULV, .URV, .none: return  Angle(degrees:0)
         case .URH, .ULH: return  Angle(degrees:270) //TODO: 90 later, tricky
         case .DLH, .DRH: return  Angle(degrees:270)
@@ -57,7 +57,7 @@ fileprivate struct titleV: View {
     }
 
     var anchor: UnitPoint {
-        switch treeVm.trunk.menuOp.cornerAxis {
+        switch treeVm.menuType.cornerAxis {
         case .DLV, .DRV, .ULV, .URV, .none: return .center
         case .DLH, .ULH: return .bottomLeading
         case .URH, .DRH: return .topTrailing
@@ -65,7 +65,7 @@ fileprivate struct titleV: View {
     }
 
     var frameAlign: Alignment {
-        switch treeVm.trunk.menuOp.cornerAxis {
+        switch treeVm.menuType.cornerAxis {
         case .DLV, .DRV, .ULV, .URV, .none: return .center
         case .DLH: return .bottomLeading
         case .ULH: return .bottomLeading
@@ -205,7 +205,7 @@ struct BranchAxisView<Content: View>: View {
         // .horizonal scroll view shifts and truncates the inner views
         // so, perhaps there is a phantom space for indicators?
         
-        if panelVm.trunk.menuOp.vertical ||
+        if panelVm.menuType.vertical ||
             [.xy, .xyz, .arch, .peer].contains(panelVm.nodeType) {
 
             ScrollView(.vertical, showsIndicators: false) {

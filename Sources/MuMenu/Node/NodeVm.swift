@@ -15,7 +15,7 @@ public class NodeVm: Identifiable, ObservableObject {
     internal var panelVm: PanelVm        /// the panel that this node belongs to
     private var prevNodeVm: NodeVm?     /// parent nodeVm in hierarchy
     internal var rootVm: RootVm
-    public var menuOp: MenuOp
+    public var menuType: MenuType
 
     @Published var refresh: Int = 0
     @Published var zIndex: CGFloat = 0 /// stack current spotlight node on top of others
@@ -25,7 +25,7 @@ public class NodeVm: Identifiable, ObservableObject {
     var spotlight: Bool {
         get { self._spotlight }
         set { _spotlight = newValue
-            if let spotFlo = menuTree.chiralSpot[menuOp.chiral]  {
+            if let spotFlo = menuTree.chiralSpot[menuType.chiral]  {
                 let oldVal: Double = spotFlo.val("on") ?? -1
                 let newVal: Double = newValue ? 1 : 0
                 if oldVal != newVal {
@@ -66,7 +66,7 @@ public class NodeVm: Identifiable, ObservableObject {
         self.rootVm = branchVm.treeVm.rootVm
         self.nodeType = menuTree.nodeType
         self.branchVm = branchVm
-        self.menuOp = branchVm.treeVm.trunk.menuOp
+        self.menuType = branchVm.treeVm.menuType
         self.prevNodeVm = prevVm
 
         self.panelVm = PanelVm(branchVm  : branchVm,

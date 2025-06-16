@@ -28,7 +28,7 @@ extension MenuTouch: CircleBufferDelegate {
         let item = item as! MenuItem
 
         if isRemote {
-            switch item.type {
+            switch item.element {
                 case .node, .leaf:
                     item.cornerVm?.gotoMenuItem(item)
                 case .root:

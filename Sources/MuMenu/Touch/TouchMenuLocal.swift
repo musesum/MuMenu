@@ -38,7 +38,7 @@ public class TouchMenuLocal {
             }
             func addMenu(_ nodeVm: NodeVm? = nil) -> Bool {
                 let touchMenu = TouchMenuLocal(cornerVm, nodeVm, isRemote: false)
-                let menuItem = MenuItem(touch, cornerVm.corner)
+                let menuItem = MenuItem(touch, cornerVm.menuType)
                 touchMenu.buffer.addItem(menuItem, bufType: .localBuf)
                 let key = touch.hash
                 menuKey[key] = touchMenu
@@ -51,7 +51,7 @@ public class TouchMenuLocal {
     public static func updateTouch(_ touch: UITouch) -> Bool {
         
         if let touchMenu = menuKey[touch.hash] {
-            let corner = touchMenu.cornerVm.corner
+            let corner = touchMenu.cornerVm.menuType
             touchMenu.buffer.addItem(MenuItem(touch, corner), bufType: .localBuf)
             return true
         }
@@ -66,7 +66,7 @@ extension TouchMenuLocal: CircleBufferDelegate {
     public func flushItem<Item>(_ item: Item, _ type: BufType) -> BufState {
         let item = item as! MenuItem
         if let touch = item.item as? MenuTouchItem,
-           let cornerVm = CornerOpVm[item.menuOp] {
+           let cornerVm = CornerOpVm[item.menuType] {
 
             cornerVm.updateTouchXY(touch.cgPoint, item.phase)
         }

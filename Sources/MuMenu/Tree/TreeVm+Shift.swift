@@ -11,45 +11,47 @@ extension TreeVm { // + Shift
         var w = CGFloat.zero
         var h = CGFloat.zero
 
-        switch trunk.bound {
-            case .lowerX:
-                for branchVm in branchVms {
-                    let lowX = branchVm.shiftRange.0.lowerBound
-                    let delta = abs(lowX - treeShift.width)
+        switch menuType.progression {
 
-                    if lowestDelta > delta {
-                        lowestDelta = delta
-                        w = lowX
-                    }
-                }
-            case .upperX:
-                for branchVm in branchVms {
-                    let uprX = branchVm.shiftRange.0.upperBound
-                    let delta =  abs(uprX - treeShift.width)
-                    if lowestDelta > delta {
-                        lowestDelta = delta
-                        w = uprX
-                    }
-                }
-            case .lowerY:
-                for branchVm in branchVms {
-                    let lowY = branchVm.shiftRange.1.lowerBound
-                    let delta =  abs(lowY - treeShift.height)
-                    if lowestDelta > delta {
-                        lowestDelta = delta
-                        h = lowY
-                    }
-                }
+        case .VL: // vertical left
+            for branchVm in branchVms {
+                let lowX = branchVm.shiftRange.0.lowerBound
+                let delta = abs(lowX - treeShift.width)
 
-            case .upperY:
-                for branchVm in branchVms {
-                    let uprY = branchVm.shiftRange.1.upperBound
-                    let delta =  abs(uprY - treeShift.height)
-                    if lowestDelta > delta {
-                        lowestDelta = delta
-                        h = uprY
-                    }
+                if lowestDelta > delta {
+                    lowestDelta = delta
+                    w = lowX
                 }
+            }
+        case .VR: // vertical right
+            for branchVm in branchVms {
+                let uprX = branchVm.shiftRange.0.upperBound
+                let delta =  abs(uprX - treeShift.width)
+                if lowestDelta > delta {
+                    lowestDelta = delta
+                    w = uprX
+                }
+            }
+        case .HU: // horizonal up
+            for branchVm in branchVms {
+                let lowY = branchVm.shiftRange.1.lowerBound
+                let delta =  abs(lowY - treeShift.height)
+                if lowestDelta > delta {
+                    lowestDelta = delta
+                    h = lowY
+                }
+            }
+
+        case .HD: // horizonal down
+            for branchVm in branchVms {
+                let uprY = branchVm.shiftRange.1.upperBound
+                let delta =  abs(uprY - treeShift.height)
+                if lowestDelta > delta {
+                    lowestDelta = delta
+                    h = uprY
+                }
+            }
+        default: break
         }
         treeShift = CGSize(width: w, height: h)
         treeShifted = treeShift
@@ -77,8 +79,8 @@ extension TreeVm { // + Shift
     func shiftTree(to index: Int) {
 
         if index < branchVms.count, index >= 0 {
-           let startBranchVm = branchVms[index]
-            treeShift = trunk.outerLimit(of: startBranchVm.shiftRange)
+           let branchVm = branchVms[index]
+            treeShift = outerLimit(of: branchVm.shiftRange)
             treeShifted = treeShift
         }
     }

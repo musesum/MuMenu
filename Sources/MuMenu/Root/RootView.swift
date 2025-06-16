@@ -10,37 +10,17 @@ extension EnvironmentValues {
         set { self[MainContentKey.self] = newValue }
     }
 }
-#if false
-public struct CornerOrnament: View {
-    @EnvironmentObject var rootVm: RootVm
 
-    public var body: some View {
-        switch rootVm.menuOp {
-        case [.lower, .right]: return DownRightView()
-        case [.lower, .left]:  return DownLeftView()
-        case [.upper, .right]: return UpRightView()
-        case [.upper, .left]:  return UpLeftView()
-        default:               return EmptyView()
-        }
-    }
-}
-#endif
 /// four posible corners
 public struct RootView: View {
     @EnvironmentObject var rootVm: RootVm
-    //@Environment(\.mainContent) var mainContent: AnyView
-    #if os(visionOS)
-    func anchor() -> OrnamentAttachmentAnchor {
-        return rootVm.menuOp.left ? .leading : .trailing
-    }
-    #endif
     public var body: some View {
-        switch rootVm.menuOp.corner {
-        case .downRight: DownRightView()
-        case .downLeft: DownLeftView()
-        case .upRight: UpRightView()
-        case .upLeft: UpLeftView()
-        default: DownRightView()
+        switch rootVm.cornerType.corner {
+        case .downRight : DownRightView()
+        case .downLeft  : DownLeftView()
+        case .upRight   : UpRightView()
+        case .upLeft    : UpLeftView()
+        default         : DownRightView()
         }
     }
 }

@@ -13,64 +13,25 @@ public struct MenuVms {
         Icon.altBundles.append(MuMenu.bundle)
         Icon.altBundles.append(MuVision.bundle)
 
-        let menuTree = MenuTree(root˚)
-        let vertiMenu = ["canvas", "plato", "cell", "camera"]
-        let horiMenu = ["more.bonjour", "more.archive", "more.search"]
+        let rootTree = MenuTree(root˚)
+        let vMenu = ["canvas", "plato", "cell", "camera"]
+        let hMenu = ["more.bonjour", "more.archive", "more.search"]
+
         #if os(visionOS)
-        let UL = CornerOp([.upper, .left])
-        let UR = CornerOp([.upper, .right])
-        let rootLL = RootVm(UL, archiveVm, peers)
-        let rootLR = RootVm(UR, archiveVm, peers)
-
-        // vertical menu
-        let VUL = Corner(menuTree, .vertical, UL)
-        let VUR = Corner(menuTree, .vertical, UR)
-        menuVms.append(MenuVm(rootLL, VUL, vertiMenu))
-        menuVms.append(MenuVm(rootLR, VUR, vertiMenu))
-
-        //..... horizonal menu
-        let HUL = Corner(menuTree, .horizontal, UL)
-        let HUR = Corner(menuTree, .horizontal, UR)
-        menuVms.append(MenuVm(rootLL, HUL, horiMenu))
-        menuVms.append(MenuVm(rootLR, HUR, horiMenu))
-
-        #elseif true // dual vertical/horizontal menu
-        // 
-        let DLV = MenuOp("DLV")
-        let DRV = MenuOp("DRV")
-        let rootDLV = RootVm(DLV, archiveVm, peers)
-        let rootDRV = RootVm(DRV, archiveVm, peers)
-
-        let trunkDLV = Trunk(menuTree, DLV)
-        let trunkDRV = Trunk(menuTree, DRV)
-        menuVms.append(MenuVm(rootDLV, trunkDLV, vertiMenu))
-        menuVms.append(MenuVm(rootDRV, trunkDRV, vertiMenu))
-
-        //..... horizonal menu
-        let DLH = MenuOp("DLH")
-        let DRH = MenuOp("DRH")
-        let rootDLH = RootVm(DLH, archiveVm, peers)
-        let rootDRH = RootVm(DRH, archiveVm, peers)
-
-        let trunkDLH = Trunk(menuTree, DLH)
-        let trunkDRH = Trunk(menuTree, DRH)
-        menuVms.append(MenuVm(rootDLH, trunkDLH, horiMenu))
-        menuVms.append(MenuVm(rootDRH, trunkDRH, horiMenu))
+        let rootUL = RootVm(.UL, archiveVm, peers)
+        let rootUR = RootVm(.UR, archiveVm, peers)
+        menuVms.append(MenuVm(rootUL, .ULV, vMenu, rootTree))
+        menuVms.append(MenuVm(rootUL, .ULH, hMenu, rootTree))
+        menuVms.append(MenuVm(rootUR, .URV, vMenu, rootTree))
+        menuVms.append(MenuVm(rootUR, .URH, hMenu, rootTree))
 
         #else
-        // vertical menu
-        let DLV = MenuOp("DLV")
-        let DRV = MenuOp("DRV")
-        menuVms.append(MenuVm(DLV), Trunk(menuTree, DLV), vertiMenu)
-        menuVms.append(MenuVm(DRV), Trunk(menuTree, DRV), vertiMenu)
-
-        //..... horizonal menu
-        let DLH = MenuOp("DLH")
-        let DRH = MenuOp("DRH")
-        menuVms.append(MenuVm(DLH), Trunk(menuTree, DLH),horiMenu)
-        menuVms.append(MenuVm(DRH), Trunk(menuTree, DRH),horiMenu)
-
-
+        let rootDL = RootVm(.DL, archiveVm, peers)
+        let rootDR = RootVm(.DR, archiveVm, peers)
+        menuVms.append(MenuVm(rootDL, .DLV, vMenu, rootTree))
+        menuVms.append(MenuVm(rootDL, .DLH, hMenu, rootTree))
+        menuVms.append(MenuVm(rootDR, .DRV, vMenu, rootTree))
+        menuVms.append(MenuVm(rootDR, .DRH, hMenu, rootTree))
         #endif
     }
 }

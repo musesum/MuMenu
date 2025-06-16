@@ -25,7 +25,7 @@ struct LeafArchiveView: View {
                             .foregroundColor(.white)
                     }
                     .frame(width: 32, height: 32)
-                    LeafHeaderTitleView(leafVm, inset: -64)
+                    LeafHeaderTitleView(leafVm, inset: 0)
                     Spacer()
                 }
                 LeafBezelView(leafVm, .none) {

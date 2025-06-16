@@ -11,14 +11,27 @@ extension CornerVm {
     public func hitTest(_ touchNow: CGPoint) ->  NodeVm? {
         if let logoNodeVm, logoNodeVm.contains(touchNow) {
             return logoNodeVm // hits the root (home) node icon
-        } else if let rootVm, let nodeVm = rootVm.hitTest(touchNow) {
-            return nodeVm // hits one of the shown branches
+        } else {
+            for treeVm in rootVm?.treeVms ?? [] {
+                if treeVm.treeBoundsPad.contains(touchNow) {
+                    for branchVm in treeVm.branchVms {
+                        if branchVm.show, branchVm.contains(touchNow) {
+                            if let nodeVm =  branchVm.nearestNode(touchNow) {
+                                return nodeVm
+                            }
+                        }
+                    }
+                    if let nodeVm = treeVm.branchSpotVm?.nodeSpotVm {
+                        return nodeVm
+                    }
+                }
+            }
         }
         return nil // does NOT hit menu
     }
 
     public func gotoMenuItem(_ item: MenuItem) {
-        switch item.type {
+        switch item.element {
             case .node:
 
                 if let nodeItem = item.item as? MenuNodeItem {

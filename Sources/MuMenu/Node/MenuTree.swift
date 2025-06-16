@@ -11,7 +11,7 @@ open class MenuTree: Identifiable, Equatable {
     public var parentTree: MenuTree?
     public var children = [MenuTree]()
     public var nodeType = NodeType.node
-    public var chiralSpot: [MenuOp: Flo] = [:]
+    public var chiralSpot: [MenuType: Flo] = [:]
 
     var axis: Axis = .vertical
     /// path and hash get updated through MuNodeDispatch::bindDispatch
