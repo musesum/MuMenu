@@ -10,7 +10,7 @@ public class LeafPeerVm: LeafVm {
     let peers: Peers
     override public func touchLeaf(_ : TouchState, _ : Visitor) {}
     override public func treeTitle() -> String { "" }
-    override public func leafTitle() -> String { "Peers for: \(peers.peerId)" }
+    override public func leafTitle() -> String { "\(peers.peerId)" }
     override public func syncVal(_ : Visitor) {}
 
     override init (_ menuTree: MenuTree,

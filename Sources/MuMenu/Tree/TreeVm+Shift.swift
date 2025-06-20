@@ -41,7 +41,6 @@ extension TreeVm { // + Shift
                     h = lowY
                 }
             }
-
         case .HD: // horizonal down
             for branchVm in branchVms {
                 let uprY = branchVm.shiftRange.1.upperBound
@@ -51,7 +50,6 @@ extension TreeVm { // + Shift
                     h = uprY
                 }
             }
-        default: break
         }
         treeShift = CGSize(width: w, height: h)
         treeShifted = treeShift
@@ -70,7 +68,8 @@ extension TreeVm { // + Shift
         }
         updateBranches(fromRemote)
     }
-    func shiftExpandLast(_ fromRemote: Bool) {
+    /// when dragging root over branches, expand tree
+    func expandTree(_ fromRemote: Bool) {
         treeShift = .zero
         treeShifted  = .zero
         updateBranches(fromRemote)

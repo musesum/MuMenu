@@ -8,7 +8,7 @@ struct LeafArchiveView: View {
     @ObservedObject var leafVm: LeafArchiveVm
     var panelVm: PanelVm { leafVm.panelVm }
 
-    @State private var showSettings = false
+    @State private var showPicker = false
     @State private var settingsDetent = PresentationDetent.medium
     @State var title: String = "Title"
     @State var description: String = "Description"
@@ -17,9 +17,9 @@ struct LeafArchiveView: View {
         ZStack {
             VStack {
                 HStack {
-                    //LeafArchivePlusView
+                    // bring up picker
                     Button {
-                        showSettings.toggle()
+                        showPicker.toggle()
                     } label: {
                         Image(systemName: "plus.circle")
                             .foregroundColor(.white)
@@ -33,7 +33,7 @@ struct LeafArchiveView: View {
                 }
             }
         }
-        .sheet(isPresented: $showSettings) {
+        .sheet(isPresented: $showPicker) {
             PickerModalView(leafVm)
             .presentationDetents(
                 [.medium],

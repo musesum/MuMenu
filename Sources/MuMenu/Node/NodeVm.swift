@@ -115,6 +115,7 @@ public class NodeVm: Identifiable, ObservableObject {
         }
     }
 
+    /// was touchedOrigin()
     func updateNodeValue(_ visit: Visitor = Visitor(0,.user)) {
         rootVm.endAutoHide(false)
 
@@ -178,7 +179,7 @@ extension NodeVm { // + Spotlight
 
     /// update only chain of spotlight nodes
     public func updateSpotNodes() {
-        if spotlight || nodeType.isLeaf {
+        if spotlight || nodeType.isControl {
             updateNodeValue()
         }
         nextBranchVm?.nodeSpotVm?.updateSpotNodes()

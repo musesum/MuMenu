@@ -7,14 +7,14 @@ struct TreeView: View {
     @ObservedObject var treeVm: TreeVm
 
     var menuType: MenuType { treeVm.rootVm.cornerType }
-    var canopyAlpha: CGFloat { treeVm.showTree == .canopy ? 0.5 : 0 }
-    var treeOpacity: CGFloat { treeVm.showTree == .show ? 1 : 0 }
+    var canopyAlpha: CGFloat { treeVm.treeState == .canopy ? 0.5 : 0 }
+    var treeOpacity: CGFloat { treeVm.treeState == .showTree ? 1 : 0 }
 
     var body: some View {
 
         ZStack(alignment: menuType.alignment) {
 
-            // TreeCanopyView(treeVm: treeVm) .opacity(canopyOpacity) //.....
+            //... TreeCanopyView(treeVm: treeVm) .opacity(canopyAlpha)
 
             if treeVm.menuType.vertical {
                 HStack(alignment: menuType.vAlign)  {

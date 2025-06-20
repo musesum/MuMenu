@@ -5,7 +5,6 @@ import MuFlo
 
 public class TouchState {
 
-    public enum MuTouchPhase { case none, begin, moved, ended }
     let tapThreshold = TimeInterval(0.5) /// tap time threshold
     let speedThreshold = CGFloat(300) /// test to skip branches
     let moveThreshold = CGFloat(5)   /// move distance to reset touchEndCount
@@ -26,6 +25,8 @@ public class TouchState {
     private var pointBegin  = CGPoint.zero /// where touch started
     private var pointPrev   = CGPoint.zero /// last reported touch while moving
     private var touchSpeed  = CGFloat.zero /// speed of movement
+
+    
 
     func beginPoint(_ pointNow: CGPoint) {
 

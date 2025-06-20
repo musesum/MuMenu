@@ -54,12 +54,7 @@ public enum NodeType: String, Codable {
         default       : self = .none
         }
     }
-    public var isLeaf: Bool {
-        switch self {
-        case .node, .none, .tog: return false
-        case .val, .seg, .xy, .xyz, .peer, .hand, .arch, .search: return true
-        }
-    }
+
     /// control will create separate child leaf
     public var isControl: Bool {
         switch self {

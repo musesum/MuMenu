@@ -143,7 +143,6 @@ public class LeafRunways {
     /// updated by View after auto-layout
     func updateBounds(_ type: LeafRunwayType,
                       _ bounds: CGRect) {
-        NoDebugLog { P("updateRunway \(type.rawValue)\(bounds.digits())") }
         runwayBounds[type] = bounds
         if runwayThumbs[type] == nil {
             runwayThumbs[type] = LeafThumb(type)

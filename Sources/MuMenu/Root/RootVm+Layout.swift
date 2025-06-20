@@ -5,7 +5,7 @@ import MuPeers
 import MuFlo
 import MuVision
 
-extension RootVm { // layout
+extension RootVm { // + Layout
 
     internal func updateTreeOffsets() {
 

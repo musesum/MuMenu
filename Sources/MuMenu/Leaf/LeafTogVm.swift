@@ -12,7 +12,6 @@ public class LeafTogVm: LeafVm {
            let thumb = runways.thumb(),
            bounds.contains(touchState.pointNow),
            touchState.phase == .ended {
-
             thumb.value.x = (thumb.value.x == 1.0 ? 0 : 1)
             syncVal(Visitor(0,.user))
         }
@@ -23,11 +22,9 @@ public class LeafTogVm: LeafVm {
         guard let thumb = runways.thumb() else { return  }
 
         if visit.type.has([.model,.bind,.midi]) {
-
             menuTree.flo.setAnyExprs([("x", thumb.value.x)], .sneak, visit)
 
         } else if visit.type.has([.user,.remote]) {
-
             menuTree.flo.setAnyExprs(("x", thumb.value.x), .fire, visit)
             updateLeafPeers(visit)
         }

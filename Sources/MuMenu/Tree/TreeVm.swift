@@ -2,7 +2,7 @@
 import SwiftUI
 import MuFlo
 
-enum ShowTree: String { case hide, canopy, show }
+enum TreeState: String { case hideTree, canopy, showTree }
 
 public class TreeVm: Identifiable, Equatable, ObservableObject {
 
@@ -17,7 +17,7 @@ public class TreeVm: Identifiable, Equatable, ObservableObject {
     @Published var treeBounds: CGRect = .zero
     var treeBoundsPad: CGRect = .zero
 
-    @Published var showTree: ShowTree = .show
+    @Published var treeState: TreeState = .showTree
     var hideAnimationTimer: Timer?
 
     @Published var interval: TimeInterval = 2.0

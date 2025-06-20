@@ -2,22 +2,23 @@
 
 
 import Foundation
+import MuFlo // logging
 
 extension TreeVm { // +Show
 
     func startHideAnimation(_ interval: TimeInterval,
                             _ done: @escaping () -> Void) {
-        if showTree != .show { return }
-        self.showTree = .canopy
+        if treeState != .showTree { return }
+        self.treeState = .canopy
 
         hideAnimationTimer = Timer.scheduledTimer(withTimeInterval: interval,
                                                   repeats: true) { [weak self] timer in
             guard let self else { return }
 
-            switch self.showTree {
-            case .show   : self.showTree = .canopy
-            case .canopy : self.showTree = .hide; done()
-            case .hide   : self.showTree = .show; timer.invalidate()
+            switch self.treeState {
+            case .showTree  : self.treeState = .canopy
+            case .canopy    : self.treeState = .hideTree; done()
+            case .hideTree  : self.treeState = .showTree; timer.invalidate()
             }
             //print("\(#function) \(self.showTree.rawValue) interval: \(interval)")
         }
@@ -33,24 +34,24 @@ extension TreeVm { // +Show
     }
     func reshowTree(_ fromRemote: Bool) {
         hideAnimationTimer?.invalidate()
-        showTree = .show 
-        showTree(depth: 9, "reshow", fromRemote)
+        treeState = .showTree 
     }
 
     func showTree(start: Int? = nil,
-                  depth: Int? = nil,
+                  depth: Int,
                   _ via: String,
                   _ fromRemote: Bool) {
-        
+
+        PrintLog("𖢞 \(menuType.icon) \(via):\(depth)")
+
         let nextIndex = start ?? startIndex
-        let nextDepth = depth ?? 9
         var newBranches = [BranchVm]()
         var index = 0
         var depthNow = 0
 
         var branch: BranchVm! = branchVms.first
         while branch != nil {
-            if depthNow < nextDepth {
+            if depthNow < depth {
                 branch.show = true
                 if index >= nextIndex {
                     depthNow += 1
@@ -80,16 +81,6 @@ extension TreeVm { // +Show
             rootVm.sendItemToPeers(menuItem)
         }
         func logShowTree() {
-            #if true
-            //print(cornerItem.corner.indicator()+(isVertical ? "|" : "━"), terminator: "")
-            #elseif true
-            //print("\(via.pad(7))\(cornerItem.corner.indicator())\(isVertical ? "V" : "H") (s \(nextIndex) d \(nextDepth)) ", terminator: " ")
-            
-            for branch in branchVms {
-                print("\(branch.title.pad(7)):\(branch.cubemap ? 1 : 0)", terminator: " ")
-            }
-            print("=== (s \(startIndex) d \(depthShown))  shift: \(treeShifted)")
-            #endif
         }
     }
     func lastShown() -> BranchVm? {

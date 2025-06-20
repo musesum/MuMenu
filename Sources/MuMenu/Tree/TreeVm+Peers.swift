@@ -41,7 +41,7 @@ extension TreeVm { // + Peers
                 }
                 branchVm = stepNodeVm.nextBranchVm
                 if branchVm == nil {
-                    showTree("hash", /*fromRemote*/ true)
+                    showTree(depth: 9, "hash", /*fromRemote*/ true)
                     return nodeNow ?? stepNodeVm
                 }
             }

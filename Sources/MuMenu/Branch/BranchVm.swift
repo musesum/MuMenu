@@ -141,7 +141,8 @@ public class BranchVm: Identifiable, ObservableObject {
 
         if let nodeSpotVm {
             if nodeSpotVm.contains(touchNow) ||
-                nodeSpotVm.nodeType.isControl {
+                nodeSpotVm.nodeType.isControl // dragged outside of control?
+            {
                 return nodeSpotVm
             }
         }

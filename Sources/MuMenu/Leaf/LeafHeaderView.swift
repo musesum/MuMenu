@@ -10,8 +10,7 @@ struct LeafHeaderTitleView: View {
     var leafTitle: String { leafVm.leafTitle() }
     var size: CGSize {
         let w = leafVm.panelVm.titleSize.width + inset
-        let h = leafVm.panelVm.titleSize.width
-        //if w<0 || w>10000000 || h < 0 || h > 1000000 { print("oy!") }
+        let h = leafVm.panelVm.titleSize.height
         return CGSize(width: max(0,w), height: max(0,h))
     }
 
@@ -26,11 +25,9 @@ struct LeafHeaderTitleView: View {
             .scaledToFit()
             .allowsTightening(true)
             .font(Font.system(size: 14, design: .default))
-            .minimumScaleFactor(0.01)
+            .minimumScaleFactor(0.5)
             .foregroundColor(.white)
             .shadow(color: .black, radius: 1.0)
-            .frame(width:  size.width + inset,
-                   height: size.height, alignment: .center)
     }
 }
 

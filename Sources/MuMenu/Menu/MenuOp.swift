@@ -3,7 +3,17 @@ import SwiftUI
 
 public enum MenuCorner {
     case none, upLeft, upRight, downLeft, downRight
+    var icon: String {
+        switch self {
+        case .none      : "⬜︎"
+        case .upLeft    : "◤"
+        case .upRight   : "◥"
+        case .downLeft  : "◣"
+        case .downRight : "◥"
+        }
+    }
 }
+
 public enum MenuCornerAxis: String {
     case none, ULV, ULH, URV, URH, DLV, DLH, DRV, DRH
 }
@@ -74,12 +84,22 @@ public struct MenuType: OptionSet, Codable, Hashable {
 
     public var chiral: MenuType { MenuType(rawValue: self.rawValue & (MenuType.L.rawValue | MenuType.R.rawValue))}
 
-    public static let UDLR = MenuType([.U,.D,.L,.R]).rawValue
-    public static let UDLRVH = MenuType([.U,.D,.L,.R,.V,.H]).rawValue
 
     public var corner: MenuCorner {
-        
-        switch self.rawValue & MenuType.UDLR {
+        let UDLR = MenuType([.U,.D,.L,.R]).rawValue
+        switch self.rawValue & UDLR {
+        case (_U + _R) : return .upRight
+        case (_U + _L) : return .upLeft
+        case (_D + _R) : return .downRight
+        case (_D + _L) : return .downLeft
+        default        : return .none
+        }
+    }
+
+    public var axis: MenuCorner {
+        let UD = MenuType([.U,.D]).rawValue
+        switch self.rawValue & UD {
+
         case (_U + _R) : return .upRight
         case (_U + _L) : return .upLeft
         case (_D + _R) : return .downRight
@@ -88,8 +108,8 @@ public struct MenuType: OptionSet, Codable, Hashable {
         }
     }
     public var cornerAxis: MenuCornerAxis {
-
-        switch self.rawValue & MenuType.UDLRVH {
+        let UDLRVH = MenuType([.U,.D,.L,.R,.V,.H]).rawValue
+        switch self.rawValue & UDLRVH {
         case (_U + _L + _V) : return .ULV
         case (_U + _L + _H) : return .ULH
         case (_U + _R + _V) : return .URV
@@ -101,7 +121,20 @@ public struct MenuType: OptionSet, Codable, Hashable {
         default             : return .none
         }
     }
-
+    public var icon: String {
+        let UDLRVH = MenuType([.U,.D,.L,.R,.V,.H]).rawValue
+        switch self.rawValue & UDLRVH {
+        case (_U + _L + _V) : return "◤❚"
+        case (_U + _L + _H) : return "◤▬"
+        case (_U + _R + _V) : return "❚◥"
+        case (_U + _R + _H) : return "▬◥"
+        case (_D + _L + _V) : return "◣❚"
+        case (_D + _L + _H) : return "◣▬"
+        case (_D + _R + _V) : return "❚◢"
+        case (_D + _R + _H) : return "▬◢"
+        default             : return "⬜︎"
+        }
+    }
     public var progression: MenuProgression {
         return (vertical
                 ? (left ? .VL : .VR)
@@ -139,7 +172,7 @@ public struct MenuType: OptionSet, Codable, Hashable {
             return "[" + matched.joined(separator: ", ") + "]"
         }
     }
-    
+
     public func contains(_ names: String) -> Bool {
         for char in names {
             guard let op = MenuType.charOp[char], self.contains(op) else {

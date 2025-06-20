@@ -16,64 +16,36 @@ struct BranchView: View {
         let cornerAxis = treeVm.menuType.cornerAxis
         if branchVm.columns > 1 {
             switch cornerAxis {
-            case .DLV, .DRV: VStack                     { titleV(branchVm); gridV(branchVm)  }
-            case .ULV, .URV: VStack                     { gridV(branchVm) ; titleV(branchVm) }
-            case .DLH, .ULH: HStack(alignment: .bottom) { gridV(branchVm) ; titleV(branchVm) }
-            case .URH, .DRH: HStack(alignment: .top)    { titleV(branchVm); gridV(branchVm)  }
-            case .none     : VStack                     { titleV(branchVm); gridV(branchVm)  }
+            case .DLV, .DRV: VStack { titleV(branchVm); gridV(branchVm)  }
+            case .ULV, .URV: VStack { gridV(branchVm) ; titleV(branchVm) }
+            case .DLH, .ULH: HStack { gridV(branchVm) ; titleV(branchVm) }
+            case .URH, .DRH: HStack { titleV(branchVm); gridV(branchVm)  }
+            case .none     : VStack { titleV(branchVm); gridV(branchVm)  }
             }
         } else {
             switch cornerAxis {
-            case .DLV, .DRV: VStack                     { titleV(branchVm); bodyV(branchVm)  }
-            case .ULV, .URV: VStack                     { bodyV(branchVm) ; titleV(branchVm) }
-            case .DLH, .ULH: HStack(alignment: .bottom) { bodyV(branchVm) ; titleV(branchVm) }
-            case .URH, .DRH: HStack(alignment: .top)    { titleV(branchVm); bodyV(branchVm)  }
-            case .none     : VStack                     { titleV(branchVm); bodyV(branchVm)  }
+            case .DLV, .DRV: VStack { titleV(branchVm); bodyV(branchVm)  }
+            case .ULV, .URV: VStack { bodyV(branchVm) ; titleV(branchVm) }
+            case .DLH, .ULH: HStack { bodyV(branchVm) ; titleV(branchVm) }
+            case .URH, .DRH: HStack { titleV(branchVm); bodyV(branchVm)  }
+            case .none     : VStack { titleV(branchVm); bodyV(branchVm)  }
             }
         }
     }
-
-    
 }
 
 /// title showing position of control
 fileprivate struct titleV: View {
     @ObservedObject var branchVm: BranchVm
-    var treeVm: TreeVm { branchVm.treeVm }
-    var panelVm: PanelVm { branchVm.panelVm }
-    var nodeSpotVm: NodeVm? { branchVm.nodeSpotVm }
-    var offset: CGSize { branchVm.branchShift + branchVm.titleShift }
-    var title: String { nodeSpotVm?.treeTitle() ?? "" }
+    var treeVm     : TreeVm  { branchVm.treeVm }
+    var panelVm    : PanelVm { branchVm.panelVm }
+    var nodeSpotVm : NodeVm? { branchVm.nodeSpotVm }
+    var offset     : CGSize  { branchVm.branchShift + branchVm.titleShift }
+    var title      : String  { nodeSpotVm?.treeTitle() ?? "" }
 
     var size: CGSize { CGSize(width: branchVm.boundsNow.width,
                               height: Layout.radius)
     }
-    var angle: Angle {
-        switch treeVm.menuType.cornerAxis {
-        case .DLV, .DRV, .ULV, .URV, .none: return  Angle(degrees:0)
-        case .URH, .ULH: return  Angle(degrees:270) //TODO: 90 later, tricky
-        case .DLH, .DRH: return  Angle(degrees:270)
-        }
-    }
-
-    var anchor: UnitPoint {
-        switch treeVm.menuType.cornerAxis {
-        case .DLV, .DRV, .ULV, .URV, .none: return .center
-        case .DLH, .ULH: return .bottomLeading
-        case .URH, .DRH: return .topTrailing
-        }
-    }
-
-    var frameAlign: Alignment {
-        switch treeVm.menuType.cornerAxis {
-        case .DLV, .DRV, .ULV, .URV, .none: return .center
-        case .DLH: return .bottomLeading
-        case .ULH: return .bottomLeading
-        case .URH: return .topTrailing
-        case .DRH: return .topTrailing
-        }
-    }
-
     var opacity: CGFloat {
         branchVm.treeVm.depthShown <= 1 ? 0 :
         branchVm.show ? branchVm.opacity : 0 }
@@ -90,8 +62,6 @@ fileprivate struct titleV: View {
             .minimumScaleFactor(0.01)
             .foregroundColor(Color.white)
             .shadow(color: .black, radius: 1.0)
-            .frame(width: size.width, height: size.height, alignment: .center)
-            .rotationEffect(angle, anchor: anchor)
             .offset(offset)
             .opacity(opacity)
             .animation(Animate(0.50), value: opacity)
@@ -166,11 +136,7 @@ fileprivate struct bodyV: View {
                 VStack {
                     BranchAxisView(panelVm) {
                         ForEach(branchVm.nodeVms) {
-                            if $0.nodeType == .tog {
-                                NodeView(nodeVm: $0)
-                            } else {
-                                NodeView(nodeVm: $0)
-                            }
+                            NodeView(nodeVm: $0)
                         }
                     }
                 }
@@ -178,9 +144,7 @@ fileprivate struct bodyV: View {
             .onAppear { branchVm.updateBounds(geo.frame(in: .global)) }
             .onChange(of: geo.frame(in: .global)) { branchVm.updateBounds($1) }
         }
-        .frame(width: outerPanel.width,
-               height: outerPanel.height)
-
+        .frame(width: outerPanel.width, height: outerPanel.height)
         .offset(branchVm.branchShift)
         .opacity(opacity)
         .animation(Animate(0.50), value: opacity)

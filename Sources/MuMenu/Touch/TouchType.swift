@@ -38,10 +38,9 @@ enum TouchType  {
             case .branch : return "branch"
             case .node   : return "node"
             case .tog    : return "tog"
-            case .leaf   : return "edit"
+            case .leaf   : return "leaf"
             case .canopy : return "canopy"
             case .shift  : return "shift"
-
             case .space  : return "space"
         }
     }
