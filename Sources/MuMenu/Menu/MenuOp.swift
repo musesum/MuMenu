@@ -19,10 +19,10 @@ public enum MenuCornerAxis: String {
 }
 
 public enum MenuProgression {
-    case VW, // vertical leftward
-         VE, // vertical rightward
-         HN, // horiontal upward
-         HS  // horizontal downward
+    case VW, // vertical westward
+         VE, // vertical eastward
+         HN, // horizontal northward
+         HS  // horizontal southward
 }
 
 public struct MenuType: OptionSet, Codable, Hashable {
@@ -38,85 +38,71 @@ public struct MenuType: OptionSet, Codable, Hashable {
         }
         self.init(rawValue: value)
     }
+
+    private let _N : Int  =  1 << 0 // north
+    private let _S : Int  =  1 << 1 // south
+    private let _W : Int  =  1 << 2 // east
+    private let _E : Int  =  1 << 3 // west
+    private let _H : Int  =  1 << 4 // hori
+    private let _V : Int  =  1 << 5 // vert
+    private let _Z0: Int  =  1 << 6 // near
+    private let _Z1: Int  =  1 << 7 // far
+
     public static let N  = MenuType(rawValue: 1 << 0) // north
     public static let S  = MenuType(rawValue: 1 << 1) // south
     public static let E  = MenuType(rawValue: 1 << 2) // east
     public static let W  = MenuType(rawValue: 1 << 3) // west
     public static let H  = MenuType(rawValue: 1 << 4) // hori
     public static let V  = MenuType(rawValue: 1 << 5) // vert
-    public static let _0 = MenuType(rawValue: 1 << 6) // near
-    public static let _1 = MenuType(rawValue: 1 << 7) // far
-    public static let NW = MenuType("NW")
-    public static let NE = MenuType("NE")
-    public static let SW = MenuType("SW")
-    public static let SE = MenuType("SE")
-
-    public static let NWV = MenuType("NWV")
-    public static let NWH = MenuType("NWH")
-    public static let NEV = MenuType("NEV")
-    public static let NEH = MenuType("NEH")
-    public static let SWV = MenuType("SWV")
-    public static let SWH = MenuType("SWH")
-    public static let SEV = MenuType("SEV")
-    public static let SEH = MenuType("SEH")
+    public static let Z0 = MenuType(rawValue: 1 << 6) // near
+    public static let Z1 = MenuType(rawValue: 1 << 7) // far
 
     public var north    : Bool { self.contains(.N ) }
     public var south    : Bool { self.contains(.S ) }
     public var east     : Bool { self.contains(.E ) }
     public var west     : Bool { self.contains(.W ) }
-    public var near     : Bool { self.contains(._0) }
-    public var far      : Bool { self.contains(._1) }
+    public var near     : Bool { self.contains(.Z0) }
+    public var far      : Bool { self.contains(.Z1) }
     public var horizon  : Bool { self.contains(.H ) }
     public var vertical : Bool { self.contains(.V ) }
 
-    public var chiral: MenuType { MenuType(rawValue: self.rawValue & _EW) }
-
-    let _N  =  MenuType.N .rawValue
-    let _S  =  MenuType.S .rawValue
-    let _W  =  MenuType.W .rawValue
-    let _E  =  MenuType.E .rawValue
-    let _H  =  MenuType.H .rawValue
-    let _V  =  MenuType.V .rawValue
-    let _NS = MenuType([.N,.S]).rawValue
-    let _EW = MenuType([.E,.W]).rawValue
-    let _NSEW = MenuType([.N,.S,.E,.W]).rawValue
-    let _NSEWVH = MenuType([.N,.S,.E,.W,.V,.H]).rawValue
+    public var chiral: MenuType {
+        self.intersection([.E,.W])
+    }
 
     public var corner: MenuCorner {
-
-        switch self.rawValue & _NSEW {
-        case (_N|_E) : return .NE
-        case (_N|_W) : return .NW
-        case (_S|_E) : return .SE
-        case (_S|_W) : return .SW
+        switch self.intersection([.N,.S,.E,.W]){
+        case [.N,.E] : return .NE
+        case [.N,.W] : return .NW
+        case [.S,.E] : return .SE
+        case [.S,.W] : return .SW
         default      : return .none
         }
     }
 
     public var cornerAxis: MenuCornerAxis {
-
-        switch self.rawValue & _NSEWVH {
-        case (_N|_W|_V) : return .NWV
-        case (_N|_W|_H) : return .NWH
-        case (_N|_E|_V) : return .NEV
-        case (_N|_E|_H) : return .NEH
-        case (_S|_W|_V) : return .SWV
-        case (_S|_W|_H) : return .SWH
-        case (_S|_E|_V) : return .SEV
-        case (_S|_E|_H) : return .SEH
-        default             : return .none
+        switch self.intersection([.N,.S,.E,.W,.V,.H]) {
+        case [.N,.W,.V] : return .NWV
+        case [.N,.W,.H] : return .NWH
+        case [.N,.E,.V] : return .NEV
+        case [.N,.E,.H] : return .NEH
+        case [.S,.W,.V] : return .SWV
+        case [.S,.W,.H] : return .SWH
+        case [.S,.E,.V] : return .SEV
+        case [.S,.E,.H] : return .SEH
+        default         : return .none
         }
     }
     public var icon: String {
-        switch self.rawValue & _NSEWVH {
-        case (_N|_W|_V) : return "◤❚"
-        case (_N|_W|_H) : return "◤▬"
-        case (_N|_E|_V) : return "❚◥"
-        case (_N|_E|_H) : return "▬◥"
-        case (_S|_W|_V) : return "◣❚"
-        case (_S|_W|_H) : return "◣▬"
-        case (_S|_E|_V) : return "❚◢"
-        case (_S|_E|_H) : return "▬◢"
+        switch self.intersection([.N,.S,.E,.W,.V,.H]) {
+        case [.N,.W,.V] : return "◤❚"
+        case [.N,.W,.H] : return "◤▬"
+        case [.N,.E,.V] : return "❚◥"
+        case [.N,.E,.H] : return "▬◥"
+        case [.S,.W,.V] : return "◣❚"
+        case [.S,.W,.H] : return "◣▬"
+        case [.S,.E,.V] : return "❚◢"
+        case [.S,.E,.H] : return "▬◢"
         default         : return "⬜︎"
         }
     }
@@ -127,9 +113,9 @@ public struct MenuType: OptionSet, Codable, Hashable {
     }
     public static let charOp: [Character: MenuType] = [
         "N": .N  , "S": .S  ,
-        "W": .W  , "E": .E  ,
+        "E": .E  , "W": .W  ,
         "H": .H  , "V": .V  ,
-        "0": ._0 , "1": ._1 ,
+        "0": .Z0 , "1": .Z1 ,
     ]
 
     public var key: String {
@@ -142,7 +128,7 @@ public struct MenuType: OptionSet, Codable, Hashable {
             (.N  , "north"  ), (.S  , "south"    ),
             (.W  , "west"   ), (.E  , "east"     ),
             (.H  , "horizon"), (.V  , "vertical" ),
-            (._0 , "near"   ), (._1 , "far"      )
+            (.Z0 , "near"   ), (.Z1 , "far"      )
         ]
 
         let matched = mapping.compactMap { (flag, name) in

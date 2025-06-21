@@ -233,11 +233,15 @@ public class BranchVm: Identifiable, ObservableObject {
 
         let rad = Layout.radius
         switch treeVm.menuType {
-        case .SWH,.NWH: titleShift = CGSize(width:  rad, height: 0)
-        case .SEH,.NEH: titleShift = CGSize(width: -rad, height: 0)
-        case .SWV,.SEV: titleShift = .zero
-        case .NWV,.NEV: titleShift = .zero
-        default       : titleShift = .zero
+        case [.S,.W,.H],
+             [.N,.W,.H]: titleShift = CGSize(width:  rad, height: 0)
+        case [.S,.E,.H],
+             [.N,.E,.H]: titleShift = CGSize(width: -rad, height: 0)
+        case [.S,.W,.V],
+             [.S,.E,.V]: titleShift = .zero
+        case [.N,.W,.V],
+             [.N,.E,.V]: titleShift = .zero
+        default        : titleShift = .zero
         }
     }
 
