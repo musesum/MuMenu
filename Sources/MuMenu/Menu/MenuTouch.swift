@@ -17,7 +17,6 @@ public class MenuTouch {
         self.isRemote = isRemote
         buffer.delegate = self
     }
-
 }
 
 extension MenuTouch: CircleBufferDelegate {
@@ -28,6 +27,7 @@ extension MenuTouch: CircleBufferDelegate {
         let item = item as! MenuItem
 
         if isRemote {
+            print("☞"+item.element.rawValue, terminator: " ")
             switch item.element {
                 case .node, .leaf:
                     item.cornerVm?.gotoMenuItem(item)
@@ -42,7 +42,7 @@ extension MenuTouch: CircleBufferDelegate {
         } else if let touch = item.item as? MenuTouchItem {
             item.cornerVm?.updateTouchXY(touch.cgPoint, item.phase)
         }
-        return .nextBuf // never invalidate internal timer
+        return .nextBuf
     }
 }
 extension MenuTouch {

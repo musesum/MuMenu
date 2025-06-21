@@ -17,7 +17,7 @@ import MuFlo
     var rootNodeΔ = CGSize.zero /// offset between rootNode and touchNow
     private var spotNodeΔ = CGSize.zero /// offset between touch point and center in coord
     var dragNodeΔ: CGSize { /// weird kludge to compsate for small right offset
-        if let rootVm, rootVm.cornerType.right,
+        if let rootVm, rootVm.cornerType.east,
            ringIconXY != parkIconXY {
             return CGSize(width: -Layout.padding2, height: 0)
         } else {

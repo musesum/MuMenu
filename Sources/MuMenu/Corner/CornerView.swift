@@ -21,7 +21,6 @@ struct CornerView: View {
 
                     .padding(Layout.padding2)
                     .position(cornerVm.parkIconXY)
-                    .offset(cornerVm.rootVm?.rootOffset ?? .zero)
             }
 
             // drag icon, follows touch

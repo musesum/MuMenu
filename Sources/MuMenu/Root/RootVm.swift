@@ -29,29 +29,14 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
     public var cornerType: MenuType /// corner where root begins, ex: `[down,left]`
     var treeVms = [TreeVm]() /// vertical or horizontal stack of branches
     var treeSpotVm: TreeVm? /// most recently used tree
-    var rootOffset: CGSize = .zero
 
     var autoHideMenu = true
     var autoHideTimer: Timer?
     var autoHideInterval = TimeInterval(12)
+
     var touchState = TouchState()
 
     public var nodeSpotVm: NodeVm?   /// current last touched or hovered node
-
-    /// update tree from new spot
-    func updateSpot(_ newSpotVm: NodeVm,
-                    _ fromRemote: Bool) {
-
-        self.nodeSpotVm = newSpotVm
-        newSpotVm.refreshBranch()
-        //????? newSpotVm.branchVm.treeVm.showTree(depth: 9, "branch", fromRemote)
-        if !fromRemote {
-            let phase = touchState.phase
-            let nodeItem = MenuNodeItem(newSpotVm)
-            let menuItem = MenuItem(node: nodeItem, phase)
-            sendItemToPeers(menuItem)
-        }
-    }
 
     public init(_ cornerType : MenuType  ,
                 _ archiveVm  : ArchiveVm ,

@@ -21,6 +21,9 @@ extension TreeVm {
         }
         return nil
     }
+    func nearestNode(_ touchNow: CGPoint) -> NodeVm? {
+        return nearestBranch(touchNow)?.nearestNode(touchNow) ?? nil
+    }
     func nearestBranch(_ touchNow: CGPoint) -> BranchVm? {
 
         guard depthShown > 0 else { return nil }

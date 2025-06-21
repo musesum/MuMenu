@@ -16,18 +16,18 @@ struct BranchView: View {
         let cornerAxis = treeVm.menuType.cornerAxis
         if branchVm.columns > 1 {
             switch cornerAxis {
-            case .DLV, .DRV: VStack { titleV(branchVm); gridV(branchVm)  }
-            case .ULV, .URV: VStack { gridV(branchVm) ; titleV(branchVm) }
-            case .DLH, .ULH: HStack { gridV(branchVm) ; titleV(branchVm) }
-            case .URH, .DRH: HStack { titleV(branchVm); gridV(branchVm)  }
+            case .SWV, .SEV: VStack { titleV(branchVm); gridV(branchVm)  }
+            case .NWV, .NEV: VStack { gridV(branchVm) ; titleV(branchVm) }
+            case .SWH, .NWH: HStack { gridV(branchVm) ; titleV(branchVm) }
+            case .NEH, .SEH: HStack { titleV(branchVm); gridV(branchVm)  }
             case .none     : VStack { titleV(branchVm); gridV(branchVm)  }
             }
         } else {
             switch cornerAxis {
-            case .DLV, .DRV: VStack { titleV(branchVm); bodyV(branchVm)  }
-            case .ULV, .URV: VStack { bodyV(branchVm) ; titleV(branchVm) }
-            case .DLH, .ULH: HStack { bodyV(branchVm) ; titleV(branchVm) }
-            case .URH, .DRH: HStack { titleV(branchVm); bodyV(branchVm)  }
+            case .SWV, .SEV: VStack { titleV(branchVm); bodyV(branchVm)  }
+            case .NWV, .NEV: VStack { bodyV(branchVm) ; titleV(branchVm) }
+            case .SWH, .NWH: HStack { bodyV(branchVm) ; titleV(branchVm) }
+            case .NEH, .SEH: HStack { titleV(branchVm); bodyV(branchVm)  }
             case .none     : VStack { titleV(branchVm); bodyV(branchVm)  }
             }
         }
@@ -40,7 +40,6 @@ fileprivate struct titleV: View {
     var treeVm     : TreeVm  { branchVm.treeVm }
     var panelVm    : PanelVm { branchVm.panelVm }
     var nodeSpotVm : NodeVm? { branchVm.nodeSpotVm }
-    var offset     : CGSize  { branchVm.branchShift + branchVm.titleShift }
     var title      : String  { nodeSpotVm?.treeTitle() ?? "" }
 
     var size: CGSize { CGSize(width: branchVm.boundsNow.width,
@@ -62,7 +61,7 @@ fileprivate struct titleV: View {
             .minimumScaleFactor(0.01)
             .foregroundColor(Color.white)
             .shadow(color: .black, radius: 1.0)
-            .offset(offset)
+            .offset(branchVm.offset)
             .opacity(opacity)
             .animation(Animate(0.50), value: opacity)
     }

@@ -44,8 +44,11 @@ public class TreeVm: Identifiable, Equatable, ObservableObject {
                 branchVm.show == false) {
                 continue
             }
-            //print(branchVm.title.pad(10) + (isVertical ? " V" : " H"), terminator: " ") 
-            rect = rect.extend(branchVm.boundsNow)
+            var branchBounds = branchVm.boundsNow
+            if menuType.vertical {
+                branchBounds.origin.y = max(0, branchBounds.origin.y - 20)
+            }
+            rect = rect.extend(branchBounds)
         }
         treeBounds = rect
         treeBoundsPad = treeBounds.pad(Layout.padding2)

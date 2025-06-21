@@ -9,7 +9,7 @@ public class TouchState {
     let speedThreshold = CGFloat(300) /// test to skip branches
     let moveThreshold = CGFloat(5)   /// move distance to reset touchEndCount
 
-    var touchBeginCount = 0 /// count `touchBegin`s within tapThreshold
+    var touchBeganCount = 0 /// count `touchBegin`s within tapThreshold
     var touchEndedCount = 0 /// count `touchEnd`s within tapThreshold
     var isFast = false  /// is moving fast to skip branches
     var pointNow = CGPoint.zero /// current position of touch
@@ -85,10 +85,10 @@ public class TouchState {
         timeBeginΔ = timeBegin - timeEnded
 
         if timeBeginΔ < tapThreshold {
-            touchBeginCount += 1
+            touchBeganCount += 1
             //MuLog.Print("⬇︎⃝".superScript(touchBeginCount), terminator: "")
         } else {
-            touchBeginCount = 0
+            touchBeganCount = 0
             touchEndedCount = 0
             timeBeginΔ = 0
         }

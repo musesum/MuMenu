@@ -2,27 +2,27 @@
 import SwiftUI
 
 public enum MenuCorner {
-    case none, upLeft, upRight, downLeft, downRight
+    case none, NW, NE, SW, SE
     var icon: String {
         switch self {
-        case .none      : "⬜︎"
-        case .upLeft    : "◤"
-        case .upRight   : "◥"
-        case .downLeft  : "◣"
-        case .downRight : "◥"
+        case .none : "⬜︎"
+        case .NW   : "◤"
+        case .NE   : "◥"
+        case .SW   : "◣"
+        case .SE   : "◢"
         }
     }
 }
 
 public enum MenuCornerAxis: String {
-    case none, ULV, ULH, URV, URH, DLV, DLH, DRV, DRH
+    case none, NWV, NWH, NEV, NEH, SWV, SWH, SEV, SEH
 }
 
 public enum MenuProgression {
-    case VL, // vertical leftward
-         VR, // vertical rightward
-         HU, // horiontal upward
-         HD  // horizontal downward
+    case VW, // vertical leftward
+         VE, // vertical rightward
+         HN, // horiontal upward
+         HS  // horizontal downward
 }
 
 public struct MenuType: OptionSet, Codable, Hashable {
@@ -38,113 +38,98 @@ public struct MenuType: OptionSet, Codable, Hashable {
         }
         self.init(rawValue: value)
     }
+    public static let N  = MenuType(rawValue: 1 << 0) // north
+    public static let S  = MenuType(rawValue: 1 << 1) // south
+    public static let E  = MenuType(rawValue: 1 << 2) // east
+    public static let W  = MenuType(rawValue: 1 << 3) // west
+    public static let H  = MenuType(rawValue: 1 << 4) // hori
+    public static let V  = MenuType(rawValue: 1 << 5) // vert
+    public static let _0 = MenuType(rawValue: 1 << 6) // near
+    public static let _1 = MenuType(rawValue: 1 << 7) // far
+    public static let NW = MenuType("NW")
+    public static let NE = MenuType("NE")
+    public static let SW = MenuType("SW")
+    public static let SE = MenuType("SE")
 
-    public static let U  = MenuType(rawValue: 1 << 0) // up
-    public static let D  = MenuType(rawValue: 1 << 1) // down
-    public static let L  = MenuType(rawValue: 1 << 2) // left
-    public static let R  = MenuType(rawValue: 1 << 3) // right
-    public static let Z0 = MenuType(rawValue: 1 << 4) // near
-    public static let Z1 = MenuType(rawValue: 1 << 5) // far
-    public static let H  = MenuType(rawValue: 1 << 6) // hori
-    public static let V  = MenuType(rawValue: 1 << 7) // vert
+    public static let NWV = MenuType("NWV")
+    public static let NWH = MenuType("NWH")
+    public static let NEV = MenuType("NEV")
+    public static let NEH = MenuType("NEH")
+    public static let SWV = MenuType("SWV")
+    public static let SWH = MenuType("SWH")
+    public static let SEV = MenuType("SEV")
+    public static let SEH = MenuType("SEH")
 
-    public static let UL = MenuType("UL")
-    public static let UR = MenuType("UR")
-    public static let DL = MenuType("DL")
-    public static let DR = MenuType("DR")
-
-    public static let ULV = MenuType("ULV")
-    public static let ULH = MenuType("ULH")
-    public static let URV = MenuType("URV")
-    public static let URH = MenuType("URH")
-    public static let DLV = MenuType("DLV")
-    public static let DLH = MenuType("DLH")
-    public static let DRV = MenuType("DRV")
-    public static let DRH = MenuType("DRH")
-
-    public static let VHLR = MenuType("VHLR")
-
-    var _U  : Int { self.rawValue & MenuType.U .rawValue }
-    var _D  : Int { self.rawValue & MenuType.D .rawValue }
-    var _L  : Int { self.rawValue & MenuType.L .rawValue }
-    var _R  : Int { self.rawValue & MenuType.R .rawValue }
-    var _Z0 : Int { self.rawValue & MenuType.Z0.rawValue }
-    var _Z1 : Int { self.rawValue & MenuType.Z1.rawValue }
-    var _H  : Int { self.rawValue & MenuType.H .rawValue }
-    var _V  : Int { self.rawValue & MenuType.V .rawValue }
-
-    public var up       : Bool { self.contains(.U ) }
-    public var down     : Bool { self.contains(.D ) }
-    public var left     : Bool { self.contains(.L ) }
-    public var right    : Bool { self.contains(.R ) }
-    public var near     : Bool { self.contains(.Z0) }
-    public var far      : Bool { self.contains(.Z1) }
+    public var north    : Bool { self.contains(.N ) }
+    public var south    : Bool { self.contains(.S ) }
+    public var east     : Bool { self.contains(.E ) }
+    public var west     : Bool { self.contains(.W ) }
+    public var near     : Bool { self.contains(._0) }
+    public var far      : Bool { self.contains(._1) }
     public var horizon  : Bool { self.contains(.H ) }
     public var vertical : Bool { self.contains(.V ) }
 
-    public var chiral: MenuType { MenuType(rawValue: self.rawValue & (MenuType.L.rawValue | MenuType.R.rawValue))}
+    public var chiral: MenuType { MenuType(rawValue: self.rawValue & _EW) }
 
+    let _N  =  MenuType.N .rawValue
+    let _S  =  MenuType.S .rawValue
+    let _W  =  MenuType.W .rawValue
+    let _E  =  MenuType.E .rawValue
+    let _H  =  MenuType.H .rawValue
+    let _V  =  MenuType.V .rawValue
+    let _NS = MenuType([.N,.S]).rawValue
+    let _EW = MenuType([.E,.W]).rawValue
+    let _NSEW = MenuType([.N,.S,.E,.W]).rawValue
+    let _NSEWVH = MenuType([.N,.S,.E,.W,.V,.H]).rawValue
 
     public var corner: MenuCorner {
-        let UDLR = MenuType([.U,.D,.L,.R]).rawValue
-        switch self.rawValue & UDLR {
-        case (_U + _R) : return .upRight
-        case (_U + _L) : return .upLeft
-        case (_D + _R) : return .downRight
-        case (_D + _L) : return .downLeft
-        default        : return .none
+
+        switch self.rawValue & _NSEW {
+        case (_N|_E) : return .NE
+        case (_N|_W) : return .NW
+        case (_S|_E) : return .SE
+        case (_S|_W) : return .SW
+        default      : return .none
         }
     }
 
-    public var axis: MenuCorner {
-        let UD = MenuType([.U,.D]).rawValue
-        switch self.rawValue & UD {
-
-        case (_U + _R) : return .upRight
-        case (_U + _L) : return .upLeft
-        case (_D + _R) : return .downRight
-        case (_D + _L) : return .downLeft
-        default        : return .none
-        }
-    }
     public var cornerAxis: MenuCornerAxis {
-        let UDLRVH = MenuType([.U,.D,.L,.R,.V,.H]).rawValue
-        switch self.rawValue & UDLRVH {
-        case (_U + _L + _V) : return .ULV
-        case (_U + _L + _H) : return .ULH
-        case (_U + _R + _V) : return .URV
-        case (_U + _R + _H) : return .URH
-        case (_D + _L + _V) : return .DLV
-        case (_D + _L + _H) : return .DLH
-        case (_D + _R + _V) : return .DRV
-        case (_D + _R + _H) : return .DRH
+
+        switch self.rawValue & _NSEWVH {
+        case (_N|_W|_V) : return .NWV
+        case (_N|_W|_H) : return .NWH
+        case (_N|_E|_V) : return .NEV
+        case (_N|_E|_H) : return .NEH
+        case (_S|_W|_V) : return .SWV
+        case (_S|_W|_H) : return .SWH
+        case (_S|_E|_V) : return .SEV
+        case (_S|_E|_H) : return .SEH
         default             : return .none
         }
     }
     public var icon: String {
-        let UDLRVH = MenuType([.U,.D,.L,.R,.V,.H]).rawValue
-        switch self.rawValue & UDLRVH {
-        case (_U + _L + _V) : return "◤❚"
-        case (_U + _L + _H) : return "◤▬"
-        case (_U + _R + _V) : return "❚◥"
-        case (_U + _R + _H) : return "▬◥"
-        case (_D + _L + _V) : return "◣❚"
-        case (_D + _L + _H) : return "◣▬"
-        case (_D + _R + _V) : return "❚◢"
-        case (_D + _R + _H) : return "▬◢"
-        default             : return "⬜︎"
+        switch self.rawValue & _NSEWVH {
+        case (_N|_W|_V) : return "◤❚"
+        case (_N|_W|_H) : return "◤▬"
+        case (_N|_E|_V) : return "❚◥"
+        case (_N|_E|_H) : return "▬◥"
+        case (_S|_W|_V) : return "◣❚"
+        case (_S|_W|_H) : return "◣▬"
+        case (_S|_E|_V) : return "❚◢"
+        case (_S|_E|_H) : return "▬◢"
+        default         : return "⬜︎"
         }
     }
     public var progression: MenuProgression {
         return (vertical
-                ? (left ? .VL : .VR)
-                : (up ? .HU : .HD))
+                ? (west ? .VW : .VE)
+                : (north ? .HN : .HS))
     }
     public static let charOp: [Character: MenuType] = [
-        "U": .U  , "D": .D  ,
-        "L": .L  , "R": .R  ,
+        "N": .N  , "S": .S  ,
+        "W": .W  , "E": .E  ,
         "H": .H  , "V": .V  ,
-        "0": .Z0 , "1": .Z1 ,
+        "0": ._0 , "1": ._1 ,
     ]
 
     public var key: String {
@@ -154,10 +139,10 @@ public struct MenuType: OptionSet, Codable, Hashable {
     }
     public var description: String {
         let mapping: [(MenuType, String)] = [
-            (.U  , "up"     ), (.D  , "down"     ),
-            (.L  , "left"   ), (.R  , "right"    ),
-            (.Z0 , "near"   ), (.Z1 , "far"      ),
-            (.H  , "horizon"), (.V  , "vertical" )
+            (.N  , "north"  ), (.S  , "south"    ),
+            (.W  , "west"   ), (.E  , "east"     ),
+            (.H  , "horizon"), (.V  , "vertical" ),
+            (._0 , "near"   ), (._1 , "far"      )
         ]
 
         let matched = mapping.compactMap { (flag, name) in
@@ -184,11 +169,11 @@ public struct MenuType: OptionSet, Codable, Hashable {
 
     static func flipUpperLower(_ oldOp: Int) -> Int {
 
-        return oldOp ^ MenuType([.U, .D]).rawValue
+        return oldOp ^ MenuType([.N, .S]).rawValue
     }
 
-    var hAlign: HorizontalAlignment { self.left ? .leading : .trailing }
-    var vAlign: VerticalAlignment   { self.up ? .top : .bottom }
+    var hAlign: HorizontalAlignment { self.west ? .leading : .trailing }
+    var vAlign: VerticalAlignment   { self.north ? .top : .bottom }
     var alignment: Alignment { Alignment(horizontal: hAlign, vertical: vAlign) }
 
 }

@@ -18,19 +18,19 @@ public struct MenuVms {
         let hMenu = ["more.bonjour", "more.archive", "more.search"]
 
         #if os(visionOS)
-        let rootUL = RootVm(.UL, archiveVm, peers) // up left
-        let rootUR = RootVm(.UR, archiveVm, peers) // up right
-        menuVms.append(MenuVm(rootUL, .ULV, vMenu, rootTree)) // verti
-        menuVms.append(MenuVm(rootUL, .ULH, hMenu, rootTree)) // horiz
-        menuVms.append(MenuVm(rootUR, .URV, vMenu, rootTree)) // verti
-        menuVms.append(MenuVm(rootUR, .URH, hMenu, rootTree)) // horiz
+        let rootNW = RootVm(.NW, archiveVm, peers) // North West corner
+        let rootNE = RootVm(.NE, archiveVm, peers) // North East corner
+        menuVms.append(MenuVm(rootNW, .NWV, vMenu, rootTree)) // verti
+        menuVms.append(MenuVm(rootNW, .NWH, hMenu, rootTree)) // horiz
+        menuVms.append(MenuVm(rootNE, .NEV, vMenu, rootTree)) // verti
+        menuVms.append(MenuVm(rootNE, .NEH, hMenu, rootTree)) // horiz
         #else
-        let rootDL = RootVm(.DL, archiveVm, peers) // down left
-        let rootDR = RootVm(.DR, archiveVm, peers) // down right
-        menuVms.append(MenuVm(rootDL, .DLV, vMenu, rootTree)) // verti
-        menuVms.append(MenuVm(rootDL, .DLH, hMenu, rootTree)) // horiz
-        menuVms.append(MenuVm(rootDR, .DRV, vMenu, rootTree)) // verti
-        menuVms.append(MenuVm(rootDR, .DRH, hMenu, rootTree)) // horiz
+        let rootSW = RootVm(.SW, archiveVm, peers) // South West corner
+        let rootSE = RootVm(.SE, archiveVm, peers) // South East corner
+        menuVms.append(MenuVm(rootSW, .SWV, vMenu, rootTree)) // verti
+        menuVms.append(MenuVm(rootSW, .SWH, hMenu, rootTree)) // horiz
+        menuVms.append(MenuVm(rootSE, .SEV, vMenu, rootTree)) // verti
+        menuVms.append(MenuVm(rootSE, .SEH, hMenu, rootTree)) // horiz
         #endif
     }
 }

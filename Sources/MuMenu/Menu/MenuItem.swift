@@ -44,7 +44,7 @@ public struct MenuItem: Codable {
         self.menuType = root.menuType
         self.phase    = root.phase
 
-        // log("MenuRootItem", [self.phase])
+        PrintLog("MenuRootItem: \(self.phase)")
     }
 
     public init(node: MenuNodeItem,
@@ -55,9 +55,11 @@ public struct MenuItem: Codable {
         self.menuType = node.menuType.rawValue
         self.phase    = phase.rawValue
         self.time     = Date().timeIntervalSince1970
-        // log("MenuItem", [self.phase])
+        if self.phase == 3 {
+            //PrintLog("MenuNodeItem: \(self.phase)")
+        }
     }
-
+    // via LeafVm::updateLeafPeers
     public init(leaf: MenuLeafItem,
                 _ phase: UITouch.Phase) {
 
@@ -66,7 +68,7 @@ public struct MenuItem: Codable {
         self.menuType = leaf.menuType.rawValue
         self.phase    = phase.rawValue
         self.time     = Date().timeIntervalSince1970
-        // log("MenuItem", [self.phase])
+        //PrintLog("MenuLeafItem: \(self.phase)")
     }
 
     public init(_ touch: UITouch,
@@ -77,6 +79,7 @@ public struct MenuItem: Codable {
         self.menuType = menuType.rawValue
         self.phase    = touch.phase.rawValue
         self.time     = Date().timeIntervalSince1970
+        //PrintLog("MenuTouchItem: \(self.phase)")
     }
 
     enum CodingKeys: String, CodingKey {

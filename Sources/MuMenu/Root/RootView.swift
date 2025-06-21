@@ -16,10 +16,10 @@ public struct RootView: View {
     @EnvironmentObject var rootVm: RootVm
     public var body: some View {
         switch rootVm.cornerType.corner {
-        case .downRight : DownRightView()
-        case .downLeft  : DownLeftView()
-        case .upRight   : UpRightView()
-        case .upLeft    : UpLeftView()
+        case .SE : DownRightView()
+        case .SW  : DownLeftView()
+        case .NE   : UpRightView()
+        case .NW    : UpLeftView()
         default         : DownRightView()
         }
     }

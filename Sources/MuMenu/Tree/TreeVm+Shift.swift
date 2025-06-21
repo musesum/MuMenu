@@ -13,7 +13,7 @@ extension TreeVm { // + Shift
 
         switch menuType.progression {
 
-        case .VL: // vertical left
+        case .VW: // vertical left
             for branchVm in branchVms {
                 let lowX = branchVm.shiftRange.0.lowerBound
                 let delta = abs(lowX - treeShift.width)
@@ -23,7 +23,7 @@ extension TreeVm { // + Shift
                     w = lowX
                 }
             }
-        case .VR: // vertical right
+        case .VE: // vertical right
             for branchVm in branchVms {
                 let uprX = branchVm.shiftRange.0.upperBound
                 let delta =  abs(uprX - treeShift.width)
@@ -32,7 +32,7 @@ extension TreeVm { // + Shift
                     w = uprX
                 }
             }
-        case .HU: // horizonal up
+        case .HN: // horizonal up
             for branchVm in branchVms {
                 let lowY = branchVm.shiftRange.1.lowerBound
                 let delta =  abs(lowY - treeShift.height)
@@ -41,7 +41,7 @@ extension TreeVm { // + Shift
                     h = lowY
                 }
             }
-        case .HD: // horizonal down
+        case .HS: // horizonal down
             for branchVm in branchVms {
                 let uprY = branchVm.shiftRange.1.upperBound
                 let delta =  abs(uprY - treeShift.height)

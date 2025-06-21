@@ -33,6 +33,7 @@ public class BranchVm: Identifiable, ObservableObject {
     var boundsPad: CGRect = .zero /// extended bounds for detecting touch
     var zindex: CGFloat = 0       /// zIndex within sub/super branches
     var columns = 1
+    var offset: CGSize { branchShift + titleShift }
 
     var title: String {
         let nameFirst = nodeVms.first?.menuTree.flo.name ?? ""
@@ -223,19 +224,19 @@ public class BranchVm: Identifiable, ObservableObject {
         let ph = boundsPrior.height
 
         switch treeVm.menuType.progression {
-        case .VL: shiftRange = (min(0,-pw)...0, 0...0)
-        case .VR: shiftRange = (0...max(0, pw), 0...0)
-        case .HU: shiftRange = (0...0, min(0,-ph)...0)
-        case .HD: shiftRange = (0...0, 0...max(0, ph))
+        case .VW: shiftRange = (min(0,-pw)...0, 0...0)
+        case .VE: shiftRange = (0...max(0, pw), 0...0)
+        case .HN: shiftRange = (0...0, min(0,-ph)...0)
+        case .HS: shiftRange = (0...0, 0...max(0, ph))
         }
         shiftBranch()
 
         let rad = Layout.radius
         switch treeVm.menuType {
-        case .DLH,.ULH: titleShift = CGSize(width:  rad, height: 0)
-        case .DRH,.URH: titleShift = CGSize(width: -rad, height: 0)
-        case .DLV,.DRV: titleShift = .zero
-        case .ULV,.URV: titleShift = .zero
+        case .SWH,.NWH: titleShift = CGSize(width:  rad, height: 0)
+        case .SEH,.NEH: titleShift = CGSize(width: -rad, height: 0)
+        case .SWV,.SEV: titleShift = .zero
+        case .NWV,.NEV: titleShift = .zero
         default       : titleShift = .zero
         }
     }

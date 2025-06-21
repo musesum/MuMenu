@@ -19,19 +19,18 @@ extension RootVm { // + Layout
         // setup vertical, horizontal, and root offsets
         var vs = CGSize.zero // vertical offset
         var hs = CGSize.zero // horizontal offset
-        var rs = CGSize.zero // root icon offset
+
         func v(_ w:CGFloat,_ h:CGFloat) { vs = CGSize(width:w,height:h) }
         func h(_ w:CGFloat,_ h:CGFloat) { hs = CGSize(width:w,height:h) }
-        func r(_ w:CGFloat,_ h:CGFloat) { rs = CGSize(width:w,height:h) }
 
         switch cornerType.corner {
-        case .downRight : v(-x0,-y1); h(-x1,-y0); r(0, 0)
-        case .downLeft  : v( x0,-y1); h( x1,-y0); r(0, 0)
-        case .upRight   : v(-x0, y1); h(-x1, y0); r(0, 0)
-        case .upLeft    : v( x0, y1); h( x1, y0); r(0, 0)
+        case .SE : v(-x0,-y1); h(-x1,-y0)
+        case .SW  : v( x0,-y1); h( x1,-y0)
+        case .NE   : v(-x0, y1); h(-x1, y0)
+        case .NW    : v( x0, y1); h( x1, y0)
         default: break
         }
-        rootOffset = rs
+
         for treeVm in treeVms {
             treeVm.treeOffset = (treeVm.menuType.vertical ? vs : hs)
         }
@@ -50,8 +49,8 @@ extension RootVm { // + Layout
 
         let h: CGFloat
         switch idiom {
-        case .pad    : h = cornerType.down ? padding2 : 0
-        case .phone  : h = cornerType.up   ? padding2 : 0
+        case .pad    : h = cornerType.south ? padding2 : 0
+        case .phone  : h = cornerType.north   ? padding2 : 0
         case .vision : h = padding2 * 2
         default      : h = 0
         }
@@ -69,10 +68,10 @@ extension RootVm { // + Layout
         let r = Layout.diameter / 2
 
         switch cornerType.corner {
-        case .downRight : return CGPoint(x: w-x-r-s, y: h-y-r-s)
-        case .downLeft  : return CGPoint(x:   x+r+s, y: h-y-r-s)
-        case .upRight   : return CGPoint(x: w-x-r-s, y:   y+r+s)
-        case .upLeft    : return CGPoint(x:   x+r+s, y:   y+r+s)
+        case .SE : return CGPoint(x: w-x-r-s, y: h-y-r-s)
+        case .SW  : return CGPoint(x:   x+r+s, y: h-y-r-s)
+        case .NE   : return CGPoint(x: w-x-r-s, y:   y+r+s)
+        case .NW    : return CGPoint(x:   x+r+s, y:   y+r+s)
         default         : return .zero
         }
     }

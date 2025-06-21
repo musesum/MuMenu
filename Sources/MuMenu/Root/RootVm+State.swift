@@ -7,6 +7,21 @@ import MuVision
 
 extension RootVm { // + State
 
+    /// update tree from new spot
+    func updateSpot(_ newSpotVm: NodeVm?,
+                    _ fromRemote: Bool) {
+
+        guard let newSpotVm else { return }
+        self.nodeSpotVm = newSpotVm
+        newSpotVm.refreshBranch()
+        if !fromRemote {
+            let phase = touchState.phase
+            let nodeItem = MenuNodeItem(newSpotVm)
+            let menuItem = MenuItem(node: nodeItem, phase)
+            sendItemToPeers(menuItem)
+        }
+    }
+
     internal func updateRoot(_ fromRemote: Bool) {
 
         let touchNow = touchState.pointNow
@@ -18,14 +33,14 @@ extension RootVm { // + State
         case .leaf   : logRoot("edit Leaf"   ); return editLeaf(nodeSpotVm)
         default      : break // logRoot(menuType.description)
         }
-        if      beganLeaf() { logRoot("beganLeaf  🍁") } // tap leaf node
-        else if endedTog()  { logRoot("endedTog   🔘") } // endedleaf node
-        else if hoverNode() { logRoot("hoverNode  ⚪️") } // over the spot node
-        else if hoverRoot() { logRoot("hoverRoot  🫚") } // over the root node
-        else if hoverTree() { logRoot("hoverTree  🌲") } // new node on same tree
-        else if hoverAlt()  { logRoot("hoverAlt   🌴") } // alternate tree
-        else if beganCanopy(){logRoot("beganCanopy 🌳") } // hovering over canvas
-        else {  hoverSpace(); logRoot("hover Space 🪐") } // hovering over canvas
+        if      beganLeaf()  { logRoot("beganLeaf ↦ 🍁") } // touch began on leaf
+        else if endedTog()   { logRoot("endedTog ⇥ 🔘") } // touch ended on toggle
+        else if hoverNode()  { logRoot("hoverNode ⟳ ⚪️") } // over the spot node
+        else if hoverRoot()  { logRoot("hoverRoot ⟳ 🫚") } // over the root node
+        else if hoverTree()  { logRoot("hoverTree ⟳ 🌲") } // new node on same tree
+        else if hoverAlt()   { logRoot("hoverAlt ⟳ 🌴") } // alternate tree
+        else if beganCanopy(){ logRoot("beganCanopy ↦ 🌳") } // hovering over canvas
+        else {  hoverSpace();  logRoot("hoverSpace ⟳ 🪐") } // hovering over canvas
 
         func logRoot(_ msg: String = "",_ t: String = "") {
 
@@ -36,7 +51,7 @@ extension RootVm { // + State
 
                 var count: Int
                 switch phase {
-                case .began : count = touchState.touchBeginCount
+                case .began : count = touchState.touchBeganCount
                 case .ended : count = touchState.touchEndedCount
                 default     : count = 0
                 }
@@ -44,15 +59,13 @@ extension RootVm { // + State
 
                 print("\(touchType.symbol) \(phase.symbol)\(countStr) \(msg)")
             }
-
         }
 
         func beganLeaf() -> Bool {
             guard let treeSpotVm else { return false }
 
             if touchState.phase == .began,
-               let branchVm = treeSpotVm.nearestBranch(touchNow),
-               let leafVm = branchVm.nearestNode(touchNow) as? LeafVm {
+               let leafVm = treeSpotVm.nearestNode(touchNow) as? LeafVm {
 
                 nodeSpotVm = leafVm
                 if leafVm.nodeType.isControl {
@@ -75,36 +88,25 @@ extension RootVm { // + State
             return false
         }
 
-        func hoverLeaf() -> Bool {
-
-            guard let leafVm = nodeSpotVm as? LeafVm else { return false }
-            if leafVm.nodeType.isControl,
-               touchType.isNotIn([.node, .space]),
-               leafVm.branchVm.contains(touchNow) {
-
-                updateTreeSpot(leafVm.branchVm.treeVm, leafVm, "shift")
-                shiftBranches() // inside branch containing runway
-                return true
-            }
-            return false
-        }
-
         func hoverNode() -> Bool {
-            guard let nodeSpotVm else { return false  }
+            guard let nodeSpotVm else { return false}
             if nodeSpotVm.contains(touchNow) {
                 touchType = .node
-                    treeSpotVm?.showTree(depth: 9, "hoverNode" + "+", fromRemote)
+                treeSpotVm?.showTree(depth: 9, "hoverNode" + "+", fromRemote)
+                if touchState.touchEndedCount == 2 {
                     nodeSpotVm.updateSpotNodes()
+                }
                 return true
             }
             return false
         }
+
         func hoverRoot() -> Bool {
+
             if !cornerVm.touchingRoot(touchNow) {
                 if touchTypeBegin == .root {
-                    // when dragging root over branches, expand tree
+                    // dragging from root, so expand tree
                     treeSpotVm?.expandTree(fromRemote)
-                    // do this only once
                     touchTypeBegin = .none
                 }
                 return false
@@ -131,7 +133,6 @@ extension RootVm { // + State
                 nodeSpotVm?.updateSpotNodes()
 
             default: break
-
             }
             return true
         }
@@ -139,14 +140,24 @@ extension RootVm { // + State
         func hoverTree() -> Bool {
             for treeVm in treeVms {
 
-                if let branchVm = treeVm.nearestBranch(touchNow),
-                   let nodeVm = branchVm.nearestNode(touchNow) {
+                if let nodeVm = treeVm.nearestNode(touchNow) {
 
                     updateTreeSpot(treeVm, nodeVm, "tree")
+                    nodeSpotVm = nodeVm
 
-                    if beganLeaf() ||
-                        hoverLeaf() {
-                        // already set touchElement
+                    if let leafVm = nodeVm as? LeafVm {
+
+                        if touchState.phase == .began,
+                           leafVm.nodeType.isControl {
+
+                            editLeaf(leafVm) //... beganLeaf
+
+                        } else if leafVm.nodeType.isControl,
+                                  touchType.isNotIn([.node, .space]),
+                                  leafVm.branchVm.contains(touchNow) {
+
+                            shiftBranches()  //... hoverLeaf
+                        }
                     } else if !viewOps.contains(.branch) {
 
                         viewOps = [.root,.branch]
@@ -246,9 +257,10 @@ extension RootVm { // + State
         func editLeaf(_ nodeVm: NodeVm?) {
             guard let leafVm = nodeVm as? LeafVm else { return }
             touchType = .leaf
+            
             leafVm.touchLeaf(touchState, Visitor(0, .user))
             if leafVm.nodeType == .tog {
-                //....
+                // leave spot on of single node button
             } else {
                 leafVm.spot(touchState.phase.done ? .off : .on)
                 leafVm.branchSpot(.off)

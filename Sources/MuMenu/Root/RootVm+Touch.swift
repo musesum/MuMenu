@@ -6,11 +6,10 @@ extension RootVm { // touch
         self.touchState = touchState
         beginViewOps = viewOps
         updateRoot(fromRemote)
-        if let nodeSpotVm {
-            updateSpot(nodeSpotVm, fromRemote)
-        }
+        updateSpot(nodeSpotVm, fromRemote)
         touchTypeBegin = touchType
         endAutoHide(fromRemote)
+        reshowTree(fromRemote)
     }
     internal func touchMoved(_ touchState: TouchState, _ fromRemote: Bool) {
 
