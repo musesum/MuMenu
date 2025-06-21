@@ -4,7 +4,7 @@ import UIKit
 import MuFlo // double buffer
 import MuPeers
 
-public var CornerOpVm = [Int: CornerVm]()
+public var MenuTypeCornerVm = [Int: CornerVm]()
 
 public class MenuTouch {
 
@@ -27,7 +27,7 @@ extension MenuTouch: CircleBufferDelegate {
         let item = item as! MenuItem
 
         if isRemote {
-            print("☞"+item.element.rawValue, terminator: " ")
+
             switch item.element {
                 case .node, .leaf:
                     item.cornerVm?.gotoMenuItem(item)

@@ -9,30 +9,30 @@ public struct TouchViewRepresentable: UIViewRepresentable {
     public static var aspect: Aspect = .square
     public static var callAspects = [CallAspect]()
 
-    var cornerVms: [CornerVm]
+    var menuVms: [MenuVm]
     var touchView: TouchView
 
     public init(_ menuVms: [MenuVm],
                 _ touchView: TouchView) {
 
-        self.cornerVms = menuVms.map { $0.rootVm.cornerVm }
+        self.menuVms = menuVms
         self.touchView = touchView
         touchView.translatesAutoresizingMaskIntoConstraints = true
-        for cornerVm in cornerVms {
-            CornerOpVm[cornerVm.menuType.rawValue] = cornerVm
+        for menuVm in menuVms {
+            MenuTypeCornerVm[menuVm.menuType.rawValue] = menuVm.rootVm.cornerVm
         }
         logVms()
     }
     func logVms() {
         var log = ""
         var delim = "["
-        for cornerVm in cornerVms {
-            let menuType = cornerVm.menuType
+        for menuVm in menuVms {
+            let menuType = menuVm.menuType
             log += "\(delim)\(menuType.icon): \(menuType.rawValue)"
             delim = ", "
         }
         log += "]"
-        PrintLog("CornerOpVm \(log)")
+        PrintLog("MenuTypeCornerVm's \(log)")
     }
     public func makeUIView(context: Context) -> TouchView {
         touchView.translatesAutoresizingMaskIntoConstraints = true

@@ -123,8 +123,13 @@ public struct MenuItem: Codable {
          phase == UITouch.Phase.cancelled.rawValue)
     }
     var cornerVm: CornerVm? {
-        if let vm = CornerOpVm[menuType] ?? CornerOpVm[MenuType.flipUpperLower(menuType)] {
+        if let vm = MenuTypeCornerVm[menuType] ?? MenuTypeCornerVm[MenuType.flipUpperLower(menuType)] {
             return vm
+        } else {
+            let menuIcon = MenuType(rawValue: menuType).icon
+            let flip = MenuType.flipUpperLower(menuType)
+            let flipIcon = MenuType(rawValue: flip).icon
+            PrintLog("cannot find \(menuIcon) nor \(flipIcon)")
         }
         return nil
     }

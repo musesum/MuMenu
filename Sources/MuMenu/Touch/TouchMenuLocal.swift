@@ -26,7 +26,7 @@ public class TouchMenuLocal {
         
         let touchXY = touch.preciseLocation(in: nil)
 
-        for cornerVm in CornerOpVm.values {
+        for cornerVm in MenuTypeCornerVm.values {
             if let nodeVm = cornerVm.hitTest(touchXY) {
                 return addMenu(nodeVm)
             } else {
@@ -66,7 +66,7 @@ extension TouchMenuLocal: CircleBufferDelegate {
     public func flushItem<Item>(_ item: Item, _ type: BufType) -> BufState {
         let item = item as! MenuItem
         if let touch = item.item as? MenuTouchItem,
-           let cornerVm = CornerOpVm[item.menuType] {
+           let cornerVm = MenuTypeCornerVm[item.menuType] {
 
             cornerVm.updateTouchXY(touch.cgPoint, item.phase)
         }

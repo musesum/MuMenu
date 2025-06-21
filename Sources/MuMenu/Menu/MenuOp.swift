@@ -39,15 +39,6 @@ public struct MenuType: OptionSet, Codable, Hashable {
         self.init(rawValue: value)
     }
 
-    private let _N : Int  =  1 << 0 // north
-    private let _S : Int  =  1 << 1 // south
-    private let _W : Int  =  1 << 2 // east
-    private let _E : Int  =  1 << 3 // west
-    private let _H : Int  =  1 << 4 // hori
-    private let _V : Int  =  1 << 5 // vert
-    private let _Z0: Int  =  1 << 6 // near
-    private let _Z1: Int  =  1 << 7 // far
-
     public static let N  = MenuType(rawValue: 1 << 0) // north
     public static let S  = MenuType(rawValue: 1 << 1) // south
     public static let E  = MenuType(rawValue: 1 << 2) // east
@@ -103,6 +94,10 @@ public struct MenuType: OptionSet, Codable, Hashable {
         case [.S,.W,.H] : return "◣▬"
         case [.S,.E,.V] : return "❚◢"
         case [.S,.E,.H] : return "▬◢"
+        case [.N,.E]    : return "◥"
+        case [.N,.W]    : return "◤"
+        case [.S,.E]    : return "◢"
+        case [.S,.W]    : return "◣"
         default         : return "⬜︎"
         }
     }
@@ -119,9 +114,13 @@ public struct MenuType: OptionSet, Codable, Hashable {
     ]
 
     public var key: String {
-        MenuType.charOp.compactMap { (char, op) in
-            self.contains(op) ? String(char) : nil
-        }.joined()
+        let order = "NSEWHV01"
+        return order.filter { char in
+            if let op = MenuType.charOp[char] {
+                return self.contains(op)
+            }
+            return false
+        }
     }
     public var description: String {
         let mapping: [(MenuType, String)] = [
@@ -163,4 +162,3 @@ public struct MenuType: OptionSet, Codable, Hashable {
     var alignment: Alignment { Alignment(horizontal: hAlign, vertical: vAlign) }
 
 }
-
