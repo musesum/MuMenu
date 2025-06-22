@@ -17,7 +17,7 @@ struct BranchPanelView: View {
                 .opacity(0.62)
             #endif
                 .cornerRadius(Layout.cornerRadius)
-                .shadow(color: .black, radius: 3)
+                .shadow(color: .black, radius: 1)
         }
     }
 }

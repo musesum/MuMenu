@@ -31,17 +31,20 @@ extension CornerVm {
     }
 
     public func gotoMenuItem(_ item: MenuItem) {
+        
         switch item.element {
             case .node:
 
-                if let nodeItem = item.item as? MenuNodeItem {
-                    _  = nodeItem.treeVm?.gotoNodeItem(nodeItem)
+                if let nodeItem = item.item as? MenuNodeItem,
+                   let treeVm = nodeItem.treeVm {
+                    _  = treeVm.gotoNodeItem(nodeItem)
                 }
 
             case .leaf:
 
                 if let leafItem = item.item as? MenuLeafItem,
-                   let leafVm = leafItem.treeVm?.gotoLeafItem(leafItem) {
+                   let treeVm = leafItem.treeVm,
+                   let leafVm = treeVm.gotoLeafItem(leafItem) {
 
                     //print("􀤆", terminator: "")
                     DispatchQueue.main.async {

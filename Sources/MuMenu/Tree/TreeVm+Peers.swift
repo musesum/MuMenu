@@ -5,35 +5,31 @@ import Foundation
 extension TreeVm { // + Peers
 
     func gotoNodeItem(_ nodeItem: MenuNodeItem) -> NodeVm? {
-        let hashPath = nodeItem.hashPath
-        let hashNow = nodeItem.hashNow
-        return followHashPath(hashPath,hashNow)
+        let wordPath = nodeItem.wordPath
+        let wordNow = nodeItem.wordNow
+        return followWordPath(wordPath, wordNow)
     }
     func gotoLeafItem(_ leafItem: MenuLeafItem) -> LeafVm? {
-        let hashPath = leafItem.hashPath
-        let hashNow = leafItem.hashNow
-        if let nodeVm = followHashPath(hashPath,hashNow),
+        let wordPath = leafItem.wordPath
+        let wordNow = leafItem.wordNow
+        if let nodeVm = followWordPath(wordPath, wordNow),
            let leafVm = nodeVm as? LeafVm {
             return leafVm
         }
         return nil 
     }
     func gotoOriginItem(_ originItem: MenuOriginItem) -> NodeVm? {
-        let hashPath = originItem.hashPath
-        let hashNow = originItem.hashNow
-        return followHashPath(hashPath, hashNow)
+        let wordPath = originItem.wordPath
+        let wordNow = originItem.wordNow
+        return followWordPath(wordPath, wordNow)
     }
-    func followHashPath(_ hashPath: [Int],
-                        _ hashNow: Int) -> NodeVm? {
-
+    func followWordPath(_ wordPath: [String], _ wordNow: String) -> NodeVm? {
         var branchVm = branchVms.first
         var nodeNow: NodeVm?
 
-        for hashi in hashPath {
-
-            if let stepNodeVm = findNode(hashi) {
-                if stepNodeVm.menuTree.hash == hashNow {
-                    // nodeNow may be in middle of shown treePath
+        for name in wordPath {
+            if let stepNodeVm = findNode(name) {
+                if stepNodeVm.menuTree.flo.name == wordNow {
                     nodeNow = stepNodeVm
                 }
                 if !stepNodeVm.nodeType.isControl {
@@ -41,19 +37,17 @@ extension TreeVm { // + Peers
                 }
                 branchVm = stepNodeVm.nextBranchVm
                 if branchVm == nil {
-                    showTree(depth: 9, "hash", /*fromRemote*/ true)
+                    showTree(depth: 9, "wordPath", /*fromRemote*/ true)
                     return nodeNow ?? stepNodeVm
                 }
             }
         }
         return nil
 
-
-        func findNode(_ hashi: Int) -> NodeVm? {
-
+        func findNode(_ name: String) -> NodeVm? {
             if let nodeVms = branchVm?.nodeVms {
                 for nodeVm in nodeVms {
-                    if nodeVm.menuTree.hash == hashi {
+                    if nodeVm.menuTree.flo.name == name {
                         return nodeVm
                     }
                 }

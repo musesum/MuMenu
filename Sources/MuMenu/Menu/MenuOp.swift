@@ -152,9 +152,9 @@ public struct MenuType: OptionSet, Codable, Hashable {
         return true
     }
 
-    static func flipUpperLower(_ oldOp: Int) -> Int {
+    static func flipNS(_ oldOp: Int) -> Int {
 
-        return oldOp ^ MenuType([.N, .S]).rawValue
+        return oldOp ^ MenuType([.N,.S]).rawValue
     }
 
     var hAlign: HorizontalAlignment { self.west ? .leading : .trailing }

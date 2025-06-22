@@ -101,7 +101,7 @@ public class PanelVm {
                        y: innerXY.width  - thumbDiameter(.runXY))
     }
 
-    private var inner: CGSize {
+    private var innerSize: CGSize {
         let result =  aspectSz * Layout.diameter
         return result
     }
@@ -133,11 +133,11 @@ public class PanelVm {
 
         case .val, .seg, .xyz, .xy:
 
-            return inner + pad
+            return innerSize + pad
 
         case .hand, .peer, .arch, .search: // header is always on top
 
-            return inner + CGSize(width: pad, height: dia)
+            return innerSize + CGSize(width: pad, height: dia)
 
         case .none, .node, .tog:
 
@@ -164,7 +164,7 @@ public class PanelVm {
               menuTrees.first?.nodeType == .peer)) {
 
             // title is always on top
-            return CGSize(width:  inner.width,
+            return CGSize(width:  innerSize.width,
                           height: Layout.diameter - 8)
         } else {
             return CGSize(width:  Layout.diameter - 8,

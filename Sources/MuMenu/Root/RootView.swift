@@ -16,11 +16,11 @@ public struct RootView: View {
     @EnvironmentObject var rootVm: RootVm
     public var body: some View {
         switch rootVm.cornerType.corner {
-        case .SE : DownRightView()
-        case .SW  : DownLeftView()
-        case .NE   : UpRightView()
-        case .NW    : UpLeftView()
-        default         : DownRightView()
+        case .SE : SoutEastView()
+        case .SW : SouthWestView()
+        case .NE : NorthEastView()
+        case .NW : NorthWestView()
+        default  : SouthWestView()
         }
     }
 }
@@ -37,7 +37,7 @@ private struct ForestView: View {
 }
 
 /// lower right corner of space
-private struct DownRightView: View {
+private struct SoutEastView: View {
     @EnvironmentObject var rootVm: RootVm
     var body: some View {
         HStack(alignment: .bottom) {
@@ -50,7 +50,7 @@ private struct DownRightView: View {
 }
 
 /// upper right corner of space
-private struct UpRightView: View {
+private struct NorthEastView: View {
     var body: some View {
         VStack(alignment: .trailing) {
             HStack(alignment: .top) {
@@ -66,7 +66,7 @@ private struct UpRightView: View {
 }
 
 /// lower left corner of space
-private struct DownLeftView: View {
+private struct SouthWestView: View {
     var body: some View {
         HStack(alignment: .bottom) {
             ZStack(alignment: .bottomLeading) {
@@ -78,7 +78,7 @@ private struct DownLeftView: View {
 }
 
 /// upper left corner of space
-private struct UpLeftView: View {
+private struct NorthWestView: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .top) {

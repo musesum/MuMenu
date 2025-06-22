@@ -32,10 +32,10 @@ open class MenuTree: Identifiable, Equatable {
         }
     }()
 
-    public lazy var hashPath: [Int] = {
-        var _hashPath = parentTree?.hashPath ?? []
-        _hashPath.append(hash)
-        return _hashPath
+    public lazy var wordPath: [String] = {
+        var _wordPath = parentTree?.wordPath ?? []
+        _wordPath.append(flo.name)
+        return _wordPath
     }()
 
     public static func == (lhs: MenuTree, rhs: MenuTree) -> Bool {
@@ -109,5 +109,4 @@ open class MenuTree: Identifiable, Equatable {
         return Icon(.none, "??")
     }
 }
-
 

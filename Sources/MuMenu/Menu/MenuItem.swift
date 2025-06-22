@@ -44,7 +44,7 @@ public struct MenuItem: Codable {
         self.menuType = root.menuType
         self.phase    = root.phase
 
-        PrintLog("MenuRootItem: \(self.phase)")
+        //PrintLog("MenuRootItem: \(self.phase)")
     }
 
     public init(node: MenuNodeItem,
@@ -123,11 +123,11 @@ public struct MenuItem: Codable {
          phase == UITouch.Phase.cancelled.rawValue)
     }
     var cornerVm: CornerVm? {
-        if let vm = MenuTypeCornerVm[menuType] ?? MenuTypeCornerVm[MenuType.flipUpperLower(menuType)] {
+        if let vm = MenuTypeCornerVm[menuType] ?? MenuTypeCornerVm[MenuType.flipNS(menuType)] {
             return vm
         } else {
             let menuIcon = MenuType(rawValue: menuType).icon
-            let flip = MenuType.flipUpperLower(menuType)
+            let flip = MenuType.flipNS(menuType)
             let flipIcon = MenuType(rawValue: flip).icon
             PrintLog("cannot find \(menuIcon) nor \(flipIcon)")
         }

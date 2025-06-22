@@ -7,8 +7,8 @@ import Foundation
 public struct MenuOriginItem: Codable {
     let nodeType : NodeType // Type of control (.val, .xy, .xyz, .seg)
     let center   : CGPoint  // destination thumb position
-    let menuType   : MenuType   // Menu position and orientation
-    let hashPath : [Int]    // Array of hashes representing the path to the node
-    let hashNow  : Int      // Hash of the currently selected node
+    let menuType : MenuType // Menu position and orientation
+    let wordPath : [String] // Array of strings representing the path to the node (flo.name and path)
+    let wordNow  : String   // String of the currently selected node (flo.name)
     let isOrigin : Bool     // true = showing origin, false = showing delta
 }

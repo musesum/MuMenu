@@ -13,7 +13,6 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
     let peers: Peers
 
     /// is the finger touching
-
     @Published var touchType = TouchType.none
     var touchTypeBegin = TouchType.none
     /// captures touch events to dispatch to this root

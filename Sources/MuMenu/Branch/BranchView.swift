@@ -16,26 +16,26 @@ struct BranchView: View {
         let cornerAxis = treeVm.menuType.cornerAxis
         if branchVm.columns > 1 {
             switch cornerAxis {
-            case .SWV, .SEV: VStack { titleV(branchVm); gridV(branchVm)  }
-            case .NWV, .NEV: VStack { gridV(branchVm) ; titleV(branchVm) }
-            case .SWH, .NWH: HStack { gridV(branchVm) ; titleV(branchVm) }
-            case .NEH, .SEH: HStack { titleV(branchVm); gridV(branchVm)  }
-            case .none     : VStack { titleV(branchVm); gridV(branchVm)  }
+            case .SWV, .SEV: VStack { Title(branchVm); Grid(branchVm)  }
+            case .NWV, .NEV: VStack { Grid(branchVm) ; Title(branchVm) }
+            case .SWH, .NWH: HStack { Grid(branchVm) ; Title(branchVm) }
+            case .NEH, .SEH: HStack { Title(branchVm); Grid(branchVm)  }
+            case .none     : VStack { Title(branchVm); Grid(branchVm)  }
             }
         } else {
             switch cornerAxis {
-            case .SWV, .SEV: VStack { titleV(branchVm); bodyV(branchVm)  }
-            case .NWV, .NEV: VStack { bodyV(branchVm) ; titleV(branchVm) }
-            case .SWH, .NWH: HStack { bodyV(branchVm) ; titleV(branchVm) }
-            case .NEH, .SEH: HStack { titleV(branchVm); bodyV(branchVm)  }
-            case .none     : VStack { titleV(branchVm); bodyV(branchVm)  }
+            case .SWV, .SEV: VStack { Title(branchVm); Body_(branchVm)  }
+            case .NWV, .NEV: VStack { Body_(branchVm); Title(branchVm) }
+            case .SWH, .NWH: HStack { Body_(branchVm); Title(branchVm) }
+            case .NEH, .SEH: HStack { Title(branchVm); Body_(branchVm)  }
+            case .none     : VStack { Title(branchVm); Body_(branchVm)  }
             }
         }
     }
 }
 
 /// title showing position of control
-fileprivate struct titleV: View {
+fileprivate struct Title: View {
     @ObservedObject var branchVm: BranchVm
     var treeVm     : TreeVm  { branchVm.treeVm }
     var panelVm    : PanelVm { branchVm.panelVm }
@@ -67,7 +67,7 @@ fileprivate struct titleV: View {
     }
 }
 
-fileprivate struct gridV: View {
+fileprivate struct Grid: View {
 
     @ObservedObject var branchVm: BranchVm
 
@@ -92,7 +92,7 @@ fileprivate struct gridV: View {
         GeometryReader { geo in
             ZStack {
                 BranchPanelView(spotlight: spotlight)
-                LazyVGrid(columns: gridColumns, spacing: spacing) {
+                LazyVGrid(columns: gridColumns, spacing: 0) {
                     ForEach(branchVm.nodeVms) {
                         NodeView(nodeVm: $0)
                     }
@@ -111,7 +111,7 @@ fileprivate struct gridV: View {
 
 
 /// Panel and closure(Content) for thumb of control
-fileprivate struct bodyV: View {
+fileprivate struct Body_: View {
 
     @ObservedObject var branchVm: BranchVm
 
