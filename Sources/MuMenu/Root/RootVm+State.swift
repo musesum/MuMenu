@@ -104,6 +104,7 @@ extension RootVm { // + State
                 touchType = .node
                 treeSpotVm?.showTree(depth: 9, "hoverNode" + "+", fromRemote)
                 if touchState.touchEndedCount == 2 {
+                    touchType = .root
                     nodeSpotVm.updateSpotNodes()
                 }
                 return true
@@ -142,7 +143,8 @@ extension RootVm { // + State
                 let wasShown = beginViewOps.hasAny([.branch,.trunks])
                 if  wasShown { showBranches() }
                 nodeSpotVm?.updateSpotNodes()
-
+            case 4: // ᴱ⁴ tap 4 times to clear buffers
+                Panic.reset()
             default: break
             }
             return true

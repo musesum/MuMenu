@@ -28,7 +28,7 @@ struct CornerView: View {
 
                 CursorView(ringNodeVm, Layout.diameter2)
                     .position(cornerVm.ringIconXY)
-                    .offset(cornerVm.dragNodeΔ) // .zero
+                    .offset(cornerVm.dragNodeΔ) // .kludge
                     .animation(Animate(0.25), value: cornerVm.ringIconXY)
                     .opacity(opacity)
                     .animation(Animate(0.50), value: opacity)

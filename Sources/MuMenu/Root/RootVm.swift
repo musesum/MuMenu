@@ -12,10 +12,12 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
     let archiveVm: ArchiveVm
     let peers: Peers
 
-    /// is the finger touching
+    /// what is the finger touching now?
     @Published var touchType = TouchType.none
+    /// what was finger touching at began phase?
     var touchTypeBegin = TouchType.none
-    /// captures touch events to dispatch to this root
+
+    /// starting corner to dispatch 
     public let cornerVm: CornerVm!
     
     /// which menu elements are shown on View

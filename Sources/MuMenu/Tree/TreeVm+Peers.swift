@@ -4,26 +4,6 @@ import Foundation
 
 extension TreeVm { // + Peers
 
-    func gotoNodeItem(_ nodeItem: MenuNodeItem) -> NodeVm? {
-        let wordPath = nodeItem.wordPath
-        let wordNow = nodeItem.wordNow
-        return followWordPath(wordPath, wordNow)
-    }
-    func gotoLeafItem(_ leafItem: MenuLeafItem) -> LeafVm? {
-        let wordPath = leafItem.wordPath
-        let wordNow = leafItem.wordNow
-        if let nodeVm = followWordPath(wordPath, wordNow),
-           let leafVm = nodeVm as? LeafVm {
-            return leafVm
-        }
-        return nil 
-    }
-    //..... not implemented
-    func gotoOriginItem(_ originItem: MenuOriginItem) -> NodeVm? {
-        let wordPath = originItem.wordPath
-        let wordNow = originItem.wordNow
-        return followWordPath(wordPath, wordNow)
-    }
     func followWordPath(_ wordPath: [String], _ wordNow: String) -> NodeVm? {
         var branchVm = branchVms.first
         var nodeNow: NodeVm?

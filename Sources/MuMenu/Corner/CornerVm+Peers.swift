@@ -35,20 +35,20 @@ extension CornerVm {
         switch item.element {
             case .node:
 
-                if let nodeItem = item.item as? MenuNodeItem,
-                   let treeVm = nodeItem.treeVm {
-                    _  = treeVm.gotoNodeItem(nodeItem)
+                if let item = item.item as? MenuNodeItem,
+                   let treeVm = item.treeVm {
+                    _ = treeVm.followWordPath(item.wordPath, item.wordNow)
                 }
 
             case .leaf:
 
-                if let leafItem = item.item as? MenuLeafItem,
-                   let treeVm = leafItem.treeVm,
-                   let leafVm = treeVm.gotoLeafItem(leafItem) {
+                if let item = item.item as? MenuLeafItem,
+                   let treeVm = item.treeVm,
+                   let nodeVm = treeVm.followWordPath(item.wordPath, item.wordNow),
+                   let leafVm = nodeVm as? LeafVm {
 
-                    //print("􀤆", terminator: "")
                     DispatchQueue.main.async {
-                        leafVm.remoteThumb(leafItem, Visitor(0, .remote))
+                        leafVm.remoteThumb(item, Visitor(0, .remote))
                     }
                 }
             case .touch:

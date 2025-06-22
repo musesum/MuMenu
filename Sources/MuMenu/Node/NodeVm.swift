@@ -179,10 +179,11 @@ extension NodeVm { // + Spotlight
 
     /// update only chain of spotlight nodes
     public func updateSpotNodes() {
-        if spotlight || nodeType.isControl {
+        if let childSpot = nextBranchVm?.nodeSpotVm {
+           childSpot.updateSpotNodes()
+        } else {
             updateNodeValue()
         }
-        nextBranchVm?.nodeSpotVm?.updateSpotNodes()
     }
 }
 
