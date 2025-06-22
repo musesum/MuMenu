@@ -18,6 +18,7 @@ extension TreeVm { // + Peers
         }
         return nil 
     }
+    //..... not implemented
     func gotoOriginItem(_ originItem: MenuOriginItem) -> NodeVm? {
         let wordPath = originItem.wordPath
         let wordNow = originItem.wordNow

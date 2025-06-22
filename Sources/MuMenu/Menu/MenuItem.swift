@@ -6,8 +6,8 @@ import MuFlo
 public struct MenuTreeItem: Codable {
 
     public var menuType : MenuType
-    public var depth  : Int
-    public var start  : Int
+    public var depth    : Int
+    public var start    : Int
 
     public init(_ treeVm: TreeVm) {
         self.menuType = treeVm.menuType
@@ -43,8 +43,6 @@ public struct MenuItem: Codable {
         self.time     = Date().timeIntervalSince1970
         self.menuType = root.menuType
         self.phase    = root.phase
-
-        //PrintLog("MenuRootItem: \(self.phase)")
     }
 
     public init(node: MenuNodeItem,
@@ -52,12 +50,9 @@ public struct MenuItem: Codable {
 
         self.element  = .node
         self.item     = node
+        self.time     = Date().timeIntervalSince1970
         self.menuType = node.menuType.rawValue
         self.phase    = phase.rawValue
-        self.time     = Date().timeIntervalSince1970
-        if self.phase == 3 {
-            //PrintLog("MenuNodeItem: \(self.phase)")
-        }
     }
     // via LeafVm::updateLeafPeers
     public init(leaf: MenuLeafItem,
@@ -68,7 +63,6 @@ public struct MenuItem: Codable {
         self.menuType = leaf.menuType.rawValue
         self.phase    = phase.rawValue
         self.time     = Date().timeIntervalSince1970
-        //PrintLog("MenuLeafItem: \(self.phase)")
     }
 
     public init(_ touch: UITouch,
@@ -79,7 +73,6 @@ public struct MenuItem: Codable {
         self.menuType = menuType.rawValue
         self.phase    = touch.phase.rawValue
         self.time     = Date().timeIntervalSince1970
-        //PrintLog("MenuTouchItem: \(self.phase)")
     }
 
     enum CodingKeys: String, CodingKey {
@@ -123,7 +116,8 @@ public struct MenuItem: Codable {
          phase == UITouch.Phase.cancelled.rawValue)
     }
     var cornerVm: CornerVm? {
-        if let vm = MenuTypeCornerVm[menuType] ?? MenuTypeCornerVm[MenuType.flipNS(menuType)] {
+        if let vm = (MenuTypeCornerVm[menuType] ??
+                     MenuTypeCornerVm[MenuType.flipNS(menuType)]) {
             return vm
         } else {
             let menuIcon = MenuType(rawValue: menuType).icon

@@ -18,7 +18,12 @@ public struct MenuNodeItem: Codable {
     }
     
     var treeVm: TreeVm? {
+        #if os(visionOS)
+        let flipKey = MenuType(rawValue: MenuType.flipNS(menuType.rawValue)).key
+        return TreeVm.sideAxis[menuType.key] ?? TreeVm.sideAxis[flipKey]
+        #else
         return TreeVm.sideAxis[menuType.key]
+        #endif
     }
 }
 
@@ -46,7 +51,7 @@ public struct MenuLeafItem: Codable {
     public var nextXY: CGPoint {
         return CGPoint(x: leafThumb.value.x, y: leafThumb.value.y)
     }
-
+    // redun
     var treeVm: TreeVm? {
         #if os(visionOS)
         let flipKey = MenuType(rawValue: MenuType.flipNS(menuType.rawValue)).key
