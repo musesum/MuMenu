@@ -13,7 +13,6 @@ enum TouchType  {
     case tog    /// toggle/tap an embedded leaf
     case leaf   /// editing area inside a leaf
     case canopy /// shift tree from whole canopy
-    //..... case shift  /// shifting branches by dragging header for leaf
     case space  /// hovering over canvas while on menu
     
     public var symbol: String {
@@ -26,7 +25,6 @@ enum TouchType  {
             case .tog    : return "☒"
             case .leaf   : return "􀥲"
             case .canopy : return "􁝯"
-            //..... case .shift  : return "􀄭"
             case .space  : return "∞⃣"
         }
     }
@@ -40,7 +38,6 @@ enum TouchType  {
             case .tog    : return "tog"
             case .leaf   : return "leaf"
             case .canopy : return "canopy"
-            //..... case .shift  : return "shift"
             case .space  : return "space"
         }
     }
@@ -53,7 +50,6 @@ enum TouchType  {
     var tog    : Bool { self == .tog    }
     var leaf   : Bool { self == .leaf   }
     var canopy : Bool { self == .canopy }
-    //..... var shift  : Bool { self == .shift  }
 
     var space  : Bool { self == .space  }
 

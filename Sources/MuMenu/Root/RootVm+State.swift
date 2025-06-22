@@ -29,7 +29,6 @@ extension RootVm { // + State
         // stay exclusively on .leaf or .edit mode
         switch touchType {
         case .canopy : logRoot("shiftCanopy"  ); return shiftCanopy()
-        //..... case .shift  : logRoot("shiftBranches"); return shiftBranches()
         case .leaf   : logRoot("editLeaf"     ); return editLeaf(nodeSpotVm)
         default      : break // logRoot(menuType.description)
         }
@@ -61,20 +60,6 @@ extension RootVm { // + State
             }
         }
 
-//        func beganCanopy() -> Bool {
-//            if touchState.phase == .began,
-//               touchType.isNotIn([.node, .space]),
-//               let treeSpotVm,
-//               let leafVm = treeSpotVm.nearestNode(touchNow) as? LeafVm,
-//               leafVm.nodeType.isControl,
-//               treeSpotVm.treeBounds.contains(touchState.pointNow),
-//               !leafVm.branchVm.contains(touchNow) {
-//
-//                shiftCanopy()//..... shiftBranches()
-//                return true
-//            }
-//            return false
-//        }
         func beganCanopy() -> Bool {
             if touchState.phase == .began,
                let treeSpotVm,
@@ -230,26 +215,6 @@ extension RootVm { // + State
                 viewOps = [.root, .branch]
             }
         }
-
-//        func shiftBranches() {
-//            if cornerVm.touchingRoot(touchNow) {
-//                showTrunks()
-//                touchType = .root
-//                return
-//
-//            } else if let leafVm = nodeSpotVm as? LeafVm  {
-//
-//                // begin touch on title section to possibly stack branches
-//                touchType = .shift
-//                leafVm.spot(.off)
-//                leafVm.branchSpot(.on)
-//                treeSpotVm?.shiftTree(touchState, fromRemote)
-//            } else {
-//                touchState.beginPoint(touchNow)
-//                touchType = .root
-//            }
-//        }
-
 
         func shiftCanopy() {
             if touchState.phase.done {
