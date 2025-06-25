@@ -43,7 +43,7 @@ extension RootVm { // + State
 
         func logRoot(_ msg: String = "",_ t: String = "") {
 
-            TimeLog(touchType.symbol, interval: 0) {
+            NoTimeLog(touchType.symbol, interval: 0) {
                 let touchType = self.touchType
                 let touchState = self.touchState
                 let phase = touchState.phase
