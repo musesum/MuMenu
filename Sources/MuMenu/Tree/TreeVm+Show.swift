@@ -42,7 +42,7 @@ extension TreeVm { // +Show
                   _ via: String,
                   _ fromRemote: Bool) {
 
-        PrintLog("𖢞 \(menuType.icon) \(via):\(depth)")
+        //PrintLog("𖢞 \(menuType.icon) \(via):\(depth)")
 
         let nextIndex = start ?? startIndex
         var newBranches = [BranchVm]()
