@@ -25,7 +25,7 @@ extension UIImage {
 
 public class Icon {
 
-    public static var altBundles = [Bundle]()
+    nonisolated(unsafe) public static var altBundles = [Bundle]()
 
     var iconType = IconType.none
     var icoName = ""

@@ -25,7 +25,7 @@ public enum MenuProgression {
          HS  // horizontal southward
 }
 
-public struct MenuType: OptionSet, Codable, Hashable {
+public struct MenuType: OptionSet, Codable, Hashable, Sendable {
     public let rawValue: Int
     public init(rawValue: Int) { self.rawValue = rawValue }
 

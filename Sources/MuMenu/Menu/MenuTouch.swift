@@ -4,11 +4,11 @@ import UIKit
 import MuFlo // double buffer
 import MuPeers
 
-public var MenuTypeCornerVm = [Int: CornerVm]()
+nonisolated(unsafe) public var MenuTypeCornerVm = [Int: CornerVm]()
 
 public class MenuTouch {
 
-    static var menuKey = [Int: MenuTouch]()
+    nonisolated(unsafe) static var menuKey = [Int: MenuTouch]()
     private let buffer = CircleBuffer<MenuItem>(capacity: 3, internalLoop: true)
     private let isRemote: Bool
 

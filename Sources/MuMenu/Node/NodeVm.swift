@@ -109,10 +109,8 @@ public class NodeVm: Identifiable, ObservableObject {
     }
 
     func refreshView() {
-        Task { @MainActor in
-            refresh += 1 // animated tween via published edit var
-            branchVm.show = branchVm.show
-        }
+        refresh += 1 // animated tween via published edit var
+        branchVm.show = branchVm.show
     }
 
     /// was touchedOrigin()

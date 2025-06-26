@@ -5,7 +5,7 @@ import MuFlo
 
 @Observable class StatusVm: Identifiable {
 
-    static var shared = StatusVm()
+    nonisolated(unsafe) static var shared = StatusVm()
 
     var before = [NodeVm]()
     var after  = [NodeVm]()

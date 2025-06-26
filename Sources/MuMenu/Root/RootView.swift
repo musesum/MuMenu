@@ -1,7 +1,7 @@
 import SwiftUI
 
 public struct MainContentKey: EnvironmentKey {
-    public static let defaultValue: AnyView = AnyView(EmptyView())
+    nonisolated(unsafe) public static let defaultValue: AnyView = AnyView(EmptyView())
 }
 
 extension EnvironmentValues {

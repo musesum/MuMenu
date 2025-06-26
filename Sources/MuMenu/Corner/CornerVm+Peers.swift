@@ -65,7 +65,7 @@ extension CornerVm {
     public func updateRemoteTouch(_ touchItem: MenuTouchItem,
                                   _ phase: Int) {
 
-        DispatchQueue.main.async {
+        // DispatchQueue.main.async {
 
             let xy = touchItem.cgPoint
 
@@ -75,6 +75,6 @@ extension CornerVm {
                 default:     self.ended(xy, fromRemote: true)
             }
             self.alignCursor(xy)
-        }
+        //}
     }
 }

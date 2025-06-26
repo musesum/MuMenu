@@ -6,7 +6,7 @@ import MuFlo
 
 public enum OnOff { case on, off }
 
-/// extend MuNodeVm to show title and thumb position
+/// extend NodeVm to show title and thumb position
 public class LeafVm: NodeVm {
     var runways: LeafRunways!
     var ranges = [String : ClosedRange<Double>]()

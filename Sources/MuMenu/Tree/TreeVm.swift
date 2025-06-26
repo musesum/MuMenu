@@ -7,7 +7,7 @@ enum TreeState: String { case hideTree, canopy, showTree }
 public class TreeVm: Identifiable, Equatable, ObservableObject {
 
     public static func == (lhs: TreeVm, rhs: TreeVm) -> Bool { return lhs.id == rhs.id }
-    public static var sideAxis = [String: TreeVm]()
+    nonisolated(unsafe) public static var sideAxis = [String: TreeVm]()
     public var id = Visitor.nextId()
     @Published var branchVms = [BranchVm]()
 

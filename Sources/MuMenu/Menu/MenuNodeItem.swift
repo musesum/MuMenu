@@ -2,12 +2,12 @@
 
 import SwiftUI
 
-public struct MenuNodeItem: Codable {
+public struct MenuNodeItem: Codable, Sendable {
 
-    public var type     : String
-    public var menuType : MenuType
-    public var wordPath : [String] // last shown item on tree (string-based path)
-    public var wordNow  : String   // name of currently selected item (string-based)
+    public let type     : String
+    public let menuType : MenuType
+    public let wordPath : [String] // last shown item on tree (string-based path)
+    public let wordNow  : String   // name of currently selected item (string-based)
 
     public init(_ nodeVm : NodeVm) {
 
@@ -27,12 +27,12 @@ public struct MenuNodeItem: Codable {
     }
 }
 
-public struct MenuLeafItem: Codable {
+public struct MenuLeafItem: Codable, Sendable {
 
-    public var type      : String
-    public var menuType  : MenuType
-    public var wordPath  : [String] // last shown item on tree (string-based path)
-    public var wordNow   : String   // name of currently selected item (string-based)
+    public let type      : String
+    public let menuType  : MenuType
+    public let wordPath  : [String] // last shown item on tree (string-based path)
+    public let wordNow   : String   // name of currently selected item (string-based)
     public let leafThumb : LeafThumb
     public let origin    : Bool
 

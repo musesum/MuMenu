@@ -6,7 +6,7 @@ import SwiftUI
 import MuFlo
 
 /// thumb values are normalized to 0...1
-public class LeafThumb: Codable {
+public class LeafThumb: Codable, @unchecked Sendable {
 
     var value: SIMD3<Double> = .zero /// destination value
     var tween: SIMD3<Double> = .zero /// current tween value

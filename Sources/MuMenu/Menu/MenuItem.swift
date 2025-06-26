@@ -28,10 +28,10 @@ public struct MenuTreeItem: Codable {
 public enum MenuElement: String, CodingKey {
     case root, node, leaf, touch }
 
-public struct MenuItem: Codable {
+public struct MenuItem: Codable, @unchecked Sendable {
 
-    public var element  : MenuElement
-    public var time     : TimeInterval
+    public let element  : MenuElement
+    public let time     : TimeInterval
     public var menuType : Int // MenuType.rawValue
     public let phase    : Int // UITouch.Phase
     public let item     : Any?
@@ -65,13 +65,15 @@ public struct MenuItem: Codable {
         self.time     = Date().timeIntervalSince1970
     }
 
-    public init(_ touch: UITouch,
+    public init(_ location: CGPoint, //touch.location(in: nil)
+                _ phase: Int, // touch.phase.rawValue
+                _ finger: Int, // touch.hash
                 _ menuType: MenuType) {
         
         self.element  = .touch
-        self.item     = MenuTouchItem(touch)
+        self.item     = MenuTouchItem(location, finger)
+        self.phase = phase
         self.menuType = menuType.rawValue
-        self.phase    = touch.phase.rawValue
         self.time     = Date().timeIntervalSince1970
     }
 

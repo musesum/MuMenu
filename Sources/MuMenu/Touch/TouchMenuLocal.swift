@@ -5,7 +5,7 @@ import MuFlo // double buffer
 
 public class TouchMenuLocal {
     
-    static var menuKey = [Int: TouchMenuLocal]()
+    nonisolated(unsafe) static var menuKey = [Int: TouchMenuLocal]()
 
     private let buffer = CircleBuffer<MenuItem>(capacity: 3, internalLoop: true)
     private let cornerVm: CornerVm
@@ -22,37 +22,38 @@ public class TouchMenuLocal {
         buffer.delegate = self
     }
     @discardableResult
-    public static func beginTouch(_ touch: UITouch) -> Bool {
-        
-        let touchXY = touch.preciseLocation(in: nil)
-
+    public static func beginTouch(_ location : CGPoint,
+                                  _ phase    : Int,
+                                  _ finger   : Int) -> Bool
+    {
         for cornerVm in MenuTypeCornerVm.values {
-            if let nodeVm = cornerVm.hitTest(touchXY) {
+            if let nodeVm = cornerVm.hitTest(location) {
                 return addMenu(nodeVm)
             } else {
                 for treeVm in cornerVm.rootVm?.treeVms ?? [] {
-                    if treeVm.treeBoundsPad.contains(touchXY) {
+                    if treeVm.treeBoundsPad.contains(location) {
                         return addMenu()
                     }
                 }
             }
             func addMenu(_ nodeVm: NodeVm? = nil) -> Bool {
                 let touchMenu = TouchMenuLocal(cornerVm, nodeVm, isRemote: false)
-                let menuItem = MenuItem(touch, cornerVm.menuType)
+                let menuItem = MenuItem(location,phase,finger, cornerVm.menuType)
                 touchMenu.buffer.addItem(menuItem, bufType: .localBuf)
-                let key = touch.hash
-                menuKey[key] = touchMenu
+                menuKey[finger] = touchMenu
                 return true
             }
         }
         return false
     }
-    
-    public static func updateTouch(_ touch: UITouch) -> Bool {
-        
-        if let touchMenu = menuKey[touch.hash] {
+
+    public static func updateTouch(_ location : CGPoint,  //let touchXY = touch.preciseLocation(in: nil)
+                                   _ phase    : Int,
+                                   _ finger   : Int) -> Bool {
+
+        if let touchMenu = menuKey[finger] {
             let corner = touchMenu.cornerVm.menuType
-            touchMenu.buffer.addItem(MenuItem(touch, corner), bufType: .localBuf)
+            touchMenu.buffer.addItem(MenuItem(location, phase, finger, corner), bufType: .localBuf)
             return true
         }
         return false

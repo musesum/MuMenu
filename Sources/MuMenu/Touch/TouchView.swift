@@ -34,36 +34,47 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
     open func beginTouches(_ touches: Set<UITouch>) {
 
         for touch in touches {
-            //print("\(touch.phase.rawValue)",terminator: "")
-            if      TouchMenuLocal.beginTouch(touch) { }
-            else if willBeginFromEdge(touch) {}
+            let location = touch.location(in: nil)
+            let phase = touch.phase.rawValue
+            let finger = touch.hash
+
+            if      TouchMenuLocal.beginTouch(location, phase, finger) { }
+            else if willBeginFromEdge() {}
             else if touchCanvas?.beginTouch(touch)  ?? false { }
-        }
-        func willBeginFromEdge(_ touch: UITouch) -> Bool {
-            let touchXY = touch.preciseLocation(in: nil)
-            let fromEdge = safeBounds.contains(touchXY) ? false : true
-            touchBeganFromEdge[touch.hash] = fromEdge
-            return fromEdge
+
+            func willBeginFromEdge() -> Bool {
+                let touchXY = touch.preciseLocation(in: nil)
+                let fromEdge = safeBounds.contains(touchXY) ? false : true
+                touchBeganFromEdge[touch.hash] = fromEdge
+                return fromEdge
+            }
         }
     }
 
     /// Continue dispatching finger to canvas or menu
     open func updateTouches(_ touches: Set<UITouch>) {
+
         for touch in touches {
-            //print("\(touch.phase.rawValue)⃝",terminator: "")
-            if      beganFromEdge(touch) {}
+
+            let location = touch.location(in: nil)
+            let phase = touch.phase.rawValue
+            let finger = touch.hash
+
+            if      beganFromEdge() {}
+            else if TouchMenuLocal.updateTouch(location,phase,finger) { }
             else if touchCanvas?.updateTouch(touch) ?? false { }
-            else if TouchMenuLocal.updateTouch(touch) { }
+
             else { print("👆 unknown touch \(touch.hash)") }
-        }
-        func beganFromEdge(_ touch: UITouch) -> Bool {
-            if let fromEdge = touchBeganFromEdge[touch.hash] {
-                if touch.phase.done {
-                    touchBeganFromEdge.removeValue(forKey: touch.hash)
+
+            func beganFromEdge() -> Bool {
+                if let fromEdge = touchBeganFromEdge[finger] {
+                    if touch.phase.done {
+                        touchBeganFromEdge.removeValue(forKey: finger)
+                    }
+                    return fromEdge
                 }
-                return fromEdge
+                return false
             }
-            return false
         }
     }
 

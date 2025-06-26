@@ -110,15 +110,15 @@ public class LeafSearchVm: LeafVm {
     func startListening() {
         SFSpeechRecognizer.requestAuthorization { authStatus in
             guard authStatus == .authorized else { return }
-            DispatchQueue.main.async { self.isListening = true }
+           self.isListening = true
             self.audioEngine = AVAudioEngine()
             let inputNode = self.audioEngine!.inputNode
             self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
             guard let recognitionRequest = self.recognitionRequest else { return }
             recognitionRequest.shouldReportPartialResults = true
             self.recognitionTask = self.recognizer?.recognitionTask(with: recognitionRequest) { result, error in
-                if let result = result {
-                    DispatchQueue.main.async { self.transcript = result.bestTranscription.formattedString }
+                if let result {
+                    self.transcript = result.bestTranscription.formattedString
                     if result.isFinal {
                         self.stopListening()
                         self.queryIntelligenceModel(text: self.transcript)
@@ -142,15 +142,13 @@ public class LeafSearchVm: LeafVm {
         audioEngine?.inputNode.removeTap(onBus: 0)
         recognitionRequest?.endAudio()
         recognitionTask?.cancel()
-        DispatchQueue.main.async { self.isListening = false }
+        self.isListening = false
     }
 
     private func queryIntelligenceModel(text: String) {
         // TODO: Call Intelligence Foundation model to predict menu path
         // For now, just echo text back as the predicted path
-        DispatchQueue.main.async {
-            self.predictedMenuPath = "Predicted path for: \(text)"
-        }
+       self.predictedMenuPath = "Predicted path for: \(text)"
     }
 }
 

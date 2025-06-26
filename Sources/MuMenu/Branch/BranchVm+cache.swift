@@ -2,7 +2,7 @@
 
 import Foundation
 import MuFlo
-var BranchCache = [Int: BranchVm]()
+nonisolated(unsafe) var BranchCache = [Int: BranchVm]()
 
 extension BranchVm {
     @discardableResult

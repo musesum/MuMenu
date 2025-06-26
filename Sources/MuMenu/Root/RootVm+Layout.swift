@@ -25,9 +25,9 @@ extension RootVm { // + Layout
 
         switch cornerType.corner {
         case .SE : v(-x0,-y1); h(-x1,-y0)
-        case .SW  : v( x0,-y1); h( x1,-y0)
-        case .NE   : v(-x0, y1); h(-x1, y0)
-        case .NW    : v( x0, y1); h( x1, y0)
+        case .SW : v( x0,-y1); h( x1,-y0)
+        case .NE : v(-x0, y1); h(-x1, y0)
+        case .NW : v( x0, y1); h( x1, y0)
         default: break
         }
 
@@ -36,24 +36,23 @@ extension RootVm { // + Layout
         }
     }
     private func idiomMargins() -> CGSize {
-        let idiom = UIDevice.current.userInterfaceIdiom
+        
         let padding2 = Layout.padding2
-
         let w: CGFloat
-        switch idiom {
-        case .pad    : w = padding2
-        case .phone  : w = 0
-        case .vision : w = padding2 * 2
-        default      : w = 0
-        }
-
         let h: CGFloat
-        switch idiom {
-        case .pad    : h = cornerType.south ? padding2 : 0
-        case .phone  : h = cornerType.north   ? padding2 : 0
-        case .vision : h = padding2 * 2
-        default      : h = 0
-        }
+        #if os(iOS)
+        w = 0
+        h = cornerType.north ? padding2 : 0
+        #elseif os(iPadOS)
+        w = padding2
+        h = cornerType.south ? padding2 : 0
+        #elseif os(visionOS)
+        w = padding2 * 2
+        h = padding2 * 2
+        #else
+        w = 0
+        h = 0
+        #endif
         return CGSize(width: w, height: h)
     }
     internal func cornerXY(in frame: CGRect) -> CGPoint {
@@ -69,10 +68,10 @@ extension RootVm { // + Layout
 
         switch cornerType.corner {
         case .SE : return CGPoint(x: w-x-r-s, y: h-y-r-s)
-        case .SW  : return CGPoint(x:   x+r+s, y: h-y-r-s)
-        case .NE   : return CGPoint(x: w-x-r-s, y:   y+r+s)
-        case .NW    : return CGPoint(x:   x+r+s, y:   y+r+s)
-        default         : return .zero
+        case .SW : return CGPoint(x:   x+r+s, y: h-y-r-s)
+        case .NE : return CGPoint(x: w-x-r-s, y:   y+r+s)
+        case .NW : return CGPoint(x:   x+r+s, y:   y+r+s)
+        default  : return .zero
         }
     }
 }
