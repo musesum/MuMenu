@@ -10,12 +10,12 @@ public class NodeVm: Identifiable, ObservableObject {
     public var nodeType: NodeType /// node, val, vxy, seg, tog
     public var branchVm: BranchVm /// branch that this node is on
     public var center = CGPoint.zero /// current center position
+    public var menuType: MenuType
 
     internal var nextBranchVm: BranchVm? /// branch this node generates
     internal var panelVm: PanelVm        /// the panel that this node belongs to
     private var prevNodeVm: NodeVm?     /// parent nodeVm in hierarchy
     internal var rootVm: RootVm
-    public var menuType: MenuType
 
     @Published var refresh: Int = 0
     @Published var zIndex: CGFloat = 0 /// stack current spotlight node on top of others
@@ -107,8 +107,8 @@ public class NodeVm: Identifiable, ObservableObject {
         superSpotlight()
         branchVm.expandBranch()
     }
-
     func refreshView() {
+
         refresh += 1 // animated tween via published edit var
         branchVm.show = branchVm.show
     }

@@ -16,6 +16,7 @@ struct BranchPanelView: View {
                 .background(.ultraThinMaterial)
                 .opacity(0.62)
             #endif
+            //..... .glassBackgroundEffect()
                 .cornerRadius(Layout.cornerRadius)
                 .shadow(color: .black, radius: 1)
         }

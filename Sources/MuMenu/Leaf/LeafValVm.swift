@@ -35,7 +35,6 @@ public class LeafValVm: LeafVm {
                 ranges[scalar.name] = scalar.range()
             }
         }
-
     }
 
     override public func treeTitle() -> String {

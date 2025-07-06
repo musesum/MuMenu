@@ -40,7 +40,19 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
 
             if      TouchMenuLocal.beginTouch(location, phase, finger) { }
             else if willBeginFromEdge() {}
-            else if touchCanvas?.beginTouch(touch)  ?? false { }
+            else if let touchCanvas {
+
+                let touchData = TouchData(
+                    force    : Float(touch.force),
+                    radius   : Float(touch.majorRadius),
+                    nextXY   : touch.preciseLocation(in: nil),
+                    phase    : touch.phase.rawValue,
+                    azimuth  : touch.azimuthAngle(in: nil),
+                    altitude : touch.altitudeAngle,
+                    key      : touch.hash
+                )
+                touchCanvas.beginTouch(touchData)
+            }
 
             func willBeginFromEdge() -> Bool {
                 let touchXY = touch.preciseLocation(in: nil)
@@ -62,8 +74,18 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
 
             if      beganFromEdge() {}
             else if TouchMenuLocal.updateTouch(location,phase,finger) { }
-            else if touchCanvas?.updateTouch(touch) ?? false { }
+            else if let touchCanvas {
 
+                let touchData = TouchData(
+                    force    : Float(touch.force),
+                    radius   : Float(touch.majorRadius),
+                    nextXY   : touch.preciseLocation(in: nil),
+                    phase    : touch.phase.rawValue,
+                    azimuth  : touch.azimuthAngle(in: nil),
+                    altitude : touch.altitudeAngle,
+                    key      : touch.hash
+                )
+                touchCanvas.updateTouch(touchData) }
             else { print("👆 unknown touch \(touch.hash)") }
 
             func beganFromEdge() -> Bool {
@@ -77,10 +99,15 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
             }
         }
     }
-
+    open func endedTouches(_ touches: Set<UITouch>) {
+        let location = touches.first!.location(in: nil)
+        PrintLog("touchCanvasItem: \(location.digits(3))" )
+        updateTouches(touches)
+    }
     open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) { beginTouches(touches) }
     open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) { updateTouches(touches) }
-    open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) { updateTouches(touches) }
-    open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) { updateTouches(touches) }
+    open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) { endedTouches(touches) }
+    open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        updateTouches(touches) }
 
 }

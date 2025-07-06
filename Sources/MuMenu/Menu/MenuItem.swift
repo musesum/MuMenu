@@ -3,36 +3,15 @@
 import SwiftUI
 import MuFlo
 
-public struct MenuTreeItem: Codable {
-
-    public var menuType : MenuType
-    public var depth    : Int
-    public var start    : Int
-
-    public init(_ treeVm: TreeVm) {
-        self.menuType = treeVm.menuType
-        self.depth = treeVm.depthShown
-        self.start = treeVm.startIndex
-    }
-    var treeVm: TreeVm? {
-        return TreeVm.sideAxis[menuType.key]
-    }
-    
-    func showTree(_ fromRemote: Bool) {
-        treeVm?.showTree(start: start,
-                         depth: depth,
-                         "item",fromRemote)
-    }
-}
-
-public enum MenuElement: String, CodingKey {
-    case root, node, leaf, touch }
 
 public struct MenuItem: Codable, @unchecked Sendable {
 
+    public enum MenuElement: String, CodingKey {
+        case root, node, leaf, touch }
+
     public let element  : MenuElement
     public let time     : TimeInterval
-    public var menuType : Int // MenuType.rawValue
+    public let menuType : Int // MenuType.rawValue
     public let phase    : Int // UITouch.Phase
     public let item     : Any?
 

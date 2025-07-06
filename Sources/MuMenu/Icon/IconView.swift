@@ -36,6 +36,7 @@ struct IconView: View {
                         .background(.clear)
                     )
                     .shadow(color: .black, radius: 1)
+                    .hoverEffect()
             }
             switch runwayType {
             case .runX, .runY, .runU, .runV, .runW, .runZ, .runS, .runT:
