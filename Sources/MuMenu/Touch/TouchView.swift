@@ -99,15 +99,8 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
             }
         }
     }
-    open func endedTouches(_ touches: Set<UITouch>) {
-        let location = touches.first!.location(in: nil)
-        PrintLog("touchCanvasItem: \(location.digits(3))" )
-        updateTouches(touches)
-    }
-    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) { beginTouches(touches) }
-    open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) { updateTouches(touches) }
-    open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) { endedTouches(touches) }
-    open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        updateTouches(touches) }
-
+    open override func touchesBegan(_ touches: Set<UITouch>, with _: UIEvent?) { beginTouches(touches) }
+    open override func touchesMoved(_ touches: Set<UITouch>, with _: UIEvent?) { updateTouches(touches) }
+    open override func touchesEnded(_ touches: Set<UITouch>, with _: UIEvent?) { updateTouches(touches) }
+    open override func touchesCancelled(_ touches: Set<UITouch>, with _: UIEvent?) { updateTouches(touches) }
 }
