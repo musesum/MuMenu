@@ -11,13 +11,13 @@ struct LeafTogView: View {
 
     var togColor: Color {
         if let thumb = leafVm.runways.thumb() {
-            return Layout.togColor(thumb.value.x > 0)
+            return Menu.togColor(thumb.value.x > 0)
         } else {
-            return Layout.togColor(false)
+            return Menu.togColor(false)
         }
     }
-    var togOffset: CGSize { CGSize(width:  Layout.radius-6,
-                                   height: Layout.radius-6)}
+    var togOffset: CGSize { CGSize(width:  Menu.radius-6,
+                                   height: Menu.radius-6)}
     var body: some View {
 
         GeometryReader { geo in

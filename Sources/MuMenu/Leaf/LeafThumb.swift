@@ -33,8 +33,8 @@ public class LeafThumb: Codable, @unchecked Sendable {
     // changed by type
     var thumbRadius: Double {
         switch type {
-        case .runX,.runY,.runZ : Layout.radius - 1.0
-        default                : (Layout.radius - 1.0) * 2.0
+        case .runX,.runY,.runZ : Menu.radius - 1.0
+        default                : (Menu.radius - 1.0) * 2.0
         }
     }
 

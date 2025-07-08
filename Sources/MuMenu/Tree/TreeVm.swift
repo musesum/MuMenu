@@ -51,7 +51,7 @@ public class TreeVm: Identifiable, Equatable, ObservableObject {
             rect = rect.extend(branchBounds)
         }
         treeBounds = rect
-        treeBoundsPad = treeBounds.pad(Layout.padding2)
+        treeBoundsPad = treeBounds.pad(Menu.padding2)
     }
     
     public init(_ rootVm: RootVm,

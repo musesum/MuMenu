@@ -26,7 +26,7 @@ struct NodeView: View {
             .onChange(of: geo.frame(in: .global)) { nodeVm.updateCenter($1) }
         }
         .frame(width: size.width, height: size.height)
-        .padding(Layout.padding)
+        .padding(Menu.padding)
         .zIndex(nodeVm.zIndex)
     }
 }

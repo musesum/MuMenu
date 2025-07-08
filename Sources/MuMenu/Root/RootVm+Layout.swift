@@ -13,8 +13,8 @@ extension RootVm { // + Layout
         // xy top left to bottom right corners
         let x0 = margins.width
         let y0 = margins.height
-        let x1 = x0 + Layout.diameter + Layout.padding * 3
-        let y1 = y0 + Layout.diameter + Layout.padding * 3
+        let x1 = x0 + Menu.diameter + Menu.padding * 3
+        let y1 = y0 + Menu.diameter + Menu.padding * 3
 
         // setup vertical, horizontal, and root offsets
         var vs = CGSize.zero // vertical offset
@@ -37,7 +37,7 @@ extension RootVm { // + Layout
     }
     private func idiomMargins() -> CGSize {
         
-        let padding2 = Layout.padding2
+        let padding2 = Menu.padding2
         let w: CGFloat
         let h: CGFloat
         #if os(iOS)
@@ -63,8 +63,8 @@ extension RootVm { // + Layout
 
         let w = frame.size.width
         let h = frame.size.height
-        let s = Layout.padding
-        let r = Layout.diameter / 2
+        let s = Menu.padding
+        let r = Menu.diameter / 2
 
         switch cornerType.corner {
         case .SE : return CGPoint(x: w-x-r-s, y: h-y-r-s)

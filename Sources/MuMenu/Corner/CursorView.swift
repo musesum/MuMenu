@@ -20,10 +20,10 @@ struct CursorView: View {
             IconView(nodeVm, nodeVm.menuTree.icon, .none)
                 .onChange(of: geo.frame(in: .global)) { nodeVm.updateCenter($1) }
                 .onAppear { nodeVm.updateCenter(geo.frame(in: .global)) }
-                .cornerRadius(Layout.cornerRadius)
+                .cornerRadius(Menu.cornerRadius)
         }
         .frame(width: diameter, height: diameter)
-        .padding(Layout.padding)
+        .padding(Menu.padding)
         .zIndex(nodeVm.zIndex)
     }
 }

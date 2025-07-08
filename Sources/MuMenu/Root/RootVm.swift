@@ -70,7 +70,7 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
         }
         viewOps = [.root]
     }
-    ///... was showSoloTree
+    
     func showFirstTree(fromRemote: Bool = false) {
         if let treeVm = treeVms.first {
             treeSpotVm = treeVm

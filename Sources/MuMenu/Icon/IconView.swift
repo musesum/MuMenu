@@ -29,9 +29,9 @@ struct IconView: View {
     var body: some View {
         ZStack {
             if icon.iconType != .cursor {
-                RoundedRectangle(cornerRadius: Layout.cornerRadius)
+                RoundedRectangle(cornerRadius: Menu.cornerRadius)
                     .fill(fillColor)
-                    .overlay(RoundedRectangle(cornerRadius:  Layout.cornerRadius)
+                    .overlay(RoundedRectangle(cornerRadius:  Menu.cornerRadius)
                         .stroke(strokeColor, lineWidth: strokeWidth)
                         .background(.clear)
                     )
@@ -104,7 +104,7 @@ private struct IconTitleView: View {
             .padding(1)
             .minimumScaleFactor(0.01)
             .foregroundColor(color)
-            .animation(Layout.flashAnim, value: color)
+            .animation(Menu.flashAnim, value: color)
     }
 }
 
@@ -137,7 +137,7 @@ private struct IconSideView: View {
             .padding(1)
             .minimumScaleFactor(0.01)
             .foregroundColor(color)
-            .animation(Layout.flashAnim, value: color)
+            .animation(Menu.flashAnim, value: color)
             .shadow(color: .black, radius: 1)
     }
 }

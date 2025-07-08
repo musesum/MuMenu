@@ -14,21 +14,21 @@ struct CornerView: View {
             // parked icon
             if let logoNodeVm = cornerVm.logoNodeVm {
                 
-                CursorView(logoNodeVm, Layout.diameter)
+                CursorView(logoNodeVm, Menu.diameter)
                    
                     .onAppear { cornerVm.updateRootIcon(geo.frame(in: .global)) }
                     .onChange(of: geo.frame(in: .global)) { cornerVm.updateRootIcon($1) }
 
-                    .padding(Layout.padding2)
+                    .padding(Menu.padding2)
                     .position(cornerVm.parkIconXY)
             }
 
             // drag icon, follows touch
             if let ringNodeVm = cornerVm.ringNodeVm {
 
-                CursorView(ringNodeVm, Layout.diameter2)
+                CursorView(ringNodeVm, Menu.diameter2)
                     .position(cornerVm.ringIconXY)
-                    .offset(cornerVm.dragNodeΔ) // .kludge
+                    .offset(cornerVm.dragNodeΔ()) // .kludge
                     .animation(Animate(0.25), value: cornerVm.ringIconXY)
                     .opacity(opacity)
                     .animation(Animate(0.50), value: opacity)

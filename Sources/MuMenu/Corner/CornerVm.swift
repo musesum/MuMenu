@@ -16,13 +16,12 @@ import MuFlo
 
     var rootNodeΔ = CGSize.zero /// offset between rootNode and touchNow
     private var spotNodeΔ = CGSize.zero /// offset between touch point and center in coord
-    var dragNodeΔ: CGSize { /// weird kludge to compsate for small right offset
-        if let rootVm, rootVm.cornerType.east,
-           ringIconXY != parkIconXY {
-            return CGSize(width: -Layout.padding2, height: 0)
-        } else {
-            return .zero
-        }
+
+    func dragNodeΔ() -> CGSize { /// kludge to compsate for small right offset
+        if ringIconXY == parkIconXY { return .zero }
+        let deltaEast = rootVm?.cornerType.east ?? false ? -Menu.padding2 : 0
+        let offset = Menu.offset(menuType.corner)
+        return CGSize(width: deltaEast - offset.width, height: -offset.height)
     }
 
     public var menuType: MenuType
@@ -40,11 +39,11 @@ import MuFlo
         let branchVm = BranchVm.cached(treeVm: treeVm)
         let cornerFlo = Flo(rootVm.cornerType.key)
 
-        let iconLogo = Icon(.cursor, Layout.iconLogo)
+        let iconLogo = Icon(.cursor, Menu.iconLogo)
         let cornerLogo = MenuTree(cornerFlo, .none, iconLogo)
         logoNodeVm = NodeVm(cornerLogo, branchVm, nil)
 
-        let iconRing = Icon(.cursor, Layout.iconRing)
+        let iconRing = Icon(.cursor, Menu.iconRing)
         let cornerRing = MenuTree(cornerFlo, .none, iconRing)
         ringNodeVm = NodeVm(cornerRing, branchVm, nil)
 

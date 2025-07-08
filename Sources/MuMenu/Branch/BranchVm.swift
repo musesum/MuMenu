@@ -150,7 +150,7 @@ public class BranchVm: Identifiable, ObservableObject {
         var candidate: NodeVm?
         for nodeVm in nodeVms {
             let distance = nodeVm.center.distance(touchNow)
-            if distance < Layout.diameter {
+            if distance < Menu.diameter {
                 if distance < candidate?.center.distance(touchNow) ?? .infinity {
                     candidate = nodeVm
                 }
@@ -207,7 +207,7 @@ public class BranchVm: Identifiable, ObservableObject {
     func updateBounds(_ fromBounds: CGRect) {
         if boundsNow != fromBounds {
             boundsNow = panelVm.updatePanelBounds(fromBounds)
-            boundsPad = boundsNow.pad(Layout.padding)
+            boundsPad = boundsNow.pad(Menu.padding)
             updateShiftRange()
         }
     }
@@ -217,7 +217,7 @@ public class BranchVm: Identifiable, ObservableObject {
         boundStart = boundsNow - CGPoint(treeVm.treeShift)
         let boundsPriorSize = branchPrev?.boundsPrior ?? .zero
         let boundsPrevSize = branchPrev?.boundStart.size ?? .zero
-        let priorPadding = branchPrev == nil ? 0 : Layout.padding2
+        let priorPadding = branchPrev == nil ? 0 : Menu.padding2
 
         boundsPrior = boundsPriorSize + boundsPrevSize + priorPadding
         let pw = boundsPrior.width
@@ -231,7 +231,7 @@ public class BranchVm: Identifiable, ObservableObject {
         }
         shiftBranch()
 
-        let rad = Layout.radius
+        let rad = Menu.radius
         switch treeVm.menuType {
         case [.S,.W,.H],
              [.N,.W,.H]: titleShift = CGSize(width:  rad, height: 0)

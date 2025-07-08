@@ -23,7 +23,7 @@ public struct LeafThumbSlideView: View {
             }
             if hasPlugin {
                 Capsule() // thumb tween
-                    .fill(Layout.tweenColor(leafVm.spotlight ) )
+                    .fill(Menu.tweenColor(leafVm.spotlight ) )
                     .frame(width: diameter, height: diameter)
                     .offset(leafVm.runways.tweenOffset(runwayType))
                     .allowsHitTesting(false)

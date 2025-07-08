@@ -50,7 +50,7 @@ struct TreeCanopyView: View {
 
     @ObservedObject var treeVm: TreeVm
 
-    let cornerRadius = Layout.radius + Layout.padding
+    let cornerRadius = Menu.radius + Menu.padding
     var treeSize: CGSize { treeVm.treeBounds.size }
     var canopyAlpha: CGFloat { treeVm.treeState == .canopy ? 0.5 : 0 }
 

@@ -33,7 +33,7 @@ public class PanelVm {
         } else {
             // the last node always is in the same place on a panel
             // so, calculate the spacing of the prior nodes
-            let nodeLen = Layout.diameter2 // node length
+            let nodeLen = Menu.diameter2 // node length
             let panelLen = (branchVm.treeVm.menuType.vertical
                             ? outerPanel.height
                             : outerPanel.width)
@@ -72,7 +72,7 @@ public class PanelVm {
         }
     }
 
-    var thumbRadius: Double { Double(Layout.radius - 1) }
+    var thumbRadius: Double { Double(Menu.radius - 1) }
 
     func thumbDiameter(_ type: LeafRunwayType) -> Double {
         switch type {
@@ -102,12 +102,12 @@ public class PanelVm {
     }
 
     private var innerSize: CGSize {
-        let result =  aspectSz * Layout.diameter
+        let result =  aspectSz * Menu.diameter
         return result
     }
 
     func innerPanel(_ runwayType: LeafRunwayType) -> CGSize {
-        let d = Layout.diameter
+        let d = Menu.diameter
         switch runwayType {
 
         case .none       : return aspectSz * d
@@ -126,8 +126,8 @@ public class PanelVm {
 
     var outerPanel: CGSize {
 
-        let pad = Layout.padding2
-        let dia = Layout.diameter2
+        let pad = Menu.padding2
+        let dia = Menu.diameter2
 
         switch nodeType {
 
@@ -165,10 +165,10 @@ public class PanelVm {
 
             // title is always on top
             return CGSize(width:  innerSize.width,
-                          height: Layout.diameter - 8)
+                          height: Menu.diameter - 8)
         } else {
-            return CGSize(width:  Layout.diameter - 8,
-                          height: Layout.diameter - 8)
+            return CGSize(width:  Menu.diameter - 8,
+                          height: Menu.diameter - 8)
         }
     }
 

@@ -9,8 +9,8 @@ struct LeafBezelView<Content: View>: View {
     let content: (() -> Content)?
     
     var size: CGSize { leafVm.panelVm.innerPanel(runwayType) }
-    var strokeColor: Color   { Layout.strokeColor(leafVm.spotlight) }
-    var strokeWidth: CGFloat { Layout.strokeWidth(leafVm.spotlight) }
+    var strokeColor: Color   { Menu.strokeColor(leafVm.spotlight) }
+    var strokeWidth: CGFloat { Menu.strokeWidth(leafVm.spotlight) }
 
     init(_ leafVm: LeafVm,
          _ runwayType: LeafRunwayType,
@@ -22,9 +22,9 @@ struct LeafBezelView<Content: View>: View {
     }
     var body: some View {
         GeometryReader { geo in
-            RoundedRectangle(cornerRadius: Layout.cornerRadius)
-                .fill(Layout.panelFill)
-                .overlay(RoundedRectangle(cornerRadius: Layout.cornerRadius)
+            RoundedRectangle(cornerRadius: Menu.cornerRadius)
+                .fill(Menu.panelFill)
+                .overlay(RoundedRectangle(cornerRadius: Menu.cornerRadius)
                     .stroke(strokeColor, lineWidth: strokeWidth))
                 .frame(width: size.width, height: size.height)
             content?()

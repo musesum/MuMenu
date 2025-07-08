@@ -43,7 +43,7 @@ fileprivate struct Title: View {
     var title      : String  { nodeSpotVm?.treeTitle() ?? "" }
 
     var size: CGSize { CGSize(width: branchVm.boundsNow.width,
-                              height: Layout.radius)
+                              height: Menu.radius)
     }
     var opacity: CGFloat {
         branchVm.treeVm.depthShown <= 1 ? 0 :

@@ -99,7 +99,7 @@ public class NodeVm: Identifiable, ObservableObject {
     }
     
     func contains(_ point: CGPoint) -> Bool {
-        center.distance(point) < (Layout.radius + Layout.padding)
+        center.distance(point) < (Menu.radius + Menu.padding)
     }
     
     /// evenly space branches leading up to current branch's position

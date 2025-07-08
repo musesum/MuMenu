@@ -6,7 +6,7 @@ func Animate(_ sec: TimeInterval) -> Animation {
     .easeInOut(duration: sec)
 }
 
-struct Layout {
+public enum Menu {
 
     static let diameter: CGFloat = 40
     static let diameter2: CGFloat = 48 // always diameter + padding2
@@ -15,7 +15,6 @@ struct Layout {
     static let padding2: CGFloat = 8 // always padding * 2
     static var cornerRadius: CGFloat { radius + padding }
     static let labelSize = CGSize(width: diameter+8, height: diameter-8)
-
     /// distance from center while inside node
     static let insideNode: CGFloat = 24
 
@@ -25,7 +24,25 @@ struct Layout {
     static let panelFill = Color.clear //?? Color(white: 0.01, opacity: 0.15)
     static func togColor(_ spot: Bool) -> Color { return spot ? .white : Color(white: 0.4) }
 
-    /// quick animatin for fla
+
+#if os(visionOS) || os(iPadOS)
+    public static let margin = CGFloat(16)
+    public static func offset(_ menuCorner: MenuCorner) -> CGSize {
+        switch menuCorner {
+        case .NW: return CGSize(width:  margin, height:  margin)
+        case .NE: return CGSize(width: -margin, height:  margin)
+        case .SW: return CGSize(width:  margin, height: -margin)
+        case .SE: return CGSize(width: -margin, height: -margin)
+        case .none: return .zero
+        }
+    }
+#else
+    public static func offset(_ menuCorner: MenuCorner) -> CGSize {
+        .zero
+    }
+#endif
+
+    /// quick animation for fla
     static var flashAnim: Animation { .easeInOut(duration: 0.20) }
 
     static func strokeColor(_ high: Bool) -> Color {

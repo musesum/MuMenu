@@ -158,8 +158,8 @@ public class LeafRunways {
     /// XY large; x,y,z ... small
     func thumbRadius(_ type: LeafRunwayType) -> Double {
         switch type {
-        case .runX,.runY,.runZ : return Double(Layout.radius / 2 - 1)
-        default                : return Double(Layout.radius - 1)
+        case .runX,.runY,.runZ : return Double(Menu.radius / 2 - 1)
+        default                : return Double(Menu.radius - 1)
         }
     }
     public func thumb(_ type: LeafRunwayType, contains point: CGPoint) -> Bool {
