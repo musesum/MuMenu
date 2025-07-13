@@ -14,11 +14,11 @@ struct IconView: View {
     var named: String { nodeVm.menuTree.icon.icoName }
 
     var spotlight: Bool { nodeVm.spotlight }
-    var fillColor = Color(white: 0.25)
+    var fillColor = Color(white: 0).opacity(0.62)
     var strokeColor: Color { spotlight ? .white : Color(white: 0.7) }
-    var strokeWidth: CGFloat { spotlight ? 3.0 : 1.0 }
-    
-    init(_ nodeVm: NodeVm, 
+    var strokeWidth: CGFloat { spotlight ? 5.0 : 1.0 }
+
+    init(_ nodeVm: NodeVm,
          _ icon: Icon,
          _ runwayType: LeafRunwayType) {
         self.nodeVm = nodeVm
@@ -28,15 +28,19 @@ struct IconView: View {
 
     var body: some View {
         ZStack {
+
             if icon.iconType != .cursor {
+
                 RoundedRectangle(cornerRadius: Menu.cornerRadius)
                     .fill(fillColor)
                     .overlay(RoundedRectangle(cornerRadius:  Menu.cornerRadius)
                         .stroke(strokeColor, lineWidth: strokeWidth)
                         .background(.clear)
                     )
-                    .shadow(color: .black, radius: 1)
+
                     .hoverEffect()
+                    .cornerRadius(Menu.cornerRadius)
+
             }
             switch runwayType {
             case .runX, .runY, .runU, .runV, .runW, .runZ, .runS, .runT:
@@ -76,16 +80,9 @@ struct IconView: View {
                     }
                 case .symbol:
 
-                    if colorScheme == .dark {
-                        Image(systemName: nodeVm.menuTree.icon.icoName)
-                            .scaledToFit()
-                            .padding(1)
-                    } else {
-                        Image(systemName: nodeVm.menuTree.icon.icoName)
-                            .colorInvert()
-                            .scaledToFit()
-                            .padding(1)
-                    }
+                    Image(systemName: nodeVm.menuTree.icon.icoName)
+                        .scaledToFit()
+                        .padding(1)
                 }
             }
         }
@@ -99,12 +96,13 @@ private struct IconTitleView: View {
     var color: Color
 
     var body: some View {
-        Text(title)
-            .scaledToFit()
-            .padding(1)
-            .minimumScaleFactor(0.01)
-            .foregroundColor(color)
-            .animation(Menu.flashAnim, value: color)
+
+            Text(title)
+                .scaledToFit()
+                .padding(1)
+                .minimumScaleFactor(0.01)
+                .foregroundColor(color)
+                .animation(Menu.flashAnim, value: color)
     }
 }
 
@@ -132,12 +130,12 @@ private struct IconSideView: View {
         self.color = color
     }
     var body: some View {
-        Text(title)
-            .scaledToFit()
-            .padding(1)
-            .minimumScaleFactor(0.01)
-            .foregroundColor(color)
-            .animation(Menu.flashAnim, value: color)
-            .shadow(color: .black, radius: 1)
+            Text(title)
+                .scaledToFit()
+                .padding(1)
+                .minimumScaleFactor(0.01)
+                .foregroundColor(color)
+                .animation(Menu.flashAnim, value: color)
+                .shadow(color: .black, radius: 1)
     }
 }

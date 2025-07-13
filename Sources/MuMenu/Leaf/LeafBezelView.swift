@@ -23,7 +23,8 @@ struct LeafBezelView<Content: View>: View {
     var body: some View {
         GeometryReader { geo in
             RoundedRectangle(cornerRadius: Menu.cornerRadius)
-                .fill(Menu.panelFill)
+                .fill(.ultraThinMaterial)
+                .opacity(0.62)
                 .overlay(RoundedRectangle(cornerRadius: Menu.cornerRadius)
                     .stroke(strokeColor, lineWidth: strokeWidth))
                 .frame(width: size.width, height: size.height)

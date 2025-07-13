@@ -79,9 +79,9 @@ fileprivate struct Grid: View {
     var opacity: CGFloat {
         branchVm.treeVm.depthShown == 0 ? 0 :
         branchVm.show ? branchVm.opacity : 0 }
-
-    var outerWidth: CGFloat { branchVm.panelVm.outerPanel.width }
-    var outerHeight: CGFloat { branchVm.panelVm.outerPanel.height }
+    var outerPanel: CGSize { branchVm.panelVm.outerPanel }
+    var outerWidth: CGFloat { outerPanel.width }
+    var outerHeight: CGFloat { outerPanel.height }
     var spacing: CGFloat { panelVm.spacing }
 
     init(_ branchVm: BranchVm) {
@@ -91,12 +91,33 @@ fileprivate struct Grid: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                BranchPanelView(spotlight: spotlight)
+#if os(visionOS)
+                BranchPanelView()
                 LazyVGrid(columns: gridColumns, spacing: 0) {
                     ForEach(branchVm.nodeVms) {
                         NodeView(nodeVm: $0)
                     }
                 }
+#else
+                if #available(iOS 26.0, *) {
+                    //GlassEffectContainer {
+                        BranchPanelView()
+                            .cornerRadius(Menu.cornerRadius)
+                    //}
+                    LazyVGrid(columns: gridColumns, spacing: 0) {
+                        ForEach(branchVm.nodeVms) {
+                            NodeView(nodeVm: $0)
+                        }
+                    }
+                } else {
+                    BranchPanelView()
+                    LazyVGrid(columns: gridColumns, spacing: 0) {
+                        ForEach(branchVm.nodeVms) {
+                            NodeView(nodeVm: $0)
+                        }
+                    }
+                }
+#endif
             }
             .onAppear { branchVm.updateBounds(geo.frame(in: .global)) }
             .onChange(of: geo.frame(in: .global)) { branchVm.updateBounds($1) }
@@ -106,6 +127,8 @@ fileprivate struct Grid: View {
         .opacity(opacity)
         .animation(Animate(0.25), value: opacity)
         .animation(Animate(0.50), value: branchVm.branchShift )
+        .background(.clear) //.....
+
     }
 }
 
@@ -131,7 +154,8 @@ fileprivate struct Body_: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                BranchPanelView(spotlight: spotlight)
+                #if os(visionOS)
+                BranchPanelView()
                 VStack {
                     BranchAxisView(panelVm) {
                         ForEach(branchVm.nodeVms) {
@@ -139,6 +163,32 @@ fileprivate struct Body_: View {
                         }
                     }
                 }
+                .cornerRadius(Menu.cornerRadius)
+                #else
+                if #available(iOS 26.0, *) {
+                    //GlassEffectContainer {
+                        BranchPanelView()
+                            .cornerRadius(Menu.cornerRadius)
+                    //}
+                    VStack {
+                        BranchAxisView(panelVm) {
+                            ForEach(branchVm.nodeVms) {
+                                NodeView(nodeVm: $0)
+                            }
+                        }
+                    }
+
+                } else {
+                    BranchPanelView()
+                    VStack {
+                        BranchAxisView(panelVm) {
+                            ForEach(branchVm.nodeVms) {
+                                NodeView(nodeVm: $0)
+                            }
+                        }
+                    }
+                }
+                #endif
             }
             .onAppear { branchVm.updateBounds(geo.frame(in: .global)) }
             .onChange(of: geo.frame(in: .global)) { branchVm.updateBounds($1) }
@@ -163,11 +213,11 @@ struct BranchAxisView<Content: View>: View {
     }
 
     var body: some View {
-        
+
         // even though .vxy has only one inner view, a
         // .horizonal scroll view shifts and truncates the inner views
         // so, perhaps there is a phantom space for indicators?
-        
+
         if panelVm.menuType.vertical ||
             [.xy, .xyz, .arch, .peer].contains(panelVm.nodeType) {
 

@@ -5,8 +5,7 @@ import SwiftUI
 /// SwiftUI DragGesture to navigate menu
 
 public struct MenuRootView: View {
-
-    @GestureState private var touchXY: CGPoint = .zero
+        @GestureState private var touchXY: CGPoint = .zero
     let menuVm: MenuVm
     var cornerVm: CornerVm { menuVm.rootVm.cornerVm }
     var menuCorner: MenuCorner { cornerVm.menuType.corner }
@@ -26,6 +25,8 @@ public struct MenuRootView: View {
                     .frame(width: geo.size.width, height: 18, alignment: .top)
                 RootView()
                     .environmentObject(menuVm.rootVm)
+                    .environment(\.colorScheme, .dark)
+
                     .onAppear { geoFrame(geo) }
                     .onChange(of: geo.frame(in: .global)) { geoFrame(geo) }
                     .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .global)

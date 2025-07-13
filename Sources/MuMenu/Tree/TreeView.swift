@@ -23,10 +23,9 @@ struct TreeView: View {
                             : treeVm.branchVms) {
 
                         BranchView(branchVm: $0)
-                        .zIndex($0.zindex)
+                            //..... .zIndex($0.zindex)
                     }
                 }
-                .opacity(treeOpacity)
             } else {
                 VStack(alignment: menuType.hAlign) {
                     ForEach(menuType.south
@@ -34,12 +33,13 @@ struct TreeView: View {
                             : treeVm.branchVms) {
 
                         BranchView(branchVm: $0)
-                        .zIndex($0.zindex)
+                        //..... .zIndex($0.zindex)
                     }
                 }
-                .opacity(treeOpacity)
+
             }
         }
+        .opacity(treeOpacity)
         .animation(Animate(treeAnimation), value: treeOpacity)
         .offset(treeVm.treeOffset)
     }
