@@ -20,9 +20,7 @@ public struct MenuRootView: View {
 
     public var body: some View {
         GeometryReader { geo in
-            ZStack {
-                StatusView()
-                    .frame(width: geo.size.width, height: 18, alignment: .top)
+            VStack {
                 RootView()
                     .environmentObject(menuVm.rootVm)
                     .environment(\.colorScheme, .dark)
@@ -33,6 +31,7 @@ public struct MenuRootView: View {
                         .updating($touchXY) { (value, touchXY, _) in touchXY = value.location })
                     .onChange(of: touchXY) { cornerVm.updateDragXY($1) }
                     .offset(Menu.offset(menuCorner))
+                //StatusView().frame(width: geo.size.width, height: 18, alignment: .top)
             }
         }
 

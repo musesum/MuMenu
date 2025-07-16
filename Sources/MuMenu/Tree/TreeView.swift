@@ -5,10 +5,16 @@ import SwiftUI
 struct TreeView: View {
 
     @ObservedObject var treeVm: TreeVm
+    @ObservedObject var showState: ShowState
 
     var menuType: MenuType { treeVm.rootVm.cornerType }
-    var treeOpacity: CGFloat { treeVm.treeState == .showTree ? 1 : 0 }
-    var treeAnimation: CGFloat { treeVm.treeState == .showTree ? 0.25 : 1.0 }
+    var treeOpacity: CGFloat { treeVm.showState.opacity }
+    var treeAnimation: Animation { treeVm.showState.animation }
+    
+    init(treeVm: TreeVm) {
+        self.treeVm = treeVm
+        self.showState = treeVm.showState
+    }
 
     var body: some View {
 
@@ -23,7 +29,6 @@ struct TreeView: View {
                             : treeVm.branchVms) {
 
                         BranchView(branchVm: $0)
-                            //..... .zIndex($0.zindex)
                     }
                 }
             } else {
@@ -33,14 +38,12 @@ struct TreeView: View {
                             : treeVm.branchVms) {
 
                         BranchView(branchVm: $0)
-                        //..... .zIndex($0.zindex)
                     }
                 }
-
             }
         }
         .opacity(treeOpacity)
-        .animation(Animate(treeAnimation), value: treeOpacity)
+        .animation(treeAnimation, value: treeOpacity)
         .offset(treeVm.treeOffset)
     }
 }
@@ -52,12 +55,12 @@ struct TreeCanopyView: View {
 
     let cornerRadius = Menu.radius + Menu.padding
     var treeSize: CGSize { treeVm.treeBounds.size }
-    var canopyAlpha: CGFloat { treeVm.treeState == .canopy ? 0.5 : 0 }
+    var canopyAlpha: CGFloat { 0 } //treeVm.showState.state == .showing ? 0.01 : 0 }
 
     var body: some View {
 
         Rectangle()
-            .background(.thinMaterial)
+            .background(.clear)
             .cornerRadius(cornerRadius)
             .opacity(canopyAlpha)
             .frame(width: treeSize.width, height: treeSize.height)

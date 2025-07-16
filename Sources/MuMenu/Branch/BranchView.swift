@@ -100,10 +100,8 @@ fileprivate struct Grid: View {
                 }
 #else
                 if #available(iOS 26.0, *) {
-                    //GlassEffectContainer {
-                        BranchPanelView()
-                            .cornerRadius(Menu.cornerRadius)
-                    //}
+                    BranchPanelView()
+                        .cornerRadius(Menu.cornerRadius)
                     LazyVGrid(columns: gridColumns, spacing: 0) {
                         ForEach(branchVm.nodeVms) {
                             NodeView(nodeVm: $0)
@@ -126,7 +124,7 @@ fileprivate struct Grid: View {
         .offset(branchVm.branchShift)
         .opacity(opacity)
         .animation(Animate(0.25), value: opacity)
-        .animation(Animate(0.50), value: branchVm.branchShift )
+        //animation(Animate(0.50), value: branchVm.branchShift )
         .background(.clear) //.....
 
     }
@@ -166,10 +164,8 @@ fileprivate struct Body_: View {
                 .cornerRadius(Menu.cornerRadius)
                 #else
                 if #available(iOS 26.0, *) {
-                    //GlassEffectContainer {
-                        BranchPanelView()
-                            .cornerRadius(Menu.cornerRadius)
-                    //}
+                    BranchPanelView()
+                        .cornerRadius(Menu.cornerRadius)
                     VStack {
                         BranchAxisView(panelVm) {
                             ForEach(branchVm.nodeVms) {

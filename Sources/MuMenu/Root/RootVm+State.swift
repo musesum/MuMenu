@@ -43,7 +43,7 @@ extension RootVm { // + State
 
         func logRoot(_ msg: String = "",_ t: String = "") {
 
-            NoTimeLog(touchType.symbol, interval: 0) {
+            TimeLog(touchType.symbol, interval: 0) {
                 let touchType = self.touchType
                 let touchState = self.touchState
                 let phase = touchState.phase
@@ -131,17 +131,13 @@ extension RootVm { // + State
                         touchType = .root
 
                         let isShowing = viewOps.hasAny([.branch,.trunks])
-                        if  !isShowing { showBranches() }
+                        if  !isShowing { showBranches(fromRemote) }
                     }
                 }
             case 1: // ᴱ¹ end tap once
                 touchType = .none
-                let wasShown = beginViewOps.hasAny([.branch,.trunks])
-                if  wasShown { hideBranches(.root, fromRemote) }
-                else         { showBranches() }
+                toggleBranches()
             case 2: // ᴱ² end tap twice
-                let wasShown = beginViewOps.hasAny([.branch,.trunks])
-                if  wasShown { showBranches() }
                 nodeSpotVm?.updateSpotNodes()
             case 4: // ᴱ⁴ tap 4 times to clear buffers
                 Panic.reset()
@@ -223,7 +219,7 @@ extension RootVm { // + State
                 treeSpotVm?.shiftNearest()
                 touchType = .root
             } else if cornerVm.touchingRoot(touchNow) {
-                showTrunks()
+                showTrunks(fromRemote)
                 touchState.beginPoint(touchNow)
                 touchType = .root
             } else {
@@ -236,34 +232,12 @@ extension RootVm { // + State
         func editLeaf(_ nodeVm: NodeVm?) {
             guard let leafVm = nodeVm as? LeafVm else { return }
             touchType = .leaf
-            
             leafVm.touchLeaf(touchState, Visitor(0, .user))
             if leafVm.nodeType == .tog {
                 // leave spot on of single node button
             } else {
                 leafVm.spot(touchState.phase.done ? .off : .on)
                 leafVm.branchSpot(.off)
-            }
-        }
-
-        func showTrunks() {
-            if treeVms.count == 1 {
-                showFirstTree(fromRemote: true)
-            } else {
-                for treeVm in treeVms {
-                    treeVm.showTree(depth: 1, "trunk", fromRemote)
-                }
-                treeSpotVm = nil
-                nodeSpotVm = nil
-                viewOps = [.root, .trunks]
-            }
-        }
-        func showBranches() {
-            if let treeSpotVm {
-                treeSpotVm.showTree(depth: 9, "spot+", fromRemote)
-                viewOps = [.root, .branch]
-            } else {
-                showTrunks()
             }
         }
     }

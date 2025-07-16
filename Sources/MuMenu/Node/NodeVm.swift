@@ -115,7 +115,7 @@ public class NodeVm: Identifiable, ObservableObject {
 
     /// was touchedOrigin()
     func updateNodeValue(_ visit: Visitor = Visitor(0,.user)) {
-        rootVm.endAutoHide(false)
+        rootVm.showTrees(/* fromRemote */ false)
 
         switch nodeType {
         case .xy, .xyz  : update(withPrior: true)

@@ -1,25 +1,26 @@
 // created by musesum on 6/13/25
-
+import MuFlo
 extension RootVm { // touch
     internal func touchBegin(_ touchState: TouchState, _ fromRemote: Bool) {
 
         self.touchState = touchState
         beginViewOps = viewOps
+        NoDebugLog { P("beginViewOps: \(self.beginViewOps.description)") }
         updateRoot(fromRemote)
         updateSpot(nodeSpotVm, fromRemote)
         touchTypeBegin = touchType
-        endAutoHide(fromRemote)
-        reshowTree(fromRemote)
+        showTrees(fromRemote)
     }
     internal func touchMoved(_ touchState: TouchState, _ fromRemote: Bool) {
 
         self.touchState = touchState
+        showTrees(fromRemote)
         updateRoot(fromRemote)
     }
     internal func touchEnded(_ touchState: TouchState, _ fromRemote: Bool) {
 
         self.touchState = touchState
-        startAutoHide(fromRemote)
+        startAutoFades()
         updateRoot(fromRemote)
 
         /// turn off spotlight for leaf after edit

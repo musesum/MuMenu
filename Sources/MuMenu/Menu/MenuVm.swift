@@ -35,7 +35,7 @@ open class MenuVm {
         treeVm.addBranchVm(branchVm)
         rootVm.addTreeVm(treeVm)
         rootVm.showFirstTree()
-        rootVm.startAutoHide()
+        rootVm.startAutoFades()
     }
     func makeMenuTree(_ floName: String) -> MenuTree? {
 

@@ -30,11 +30,6 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
     public var cornerType: MenuType /// corner where root begins, ex: `[down,left]`
     var treeVms = [TreeVm]() /// vertical or horizontal stack of branches
     var treeSpotVm: TreeVm? /// most recently used tree
-
-    var autoHideMenu = true
-    var autoHideTimer: Timer?
-    var autoHideInterval = TimeInterval(12)
-
     var touchState = TouchState()
 
     public var nodeSpotVm: NodeVm?   /// current last touched or hovered node
@@ -58,24 +53,12 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
         updateTreeOffsets()
     }
 
-    func reshowTree(_ fromRemote: Bool) {
-        for treeVm in treeVms {
-            treeVm.reshowTree(fromRemote)
-        }
-    }
-    func hideBranches(_ touchType: TouchType, _ fromRemote: Bool) {
-        autoHideTimer?.invalidate()
-        for treeVm in treeVms {
-            treeVm.hideTree(touchType, fromRemote)
-        }
-        viewOps = [.root]
-    }
-    
+
     func showFirstTree(fromRemote: Bool = false) {
         if let treeVm = treeVms.first {
             treeSpotVm = treeVm
             treeVm.showTree(depth: 9, "first", fromRemote)
-            viewOps = [.root,.branch]
+            viewOps = [.root]
         }
     }
 

@@ -2,9 +2,104 @@
 import SwiftUI
 import MuFlo
 
-enum TreeState: String { case hideTree, canopy, showTree }
+class ShowState: ObservableObject, @unchecked Sendable {
+    @Published private var state: State = .showing
 
-public class TreeVm: Identifiable, Equatable, ObservableObject {
+    private enum State: String {
+        case hidden, fadeOut, showing
+    }
+    var opacity: CGFloat {
+        switch state {
+        case .hidden  : return 0.00
+        case .showing : return 1.00
+        case .fadeOut : return 0.05
+        }
+    }
+
+    let autoFadeInterval: TimeInterval = 4.0
+    let fadeOutInterval: TimeInterval = 8.0
+    let animInterval: TimeInterval = 0.25
+    let tapInterval: TimeInterval = 0.5
+
+    var animation: Animation {
+        switch state {
+        case .hidden  : return Animate(animInterval)
+        case .showing : return Animate(animInterval)
+        case .fadeOut : return Animate(fadeOutInterval)
+        }
+    }
+
+    var autoFadeTimer: Timer?
+    var fadeOutTimer: Timer?
+    var fadeInTimer: Timer?
+    var showStartTime: TimeInterval = 0.0
+
+    func clearTimers() {
+        autoFadeTimer?.invalidate()
+        fadeInTimer?.invalidate()
+        fadeOutTimer?.invalidate()
+    }
+
+    public func startAutoFade() {
+
+        clearTimers()
+        PrintLog("\(#function) from state: \(state.rawValue)" )
+        if state == .hidden {
+            print("??")
+        }
+
+        autoFadeTimer = Timer.scheduledTimer(
+            withTimeInterval: autoFadeInterval,
+            repeats: false) { _ in
+
+                self.fadeOut()
+            }
+    }
+    func fadeOut() {
+        clearTimers()
+        PrintLog("\(#function) from state: \(state.rawValue)" )
+        state = .fadeOut
+
+        fadeOutTimer = Timer.scheduledTimer(
+            withTimeInterval: fadeOutInterval,
+            repeats: false) {_ in
+
+                self.hideTree()
+            }
+    }
+    func hideTree() {
+        clearTimers()
+        PrintLog("\(#function) from state: \(state.rawValue)" )
+        state = .hidden
+    }
+
+    func showTree() {
+        clearTimers()
+        PrintLog("\(#function) from state: \(state.rawValue)" )
+        if state == .hidden {
+            showStartTime = Date().timeIntervalSince1970
+        }
+        state = .showing
+        startAutoFade()
+    }
+
+    func toggleTree() {
+        let timeNow = Date().timeIntervalSince1970
+        let timeElapsed: TimeInterval = timeNow - showStartTime
+        if timeElapsed < tapInterval {
+            PrintLog("\(#function) timeElapsed \(timeElapsed.digits(2)) < fadeInInterval now state: \(state.rawValue)" )
+            return //.....
+        }
+
+        switch state {
+        case .showing, .fadeOut : hideTree()
+        case .hidden            : showTree()
+        }
+        PrintLog("\(#function) timeElapsed \(timeElapsed.digits(2)) state: \(state.rawValue)" )
+    }
+}
+
+public class TreeVm: Identifiable, Equatable, ObservableObject, @unchecked Sendable {
 
     public static func == (lhs: TreeVm, rhs: TreeVm) -> Bool { return lhs.id == rhs.id }
     nonisolated(unsafe) public static var sideAxis = [String: TreeVm]()
@@ -17,10 +112,7 @@ public class TreeVm: Identifiable, Equatable, ObservableObject {
     @Published var treeBounds: CGRect = .zero
     var treeBoundsPad: CGRect = .zero
 
-    @Published var treeState: TreeState = .showTree
-    var hideAnimationTimer: Timer?
-
-    @Published var interval: TimeInterval = 2.0
+    @Published var showState = ShowState()
 
     var rootVm: RootVm
     var branchSpotVm: BranchVm?
