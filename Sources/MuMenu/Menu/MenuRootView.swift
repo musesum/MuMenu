@@ -5,11 +5,11 @@ import SwiftUI
 /// SwiftUI DragGesture to navigate menu
 
 public struct MenuRootView: View {
-        @GestureState private var touchXY: CGPoint = .zero
+    @GestureState private var touchXY: CGPoint = .zero
     let menuVm: MenuVm
     var cornerVm: CornerVm { menuVm.rootVm.cornerVm }
     var menuCorner: MenuCorner { cornerVm.menuType.corner }
-
+    
     public init(menuVm: MenuVm) {
         self.menuVm = menuVm
     }

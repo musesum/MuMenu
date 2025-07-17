@@ -4,8 +4,8 @@ import SwiftUI
 import MuPeers
 import MuFlo
 import MuVision
-
-public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
+@MainActor
+public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable {
 
     public static func == (lhs: RootVm, rhs: RootVm) -> Bool { return lhs.id == rhs.id }
     let id = Visitor.nextId()
@@ -44,20 +44,17 @@ public class RootVm: @unchecked Sendable, ObservableObject, Equatable {
         self.peers = peers
         peers.setDelegate(self, for: .menuFrame)
     }
-    deinit {
-        peers.removeDelegate(self)
-    }
+    //..... deinit { peers.removeDelegate(self) }
     public func addTreeVm(_ treeVm: TreeVm) {
         self.treeVms.append(treeVm)
         cornerVm.setRoot(self)
         updateTreeOffsets()
     }
 
-
     func showFirstTree(fromRemote: Bool = false) {
         if let treeVm = treeVms.first {
             treeSpotVm = treeVm
-            treeVm.showTree(depth: 9, "first", fromRemote)
+            treeVm.growTree(depth: 9, "first", fromRemote)
             viewOps = [.root]
         }
     }

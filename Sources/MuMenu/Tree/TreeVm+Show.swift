@@ -6,14 +6,14 @@ import MuFlo // logging
 
 extension TreeVm { // +Show
 
-    func showTree(start: Int? = nil,
+    func growTree(start: Int? = nil,
                   depth: Int,
                   _ via: String,
                   _ fromRemote: Bool) {
 
-        DebugLog { P("𖢞 \(self.menuType.icon) \(via):\(depth)") }
+        NoDebugLog { P("𖢞 \(self.menuType.icon) \(via):\(depth)") }
 
-        showState.showTree()
+        treeShow.showTree()
 
 
         let nextIndex = start ?? startIndex

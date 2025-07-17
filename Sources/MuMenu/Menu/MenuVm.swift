@@ -5,6 +5,7 @@ import MuFlo
 import MuPeers
 import MuVision
 
+@MainActor
 open class MenuVm {
 
     let id = Visitor.nextId()
@@ -136,7 +137,7 @@ open class MenuVm {
     }
 
 }
-extension MenuVm: Hashable {
+extension MenuVm: @MainActor Hashable {
 
     public static func == (lhs: MenuVm, rhs: MenuVm) -> Bool { lhs.id == rhs.id }
     public func hash(into hasher: inout Hasher) { hasher.combine(id) }

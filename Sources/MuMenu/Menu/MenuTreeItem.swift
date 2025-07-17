@@ -1,7 +1,7 @@
 // created by musesum on 6/27/25
 
 import Foundation
-
+@MainActor
 public struct MenuTreeItem: Codable {
 
     public let menuType : MenuType
@@ -17,8 +17,8 @@ public struct MenuTreeItem: Codable {
         return TreeVm.sideAxis[menuType.key]
     }
 
-    func showTree(_ fromRemote: Bool) {
-        treeVm?.showTree(start: start,
+    func growTree(_ fromRemote: Bool) {
+        treeVm?.growTree(start: start,
                          depth: depth,
                          "item",fromRemote)
     }

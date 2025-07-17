@@ -15,7 +15,7 @@ open class MuMenu {
             return nil
         }
         do {
-            return try String(contentsOfFile: path) }
+            return try String(contentsOfFile: path, encoding: .utf8) }
         catch {
             PrintLog("⁉️ MuMenu:: error:\(error) loading contents of:\(path)")
         }

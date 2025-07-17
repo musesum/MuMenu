@@ -3,8 +3,8 @@
 import SwiftUI
 import MuFlo
 import MuVision
-
-public class BranchVm: Identifiable, ObservableObject {
+@MainActor
+public class BranchVm: @MainActor Identifiable, ObservableObject {
 
     static func == (lhs: BranchVm, rhs: BranchVm)  -> Bool { lhs.id == rhs.id }
     static func == (lhs: BranchVm, rhs: BranchVm?) -> Bool { lhs.id == (rhs?.id ?? -1) }

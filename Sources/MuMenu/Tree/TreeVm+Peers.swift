@@ -18,7 +18,7 @@ extension TreeVm { // + Peers
                 }
                 branchVm = stepNodeVm.nextBranchVm
                 if branchVm == nil {
-                    showTree(depth: 9, "wordPath", /*fromRemote*/ true)
+                    growTree(depth: 9, "wordPath", /*fromRemote*/ true)
                     return nodeNow ?? stepNodeVm
                 }
             }

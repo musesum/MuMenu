@@ -15,6 +15,7 @@ enum Offsetting { case none, begin, move }
 ///     1 runway for Val, horizonal x or y
 ///     3 runways for Xy, includes: xy, x, y
 ///     4 runways for Xyz, includes: xy, x, y, z
+@MainActor
 public class LeafRunways {
     /// bounds for control surface, used to determin if touch is inside control area
     private var runwayBounds = [LeafRunwayType: CGRect]()

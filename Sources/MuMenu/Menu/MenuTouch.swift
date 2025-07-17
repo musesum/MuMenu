@@ -6,6 +6,7 @@ import MuPeers
 
 nonisolated(unsafe) public var MenuTypeCornerVm = [Int: CornerVm]()
 
+@MainActor
 public class MenuTouch {
 
     nonisolated(unsafe) static var menuKey = [Int: MenuTouch]()
@@ -33,8 +34,8 @@ extension MenuTouch: CircleBufferDelegate {
                     item.cornerVm?.gotoMenuItem(item)
                 case .root:
                     if let root = item.item as? MenuRootItem {
-                        for tree in root.trees {
-                            tree.showTree(isRemote)
+                        for tree in root.treeItems {
+                            tree.growTree(isRemote)
                         }
                     }
                 default: break

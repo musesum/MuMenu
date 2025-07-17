@@ -4,6 +4,7 @@ import SwiftUI
 import MuFlo
 
 /// corner node which follows touch
+@MainActor
 @Observable public class CornerVm {
 
     var ringIconXY = CGPoint.zero /// current position

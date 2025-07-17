@@ -1,7 +1,7 @@
 //  created by musesum on 9/26/22.
 
 import SwiftUI
-
+@MainActor
 public struct MenuNodeItem: Codable, Sendable {
 
     public let type     : String
@@ -26,7 +26,7 @@ public struct MenuNodeItem: Codable, Sendable {
         #endif
     }
 }
-
+@MainActor
 public struct MenuLeafItem: Codable, Sendable {
 
     public let type      : String

@@ -3,6 +3,7 @@
 import UIKit
 import MuFlo // double buffer
 
+@MainActor
 public class TouchMenuLocal {
     
     nonisolated(unsafe) static var menuKey = [Int: TouchMenuLocal]()

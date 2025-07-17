@@ -1,29 +1,20 @@
 // created by musesum on 6/15/25
 
 import Foundation
-
+@MainActor
 public struct MenuRootItem: Codable {
 
-    public var trees    : [MenuTreeItem]
-    public var menuType : Int // MenuType.rawValue
-    public var phase    : Int // UITouch.Phase
+    public var treeItems : [MenuTreeItem]
+    public var menuType  : Int // MenuType.rawValue
+    public var phase     : Int // UITouch.Phase
 
     public init(_ rootVm: RootVm) {
-        var trees = [MenuTreeItem]()
+        var treeItems = [MenuTreeItem]()
         for treeVm in rootVm.treeVms {
-            trees.append(MenuTreeItem(treeVm))
+            treeItems.append(MenuTreeItem(treeVm))
         }
-        self.trees = trees
+        self.treeItems = treeItems
         self.menuType = rootVm.cornerType.rawValue
         self.phase = rootVm.touchState.phase.rawValue
-    }
-
-    enum CodingKeys: String, CodingKey { case trees, menuType, phase }
-
-    public init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        try trees    = c.decode([MenuTreeItem].self, forKey: .trees )
-        try menuType = c.decode(Int.self, forKey: .menuType)
-        try phase    = c.decode(Int.self, forKey: .phase )
     }
 }

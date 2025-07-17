@@ -4,6 +4,8 @@ import SwiftUI
 
 struct BranchPanelView: View {
 
+    @EnvironmentObject var menuState: MenuState
+
     var body: some View {
 
 #if os(visionOS)
@@ -23,7 +25,7 @@ struct BranchPanelView: View {
             }
         }
 #else
-        if #available(iOS 26.0, *) {
+        if #available(iOS 26.0, *), menuState.glass {
             GeometryReader { geo in
                 Rectangle()
                     .background(.black)

@@ -43,7 +43,7 @@ extension RootVm { // + State
 
         func logRoot(_ msg: String = "",_ t: String = "") {
 
-            TimeLog(touchType.symbol, interval: 0) {
+            NoTimeLog(touchType.symbol, interval: 0) {
                 let touchType = self.touchType
                 let touchState = self.touchState
                 let phase = touchState.phase
@@ -102,7 +102,7 @@ extension RootVm { // + State
             guard let nodeSpotVm else { return false}
             if nodeSpotVm.contains(touchNow) {
                 touchType = .node
-                treeSpotVm?.showTree(depth: 9, "hoverNode" + "+", fromRemote)
+                treeSpotVm?.growTree(depth: 9, "hoverNode" + "+", fromRemote)
                 if touchState.touchEndedCount == 2 {
                     touchType = .root
                     nodeSpotVm.updateSpotNodes()
@@ -180,9 +180,9 @@ extension RootVm { // + State
 
             for treeVm in treeVms {
                 if treeVm == treeSpotVm {
-                    treeVm.showTree(depth: 9, via + "+", fromRemote)
+                    treeVm.growTree(depth: 9, via + "+", fromRemote)
                 } else {
-                    treeVm.showTree(depth: 0, via + "-", fromRemote)
+                    treeVm.growTree(depth: 0, via + "-", fromRemote)
                 }
             }
             updateSpot(nearestNode, fromRemote)
@@ -209,7 +209,7 @@ extension RootVm { // + State
         func hoverSpace() {
             touchType = .space
             if let leafVm = nodeSpotVm as? LeafVm {
-                leafVm.branchVm.treeVm.showTree(start: 0, depth: 9, "space", fromRemote)
+                leafVm.branchVm.treeVm.growTree(start: 0, depth: 9, "space", fromRemote)
                 viewOps = [.root, .branch]
             }
         }

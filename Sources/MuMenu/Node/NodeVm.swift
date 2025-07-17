@@ -4,6 +4,7 @@ import SwiftUI
 import MuFlo // strHash
 import MuVision // Chiral
 
+@MainActor
 public class NodeVm: Identifiable, ObservableObject {
 
     public let menuTree: MenuTree /// maybe shared on other branches
@@ -110,6 +111,7 @@ public class NodeVm: Identifiable, ObservableObject {
     func refreshView() {
 
         refresh += 1 // animated tween via published edit var
+        NoDebugLog { P("refreshView()") } //.....
         branchVm.show = branchVm.show
     }
 
@@ -168,7 +170,7 @@ public class NodeVm: Identifiable, ObservableObject {
     }
 }
 
-extension NodeVm: Equatable {
+extension NodeVm: @MainActor Equatable {
     public static func == (lhs: NodeVm, rhs: NodeVm) -> Bool {
         return lhs.nodeHash == rhs.nodeHash
     }

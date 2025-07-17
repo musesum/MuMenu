@@ -31,7 +31,7 @@ struct NodeView: View {
     }
 }
 
-extension NodeVm: Hashable {
+extension NodeVm: @MainActor Hashable {
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(nodeHash)

@@ -5,7 +5,7 @@ import UIKit
 import MuPeers
 
 
-extension RootVm: PeersDelegate {
+extension RootVm: @MainActor PeersDelegate {
 
     public func didChange() {}
 

@@ -99,20 +99,11 @@ fileprivate struct Grid: View {
                     }
                 }
 #else
-                if #available(iOS 26.0, *) {
-                    BranchPanelView()
-                        .cornerRadius(Menu.cornerRadius)
-                    LazyVGrid(columns: gridColumns, spacing: 0) {
-                        ForEach(branchVm.nodeVms) {
-                            NodeView(nodeVm: $0)
-                        }
-                    }
-                } else {
-                    BranchPanelView()
-                    LazyVGrid(columns: gridColumns, spacing: 0) {
-                        ForEach(branchVm.nodeVms) {
-                            NodeView(nodeVm: $0)
-                        }
+                BranchPanelView()
+                    .cornerRadius(Menu.cornerRadius)
+                LazyVGrid(columns: gridColumns, spacing: 0) {
+                    ForEach(branchVm.nodeVms) {
+                        NodeView(nodeVm: $0)
                     }
                 }
 #endif
@@ -124,9 +115,6 @@ fileprivate struct Grid: View {
         .offset(branchVm.branchShift)
         .opacity(opacity)
         .animation(Animate(0.25), value: opacity)
-        //animation(Animate(0.50), value: branchVm.branchShift )
-        .background(.clear) //.....
-
     }
 }
 
@@ -163,24 +151,13 @@ fileprivate struct Body_: View {
                 }
                 .cornerRadius(Menu.cornerRadius)
                 #else
-                if #available(iOS 26.0, *) {
-                    BranchPanelView()
-                        .cornerRadius(Menu.cornerRadius)
-                    VStack {
-                        BranchAxisView(panelVm) {
-                            ForEach(branchVm.nodeVms) {
-                                NodeView(nodeVm: $0)
-                            }
-                        }
-                    }
 
-                } else {
-                    BranchPanelView()
-                    VStack {
-                        BranchAxisView(panelVm) {
-                            ForEach(branchVm.nodeVms) {
-                                NodeView(nodeVm: $0)
-                            }
+                BranchPanelView()
+                    .cornerRadius(Menu.cornerRadius)
+                VStack {
+                    BranchAxisView(panelVm) {
+                        ForEach(branchVm.nodeVms) {
+                            NodeView(nodeVm: $0)
                         }
                     }
                 }
@@ -210,9 +187,7 @@ struct BranchAxisView<Content: View>: View {
 
     var body: some View {
 
-        // even though .vxy has only one inner view, a
-        // .horizonal scroll view shifts and truncates the inner views
-        // so, perhaps there is a phantom space for indicators?
+        // even though .vxy has only one inner view, a .horizonal scroll view shifts and truncates the inner views. So, perhaps there is a phantom space for indicators?
 
         if panelVm.menuType.vertical ||
             [.xy, .xyz, .arch, .peer].contains(panelVm.nodeType) {
