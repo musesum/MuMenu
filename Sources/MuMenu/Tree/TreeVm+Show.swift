@@ -5,9 +5,10 @@ import Foundation
 import MuFlo // logging
 
 extension TreeVm { // +Show
-
-    func growTree(start: Int? = nil,
-                  depth: Int,
+    func remoteTree(depth: Int = 99) {
+        self.growTree(depth: depth, "remote", true)
+    }
+    func growTree(depth: Int,
                   _ via: String,
                   _ fromRemote: Bool) {
 
@@ -15,8 +16,6 @@ extension TreeVm { // +Show
 
         treeShow.showTree()
 
-
-        let nextIndex = start ?? startIndex
         var newBranches = [BranchVm]()
         var index = 0
         var depthNow = 0
@@ -25,7 +24,7 @@ extension TreeVm { // +Show
         while branch != nil {
             if depthNow < depth {
                 branch.show = true
-                if index >= nextIndex {
+                if index >= 0 {
                     depthNow += 1
                 }
             } else {
@@ -42,13 +41,13 @@ extension TreeVm { // +Show
             branchVm.updateShiftRange()
         }
 
-        startIndex = nextIndex
+        startIndex = 0
         depthShown = depthNow
         shiftTree(to: startIndex)
 
         if !fromRemote {
-            let rootItem = MenuRootItem(rootVm)
-            let menuItem = MenuItem(root: rootItem)
+            let treesItem = MenuTreesItem(rootVm)
+            let menuItem = MenuItem(trees: treesItem)
             rootVm.sendItemToPeers(menuItem)
         }
     }

@@ -109,9 +109,7 @@ public class NodeVm: Identifiable, ObservableObject {
         branchVm.expandBranch()
     }
     func refreshView() {
-
         refresh += 1 // animated tween via published edit var
-        NoDebugLog { P("refreshView()") } //.....
         branchVm.show = branchVm.show
     }
 

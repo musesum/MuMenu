@@ -131,12 +131,14 @@ extension RootVm { // + State
                         touchType = .root
 
                         let isShowing = viewOps.hasAny([.branch,.trunks])
-                        if  !isShowing { showBranches(fromRemote) }
+                        if  !isShowing {
+                            showBranches(fromRemote)
+                        }
                     }
                 }
             case 1: // ᴱ¹ end tap once
                 touchType = .none
-                toggleBranches()
+                toggleBranches(fromRemote)
             case 2: // ᴱ² end tap twice
                 nodeSpotVm?.updateSpotNodes()
             case 4: // ᴱ⁴ tap 4 times to clear buffers
@@ -209,7 +211,7 @@ extension RootVm { // + State
         func hoverSpace() {
             touchType = .space
             if let leafVm = nodeSpotVm as? LeafVm {
-                leafVm.branchVm.treeVm.growTree(start: 0, depth: 9, "space", fromRemote)
+                leafVm.branchVm.treeVm.growTree(depth: 9, "space", fromRemote)
                 viewOps = [.root, .branch]
             }
         }

@@ -39,14 +39,17 @@ public struct MenuType: OptionSet, Codable, Hashable, Sendable {
         self.init(rawValue: value)
     }
 
-    public static let N  = MenuType(rawValue: 1 << 0) // north
-    public static let S  = MenuType(rawValue: 1 << 1) // south
-    public static let E  = MenuType(rawValue: 1 << 2) // east
-    public static let W  = MenuType(rawValue: 1 << 3) // west
-    public static let H  = MenuType(rawValue: 1 << 4) // hori
-    public static let V  = MenuType(rawValue: 1 << 5) // vert
-    public static let Z0 = MenuType(rawValue: 1 << 6) // near
-    public static let Z1 = MenuType(rawValue: 1 << 7) // far
+    public static let N  = MenuType(rawValue: 1 <<  0) // north
+    public static let S  = MenuType(rawValue: 1 <<  1) // south
+    public static let E  = MenuType(rawValue: 1 <<  2) // east
+    public static let W  = MenuType(rawValue: 1 <<  3) // west
+    public static let H  = MenuType(rawValue: 1 <<  4) // hori
+    public static let V  = MenuType(rawValue: 1 <<  5) // vert
+    public static let Z0 = MenuType(rawValue: 1 <<  6) // near
+    public static let Z1 = MenuType(rawValue: 1 <<  7) // far
+    public static let Q  = MenuType(rawValue: 1 <<  8) // quest
+    public static let L  = MenuType(rawValue: 1 <<  9) // left hand
+    public static let R  = MenuType(rawValue: 1 << 10) // right Hand
 
     public var north    : Bool { self.contains(.N ) }
     public var south    : Bool { self.contains(.S ) }
@@ -56,6 +59,9 @@ public struct MenuType: OptionSet, Codable, Hashable, Sendable {
     public var far      : Bool { self.contains(.Z1) }
     public var horizon  : Bool { self.contains(.H ) }
     public var vertical : Bool { self.contains(.V ) }
+    public var quest    : Bool { self.contains(.Q ) }
+    public var left     : Bool { self.contains(.L ) }
+    public var right    : Bool { self.contains(.R ) }
 
     public var chiral: MenuType {
         self.intersection([.E,.W])
@@ -85,21 +91,30 @@ public struct MenuType: OptionSet, Codable, Hashable, Sendable {
         }
     }
     public var icon: String {
-        switch self.intersection([.N,.S,.E,.W,.V,.H]) {
-        case [.N,.W,.V] : return "◤❚"
-        case [.N,.W,.H] : return "◤▬"
-        case [.N,.E,.V] : return "❚◥"
-        case [.N,.E,.H] : return "▬◥"
-        case [.S,.W,.V] : return "◣❚"
-        case [.S,.W,.H] : return "◣▬"
-        case [.S,.E,.V] : return "❚◢"
-        case [.S,.E,.H] : return "▬◢"
-        case [.N,.E]    : return "◥"
-        case [.N,.W]    : return "◤"
-        case [.S,.E]    : return "◢"
-        case [.S,.W]    : return "◣"
-        default         : return "⬜︎"
+        var str  = ""
+        switch self.intersection([.N,.S,.E,.W]) {
+        case [.N,.E] : str += "◥"
+        case [.N,.W] : str += "◤"
+        case [.S,.E] : str += "◢"
+        case [.S,.W] : str += "◣"
+        default      : str += "⬜︎"
         }
+        switch self.intersection([.V,.H]) {
+        case [.V] : str += "❚"
+        case [.H] : str += "▬"
+        default   : break
+        }
+        switch self.intersection([.L,.R]){
+        case [.L]    : str += "←⏺"
+        case [.R]    : str += "⏺→"
+        case [.L,.R] : str += "←⏺→"
+        default      : break
+        }
+        switch self.intersection([.Q]) {
+        case [.Q]       : str += "Q"
+        default         : break
+        }
+        return str
     }
     public var progression: MenuProgression {
         return (vertical
@@ -111,6 +126,8 @@ public struct MenuType: OptionSet, Codable, Hashable, Sendable {
         "E": .E  , "W": .W  ,
         "H": .H  , "V": .V  ,
         "0": .Z0 , "1": .Z1 ,
+        "L": .L  , "R": .R  ,
+        "Q": .Q
     ]
 
     public var key: String {
@@ -127,7 +144,9 @@ public struct MenuType: OptionSet, Codable, Hashable, Sendable {
             (.N  , "north"  ), (.S  , "south"    ),
             (.W  , "west"   ), (.E  , "east"     ),
             (.H  , "horizon"), (.V  , "vertical" ),
-            (.Z0 , "near"   ), (.Z1 , "far"      )
+            (.Z0 , "near"   ), (.Z1 , "far"      ),
+            (.L  , "left"   ), (.R  , "right"    ),
+            (.Q  , "quest"  )
         ]
 
         let matched = mapping.compactMap { (flag, name) in

@@ -1,6 +1,6 @@
 // created by musesum on 6/13/25
 
-import Foundation
+import MuFlo // PrintLog
 
 extension RootVm {
     
@@ -14,9 +14,16 @@ extension RootVm {
         }
     }
 
-    func toggleBranches() {
+    func toggleBranches(_ fromRemote: Bool) {
         if let treeSpotVm {
-           treeSpotVm.treeShow.toggleTree()
+            let treeShow = treeSpotVm.treeShow
+           treeShow.toggleTree()
+            if !fromRemote {
+                PrintLog("toggleBranches treeShow: \(treeShow.state)")
+                let treesItem = MenuTreesItem(self)
+                let menuItem = MenuItem(trees: treesItem)
+                sendItemToPeers(menuItem)
+            }
         } else {
             for treeVm in treeVms {
                 treeVm.treeShow.hideTree()

@@ -1,11 +1,11 @@
 // created by musesum on 6/15/25
 
-import Foundation
+import MuFlo
 @MainActor
-public struct MenuRootItem: Codable {
+public struct MenuTreesItem: Codable {
 
     public var treeItems : [MenuTreeItem]
-    public var menuType  : Int // MenuType.rawValue
+    public var menuType  : MenuType
     public var phase     : Int // UITouch.Phase
 
     public init(_ rootVm: RootVm) {
@@ -14,7 +14,8 @@ public struct MenuRootItem: Codable {
             treeItems.append(MenuTreeItem(treeVm))
         }
         self.treeItems = treeItems
-        self.menuType = rootVm.cornerType.rawValue
+        self.menuType = rootVm.cornerType
         self.phase = rootVm.touchState.phase.rawValue
     }
 }
+

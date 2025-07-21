@@ -2,13 +2,19 @@
 
 import SwiftUI
 
-class TreeShow: ObservableObject, @unchecked Sendable {
-    @Published private var state: State = .showing
+public class TreeShow: ObservableObject, Codable, @unchecked Sendable {
 
-    private enum State: String {
+    @Published public private(set) var state: State
+
+    public enum State: String, Codable {
         case hidden, fadeOut, showing
     }
-    var opacity: CGFloat {
+
+    init(_ state: State = .showing) {
+        self.state = state
+    }
+
+    internal var opacity: CGFloat {
         switch state {
         case .hidden  : return 0.00
         case .showing : return 1.00
@@ -21,7 +27,7 @@ class TreeShow: ObservableObject, @unchecked Sendable {
     let animInterval: TimeInterval = 0.25
     let tapInterval: TimeInterval = 0.5
 
-    var animation: Animation {
+    internal var animation: Animation {
         switch state {
         case .hidden  : return Animate(animInterval)
         case .showing : return Animate(animInterval)
@@ -29,12 +35,12 @@ class TreeShow: ObservableObject, @unchecked Sendable {
         }
     }
 
-    var autoFadeTimer: Timer?
-    var fadeOutTimer: Timer?
-    var fadeInTimer: Timer?
-    var showStartTime: TimeInterval = 0.0
+    private var autoFadeTimer: Timer?
+    private var fadeOutTimer: Timer?
+    private var fadeInTimer: Timer?
+    private var showStartTime: TimeInterval = 0.0
 
-    func clearTimers() {
+    private func clearTimers() {
         autoFadeTimer?.invalidate()
         fadeInTimer?.invalidate()
         fadeOutTimer?.invalidate()
@@ -79,6 +85,15 @@ class TreeShow: ObservableObject, @unchecked Sendable {
         startAutoFade()
     }
 
+    func setState(_ state: State) {
+
+        switch state {
+        case .showing : showTree()
+        case .hidden  : hideTree()
+        default       : break
+        }
+    }
+
     func toggleTree() {
         let timeNow = Date().timeIntervalSince1970
         let timeElapsed: TimeInterval = timeNow - showStartTime
@@ -89,4 +104,19 @@ class TreeShow: ObservableObject, @unchecked Sendable {
         case .hidden            : showTree()
         }
     }
+
+    enum CodingKeys: String, CodingKey {
+        case state
+    }
+
+    required public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.state = try container.decode(State.self, forKey: .state)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(state, forKey: .state)
+    }
 }
+

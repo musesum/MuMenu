@@ -44,7 +44,6 @@ public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable
         self.peers = peers
         peers.setDelegate(self, for: .menuFrame)
     }
-    //..... deinit { peers.removeDelegate(self) }
     public func addTreeVm(_ treeVm: TreeVm) {
         self.treeVms.append(treeVm)
         cornerVm.setRoot(self)

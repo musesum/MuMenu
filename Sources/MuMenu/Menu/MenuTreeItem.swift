@@ -1,25 +1,27 @@
 // created by musesum on 6/27/25
 
-import Foundation
+import MuFlo
+
 @MainActor
 public struct MenuTreeItem: Codable {
 
     public let menuType : MenuType
     public let depth    : Int
-    public let start    : Int
+    public let treeShow : TreeShow
 
     public init(_ treeVm: TreeVm) {
         self.menuType = treeVm.menuType
         self.depth = treeVm.depthShown
-        self.start = treeVm.startIndex
+        self.treeShow = treeVm.treeShow
     }
     var treeVm: TreeVm? {
         return TreeVm.sideAxis[menuType.key]
     }
 
-    func growTree(_ fromRemote: Bool) {
-        treeVm?.growTree(start: start,
-                         depth: depth,
-                         "item",fromRemote)
+    func remoteTree() {
+        if let treeVm {
+            treeVm.remoteTree(depth: depth)
+            treeVm.treeShow.setState(treeShow.state)
+        }
     }
 }

@@ -30,15 +30,31 @@ extension MenuTouch: CircleBufferDelegate {
         if isRemote {
 
             switch item.element {
-                case .node, .leaf:
-                    item.cornerVm?.gotoMenuItem(item)
-                case .root:
-                    if let root = item.item as? MenuRootItem {
-                        for tree in root.treeItems {
-                            tree.growTree(isRemote)
-                        }
+                
+            case .node:
+
+                if let item = item.item as? MenuNodeItem,
+                   let treeVm = item.treeVm {
+                    _ = treeVm.followWordPath(item.wordPath, item.wordNow)
+                }
+
+            case .leaf:
+
+                if let item = item.item as? MenuLeafItem,
+                   let treeVm = item.treeVm,
+                   let nodeVm = treeVm.followWordPath(item.wordPath, item.wordNow),
+                   let leafVm = nodeVm as? LeafVm {
+
+                    leafVm.remoteThumb(item, Visitor(0, .remote))
+                }
+            case .trees:
+                if let trees = item.item as? MenuTreesItem {
+                    for treeItem in trees.treeItems {
+                        treeItem.remoteTree()
                     }
-                default: break
+                }
+           
+            default: break
             }
         } else if let touch = item.item as? MenuTouchItem {
             item.cornerVm?.updateTouchXY(touch.cgPoint, item.phase)

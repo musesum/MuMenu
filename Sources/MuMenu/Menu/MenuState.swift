@@ -26,20 +26,42 @@ public struct MenuViewing: OptionSet, Sendable {
 }
 open class MenuState: ObservableObject {
 
-    private var left˚  : Flo?
-    private var right˚ : Flo?
     private var glass˚ : Flo?
-
-    public var left = true
-    public var right = true
     @Published public var glass = true
 
+#if !os(visionOS)
     public init(_ root˚: Flo) {
-        let menu = root˚.bind("hand.menu")
-        left˚  = menu.bind("left" ) { f,_ in self.left  = f.bool }
-        right˚ = menu.bind("right") { f,_ in self.right = f.bool }
         glass˚ = root˚.bind("more.settings.glass") { f,_ in
             self.glass = f.bool
         }
     }
+#else
+    private var left˚  : Flo?
+    private var right˚ : Flo?
+    public var left = false
+    public var right = false
+
+    public init(_ root˚: Flo) {
+        let menu = root˚.bind("hand.menu")
+
+        left˚  = menu.bind("left" ) { f,_ in
+            self.leftThumbTip(f.bool)
+        }
+        right˚ = menu.bind("right") { f,_ in
+            self.rightThumbTip(f.bool)
+        }
+    }
+    func leftThumbTip(_ new: Bool) {
+        if new != left {
+            PrintLog("left: \(left) -> \(new)")
+            left = new
+        }
+    }
+    func rightThumbTip(_ new: Bool) {
+        if new != right {
+            PrintLog("right: \(right) -> \(new)")
+            right = new
+        }
+    }
+#endif
 }
