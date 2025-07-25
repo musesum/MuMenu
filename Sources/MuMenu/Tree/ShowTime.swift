@@ -2,7 +2,7 @@
 
 import SwiftUI
 
-public class TreeShow: ObservableObject, Codable, @unchecked Sendable {
+public class ShowTime: ObservableObject, Codable, @unchecked Sendable {
 
     @Published public private(set) var state: State
 
@@ -10,11 +10,11 @@ public class TreeShow: ObservableObject, Codable, @unchecked Sendable {
         case hidden, fadeOut, showing
     }
 
-    init(_ state: State = .showing) {
+    public init(_ state: State = .showing) {
         self.state = state
     }
 
-    internal var opacity: CGFloat {
+    public var opacity: CGFloat {
         switch state {
         case .hidden  : return 0.00
         case .showing : return 1.00
@@ -27,7 +27,7 @@ public class TreeShow: ObservableObject, Codable, @unchecked Sendable {
     let animInterval: TimeInterval = 0.25
     let tapInterval: TimeInterval = 0.5
 
-    internal var animation: Animation {
+    public var animation: Animation {
         switch state {
         case .hidden  : return Animate(animInterval)
         case .showing : return Animate(animInterval)
@@ -67,16 +67,15 @@ public class TreeShow: ObservableObject, Codable, @unchecked Sendable {
         fadeOutTimer = Timer.scheduledTimer(
             withTimeInterval: fadeOutInterval,
             repeats: false) {_ in
-
-                self.hideTree()
+                self.hideNow()
             }
     }
-    func hideTree() {
+    public func hideNow() {
         clearTimers()
         state = .hidden
     }
 
-    func showTree() {
+    public func showNow() {
         clearTimers()
         if state == .hidden {
             showStartTime = Date().timeIntervalSince1970
@@ -88,8 +87,8 @@ public class TreeShow: ObservableObject, Codable, @unchecked Sendable {
     func setState(_ state: State) {
 
         switch state {
-        case .showing : showTree()
-        case .hidden  : hideTree()
+        case .showing : showNow()
+        case .hidden  : hideNow()
         default       : break
         }
     }
@@ -100,8 +99,8 @@ public class TreeShow: ObservableObject, Codable, @unchecked Sendable {
         if timeElapsed < tapInterval { return }
 
         switch state {
-        case .showing, .fadeOut : hideTree()
-        case .hidden            : showTree()
+        case .showing, .fadeOut : hideNow()
+        case .hidden            : showNow()
         }
     }
 

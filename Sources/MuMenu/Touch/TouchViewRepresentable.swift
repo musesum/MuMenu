@@ -44,7 +44,7 @@ public struct TouchViewRepresentable: UIViewRepresentable {
         for callAspect in TouchViewRepresentable.callAspects {
             callAspect(aspect)
         }
-        DebugLog { P("📋 updateUIView touchView\(touchView.frame.digits(0))") }
+        NoDebugLog { P("📋 updateUIView touchView\(touchView.frame.digits(0))") }
     }
 
 }

@@ -7,12 +7,12 @@ public struct MenuTreeItem: Codable {
 
     public let menuType : MenuType
     public let depth    : Int
-    public let treeShow : TreeShow
+    public let showTree : ShowTime
 
     public init(_ treeVm: TreeVm) {
         self.menuType = treeVm.menuType
         self.depth = treeVm.depthShown
-        self.treeShow = treeVm.treeShow
+        self.showTree = treeVm.showTree
     }
     var treeVm: TreeVm? {
         return TreeVm.sideAxis[menuType.key]
@@ -21,7 +21,7 @@ public struct MenuTreeItem: Codable {
     func remoteTree() {
         if let treeVm {
             treeVm.remoteTree(depth: depth)
-            treeVm.treeShow.setState(treeShow.state)
+            treeVm.showTree.setState(showTree.state)
         }
     }
 }

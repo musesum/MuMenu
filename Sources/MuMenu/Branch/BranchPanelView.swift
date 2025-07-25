@@ -1,14 +1,11 @@
 // created by musesum on 10/7/21.
 
 import SwiftUI
-
+#if os(visionOS)
 struct BranchPanelView: View {
-
-    @EnvironmentObject var menuState: MenuState
 
     var body: some View {
 
-#if os(visionOS)
         GeometryReader { geo in
             if false {
                 Circle()
@@ -24,8 +21,18 @@ struct BranchPanelView: View {
                     .cornerRadius(Menu.cornerRadius)
             }
         }
+
+
+    }
+}
 #else
-        if #available(iOS 26.0, *), menuState.glass {
+struct BranchPanelView: View {
+
+    @EnvironmentObject var glassState: GlassState
+
+    var body: some View {
+
+        if #available(iOS 26.0, *), glassState.glass {
             GeometryReader { geo in
                 Rectangle()
                     .background(.black)
@@ -42,7 +49,8 @@ struct BranchPanelView: View {
                     .cornerRadius(Menu.cornerRadius)
             }
         }
-#endif
+
 
     }
 }
+#endif

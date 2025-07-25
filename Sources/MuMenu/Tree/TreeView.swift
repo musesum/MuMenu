@@ -5,15 +5,15 @@ import SwiftUI
 struct TreeView: View {
 
     @ObservedObject var treeVm: TreeVm
-    @ObservedObject var treeShow: TreeShow
+    @ObservedObject var showTree: ShowTime
 
     var menuType: MenuType { treeVm.rootVm.cornerType }
-    var treeOpacity: CGFloat { treeVm.treeShow.opacity }
-    var treeAnimation: Animation { treeVm.treeShow.animation }
+    var showOpacity: CGFloat { treeVm.showTree.opacity }
+    var showAnimation: Animation { treeVm.showTree.animation }
     
     init(treeVm: TreeVm) {
         self.treeVm = treeVm
-        self.treeShow = treeVm.treeShow
+        self.showTree = treeVm.showTree
     }
 
     var body: some View {
@@ -42,8 +42,8 @@ struct TreeView: View {
                 }
             }
         }
-        .opacity(treeOpacity)
-        .animation(treeAnimation, value: treeOpacity)
+        .opacity(showOpacity)
+        .animation(showAnimation, value: showOpacity)
         .offset(treeVm.treeOffset)
     }
 }
@@ -55,7 +55,7 @@ struct TreeCanopyView: View {
 
     let cornerRadius = Menu.radius + Menu.padding
     var treeSize: CGSize { treeVm.treeBounds.size }
-    var canopyAlpha: CGFloat { 0 } //treeVm.treeShow.state == .showing ? 0.01 : 0 }
+    var canopyAlpha: CGFloat { 0 } //treeVm.showTime.state == .showing ? 0.01 : 0 }
 
     var body: some View {
 

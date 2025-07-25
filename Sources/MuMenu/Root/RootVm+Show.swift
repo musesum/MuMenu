@@ -6,36 +6,36 @@ extension RootVm {
     
     public func startAutoFades() {
         if let treeSpotVm {
-            treeSpotVm.treeShow.startAutoFade()
+            treeSpotVm.showTree.startAutoFade()
         } else {
             for treeVm in treeVms {
-                treeVm.treeShow.startAutoFade()
+                treeVm.showTree.startAutoFade()
             }
         }
     }
 
     func toggleBranches(_ fromRemote: Bool) {
         if let treeSpotVm {
-            let treeShow = treeSpotVm.treeShow
-           treeShow.toggleTree()
+            let showTree = treeSpotVm.showTree
+           showTree.toggleTree()
             if !fromRemote {
-                PrintLog("toggleBranches treeShow: \(treeShow.state)")
+                PrintLog("toggleBranches showTime: \(showTree.state)")
                 let treesItem = MenuTreesItem(self)
                 let menuItem = MenuItem(trees: treesItem)
                 sendItemToPeers(menuItem)
             }
         } else {
             for treeVm in treeVms {
-                treeVm.treeShow.hideTree()
+                treeVm.showTree.hideNow()
             }
         }
     }
     func showTrees(_ fromRemote: Bool) {
         if let treeSpotVm {
-            treeSpotVm.treeShow.showTree()
+            treeSpotVm.showTree.showNow()
         } else {
             for treeVm in treeVms {
-                treeVm.treeShow.showTree()
+                treeVm.showTree.showNow()
             }
         }
     }

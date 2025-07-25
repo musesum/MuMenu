@@ -91,14 +91,6 @@ fileprivate struct Grid: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-#if os(visionOS)
-                BranchPanelView()
-                LazyVGrid(columns: gridColumns, spacing: 0) {
-                    ForEach(branchVm.nodeVms) {
-                        NodeView(nodeVm: $0)
-                    }
-                }
-#else
                 BranchPanelView()
                     .cornerRadius(Menu.cornerRadius)
                 LazyVGrid(columns: gridColumns, spacing: 0) {
@@ -106,7 +98,6 @@ fileprivate struct Grid: View {
                         NodeView(nodeVm: $0)
                     }
                 }
-#endif
             }
             .onAppear { branchVm.updateBounds(geo.frame(in: .global)) }
             .onChange(of: geo.frame(in: .global)) { branchVm.updateBounds($1) }
@@ -140,18 +131,6 @@ fileprivate struct Body_: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                #if os(visionOS)
-                BranchPanelView()
-                VStack {
-                    BranchAxisView(panelVm) {
-                        ForEach(branchVm.nodeVms) {
-                            NodeView(nodeVm: $0)
-                        }
-                    }
-                }
-                .cornerRadius(Menu.cornerRadius)
-                #else
-
                 BranchPanelView()
                     .cornerRadius(Menu.cornerRadius)
                 VStack {
@@ -161,7 +140,6 @@ fileprivate struct Body_: View {
                         }
                     }
                 }
-                #endif
             }
             .onAppear { branchVm.updateBounds(geo.frame(in: .global)) }
             .onChange(of: geo.frame(in: .global)) { branchVm.updateBounds($1) }

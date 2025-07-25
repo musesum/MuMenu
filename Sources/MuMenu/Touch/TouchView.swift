@@ -17,7 +17,7 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
     public init(_ pipeline: Pipeline,
                 _ touchCanvas: TouchCanvas) {
         let size = pipeline.pipeSize
-        DebugLog { P("🧭 TouchView::init size \(size.digits())") }
+        NoDebugLog { P("🧭 TouchView::init size \(size.digits())") }
         super.init(frame: .zero)
         self.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
         self.touchCanvas = touchCanvas

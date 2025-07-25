@@ -14,7 +14,7 @@ extension TreeVm { // +Show
 
         NoDebugLog { P("𖢞 \(self.menuType.icon) \(via):\(depth)") }
 
-        treeShow.showTree()
+        showTree.showNow()
 
         var newBranches = [BranchVm]()
         var index = 0
