@@ -2,7 +2,7 @@ import SwiftUI
 import MuFlo
 import MuPeers
 import MuVision
-import MultipeerConnectivity
+import MuHands
 
 open class TouchView: UIView, UIGestureRecognizerDelegate {
 
