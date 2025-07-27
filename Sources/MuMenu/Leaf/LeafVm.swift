@@ -81,7 +81,7 @@ public class LeafVm: NodeVm {
     }
    
     public func syncVal(_ visit: Visitor) {
-        print("*** \(#function) override me")
+        print("⁉️ \(#function) override me")
     }
     func updateLeafPeers(_ visit: Visitor) {
         if visit.isLocal(),
