@@ -5,15 +5,50 @@ import MuFlo
 import MuPeers
 import MuVision
 
+public class MenuBranch {
+    let type: MenuType
+    let names: [String]
+    init(_ type: MenuType,_  names: [String]) {
+        self.type = type
+        self.names = names
+    }
+}
+
+
 @MainActor
 open class MenuVm {
 
     let id = Visitor.nextId()
     let rootMenu: MenuTree
-    let menuType: MenuType
 
     public var rootVm: RootVm
+    public var cornerType: MenuType
 
+    public init(_ rootVm    : RootVm ,
+                _ branches  : [MenuBranch],
+                _ rootMenu  : MenuTree) {
+
+        // both veritical and horizontal menu will share the same root
+        self.rootVm = rootVm
+        self.cornerType = rootVm.cornerType
+        self.rootMenu = rootMenu
+
+        for branch in branches {
+            var menuTrees = [MenuTree]()
+            for name in branch.names {
+                if let menuTree = makeMenuTree(name) {
+                    menuTrees.append(menuTree)
+                }
+            }
+            let treeVm = TreeVm(rootVm, branch.type)
+            let branchVm = BranchVm(menuTrees: menuTrees, treeVm: treeVm)
+            treeVm.addBranchVm(branchVm)
+            rootVm.addTreeVm(treeVm)
+        }
+        // updateBranches
+        rootVm.showFirstTree()
+        rootVm.startAutoFades()
+    }
     public init(_ rootVm    : RootVm ,
                 _ menuType  : MenuType,
                 _ floNames  : [String],
@@ -22,7 +57,7 @@ open class MenuVm {
         // both veritical and horizontal menu will share the same root
         self.rootVm = rootVm
         self.rootMenu = rootMenu
-        self.menuType = menuType
+        self.cornerType = rootVm.cornerType
 
         var menuTrees = [MenuTree]()
         for floName in floNames {
@@ -59,15 +94,15 @@ open class MenuVm {
         let root˚ = rootMenu.flo
 
         // two separate spotTrees for left and right sides
-        if let spotTree = root˚.findPath(menuType.key + ".spot") {
+        if let spotTree = root˚.findPath(cornerType.key + ".spot") {
 
             //DebugLog("𐂷 found: \(chiral.name) {\n\(spotTree.scriptFull)\n}\n")
-            mergeSpotMenu(menuType, spotTree, menuTree)
+            mergeSpotMenu(cornerType, spotTree, menuTree)
 
         } else if let spotTree = makeSpotTree(menuTree) {
 
             //DebugLog { P("𐂷 make:  \(chiral.name) {\n\(spotTree.scriptFull)\n}\n") }
-            mergeSpotMenu(menuType, spotTree, menuTree)
+            mergeSpotMenu(cornerType, spotTree, menuTree)
 
         } else {
            err("no spotTree")
@@ -81,7 +116,7 @@ open class MenuVm {
 
             guard let menuFlo = root˚.findPath("menu") else { return nil }
 
-            let chiralFlo = Flo(menuType.key, parent: root˚)
+            let chiralFlo = Flo(cornerType.key, parent: root˚)
             let spotFlo = Flo("spot", parent: chiralFlo)
 
             /// make `on 0` expression and decorate shadow-clone of
@@ -91,7 +126,7 @@ open class MenuVm {
                 _ = Flo(decorate: menuChild, parent: spotFlo, exprs: spotExpress)
             }
             NoDebugLog { P("\(chiralFlo.name) { \n\(chiralFlo.scriptFull) \n} ") }
-            mergeSpotMenu(menuType, spotFlo, menuTree)
+            mergeSpotMenu(cornerType, spotFlo, menuTree)
             return spotFlo
         }
 }

@@ -79,7 +79,7 @@ public class LeafVm: NodeVm {
         runways.setThumbFlo(flo)
         syncVal(visit)
     }
-   
+   @MainActor
     public func syncVal(_ visit: Visitor) {
         print("⁉️ \(#function) override me")
     }

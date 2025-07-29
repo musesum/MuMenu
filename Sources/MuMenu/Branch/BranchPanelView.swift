@@ -4,25 +4,23 @@ import SwiftUI
 #if os(visionOS)
 struct BranchPanelView: View {
 
-    var body: some View {
+    @EnvironmentObject var glassState: GlassState
 
-        GeometryReader { geo in
-            if false {
-                Circle()
-                    .fill(.green)
-                    .opacity(0.38)
-                    //.background(.blue)
-                    .glassBackgroundEffect()
-                    //.cornerRadius(Menu.cornerRadius)
-            } else {
+    var body: some View {
+        if glassState.glass {
+            GeometryReader { geo in
                 Rectangle()
-                    .background(.ultraThinMaterial)
-                    .opacity(0.25)
+                    .opacity(0)
                     .cornerRadius(Menu.cornerRadius)
             }
+            .glassBackgroundEffect(in: .rect(cornerRadius: Menu.cornerRadius) )
+
+        } else {
+            Rectangle()
+                .background(.thickMaterial)
+                .opacity(0.35)
+                .cornerRadius(Menu.cornerRadius)
         }
-
-
     }
 }
 #else
@@ -35,8 +33,7 @@ struct BranchPanelView: View {
         if #available(iOS 26.0, *), glassState.glass {
             GeometryReader { geo in
                 Rectangle()
-                    .background(.black)
-                    .opacity(0.2)
+                    .opacity(0)
             }
             .glassEffect(.clear, in: .rect(cornerRadius: Menu.cornerRadius))
             .cornerRadius(Menu.cornerRadius)
@@ -54,3 +51,4 @@ struct BranchPanelView: View {
     }
 }
 #endif
+

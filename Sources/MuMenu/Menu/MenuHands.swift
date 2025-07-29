@@ -11,37 +11,23 @@ public struct MenuHands {
     
     public init(_ root˚: Flo,
                 _ archiveVm: ArchiveVm,
-                _ handsPhase: HandsPhase,
+                _ phase: HandsPhase,
                 _ peers: Peers) {
 
         Icon.altBundles.append(MuMenu.bundle)
         Icon.altBundles.append(MuVision.bundle)
 
         let rootTree = MenuTree(root˚)
-        let vMenu: [String] = ["canvas", "plato", "cell", "camera", "more"]
-        let hMenu: [String] = ["chat"]
+        let vNames: [String] = ["canvas", "plato", "cell", "camera", "more"]
+        let hNames: [String] = ["chat"]
 
-        #if false // os(visionOS)
-        let rootNW = RootVm([.N,.W], archiveVm, handsPhase, peers) // North West corner
-        let rootNE = RootVm([.N,.E], archiveVm, handsPhase, peers) // North East corner
-        menuVms.append(MenuVm(rootNW, [.N,.W,.V], vMenu, rootTree)) // verti
-        menuVms.append(MenuVm(rootNE, [.N,.E,.V], vMenu, rootTree)) // verti
-        // menuVms.append(MenuVm(rootNW, [.N,.W,.H], hMenu, rootTree)) // horiz
-        // menuVms.append(MenuVm(rootNE, [.N,.E,.H], hMenu, rootTree)) // horiz
-        #elseif os(visionOS)
-        let rootSW = RootVm([.S,.W,.L], archiveVm, handsPhase, peers) // North West corner
-        let rootSE = RootVm([.S,.E,.R], archiveVm, handsPhase, peers) // North East corner
-        menuVms.append(MenuVm(rootSW, [.S,.W,.V], vMenu, rootTree)) // verti
-        menuVms.append(MenuVm(rootSE, [.S,.E,.V], vMenu, rootTree)) // verti
-        // menuVms.append(MenuVm(rootSW, [.S,.W,.H], hMenu, rootTree)) // horiz
-        // menuVms.append(MenuVm(rootSE, [.S,.E,.H], hMenu, rootTree)) // horiz
-        #else
-        let rootSW = RootVm([.S,.W,.L], archiveVm, handsPhase, peers) // SouthWest
-        let rootSE = RootVm([.S,.E,.R], archiveVm, handsPhase, peers) // SouthEast
-        menuVms.append(MenuVm(rootSW, [.S,.W,.V], vMenu, rootTree)) // verti
-        menuVms.append(MenuVm(rootSE, [.S,.E,.V], vMenu, rootTree)) // verti
-        menuVms.append(MenuVm(rootSW, [.S,.W,.H], hMenu, rootTree)) // horiz
-        menuVms.append(MenuVm(rootSE, [.S,.E,.H], hMenu, rootTree)) // horiz
-        #endif
+        let rootSW = RootVm([.S,.W,.L], archiveVm, phase, peers) // SW Left
+        let rootSE = RootVm([.S,.E,.R], archiveVm, phase, peers) // SE Right
+        let swv = MenuBranch([.S,.W,.V], vNames) //SW Verti
+        let swh = MenuBranch([.S,.W,.H], hNames) //SW Horiz
+        let sev = MenuBranch([.S,.E,.V], vNames) //SE Verti
+        let seh = MenuBranch([.S,.E,.H], hNames) //SE Horiz
+        menuVms.append(MenuVm(rootSW, [swv,swh], rootTree))
+        menuVms.append(MenuVm(rootSE, [sev,seh], rootTree))
     }
 }

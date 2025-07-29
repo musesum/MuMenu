@@ -61,6 +61,9 @@ public class LeafXyVm: LeafVm {
         if !menuTree.flo.hasPlugins {
             thumb.tween = thumb.value
         }
-        refreshView()
+        Task { @MainActor in
+            refreshView()
+        }
+
     }
 }

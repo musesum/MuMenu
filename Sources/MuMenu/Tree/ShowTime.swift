@@ -50,9 +50,8 @@ public class ShowTime: ObservableObject, Codable, @unchecked Sendable {
 
         clearTimers()
         if state == .hidden {
-            print("??")
+            return
         }
-
         autoFadeTimer = Timer.scheduledTimer(
             withTimeInterval: autoFadeInterval,
             repeats: false) { _ in

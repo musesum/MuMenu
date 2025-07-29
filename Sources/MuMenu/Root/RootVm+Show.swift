@@ -19,7 +19,7 @@ extension RootVm {
             let showTree = treeSpotVm.showTree
            showTree.toggleTree()
             if !fromRemote {
-                PrintLog("toggleBranches showTime: \(showTree.state)")
+                NoDebugLog{P("toggleBranches showTime: \(showTree.state)")}
                 let treesItem = MenuTreesItem(self)
                 let menuItem = MenuItem(trees: treesItem)
                 sendItemToPeers(menuItem)
