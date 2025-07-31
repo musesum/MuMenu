@@ -1,13 +1,16 @@
 // created by musesum on 7/16/25
 
 import SwiftUI
-
+import MuFlo
 public class ShowTime: ObservableObject, Codable, @unchecked Sendable {
-
+    let id = Visitor.nextId()
     @Published public private(set) var state: State
 
     public enum State: String, Codable {
         case hidden, fadeOut, showing
+        var showing: Bool { self == .showing }
+        var hidden: Bool { self == .hidden }
+        var fadeOut: Bool { self == .fadeOut }
     }
 
     public init(_ state: State = .showing) {
@@ -18,7 +21,7 @@ public class ShowTime: ObservableObject, Codable, @unchecked Sendable {
         switch state {
         case .hidden  : return 0.00
         case .showing : return 1.00
-        case .fadeOut : return 0.05
+        case .fadeOut : return 0.00
         }
     }
 

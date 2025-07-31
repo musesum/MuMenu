@@ -13,7 +13,8 @@ extension CornerVm {
             return logoNodeVm // hits the root (home) node icon
         } else {
             for treeVm in rootVm?.treeVms ?? [] {
-                if treeVm.treeBoundsPad.contains(touchNow) {
+                if !treeVm.showTree.state.hidden,
+                    treeVm.treeBoundsPad.contains(touchNow) {
                     for branchVm in treeVm.branchVms {
                         if branchVm.show, branchVm.contains(touchNow) {
                             if let nodeVm =  branchVm.nearestNode(touchNow) {
