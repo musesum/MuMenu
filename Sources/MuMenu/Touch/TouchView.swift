@@ -32,27 +32,31 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
         for touch in touches {
 
             let location = touch.preciseLocation(in: nil)
-            let phase = min(3,touch.phase.rawValue)
+            let phase3 = min(3,touch.phase.rawValue)
             let hash = touch.hash // allows multi-finger
             let touchData = TouchData(
                 force    : Float(touch.force),
                 radius   : Float(touch.majorRadius),
                 nextXY   : touch.preciseLocation(in: nil),
-                phase    : phase,
+                phase    : phase3,
                 azimuth  : touch.azimuthAngle(in: nil),
                 altitude : touch.altitudeAngle,
-                key      : touch.hash
+                key      : hash
             )
-            switch phase {
+            switch phase3 {
             case 0: // begin
-                if TouchMenuLocal.beginTouch(location, phase, hash) { return }
+                if TouchMenuLocal.beginTouch(location, phase3, hash) { return }
                 if willBeginFromEdge() { return }
                 touchCanvas?.beginTouch(touchData)
             default: // moved, stationaru, ennded
                 if beganFromEdge() { return }
-                if TouchMenuLocal.updateTouch(location,phase,hash) { return }
+                if TouchMenuLocal.updateTouch(location,phase3,hash) { return }
                 touchCanvas?.updateTouch(touchData)
             }
+            if !beganFromEdge(), phase3 != 1 {
+                DebugLog { P("👆 hash: \(hash) phase: \(touch.phase.rawValue)") }
+            }
+
             // block touch when finger starts from edge of iPhone
             func willBeginFromEdge() -> Bool {
                 if !Idiom.iOS { return false }
@@ -76,8 +80,5 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
     open override func touchesBegan(_ touches: Set<UITouch>, with _: UIEvent?) { addTouches(touches) }
     open override func touchesMoved(_ touches: Set<UITouch>, with _: UIEvent?) { addTouches(touches) }
     open override func touchesEnded(_ touches: Set<UITouch>, with _: UIEvent?) { addTouches(touches) }
-    open override func touchesCancelled(_ touches: Set<UITouch>, with _: UIEvent?) {
-        DebugLog { P("👆❌touches cancelled phase: \(touches.first?.phase.rawValue ?? -1)") }
-        addTouches(touches)
-    }
+    open override func touchesCancelled(_ touches: Set<UITouch>, with _: UIEvent?) { addTouches(touches) }
 }

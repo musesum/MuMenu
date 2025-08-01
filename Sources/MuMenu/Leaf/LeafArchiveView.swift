@@ -30,11 +30,12 @@ struct LeafArchiveView: View {
                 }
                 LeafBezelView(leafVm, .none) {
                     ArchivePickerView(leafVm.archiveVm)
+                        .cornerRadius(Menu.cornerRadius)
                 }
             }
         }
         .sheet(isPresented: $showPicker) {
-            PickerModalView(leafVm)
+            SaveArchiveView(leafVm)
             .presentationDetents(
                 [.medium],
                 selection: $settingsDetent
@@ -43,7 +44,7 @@ struct LeafArchiveView: View {
     }
 }
 
-struct PickerModalView: View {
+struct SaveArchiveView: View {
 
     let leafArchiveVm: LeafArchiveVm
     let archiveVm: ArchiveVm

@@ -18,16 +18,21 @@ public struct MenuHands {
         Icon.altBundles.append(MuVision.bundle)
 
         let rootTree = MenuTree(root˚)
-        let vNames: [String] = ["canvas", "plato", "cell", "camera", "more"]
+        let vNames: [String] = ["canvas", "plato", "cell", "camera", "archive", "more"]
         let hNames: [String] = ["chat"]
 
         let rootSW = RootVm([.S,.W,.L], archiveVm, phase, peers) // SW Left
         let rootSE = RootVm([.S,.E,.R], archiveVm, phase, peers) // SE Right
         let swv = MenuBranch([.S,.W,.V], vNames) //SW Verti
-        let swh = MenuBranch([.S,.W,.H], hNames) //SW Horiz
         let sev = MenuBranch([.S,.E,.V], vNames) //SE Verti
+        #if true // only vertical menu
+        menuVms.append(MenuVm(rootSW, [swv], rootTree))
+        menuVms.append(MenuVm(rootSE, [sev], rootTree))
+        #else // both vertical and horizontal menu
+        let swh = MenuBranch([.S,.W,.H], hNames) //SW Horiz
         let seh = MenuBranch([.S,.E,.H], hNames) //SE Horiz
         menuVms.append(MenuVm(rootSW, [swv,swh], rootTree))
         menuVms.append(MenuVm(rootSE, [sev,seh], rootTree))
+        #endif
     }
 }

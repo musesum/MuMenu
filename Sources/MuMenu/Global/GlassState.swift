@@ -13,7 +13,6 @@ open class GlassState: ObservableObject {
             self.glass = f.bool
         }
     }
-
 }
 
 open class PanicState: ObservableObject {
