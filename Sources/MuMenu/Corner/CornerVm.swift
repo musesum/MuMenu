@@ -138,6 +138,7 @@ import MuFlo
     }
     var bounds = CGRect.zero
     func updateBounds(_ bounds: CGRect) {
+        DebugLog { P("\(self.rootVm?.cornerType.icon ?? "??") CornerVm changed geometry ") }
         self.bounds = bounds
         //log("RootVm",[bounds])
     }

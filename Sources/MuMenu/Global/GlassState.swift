@@ -17,11 +17,16 @@ open class GlassState: ObservableObject {
 
 open class PanicState: ObservableObject {
 
-    private var panic˚ : Flo?
+    private var panic˚: Flo?
+    private var nextFrame: NextFrame
 
-    public init(_ root˚: Flo) {
-        panic˚ = root˚.bind("more.panic") { f,_ in
-            Panic.reset()
+    public init(_ root˚: Flo,
+                _ nextFrame: NextFrame) {
+        self.nextFrame = nextFrame
+        self.panic˚ = root˚.bind("more.panic") { f,_ in
+            self.nextFrame.addBetweenFrame {
+                Panic.reset()
+            }
         }
     }
 

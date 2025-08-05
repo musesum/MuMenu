@@ -39,7 +39,7 @@ public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable
 
     public var nodeSpotVm: NodeVm?   /// current last touched or hovered node
     private var handState: leftRight<PinchPhase> = .init(.end, .end)
-
+    
     public init(_ cornerType : MenuType   ,
                 _ archiveVm  : ArchiveVm  ,
                 _ handsPhase : HandsPhase ,

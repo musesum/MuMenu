@@ -4,10 +4,14 @@ import MuPeers
 import MuVision
 import MuHands
 
+
+
+
 open class TouchView: UIView, UIGestureRecognizerDelegate {
 
     var safeBounds: CGRect { frame.pad(-4) }
-    var blockTouch = [Int: Bool]()
+    var touchBlock = [Hash: Bool]()
+    var touchPhase = [Hash: Int]()
     var touchCanvas: TouchCanvas?
 
     required public init?(coder aDecoder: NSCoder) {
@@ -32,8 +36,12 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
         for touch in touches {
 
             let location = touch.preciseLocation(in: nil)
-            let phase3 = min(3,touch.phase.rawValue)
+            var phase3 = min(3,touch.phase.rawValue)
             let hash = touch.hash // allows multi-finger
+
+            if phase3 == 0, touchPhase[hash] != nil {
+                phase3 = 3 // switch to endeded
+            }
             let touchData = TouchData(
                 force    : Float(touch.force),
                 radius   : Float(touch.majorRadius),
@@ -41,18 +49,25 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
                 phase    : phase3,
                 azimuth  : touch.azimuthAngle(in: nil),
                 altitude : touch.altitudeAngle,
-                key      : hash
+                hash     : hash
             )
             switch phase3 {
             case 0: // begin
+
                 if TouchMenuLocal.beginTouch(location, phase3, hash) { return }
                 if willBeginFromEdge() { return }
                 touchCanvas?.beginTouch(touchData)
-            default: // moved, stationaru, ennded
+                touchPhase[hash] = phase3
+
+            default: // moved, stationaru, ended
                 if beganFromEdge() { return }
                 if TouchMenuLocal.updateTouch(location,phase3,hash) { return }
                 touchCanvas?.updateTouch(touchData)
+                if phase3 == 3 {
+                    touchPhase.removeValue(forKey: hash)
+                }
             }
+        
             if !beganFromEdge(), phase3 != 1 {
                 DebugLog { P("👆 hash: \(hash) phase: \(touch.phase.rawValue)") }
             }
@@ -61,14 +76,17 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
             func willBeginFromEdge() -> Bool {
                 if !Idiom.iOS { return false }
                 let fromEdge = safeBounds.contains(location) ? false : true
-                blockTouch[hash] = fromEdge
+                touchBlock[hash] = fromEdge
+                if fromEdge {
+                    DebugLog { P("👆 hash: \(hash) fromEdge ***") }
+                }
                 return fromEdge
             }
             func beganFromEdge() -> Bool {
                 if !Idiom.iOS { return false }
-                if let fromEdge = blockTouch[hash] {
+                if let fromEdge = touchBlock[hash] {
                     if touch.phase.done {
-                        blockTouch.removeValue(forKey: hash)
+                        touchBlock.removeValue(forKey: hash)
                     }
                     return fromEdge
                 }

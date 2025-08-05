@@ -204,7 +204,8 @@ public class BranchVm: @MainActor Identifiable, ObservableObject {
     }
 
     /// update from MuBranchView
-    func updateBounds(_ fromBounds: CGRect) {
+    func changedGeoFrame(_ fromBounds: CGRect) {
+        DebugLog { P("🌲 BranchVm changed geometry ") }
         if boundsNow != fromBounds {
             boundsNow = panelVm.updatePanelBounds(fromBounds)
             boundsPad = boundsNow.pad(Menu.padding)

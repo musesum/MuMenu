@@ -38,6 +38,3 @@ public struct LeafSearchView: View {
     }
 }
 
-//#Preview {
-//    LeafSearchView(vm: LeafSearchVm(...))
-//}

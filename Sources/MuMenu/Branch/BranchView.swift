@@ -99,8 +99,8 @@ fileprivate struct Grid: View {
                     }
                 }
             }
-            .onAppear { branchVm.updateBounds(geo.frame(in: .global)) }
-            .onChange(of: geo.frame(in: .global)) { branchVm.updateBounds($1) }
+            .onAppear { branchVm.changedGeoFrame(geo.frame(in: .global)) }
+            .onChange(of: geo.frame(in: .global)) { branchVm.changedGeoFrame($1) }
         }
         .frame(width: outerWidth, height: outerHeight)
         .offset(branchVm.branchShift)
@@ -141,8 +141,8 @@ fileprivate struct Body_: View {
                     }
                 }
             }
-            .onAppear { branchVm.updateBounds(geo.frame(in: .global)) }
-            .onChange(of: geo.frame(in: .global)) { branchVm.updateBounds($1) }
+            .onAppear { branchVm.changedGeoFrame(geo.frame(in: .global)) }
+            .onChange(of: geo.frame(in: .global)) { branchVm.changedGeoFrame($1) }
         }
         .frame(width: outerPanel.width, height: outerPanel.height)
         .offset(branchVm.branchShift)
