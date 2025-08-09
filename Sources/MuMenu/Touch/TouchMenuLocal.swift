@@ -58,6 +58,9 @@ public class TouchMenuLocal {
         if let touchMenu = menuKey[hash] {
             let corner = touchMenu.cornerVm.menuType
             touchMenu.buffer.addItem(MenuItem(location, phase, hash, corner), bufType: .localBuf)
+            if phase == 3 {
+                menuKey.removeValue(forKey: hash)
+            }
             return true
         }
         return false

@@ -7,8 +7,6 @@ import MuPeers
 
 extension RootVm: @MainActor PeersDelegate {
 
-    public func didChange() {}
-
     public func received(data: Data) {
 
         let decoder = JSONDecoder()
@@ -16,6 +14,9 @@ extension RootVm: @MainActor PeersDelegate {
             MenuTouch.remoteItem(item)
         }
     }
+}
+extension RootVm {
+
     /// not part of  PeersDelegate protocol,
     /// but maybe it should be
     func sendItemToPeers(_ item: MenuItem) {
