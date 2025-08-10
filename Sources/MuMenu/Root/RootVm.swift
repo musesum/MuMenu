@@ -38,7 +38,7 @@ public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable
     var touchState = TouchState()
 
     public var nodeSpotVm: NodeVm?   /// current last touched or hovered node
-    private var handState: leftRight<PinchPhase> = .init(.end, .end)
+    private var handState: leftRight<PinchPhase> = .init(.ended, .ended)
     
     public init(_ cornerType : MenuType   ,
                 _ archiveVm  : ArchiveVm  ,
@@ -51,18 +51,22 @@ public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable
         self.handsPhase = handsPhase
         self.peers = peers
 
-        handsPhase.$state.sink { state in
-            // is this phase for my corner? 
-            if let phase = (cornerType.left ? state.left :
-                            cornerType.right ? state.right : nil) {
+        handsPhase.$update.sink { [weak self] _ in
+            guard let self = self else { return }
+            // is this phase for my corner?
+            let state = self.handsPhase.state
+            let phase = self.cornerType.left ? state.left :
+                        self.cornerType.right ? state.right : nil
 
+            if let phase {
                 switch phase {
-                case .end : self.startAutoFades()
-                default   : self.showTrees(false)
+                case .ended : self.startAutoFades()
+                default     : self.showTrees(false)
                 }
-                TimeLog(handsPhase.icon, interval: 1 ) { P(handsPhase.icon) }
+                TimeLog(self.handsPhase.handsIcon, interval: 1 ) { P(self.handsPhase.handsIcon) }
             }
         }.store(in: &cancellables)
+        
         peers.setDelegate(self, for: .menuFrame)
     }
     public func addTreeVm(_ treeVm: TreeVm) {
@@ -80,3 +84,4 @@ public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable
     }
 
 }
+
