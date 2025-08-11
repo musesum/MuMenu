@@ -10,12 +10,13 @@ nonisolated(unsafe) public var MenuTypeCornerVm = [Int: CornerVm]()
 public class MenuTouch {
 
     nonisolated(unsafe) static var menuKey = [Int: MenuTouch]()
-    private let buffer = CircleBuffer<MenuItem>(capacity: 3, internalLoop: true)
+    private let buffer: CircleBuffer<MenuItem>
     private let isRemote: Bool
 
     public init(isRemote: Bool) {
         
         self.isRemote = isRemote
+        self.buffer = CircleBuffer<MenuItem>()
         buffer.delegate = self
     }
 }

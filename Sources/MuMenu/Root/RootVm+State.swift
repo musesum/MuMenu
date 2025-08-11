@@ -143,7 +143,7 @@ extension RootVm { // + State
                 nodeSpotVm?.updateSpotNodes()
             case 4: // ᴱ⁴ tap 4 times to clear buffers
                 archiveVm.nextFrame.addBetweenFrame {
-                    Panic.reset()
+                    Reset.reset()
                 }
             default: break
             }

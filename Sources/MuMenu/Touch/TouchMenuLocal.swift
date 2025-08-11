@@ -10,7 +10,7 @@ public class TouchMenuLocal {
     
    static var menuKey = [Int: TouchMenuLocal]()
 
-    private let buffer = CircleBuffer<MenuItem>(capacity: 3, internalLoop: true)
+    private let buffer: CircleBuffer<MenuItem>
     private let cornerVm: CornerVm
     private let isRemote: Bool
     private let nodeVm: NodeVm?
@@ -22,6 +22,7 @@ public class TouchMenuLocal {
         self.cornerVm = cornerVm
         self.nodeVm = nodeVm
         self.isRemote = isRemote
+        self.buffer = CircleBuffer<MenuItem>()
         buffer.delegate = self
     }
     /// hit test if touch is on menu
