@@ -38,7 +38,7 @@ public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable
     var touchState = TouchState()
 
     public var nodeSpotVm: NodeVm?   /// current last touched or hovered node
-    private var handState: leftRight<PinchPhase> = .init(.ended, .ended)
+    private var handState: leftRight<TouchPhase> = .init(.ended, .ended)
     
     public init(_ cornerType : MenuType   ,
                 _ archiveVm  : ArchiveVm  ,
@@ -63,7 +63,7 @@ public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable
                 case .ended : self.startAutoFades()
                 default     : self.showTrees(false)
                 }
-                TimeLog(self.handsPhase.handsIcon, interval: 1 ) { P(self.handsPhase.handsIcon) }
+                TimeLog(self.handsPhase.handsState, interval: 1 ) { P(self.handsPhase.handsState) }
             }
         }.store(in: &cancellables)
         

@@ -5,7 +5,7 @@ import MuPeers
 import MuVision
 import MuHands
 @MainActor
-public struct MenuHands {
+public struct Menus {
 
     public var menuVms = [MenuVm]()
     
@@ -19,19 +19,20 @@ public struct MenuHands {
 
         let rootTree = MenuTree(root˚)
         #if os(visionOS)
-        let vNames: [String] = ["canvas", "plato", "cell", "camera", "archive", "more"]
+        let vNames: [String] = ["canvas", "plato", "cell", "more"]
         #else
-        let vNames: [String] = ["canvas", "plato", "cell", "camera", "archive", "more"]
+        let vNames: [String] = ["canvas", "plato", "cell", "camera", "more"]
         #endif
+
         let rootSW = RootVm([.S,.W,.L], archiveVm, phase, peers) // SW Left
         let rootSE = RootVm([.S,.E,.R], archiveVm, phase, peers) // SE Right
         let swv = MenuBranch([.S,.W,.V], vNames) //SW Verti
         let sev = MenuBranch([.S,.E,.V], vNames) //SE Verti
-        #if true // only vertical menu
+        #if false // only vertical menu
         menuVms.append(MenuVm(rootSW, [swv], rootTree))
         menuVms.append(MenuVm(rootSE, [sev], rootTree))
         #else // both vertical and horizontal menu
-        let hNames: [String] = ["chat"]
+        let hNames: [String] = ["tape","archive", "chat"]
         let swh = MenuBranch([.S,.W,.H], hNames) //SW Horiz
         let seh = MenuBranch([.S,.E,.H], hNames) //SE Horiz
         menuVms.append(MenuVm(rootSW, [swv,swh], rootTree))
