@@ -22,10 +22,10 @@ public class LeafTogVm: LeafVm {
         guard let thumb = runways.thumb() else { return  }
 
         if visit.type.has([.model,.bind,.midi]) {
-            menuTree.flo.setAnyExprs([("x", thumb.value.x)], .sneak, visit)
+            menuTree.flo.setNameNums([("x", thumb.value.x)], .sneak, visit)
 
         } else if visit.type.has([.user,.remote]) {
-            menuTree.flo.setAnyExprs(("x", thumb.value.x), .fire, visit)
+            menuTree.flo.setAnyValue(("x", thumb.value.x), .fire, visit)
             updateLeafPeers(visit)
         }
         thumb.tween = thumb.value

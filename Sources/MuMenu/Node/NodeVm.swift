@@ -31,7 +31,7 @@ public class NodeVm: Identifiable, ObservableObject {
                 let newVal: Double = newValue ? 1 : 0
                 if oldVal != newVal {
                     //DebugLog { P("🔦 \(spotFlo.path(99))(on \(newVal.digits(0)))") }
-                    spotFlo.setVal("on", newVal, .sneak)
+                    spotFlo.setNameNums([("on", newVal)], .sneak)
                 }
             }
         }

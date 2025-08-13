@@ -47,11 +47,11 @@ public class LeafXyVm: LeafVm {
             
             if visit.type.has([.model, .bind]) {
 
-                menuTree.flo.setAnyExprs([("x", x),("y", y)], .sneak, visit)
+                menuTree.flo.setNameNums([("x", x),("y", y)], .sneak, visit)
 
             } else if visit.type.has([.user, .remote]) {
                 
-                menuTree.flo.setAnyExprs([("x", x),("y", y)], .fire, visit)
+                menuTree.flo.setNameNums([("x", x),("y", y)], .fire, visit)
                 updateLeafPeers(visit)
                 
             } else {

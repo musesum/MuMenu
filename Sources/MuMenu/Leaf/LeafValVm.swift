@@ -73,9 +73,9 @@ public class LeafValVm: LeafVm {
             }
 
             if visit.type.has([.model, .bind]) {
-                menuTree.flo.setAnyExprs(nameVals, .sneak, visit)
+                menuTree.flo.setAnyValue(nameVals, .sneak, visit)
             } else if visit.type.has([.user, .remote]) {
-                menuTree.flo.setAnyExprs(nameVals, .fire, visit)
+                menuTree.flo.setAnyValue(nameVals, .fire, visit)
                 updateLeafPeers(visit)
             }
         }
