@@ -18,7 +18,7 @@ extension RootVm { // + State
             let phase = touchState.phase
             let nodeItem = MenuNodeItem(newSpotVm)
             let menuItem = MenuItem(node: nodeItem, phase)
-            sendItemToPeers(menuItem)
+            shareItem(menuItem)
         }
     }
 

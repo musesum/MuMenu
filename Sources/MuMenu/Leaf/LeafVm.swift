@@ -89,7 +89,7 @@ public class LeafVm: NodeVm {
 
             let leafItem = MenuLeafItem(self, thumb, origin)
             let menuItem = MenuItem(leaf: leafItem, .moved)
-            rootVm.sendItemToPeers(menuItem)
+            rootVm.shareItem(menuItem)
         }
     }
 

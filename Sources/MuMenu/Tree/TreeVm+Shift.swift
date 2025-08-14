@@ -99,7 +99,7 @@ extension TreeVm { // + Shift
         if !fromRemote {
             let treesItem = MenuTreesItem(rootVm)
             let menuItem = MenuItem(trees: treesItem)
-            rootVm.sendItemToPeers(menuItem)
+            rootVm.shareItem(menuItem)
         }
     }
     

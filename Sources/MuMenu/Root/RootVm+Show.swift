@@ -22,7 +22,7 @@ extension RootVm {
                 NoDebugLog { P("toggleBranches showTime: \(showTree.state)") }
                 let treesItem = MenuTreesItem(self)
                 let menuItem = MenuItem(trees: treesItem)
-                sendItemToPeers(menuItem)
+                shareItem(menuItem)
             }
         } else {
             for treeVm in treeVms {

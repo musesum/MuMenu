@@ -38,7 +38,7 @@ extension RootVm { // touch
         if !fromRemote, let nodeSpotVm {
             let nodeItem = MenuNodeItem(nodeSpotVm)
             let menuItem = MenuItem(node: nodeItem, touchState.phase)
-            sendItemToPeers(menuItem)
+            shareItem(menuItem)
         }
 
     }

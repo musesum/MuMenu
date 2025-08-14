@@ -3,7 +3,7 @@
 
 import UIKit
 import MuPeers
-
+import MuFlo // PrintLog
 
 extension RootVm: @MainActor PeersDelegate {
 
@@ -14,19 +14,15 @@ extension RootVm: @MainActor PeersDelegate {
             MenuTouch.remoteItem(item)
         }
     }
-}
-extension RootVm {
 
-    /// not part of  PeersDelegate protocol,
-    /// but maybe it should be
-    func sendItemToPeers(_ item: MenuItem) {
+    public func shareItem(_ item: MenuItem) {
 
         Task {
             await peers.sendItem(.menuFrame) {
                 do {
                     return try JSONEncoder().encode(item)
                 } catch {
-                    print(error)
+                    PrintLog(error.localizedDescription)
                     return nil
                 }
             }
