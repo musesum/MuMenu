@@ -66,16 +66,16 @@ public class LeafValVm: LeafVm {
         if visit.type.has([.tween, .midi]) {
             // ignore
         } else {
-            var nameVals = [(String, Double)]()
+            var nameNums = [(String, Double)]()
             for name in ranges.keys {
                 let nameVal = (name, expand(named: name, val))
-                nameVals.append(nameVal)
+                nameNums.append(nameVal)
             }
 
             if visit.type.has([.model, .bind]) {
-                menuTree.flo.setAnyValue(nameVals, .sneak, visit)
+                menuTree.flo.setNameNums(nameNums, .sneak, visit)
             } else if visit.type.has([.user, .remote]) {
-                menuTree.flo.setAnyValue(nameVals, .fire, visit)
+                menuTree.flo.setNameNums(nameNums, .fire, visit)
                 updateLeafPeers(visit)
             }
         }

@@ -25,7 +25,7 @@ public class LeafTogVm: LeafVm {
             menuTree.flo.setNameNums([("x", thumb.value.x)], .sneak, visit)
 
         } else if visit.type.has([.user,.remote]) {
-            menuTree.flo.setAnyValue(("x", thumb.value.x), .fire, visit)
+            menuTree.flo.setNameNums([("x", thumb.value.x)], .fire, visit)
             updateLeafPeers(visit)
         }
         thumb.tween = thumb.value
