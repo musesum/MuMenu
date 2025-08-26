@@ -27,44 +27,47 @@ public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable
     
     /// which menu elements are shown on View
     var viewOps: Set<TouchType> = [.root, .trunks]
-    
-    /// `touchBegin` snapshot of viewElements.
-    /// To prevent touchEnded from hiding elements that were shown during `touchBegin`
+    /// state during touchBegin
     var beginViewOps: Set<TouchType> = []
     
     public var cornerType: MenuType /// corner where root begins, ex: `[down,left]`
+
     var treeVms = [TreeVm]() /// vertical or horizontal stack of branches
     var treeSpotVm: TreeVm? /// most recently used tree
     var touchState = TouchState()
 
+    // all menu corners
+    let menuVms: MenuVms
+    var _menuSpotVm: MenuVm?
+    var menuSpot: MenuVm? {
+        if let _menuSpotVm { return _menuSpotVm }
+        for menuVm in menuVms {
+            if menuVm.cornerType == cornerType {
+                _menuSpotVm = menuVm
+                return menuVm
+            }
+        }
+        PrintLog("RootVm::menuSpot[\(menuSpot?.cornerType.icon ?? "??")] not found")
+        return nil
+    }
     public var nodeSpotVm: NodeVm?   /// current last touched or hovered node
     private var handState: leftRight<TouchPhase> = .init(.ended, .ended)
     
-    public init(_ cornerType : MenuType   ,
-                _ archiveVm  : ArchiveVm  ,
-                _ handsPhase : HandsPhase ,
-                _ share      : Share      ) {
+    public init(_ cornerType : MenuType,
+                _ menuVms    : MenuVms,
+                _ archiveVm  : ArchiveVm,
+                _ handsPhase : HandsPhase,
+                _ share      : Share) {
 
         self.cornerType = cornerType
+        self.menuVms = menuVms
         self.cornerVm = CornerVm(cornerType)
         self.archiveVm = archiveVm
         self.handsPhase = handsPhase
         self.share = share
 
-        handsPhase.$update.sink { [weak self] _ in
-            guard let self = self else { return }
-            // is this phase for my corner?
-            let state = self.handsPhase.state
-            let phase = self.cornerType.left ? state.left :
-                        self.cornerType.right ? state.right : nil
-
-            if let phase {
-                switch phase {
-                case .ended : self.startAutoFades()
-                default     : self.showTrees(false)
-                }
-                TimeLog(self.handsPhase.handsState, interval: 1 ) { P(self.handsPhase.handsState) }
-            }
+        handsPhase.$update.sink { _ in
+            self.updateHandsPhase()
         }.store(in: &cancellables)
         
         share.peers.addDelegate(self, for: .menuFrame)

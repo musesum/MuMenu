@@ -5,16 +5,6 @@ import MuFlo
 import MuPeers
 import MuVision
 
-public class MenuBranch {
-    let type: MenuType
-    let names: [String]
-    init(_ type: MenuType,_  names: [String]) {
-        self.type = type
-        self.names = names
-    }
-}
-
-
 @MainActor
 open class MenuVm {
 
@@ -23,6 +13,14 @@ open class MenuVm {
 
     public var rootVm: RootVm
     public var cornerType: MenuType
+    public var isShowing: Bool {
+        for treeVm in rootVm.treeVms {
+            if treeVm.showTree.state.hidden == false {
+                return true
+            }
+        }
+        return false
+    }
 
     public init(_ rootVm    : RootVm ,
                 _ branches  : [MenuBranch],
@@ -46,7 +44,7 @@ open class MenuVm {
             rootVm.addTreeVm(treeVm)
         }
         // updateBranches
-        rootVm.showFirstTree()
+        rootVm.showFirstTree() //.....
         rootVm.startAutoFades()
     }
     public init(_ rootVm    : RootVm ,

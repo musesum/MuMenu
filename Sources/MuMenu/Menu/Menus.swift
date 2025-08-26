@@ -4,10 +4,12 @@ import MuFlo
 import MuPeers
 import MuVision
 import MuHands
+
+public typealias MenuVms = [MenuVm]
 @MainActor
 public struct Menus {
 
-    public var menuVms = [MenuVm]()
+    public var menuVms = MenuVms()
     
     public init(_ root˚: Flo,
                 _ archiveVm: ArchiveVm,
@@ -24,8 +26,8 @@ public struct Menus {
         let vNames: [String] = ["canvas", "plato", "cell", "camera", "more"]
         #endif
 
-        let rootSW = RootVm([.S,.W,.L], archiveVm, phase, share) // SW Left
-        let rootSE = RootVm([.S,.E,.R], archiveVm, phase, share) // SE Right
+        let rootSW = RootVm([.S,.W,.L], menuVms, archiveVm, phase, share) // SW Left
+        let rootSE = RootVm([.S,.E,.R], menuVms, archiveVm, phase, share) // SE Right
         let swv = MenuBranch([.S,.W,.V], vNames) //SW Verti
         let sev = MenuBranch([.S,.E,.V], vNames) //SE Verti
         #if false // only vertical menu

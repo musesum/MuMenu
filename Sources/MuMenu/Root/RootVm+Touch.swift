@@ -1,17 +1,22 @@
 // created by musesum on 6/13/25
 import MuFlo
 
+
+/// This is a set of touches reported by SwiftUI.
+/// VisionOS uses handpose and eyegaze in immersive Mode, which may conflict state.
 extension RootVm { // touch
 
-    internal func touchBegin(_ touchState: TouchState, _ fromRemote: Bool) {
+    internal func touchBegin(_ touchState: TouchState,
+                             _ fromRemote: Bool) {
 
         self.touchState = touchState
         beginViewOps = viewOps
-        NoDebugLog { P("beginViewOps: \(self.beginViewOps.description)") }
+
         updateRoot(fromRemote)
         updateSpot(nodeSpotVm, fromRemote)
         touchTypeBegin = touchType
         showTrees(fromRemote)
+        DebugLog { P("🔰 touchBegin \(self.cornerType.icon) \(self.touchType.symbol) \(self.touchType.description)") }
     }
     internal func touchMoved(_ touchState: TouchState, _ fromRemote: Bool) {
 
@@ -34,6 +39,7 @@ extension RootVm { // touch
         }
         treeSpotVm?.branchSpotVm = nil
         touchType = .none
+        DebugLog { P("🛑 touchEnded \(self.cornerType.icon) \(self.touchType.symbol) \(self.touchType.description)") }
 
         if !fromRemote, let nodeSpotVm {
             let nodeItem = MenuNodeItem(nodeSpotVm)
