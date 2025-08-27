@@ -47,7 +47,7 @@ public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable
                 return menuVm
             }
         }
-        PrintLog("RootVm::menuSpot[\(menuSpot?.cornerType.icon ?? "??")] not found")
+        //PrintLog("RootVm::menuSpot[\(_menuSpotVm?.cornerType.icon ?? "??")] not found")
         return nil
     }
     public var nodeSpotVm: NodeVm?   /// current last touched or hovered node

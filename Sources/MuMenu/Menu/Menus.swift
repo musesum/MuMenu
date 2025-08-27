@@ -21,9 +21,9 @@ public struct Menus {
 
         let rootTree = MenuTree(root˚)
         #if os(visionOS)
-        let vNames: [String] = ["canvas", "plato", "cell", "more"]
+        let vNames: [String] = ["canvas", "plato", "cell", "tape", "archive","more"]
         #else
-        let vNames: [String] = ["canvas", "plato", "cell", "camera", "more"]
+        let vNames: [String] = ["canvas", "plato", "cell", "camera","tape",  "archive", "more"]
         #endif
 
         let rootSW = RootVm([.S,.W,.L], menuVms, archiveVm, phase, share) // SW Left
@@ -34,7 +34,7 @@ public struct Menus {
         menuVms.append(MenuVm(rootSW, [swv], rootTree))
         menuVms.append(MenuVm(rootSE, [sev], rootTree))
         #else // both vertical and horizontal menu
-        let hNames: [String] = ["tape","archive", "chat"]
+        let hNames: [String] = ["chat"]
         let swh = MenuBranch([.S,.W,.H], hNames) //SW Horiz
         let seh = MenuBranch([.S,.E,.H], hNames) //SE Horiz
         menuVms.append(MenuVm(rootSW, [swv,swh], rootTree))
