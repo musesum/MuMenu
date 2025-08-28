@@ -49,7 +49,8 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
                 phase    : phase3,
                 azimuth  : touch.azimuthAngle(in: nil),
                 altitude : touch.altitudeAngle,
-                hash     : hash
+                hash     : hash,
+                type     : VisitType.user.rawValue
             )
 
             var from = TouchFrom.none
