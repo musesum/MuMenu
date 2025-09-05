@@ -24,6 +24,21 @@ public enum Menu {
     static let panelFill = Color(white: 0.01, opacity: 0.15)
     static func togColor(_ spot: Bool) -> Color { return spot ? .white : Color(white: 0.4) }
 
+    public static func touchWidth(_ geo: GeometryProxy) -> CGFloat {
+        geo.size.width +
+        geo.safeAreaInsets.leading +
+        geo.safeAreaInsets.trailing
+    }
+    public static func touchHeight(_ geo: GeometryProxy) -> CGFloat {
+        geo.size.height +
+        geo.safeAreaInsets.top +
+        geo.safeAreaInsets.bottom
+    }
+    public static func touchOffset(_ geo: GeometryProxy) -> CGSize {
+        CGSize(width:  -geo.safeAreaInsets.leading,
+               height: -geo.safeAreaInsets.top)
+    }
+
 
 #if os(visionOS) || os(iPadOS)
     public static let margin = CGFloat(16)
