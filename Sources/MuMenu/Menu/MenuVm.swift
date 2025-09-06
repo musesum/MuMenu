@@ -44,7 +44,7 @@ open class MenuVm {
             rootVm.addTreeVm(treeVm)
         }
         // updateBranches
-        rootVm.showFirstTree() //.....
+        rootVm.showFirstTree()
         rootVm.startAutoFades()
     }
     public init(_ rootVm    : RootVm ,
