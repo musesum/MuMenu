@@ -11,12 +11,43 @@ enum TouchFrom: String {
     case menu   = "📋"
     case canvas = "🎑"
 }
+
+/// Sometimes UITouches recycle hashes. This becomes a problem with remote replay
+/// as there is a lagtime, resulting in some touch begin…end cycles getting
+/// stuffed into the same touchBuffers[item.hash]. The result is that some
+/// recycled gestures may be ignored or get stuck.
+/// 
+/// Instead, HashBump looks at recycled Hashes and bumps up the hash value by +1.
+/// After a timeout of 60 seconds, the history will get clear out, which should be
+/// enough time for any remote timelag.
+class HashBump {
+
+    let id = Visitor.nextId()
+    let maxLag = TimeInterval(60) // after two seconds clear out history
+    var lastTime = TimeInterval(0)
+    var history = [Int: Int]()
+
+    func hash(_ phase: Int,_ hash: Int) -> Int {
+
+        let now = Date().timeIntervalSince1970
+        if now - lastTime > maxLag {
+            history.removeAll()
+        }
+        lastTime = now
+
+        if phase == UITouch.Phase.began.rawValue {
+            history[hash] = (history[hash] ?? -1) + 1
+        }
+        return hash + (history[hash] ?? 0)
+    }
+}
 open class TouchView: UIView, UIGestureRecognizerDelegate {
 
     var safeBounds: CGRect { frame.pad(-4) }
     var touchBlock = [Hash: Bool]()
     var touchPhase = [Hash: Int]()
     var touchCanvas: TouchCanvas?
+    let hashBump = HashBump()
 
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -40,13 +71,13 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
         for touch in touches {
 
             let location = touch.preciseLocation(in: nil)
-            let phase3 = min(3,touch.phase.rawValue)
-            let hash = touch.hash // allows multi-finger
+            let phase = min(3,touch.phase.rawValue)
+            let hash = hashBump.hash(phase,touch.hash) // allows multi-finger
             let touchData = TouchData(
                 force    : Float(touch.force),
                 radius   : Float(touch.majorRadius),
                 nextXY   : touch.preciseLocation(in: nil),
-                phase    : phase3,
+                phase    : phase,
                 azimuth  : touch.azimuthAngle(in: nil),
                 altitude : touch.altitudeAngle,
                 hash     : hash,
@@ -55,16 +86,21 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
 
             var from = TouchFrom.none
 
-            switch phase3 {
+            switch phase {
             case 0: // begin
-                if TouchMenuLocal.beginTouch(location, phase3, hash) {  from = .menu }
-                else if willBeginFromEdge() { touchCanvas?.beginTouch(touchData); from = .edge }
-                else { touchCanvas?.beginTouch(touchData); from = .canvas }
-
+                if TouchMenuLocal.beginTouch(location, phase, hash) {  from = .menu }
+                else if willBeginFromEdge() {
+                    touchCanvas?.beginTouch(touchData); from = .edge
+                } else {
+                    touchCanvas?.beginTouch(touchData); from = .canvas
+                }
             default: // moved, stationary, ended
                 if beganFromEdge() { from = .edge }
-                else if TouchMenuLocal.updateTouch(location,phase3,hash) { from = .menu }
-                else { touchCanvas?.updateTouch(touchData); from = .canvas}
+                else if TouchMenuLocal.updateTouch(location,phase,hash) {
+                    from = .menu
+                } else {
+                    touchCanvas?.updateTouch(touchData); from = .canvas
+                }
             }
             // log()
 
@@ -87,7 +123,7 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
             }
 
             func log() {
-                switch phase3 {
+                switch phase {
                 case 0,2,3: DebugLog { P("👆 \(from.rawValue) hash: \(hash) phase: \(touch.phase.rawValue)") }
                 default: TimeLog("👆 \(hash)", interval:0.5) { P("👆 \(from.rawValue) hash: \(hash) phase: \(touch.phase.rawValue)")}
                 }
