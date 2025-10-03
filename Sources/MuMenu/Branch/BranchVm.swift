@@ -47,21 +47,25 @@ public class BranchVm: @MainActor Identifiable, ObservableObject {
         return nameFirst + "…" + nameLast
     }
 
-    public init(menuTrees: [MenuTree] = [],
-                treeVm: TreeVm,
-                branchPrev: BranchVm? = nil,
-                prevNodeVm: NodeVm? = nil,
-                zindex: CGFloat = 0) {
+    public init(menuTrees  : [MenuTree] = [],
+                treeVm     : TreeVm,
+                branchPrev : BranchVm? = nil,
+                prevNodeVm : NodeVm? = nil,
+                columns    : Int? = nil,
+                zindex     : CGFloat = 0) {
 
         self.nodeVms = []
         self.treeVm = treeVm
         self.branchPrev = branchPrev
         self.zindex = zindex
-        self.columns = prevNodeVm?.menuTree.flo.intVal("columns") ?? 1
+        if let columns = columns ?? prevNodeVm?.menuTree.flo.intVal("columns") {
+            self.columns = columns
+        }
         self.panelVm = PanelVm(branchVm: self,
                                menuTrees: menuTrees,
                                treeVm: treeVm,
-                               columns: columns)
+                               columns: self.columns
+        )
 
         buildNodeVms(menuTrees: menuTrees,
                      prevNodeVm: prevNodeVm)

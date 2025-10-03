@@ -22,9 +22,10 @@ open class MenuVm {
         return false
     }
 
-    public init(_ rootVm    : RootVm ,
-                _ branches  : [MenuBranch],
-                _ rootMenu  : MenuTree) {
+    public init(_ rootVm   : RootVm ,
+                _ branches : [MenuBranch],
+                _ rootMenu : MenuTree,
+                columns    : Int? = nil) {
 
         // both veritical and horizontal menu will share the same root
         self.rootVm = rootVm
@@ -39,7 +40,9 @@ open class MenuVm {
                 }
             }
             let treeVm = TreeVm(rootVm, branch.type)
-            let branchVm = BranchVm(menuTrees: menuTrees, treeVm: treeVm)
+            let branchVm = BranchVm(menuTrees : menuTrees,
+                                    treeVm    : treeVm,
+                                    columns   : columns)
             treeVm.addBranchVm(branchVm)
             rootVm.addTreeVm(treeVm)
         }
@@ -47,10 +50,10 @@ open class MenuVm {
         rootVm.showFirstTree()
         rootVm.startAutoFades()
     }
-    public init(_ rootVm    : RootVm ,
-                _ menuType  : MenuType,
-                _ floNames  : [String],
-                _ rootMenu  : MenuTree) {
+    public init(_ rootVm   : RootVm,
+                _ menuType : MenuType,
+                _ floNames : [String],
+                _ rootMenu : MenuTree) {
 
         // both veritical and horizontal menu will share the same root
         self.rootVm = rootVm

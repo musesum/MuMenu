@@ -21,18 +21,25 @@ public struct Menus {
 
         let rootTree = MenuTree(root˚)
         #if os(visionOS)
-        let vNames: [String] = ["canvas", "plato", "cell", "tape", "archive","more"]
-        #else
-        let vNames: [String] = ["canvas", "plato", "cell", "camera","tape",  "archive", "more"]
+        let vNames: [String] = ["canvas"  , "brush" ,
+                                "plato"   , "cell"  ,
+                                "archive" , "music" ,
+                                "tape"    , "more"  ]
+#else
+        let vNames: [String] = ["canvas"  , "brush" ,
+                                "plato"   , "cell"  ,
+                                "archive" , "music" ,
+                                "camera"  , "mic"   ,
+                                "tape"    , "more"  ]
         #endif
 
         let rootSW = RootVm([.S,.W,.L], menuVms, archiveVm, phase, share) // SW Left
         let rootSE = RootVm([.S,.E,.R], menuVms, archiveVm, phase, share) // SE Right
         let swv = MenuBranch([.S,.W,.V], vNames) //SW Verti
         let sev = MenuBranch([.S,.E,.V], vNames) //SE Verti
-        #if false // only vertical menu
-        menuVms.append(MenuVm(rootSW, [swv], rootTree))
-        menuVms.append(MenuVm(rootSE, [sev], rootTree))
+        #if true // only vertical menu
+        menuVms.append(MenuVm(rootSW, [swv], rootTree, columns: 2))
+        menuVms.append(MenuVm(rootSE, [sev], rootTree, columns: 2))
         #else // both vertical and horizontal menu
         let hNames: [String] = ["chat"]
         let swh = MenuBranch([.S,.W,.H], hNames) //SW Horiz
