@@ -22,7 +22,7 @@ struct LeafPeerView: View {
                 Spacer()
             }
             LeafBezelView(leafVm, .none) {
-                PeersView(leafVm.share.peers)
+                PeersView(leafVm.peers)
             }
         }
     }

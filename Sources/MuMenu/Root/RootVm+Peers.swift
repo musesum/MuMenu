@@ -18,7 +18,7 @@ extension RootVm: @MainActor PeersDelegate {
     public func shareItem(_ item: MenuItem) {
 
         Task {
-            await share.peers.sendItem(.menuFrame) {
+            await peers.sendItem(.menuFrame) {
                 do {
                     return try JSONEncoder().encode(item)
                 } catch {

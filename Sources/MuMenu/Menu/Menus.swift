@@ -14,7 +14,7 @@ public struct Menus {
     public init(_ root˚: Flo,
                 _ archiveVm: ArchiveVm,
                 _ phase: HandsPhase,
-                _ share: Share) {
+                _ peers: Peers) {
 
         Icon.altBundles.append(MuMenu.bundle)
         Icon.altBundles.append(MuVision.bundle)
@@ -33,8 +33,8 @@ public struct Menus {
                                 "tape"    , "more"  ]
         #endif
 
-        let rootSW = RootVm([.S,.W,.L], menuVms, archiveVm, phase, share) // SW Left
-        let rootSE = RootVm([.S,.E,.R], menuVms, archiveVm, phase, share) // SE Right
+        let rootSW = RootVm([.S,.W,.L], menuVms, archiveVm, phase, peers) // SW Left
+        let rootSE = RootVm([.S,.E,.R], menuVms, archiveVm, phase, peers) // SE Right
         let swv = MenuBranch([.S,.W,.V], vNames) //SW Verti
         let sev = MenuBranch([.S,.E,.V], vNames) //SE Verti
         #if true // only vertical menu
