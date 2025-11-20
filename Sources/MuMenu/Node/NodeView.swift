@@ -19,6 +19,7 @@ struct NodeView: View {
                 case let n as LeafSearchVm  : LeafSearchView  (leafVm: n)
                 case let n as LeafArchiveVm : LeafArchiveView (leafVm: n)
                 case let n as LeafTogVm     : LeafTogView     (leafVm: n)
+                case let n as LeafTapVm     : LeafTapView     (leafVm: n)
                 default: IconView(nodeVm, nodeVm.menuTree.icon, .none)
                 }
             }

@@ -49,7 +49,7 @@ public class PanelVm {
 
         switch nodeType {
 
-        case .none, .node, .tog:
+        case .none, .node, .tog, .tap:
 
             aspect(1.0 * CGFloat(columns),
                    1.0 * CGFloat(columns))
@@ -140,7 +140,7 @@ public class PanelVm {
 
             return innerSize + CGSize(width: pad, height: dia)
 
-        case .none, .node, .tog:
+        case .none, .node, .tog, .tap:
 
             if columns > 1 {
                 let rowi = (branchVm.nodeVms.count + 1) / columns

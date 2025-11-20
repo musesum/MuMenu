@@ -9,6 +9,7 @@ public enum NodeType: String, Codable {
     case xy     // 2-axis XY control
     case xyz    // 3-azis XYZ control
     case tog    // toggle on/off
+    case tap    // tapping
     case seg    // segment control
     case peer   // join a peer network
     case arch   // list of archives
@@ -23,6 +24,7 @@ public enum NodeType: String, Codable {
         case .xy     : return "xy"
         case .xyz    : return "xyz"
         case .tog    : return "tog"
+        case .tap    : return "tap"
         case .seg    : return "seg"
         case .peer   : return "peer"
         case .arch   : return "arch"
@@ -47,6 +49,7 @@ public enum NodeType: String, Codable {
         case "xy"     : self = .xy
         case "xyz"    : self = .xyz
         case "tog"    : self = .tog
+        case "tap"    : self = .tap
         case "seg"    : self = .seg
         case "peer"   : self = .peer
         case "arch"   : self = .arch
@@ -58,7 +61,7 @@ public enum NodeType: String, Codable {
     /// control will create separate child leaf
     public var isControl: Bool {
         switch self {
-        case .node, .none, .tog: return false
+        case .node, .none, .tog, .tap: return false
         case .val, .seg, .xy, .xyz, .peer, .hand, .arch, .search: return true
         }
     }
