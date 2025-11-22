@@ -51,7 +51,7 @@ struct LeafHeaderDeltaView: View {
         if let img = UIImage(named: name) {
             return img
         } else {
-            for bundle in Icon.altBundles {
+            for bundle in Menus.bundles {
                 if let img =  UIImage(named: name, in: bundle, with: nil) {
                     return img
                 }

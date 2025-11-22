@@ -92,21 +92,44 @@ open class MenuTree: Identifiable, Equatable {
     }
 
     public func makeFloIcon(_ flo: Flo) -> Icon {
-        if let nameAny = flo.exprs?.nameAny {
-            for (key,name) in nameAny {
-                if let name = name as? String {
-                    switch key {
-                    case "sym"    : return Icon(.symbol, name, nodeType)
-                    case "img"    : return Icon(.image,  name, nodeType)
-                    case "svg"    : return Icon(.svg,    name, nodeType)
-                    case "text"   : return Icon(.text,   name, nodeType)
-                    case "cursor" : return Icon(.cursor, name, nodeType)
-                    default       : continue
+        var on: IconTypeName?
+        var off: IconTypeName?
+
+        if let on = iconTypeName(flo) {
+            return Icon(on,off,nodeType)
+        } else {
+            for child in flo.children {
+                switch child.name {
+                case "_on" , "on"  : on  = iconTypeName(child);
+                case "_off", "off" : off = iconTypeName(child);
+                default: continue
+                }
+            }
+            if let on, let off {
+                return Icon(on, off, nodeType)
+            }
+        }
+        let none: IconTypeName = (.none,"")
+        return Icon(none,none, nodeType)
+
+
+        func iconTypeName(_ flo: Flo) -> IconTypeName? {
+            if let nameAny = flo.exprs?.nameAny {
+                for (key,name) in nameAny {
+                    if let name = name as? String {
+                        switch key {
+                        case "sym"    : return (.symbol , name)
+                        case "img"    : return (.image  , name)
+                        case "svg"    : return (.svg    , name)
+                        case "text"   : return (.text   , name)
+                        case "cursor" : return (.cursor , name)
+                        default       : continue
+                        }
                     }
                 }
             }
+            return nil
         }
-        return Icon(.none, "??")
     }
 }
 

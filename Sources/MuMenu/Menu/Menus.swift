@@ -4,11 +4,13 @@ import MuFlo
 import MuPeers
 import MuVision
 import MuHands
+import Foundation
+
 
 public typealias MenuVms = [MenuVm]
 @MainActor
 public struct Menus {
-
+    static var bundles = [Bundle]()
     public var menuVms = MenuVms()
     
     public init(_ root˚: Flo,
@@ -16,8 +18,8 @@ public struct Menus {
                 _ phase: HandsPhase,
                 _ peers: Peers) {
 
-        Icon.altBundles.append(MuMenu.bundle)
-        Icon.altBundles.append(MuVision.bundle)
+        Menus.bundles.append(MuMenu.bundle)
+        Menus.bundles.append(MuVision.bundle)
 
         let rootTree = MenuTree(root˚)
         #if os(visionOS)

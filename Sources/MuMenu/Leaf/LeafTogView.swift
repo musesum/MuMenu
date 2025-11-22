@@ -8,14 +8,18 @@ struct LeafTogView: View {
     @ObservedObject var leafVm: LeafTogVm
 
     let runwayType = LeafRunwayType.none
-
-    var togColor: Color {
+    var icon: Icon { leafVm.menuTree.icon }
+    var isOn: Bool {
         if let thumb = leafVm.runways.thumb() {
-            return Menu.togColor(thumb.value.x > 0)
+            return thumb.value.x > 0
         } else {
-            return Menu.togColor(false)
+            return false
         }
     }
+    var togColor: Color {
+       Menu.togColor(isOn)
+    }
+
     var togOffset: CGSize { CGSize(width:  Menu.radius-6,
                                    height: Menu.radius-6)}
     var body: some View {
@@ -24,7 +28,8 @@ struct LeafTogView: View {
 
             ZStack {
 
-                IconView(leafVm, leafVm.menuTree.icon, runwayType)
+                IconView(leafVm, icon, runwayType)
+                    .id(leafVm.refresh)
 
                 Capsule()
                     .fill(.black)
@@ -53,13 +58,16 @@ struct LeafTapView: View {
     @ObservedObject var leafVm: LeafTapVm
 
     let runwayType = LeafRunwayType.none
-
-    var tapColor: Color {
+    var icon: Icon { leafVm.menuTree.icon }
+    var isOn: Bool {
         if let thumb = leafVm.runways.thumb() {
-            return Menu.tapColor(thumb.value.x > 0)
+            return thumb.value.x > 0
         } else {
-            return Menu.tapColor(false)
+            return false
         }
+    }
+    var tapColor: Color {
+        return Menu.tapColor(isOn)
     }
     var tapOffset: CGSize { CGSize(width:  Menu.radius-6,
                                    height: Menu.radius-6)}
@@ -69,7 +77,8 @@ struct LeafTapView: View {
 
             ZStack {
 
-                IconView(leafVm, leafVm.menuTree.icon, runwayType)
+                IconView(leafVm, icon, runwayType)
+                    .id(leafVm.refresh)
 
                 Capsule()
                     .fill(.black)

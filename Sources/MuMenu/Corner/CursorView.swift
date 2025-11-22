@@ -27,3 +27,43 @@ struct CursorView: View {
         .zIndex(nodeVm.zIndex)
     }
 }
+struct NodeIconView: View {
+
+    @Environment(\.colorScheme) var colorScheme // darkMode
+    @ObservedObject var nodeVm: NodeVm
+
+    let icon: Icon
+    var title: String { nodeVm.menuTree.flo.name }
+    var spotlight: Bool { nodeVm.spotlight }
+    var fillColor = Color(white: 0).opacity(0.62)
+    var strokeColor: Color { spotlight ? .white : Color(white: 0.7) }
+    var strokeWidth: CGFloat { spotlight ? 5.0 : 1.0 }
+
+    init(_ nodeVm: NodeVm,
+         _ icon: Icon) {
+        self.nodeVm = nodeVm
+        self.icon = icon
+    }
+
+    var body: some View {
+        ZStack {
+
+            if icon.typeOn != .cursor {
+
+                RoundedRectangle(cornerRadius: Menu.cornerRadius)
+                    .fill(fillColor)
+                    .overlay(RoundedRectangle(cornerRadius:  Menu.cornerRadius)
+                        .stroke(strokeColor, lineWidth: strokeWidth)
+                        .background(.clear)
+                    )
+
+                    .hoverEffect()
+                    .cornerRadius(Menu.cornerRadius)
+
+            }
+            IconTitleView(title: title, color: strokeColor)
+
+        }
+        .allowsHitTesting(true)
+    }
+}

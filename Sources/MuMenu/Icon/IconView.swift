@@ -2,16 +2,23 @@
 
 import SwiftUI
 
-
 struct IconView: View {
 
     @Environment(\.colorScheme) var colorScheme // darkMode
     @ObservedObject var nodeVm: NodeVm
 
     let icon: Icon
+    var isOn: Bool {
+        if let leaf = nodeVm as? LeafVm,
+           let thumb = leaf.runways.thumb() {
+            return thumb.value.x > 0
+        }
+         return true
+    }
     let runwayType: LeafRunwayType
     var title: String { nodeVm.menuTree.flo.name }
-    var named: String { nodeVm.menuTree.icon.icoName }
+    var iconName: String { isOn ? icon.nameOn  : icon.nameOff  }
+    var iconImage: UIImage?  { isOn ? icon.imageOn : icon.imageOff }
 
     var spotlight: Bool { nodeVm.spotlight }
     var fillColor = Color(white: 0).opacity(0.62)
@@ -29,7 +36,7 @@ struct IconView: View {
     var body: some View {
         ZStack {
 
-            if icon.iconType != .cursor {
+            if icon.typeOn != .cursor {
 
                 RoundedRectangle(cornerRadius: Menu.cornerRadius)
                     .fill(fillColor)
@@ -46,17 +53,17 @@ struct IconView: View {
             case .runX, .runY, .runU, .runV, .runW, .runZ, .runS, .runT:
                 IconSideView(runwayType, strokeColor)
             default:
-                switch icon.iconType {
+                switch icon.typeOn {
                 case .none: IconTitleView(title: title, color: strokeColor)
-                case .text: IconTitleView(title: named, color: strokeColor)
+                case .text: IconTitleView(title: iconName, color: strokeColor)
                 case .cursor:
 
-                    if let uiImage = UIImage(named: nodeVm.menuTree.icon.icoName) {
+                    if let uiImage = UIImage(named: iconName) {
                         Image(uiImage: uiImage).resizable() }
 
                 case .image:
 
-                    if let image = icon.image {
+                    if let image = iconImage {
                         GeometryReader { geo in
                             Image(uiImage: image)
                                 .resizable()
@@ -67,7 +74,7 @@ struct IconView: View {
                     }
                 case .svg:
 
-                    if let image = icon.image {
+                    if let image = iconImage {
                         GeometryReader { geo in
                             Image(uiImage: image)
                                 .resizable()
@@ -80,7 +87,7 @@ struct IconView: View {
                     }
                 case .symbol:
 
-                    Image(systemName: nodeVm.menuTree.icon.icoName)
+                    Image(systemName: iconName)
                         .scaledToFit()
                         .padding(1)
                 }
@@ -90,7 +97,7 @@ struct IconView: View {
     }
 }
 
-private struct IconTitleView: View {
+struct IconTitleView: View {
 
     let title: String
     var color: Color
