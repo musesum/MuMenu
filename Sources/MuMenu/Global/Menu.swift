@@ -19,7 +19,7 @@ public enum Menu {
     static let insideNode: CGFloat = 24
 
     static let iconRing = "icon.ring"
-    static let iconLogo = "icon.logo"
+//    static let iconLogo = "icon.logo"
     static let lagStep = TimeInterval(1.0/32.0) // sixteenth of a second
     static let panelFill = Color(white: 0.01, opacity: 0.15)
     static func togColor(_ spot: Bool) -> Color { return spot ? .white : Color(white: 0.4) }

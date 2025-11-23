@@ -27,21 +27,26 @@ public struct Menus {
                                 "plato"   , "cell"  ,
                                 "archive" , "music" ,
                                 "tape"    , "more"  ]
-#else
+        #else
         let vNames: [String] = ["canvas"  , "brush" ,
                                 "plato"   , "cell"  ,
                                 "archive" , "music" ,
                                 "camera"  , "mic"   ,
                                 "tape"    , "more"  ]
+
+        let WNames: [String] = ["canvas", "brush", "plato", "cell","camera"]
+        let ENames: [String] = ["music", "mic", "tape", "archive", "more" ]
+        let WLogo = "eye"
+        let ELogo = "ear"
         #endif
 
-        let rootSW = RootVm([.S,.W,.L], menuVms, archiveVm, phase, peers) // SW Left
-        let rootSE = RootVm([.S,.E,.R], menuVms, archiveVm, phase, peers) // SE Right
-        let swv = MenuBranch([.S,.W,.V], vNames) //SW Verti
-        let sev = MenuBranch([.S,.E,.V], vNames) //SE Verti
+        let rootSW = RootVm([.S,.W,.L], WLogo, menuVms, archiveVm, phase, peers) // SW Left
+        let rootSE = RootVm([.S,.E,.R], ELogo, menuVms, archiveVm, phase, peers) // SE Right
+        let swv = MenuBranch([.S,.W,.V], WNames) //SW Verti
+        let sev = MenuBranch([.S,.E,.V], ENames) //SE Verti
         #if true // only vertical menu
-        menuVms.append(MenuVm(rootSW, [swv], rootTree, columns: 2))
-        menuVms.append(MenuVm(rootSE, [sev], rootTree, columns: 2))
+        menuVms.append(MenuVm(rootSW, [swv], rootTree))
+        menuVms.append(MenuVm(rootSE, [sev], rootTree))
         #else // both vertical and horizontal menu
         let hNames: [String] = ["chat"]
         let swh = MenuBranch([.S,.W,.H], hNames) //SW Horiz

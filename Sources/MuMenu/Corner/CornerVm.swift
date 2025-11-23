@@ -25,10 +25,13 @@ import MuFlo
         return CGSize(width: deltaEast - offset.width, height: -offset.height)
     }
 
-    public var menuType: MenuType
+    public let menuType: MenuType
+    let logoName: String
 
-    init(_ menuType: MenuType) {
+    init(_ menuType: MenuType,
+         _ logoName: String) {
         self.menuType = menuType
+        self.logoName = logoName
     }
 
     public func setRoot(_ rootVm: RootVm) {
@@ -40,7 +43,7 @@ import MuFlo
         let branchVm = BranchVm.cached(treeVm: treeVm)
         let cornerFlo = Flo(rootVm.cornerType.key)
 
-        let iconLogo = Icon(.cursor, Menu.iconLogo)
+        let iconLogo = Icon(.symbol, logoName)
         let cornerLogo = MenuTree(cornerFlo, .none, iconLogo)
         logoNodeVm = NodeVm(cornerLogo, branchVm, nil)
 

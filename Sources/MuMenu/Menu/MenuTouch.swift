@@ -25,7 +25,7 @@ extension MenuTouch: CircleBufferDelegate {
 
     public typealias Item = MenuItem
 
-    public func flushItem<Item>(_ item: Item, _ type: BufType) -> BufState {
+    public func flushItem<Item>(_ item: Item, _ from: DataFrom) -> BufState {
         let item = item as! MenuItem
 
         if isRemote {
@@ -67,11 +67,11 @@ extension MenuTouch {
 
     public static func remoteItem(_ item: MenuItem) {
         if let menu = menuKey[item.key] {
-            menu.buffer.addItem(item, bufType: .remoteBuf)
+            menu.buffer.addItem(item, from: .remote)
         } else {
             let touchMenu = MenuTouch(isRemote: true)
             menuKey[item.key] = touchMenu
-            touchMenu.buffer.addItem(item, bufType: .remoteBuf)
+            touchMenu.buffer.addItem(item, from: .remote)
         }
     }
 }

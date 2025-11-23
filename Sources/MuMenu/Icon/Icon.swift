@@ -37,7 +37,7 @@ public class Icon {
 
     @MainActor
     var imageOn: UIImage? {
-        if let iconOn {
+        if let _ = iconOn {
             switch typeOn {
             case .image, .svg:
                 return UIImage.named(nameOn)
@@ -48,7 +48,7 @@ public class Icon {
     }
     @MainActor
     var imageOff: UIImage? {
-        if let iconOff {
+        if let _ = iconOff {
             switch typeOff {
             case .image, .svg:
                 return UIImage.named(nameOff)

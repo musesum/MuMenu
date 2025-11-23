@@ -54,6 +54,7 @@ public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable
     private var handState: leftRight<TouchPhase> = .init(.ended, .ended)
     
     public init(_ cornerType : MenuType,
+                _ logoName   : String,
                 _ menuVms    : MenuVms,
                 _ archiveVm  : ArchiveVm,
                 _ handsPhase : HandsPhase,
@@ -61,7 +62,7 @@ public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable
 
         self.cornerType = cornerType
         self.menuVms = menuVms
-        self.cornerVm = CornerVm(cornerType)
+        self.cornerVm = CornerVm(cornerType, logoName)
         self.archiveVm = archiveVm
         self.handsPhase = handsPhase
         self.peers = peers

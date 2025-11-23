@@ -5,9 +5,10 @@ import UIKit
 import MuPeers
 import MuFlo // PrintLog
 
+
 extension RootVm: @MainActor PeersDelegate {
 
-    public func received(data: Data) {
+    public func received(data: Data, from: DataFrom) {
 
         let decoder = JSONDecoder()
         if let item = try? decoder.decode(MenuItem.self, from: data) {

@@ -2,7 +2,7 @@
 
 import UIKit
 import MuFlo // double buffer
-
+import MuPeers // DataFrom
 
 /// user touched menu locally, so buffer menuTouchs in CircleBuffer
 @MainActor
@@ -44,7 +44,7 @@ public class TouchMenuLocal {
             func addMenu(_ nodeVm: NodeVm? = nil) -> Bool {
                 let touchMenu = TouchMenuLocal(cornerVm, nodeVm, isRemote: false)
                 let menuItem = MenuItem(location,phase,hash, cornerVm.menuType)
-                touchMenu.buffer.addItem(menuItem, bufType: .localBuf)
+                touchMenu.buffer.addItem(menuItem, from: .local)
                 menuKey[hash] = touchMenu
                 return true
             }
@@ -58,7 +58,7 @@ public class TouchMenuLocal {
 
         if let touchMenu = menuKey[hash] {
             let corner = touchMenu.cornerVm.menuType
-            touchMenu.buffer.addItem(MenuItem(location, phase, hash, corner), bufType: .localBuf)
+            touchMenu.buffer.addItem(MenuItem(location, phase, hash, corner), from: .local)
             if phase == 3 {
                 menuKey.removeValue(forKey: hash)
             }
@@ -72,7 +72,7 @@ extension TouchMenuLocal: CircleBufferDelegate {
 
     public typealias Item = MenuItem
 
-    public func flushItem<Item>(_ item: Item, _ type: BufType) -> BufState {
+    public func flushItem<Item>(_ item: Item, _ from: DataFrom) -> BufState {
         let item = item as! MenuItem
         if let touch = item.item as? MenuTouchItem,
            let cornerVm = MenuTypeCornerVm[item.menuType.rawValue] {
