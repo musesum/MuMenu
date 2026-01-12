@@ -34,12 +34,11 @@ public struct Menus {
                                 "camera"  , "mic"   ,
                                 "tape"    , "more"  ]
 
+        #endif
         let WNames: [String] = ["canvas", "brush", "plato", "cell","camera"]
         let ENames: [String] = ["music", "mic", "tape", "archive", "more" ]
         let WLogo = "eye"
         let ELogo = "ear"
-        #endif
-
         let rootSW = RootVm([.S,.W,.L], WLogo, menuVms, archiveVm, phase, peers) // SW Left
         let rootSE = RootVm([.S,.E,.R], ELogo, menuVms, archiveVm, phase, peers) // SE Right
         let swv = MenuBranch([.S,.W,.V], WNames) //SW Verti
