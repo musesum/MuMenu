@@ -81,8 +81,8 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
                 azimuth  : touch.azimuthAngle(in: nil),
                 altitude : touch.altitudeAngle,
                 hash     : hash,
-                type     : VisitType.user.rawValue
-            )
+                type     : VisitType.user.rawValue,
+                time     : touch.timestamp)
 
             var from = TouchFrom.none
 
