@@ -16,7 +16,7 @@ extension RootVm { // touch
         updateSpot(nodeSpotVm, fromRemote)
         touchTypeBegin = touchType
         showTrees(fromRemote)
-        DebugLog { P("🔰 touchBegin \(self.cornerType.icon) \(self.touchType.symbol) \(self.touchType.description)") }
+        NoDebugLog { P("🔰 touchBegin \(self.cornerType.icon) \(self.touchType.symbol) \(self.touchType.description)") }
     }
     internal func touchMoved(_ touchState: TouchState, _ fromRemote: Bool) {
 
@@ -39,7 +39,7 @@ extension RootVm { // touch
         }
         treeSpotVm?.branchSpotVm = nil
         touchType = .none
-        DebugLog { P("🛑 touchEnded \(self.cornerType.icon) \(self.touchType.symbol) \(self.touchType.description)") }
+        NoDebugLog { P("🛑 touchEnded \(self.cornerType.icon) \(self.touchType.symbol) \(self.touchType.description)") }
 
         if !fromRemote, let nodeSpotVm {
             let nodeItem = MenuNodeItem(nodeSpotVm)

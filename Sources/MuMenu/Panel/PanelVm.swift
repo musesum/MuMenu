@@ -65,6 +65,7 @@ public class PanelVm {
         case .search : aspect(6.0, 3.0)
         case .arch   : aspect(6.0, 6.0)
         case .hand   : aspect(4.0, 3.5)
+        default      : log("unexpected nodeType: \(nodeType)")
         }
         func aspect(_ lo: CGFloat,_ hi: CGFloat  ) {
             aspectSz = (menuType.vertical || nodeType == .peer)

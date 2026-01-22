@@ -17,7 +17,7 @@ extension RootVm: @MainActor PeersDelegate {
     }
 
     public func shareItem(_ item: MenuItem) {
-
+        guard item.floOps.share else { return }
         Task {
             await peers.sendItem(.menuFrame, item.time) {
                 do {

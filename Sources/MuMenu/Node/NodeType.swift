@@ -33,13 +33,6 @@ public enum NodeType: String, Codable {
         }
     }
 
-    public var name: String {
-        return description
-    }
-    public func nodeType(for key: String) -> NodeType? {
-        return NodeType(rawValue: key)
-    }
-
     init(_ name: String) {
 
         switch name {

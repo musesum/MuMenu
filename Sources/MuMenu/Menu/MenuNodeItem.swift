@@ -1,6 +1,7 @@
 //  created by musesum on 9/26/22.
 
 import SwiftUI
+import MuFlo
 @MainActor
 public struct MenuNodeItem: Codable, Sendable {
 
@@ -8,6 +9,7 @@ public struct MenuNodeItem: Codable, Sendable {
     public let menuType : MenuType
     public let wordPath : [String] // last shown item on tree (string-based path)
     public let wordNow  : String   // name of currently selected item (string-based)
+    public let floOps    : FloOps
 
     public init(_ nodeVm : NodeVm) {
 
@@ -15,6 +17,7 @@ public struct MenuNodeItem: Codable, Sendable {
         self.menuType = nodeVm.branchVm.treeVm.menuType
         self.wordPath = nodeVm.menuTree.wordPath
         self.wordNow  = nodeVm.menuTree.flo.name
+        self.floOps   = nodeVm.menuTree.flo.floOps
     }
     
     var treeVm: TreeVm? {
@@ -35,6 +38,7 @@ public struct MenuLeafItem: Codable, Sendable {
     public let wordNow   : String   // name of currently selected item (string-based)
     public let leafThumb : LeafThumb
     public let origin    : Bool
+    public let floOps    : FloOps
 
     public init(_ leafVm    : LeafVm,
                 _ leafThumb : LeafThumb,
@@ -46,6 +50,7 @@ public struct MenuLeafItem: Codable, Sendable {
         self.wordNow   = leafVm.menuTree.flo.name
         self.leafThumb = leafThumb
         self.origin    = origin
+        self.floOps    = leafVm.menuTree.flo.floOps
     }
 
     public var nextXY: CGPoint {

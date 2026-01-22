@@ -37,13 +37,14 @@ public class TouchMenuLocal {
                 for treeVm in cornerVm.rootVm?.treeVms ?? [] {
                     if !treeVm.showTree.state.hidden,
                         treeVm.treeBoundsPad.contains(location) {
-                        return addMenu()
+                        let nodeVm = treeVm.branchVms.first?.nodeVms.first
+                        return addMenu(nodeVm)
                     }
                 }
             }
             func addMenu(_ nodeVm: NodeVm? = nil) -> Bool {
                 let touchMenu = TouchMenuLocal(cornerVm, nodeVm, isRemote: false)
-                let menuItem = MenuItem(location,phase,hash, cornerVm.menuType)
+                let menuItem = MenuItem(location: location, phase, hash, cornerVm.menuType, nodeVm?.menuTree.flo.floOps)
                 touchMenu.buffer.addItem(menuItem, from: .local)
                 menuKey[hash] = touchMenu
                 return true
@@ -58,7 +59,9 @@ public class TouchMenuLocal {
 
         if let touchMenu = menuKey[hash] {
             let corner = touchMenu.cornerVm.menuType
-            touchMenu.buffer.addItem(MenuItem(location, phase, hash, corner), from: .local)
+            let floOps  = touchMenu.nodeVm?.menuTree.flo.floOps
+            let menuItem = MenuItem(location: location, phase, hash, corner, floOps)
+            touchMenu.buffer.addItem(menuItem, from: .local)
             if phase == 3 {
                 menuKey.removeValue(forKey: hash)
             }
