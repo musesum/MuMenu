@@ -44,7 +44,7 @@ public class TouchMenuLocal {
             }
             func addMenu(_ nodeVm: NodeVm? = nil) -> Bool {
                 let touchMenu = TouchMenuLocal(cornerVm, nodeVm, isRemote: false)
-                let menuItem = MenuItem(location: location, phase, hash, cornerVm.menuType, nodeVm?.menuTree.flo.floOps)
+                let menuItem = MenuItem(location: location, phase, hash, cornerVm.menuType, nodeVm?.menuTree.flo.policy)
                 touchMenu.buffer.addItem(menuItem, from: .local)
                 menuKey[hash] = touchMenu
                 return true
@@ -59,8 +59,8 @@ public class TouchMenuLocal {
 
         if let touchMenu = menuKey[hash] {
             let corner = touchMenu.cornerVm.menuType
-            let floOps  = touchMenu.nodeVm?.menuTree.flo.floOps
-            let menuItem = MenuItem(location: location, phase, hash, corner, floOps)
+            let policy  = touchMenu.nodeVm?.menuTree.flo.policy
+            let menuItem = MenuItem(location: location, phase, hash, corner, policy)
             touchMenu.buffer.addItem(menuItem, from: .local)
             if phase == 3 {
                 menuKey.removeValue(forKey: hash)

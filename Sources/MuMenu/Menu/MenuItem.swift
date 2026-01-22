@@ -14,7 +14,7 @@ public struct MenuItem: Codable, @unchecked Sendable {
     public let menuType : MenuType
     public let phase    : Int // UITouch.Phase
     public let item     : Any?
-    public let floOps   : FloOps
+    public let policy   : Policy
     
     public init(trees: MenuTreesItem) {
 
@@ -23,7 +23,7 @@ public struct MenuItem: Codable, @unchecked Sendable {
         self.time     = Date().timeIntervalSince1970
         self.menuType = trees.menuType
         self.phase    = trees.phase
-        self.floOps   = FloOps()
+        self.policy   = Policy()
     }
 
     public init(node: MenuNodeItem,
@@ -34,7 +34,7 @@ public struct MenuItem: Codable, @unchecked Sendable {
         self.item     = node
         self.menuType = node.menuType
         self.phase    = phase.rawValue
-        self.floOps   = node.floOps
+        self.policy   = node.policy
     }
     // via LeafVm::updateLeafPeers
     public init(leaf: MenuLeafItem,
@@ -45,25 +45,25 @@ public struct MenuItem: Codable, @unchecked Sendable {
         self.item     = leaf
         self.menuType = leaf.menuType
         self.phase    = phase.rawValue
-        self.floOps   = leaf.floOps
+        self.policy   = leaf.policy
     }
 
-    public init(location  : CGPoint, //touch.location(in: nil)
-                _ phase     : Int, // touch.phase.rawValue
-                _ finger    : Int, // touch.hash
-                _ menuType  : MenuType,
-                _ floOps    : FloOps?) {
+    public init(location   : CGPoint, //touch.location(in: nil)
+                _ phase    : Int, // touch.phase.rawValue
+                _ finger   : Int, // touch.hash
+                _ menuType : MenuType,
+                _ policy   : Policy?) {
 
         self.element  = .touch
         self.time     = Date().timeIntervalSince1970
         self.item     = MenuTouchItem(location, finger)
         self.phase    = phase
         self.menuType = menuType
-        self.floOps   = floOps ?? FloOps()
+        self.policy   = policy ?? Policy()
     }
 
     enum CodingKeys: String, CodingKey {
-        case element, time, menuType, phase, item, floOps }
+        case element, time, menuType, phase, item, policy }
 
     public func encode(to encoder: Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
@@ -71,7 +71,7 @@ public struct MenuItem: Codable, @unchecked Sendable {
         try c.encode(menuType, forKey: .menuType)
         try c.encode(phase,    forKey: .phase )
         try c.encode(element.stringValue, forKey: .element)
-        try c.encode(floOps.rawValue, forKey: .floOps)
+        try c.encode(policy.rawValue, forKey: .policy)
         switch element {
         case .trees : try c.encode(item as? MenuTreesItem, forKey: .item)
         case .node  : try c.encode(item as? MenuNodeItem,  forKey: .item)
@@ -81,10 +81,10 @@ public struct MenuItem: Codable, @unchecked Sendable {
     }
     public init(from decoder: Decoder) throws {
         let c  = try decoder.container(keyedBy: CodingKeys.self)
-        try time     = c.decode(Double  .self, forKey: .time  )
+        try time     = c.decode(Double  .self, forKey: .time    )
         try menuType = c.decode(MenuType.self, forKey: .menuType)
-        try phase    = c.decode(Int     .self, forKey: .phase )
-        try floOps   = c.decode(FloOps  .self, forKey: .floOps)
+        try phase    = c.decode(Int     .self, forKey: .phase   )
+        try policy   = c.decode(Policy  .self, forKey: .policy  )
         element = MenuElement(rawValue: try c.decode(String.self, forKey: .element)) ?? .node
         switch element {
         case .trees : try item = c.decode(MenuTreesItem.self, forKey: .item)

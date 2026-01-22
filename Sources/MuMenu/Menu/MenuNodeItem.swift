@@ -5,19 +5,19 @@ import MuFlo
 @MainActor
 public struct MenuNodeItem: Codable, Sendable {
 
-    public let type     : String
+    public let nodeType : String
     public let menuType : MenuType
     public let wordPath : [String] // last shown item on tree (string-based path)
     public let wordNow  : String   // name of currently selected item (string-based)
-    public let floOps    : FloOps
+    public let policy   : Policy   // who, when, and where node can be used
 
     public init(_ nodeVm : NodeVm) {
 
-        self.type     = nodeVm.nodeType.rawValue
+        self.nodeType = nodeVm.nodeType.rawValue
         self.menuType = nodeVm.branchVm.treeVm.menuType
         self.wordPath = nodeVm.menuTree.wordPath
         self.wordNow  = nodeVm.menuTree.flo.name
-        self.floOps   = nodeVm.menuTree.flo.floOps
+        self.policy   = nodeVm.menuTree.flo.policy
     }
     
     var treeVm: TreeVm? {
@@ -29,28 +29,29 @@ public struct MenuNodeItem: Codable, Sendable {
         #endif
     }
 }
+
 @MainActor
 public struct MenuLeafItem: Codable, Sendable {
 
-    public let type      : String
+    public let nodeType  : String
     public let menuType  : MenuType
     public let wordPath  : [String] // last shown item on tree (string-based path)
     public let wordNow   : String   // name of currently selected item (string-based)
     public let leafThumb : LeafThumb
     public let origin    : Bool
-    public let floOps    : FloOps
+    public let policy    : Policy
 
     public init(_ leafVm    : LeafVm,
                 _ leafThumb : LeafThumb,
                 _ origin    : Bool) {
 
-        self.type      = leafVm.nodeType.rawValue
+        self.nodeType  = leafVm.nodeType.rawValue
         self.menuType  = leafVm.branchVm.treeVm.menuType
         self.wordPath  = leafVm.menuTree.wordPath
         self.wordNow   = leafVm.menuTree.flo.name
         self.leafThumb = leafThumb
         self.origin    = origin
-        self.floOps    = leafVm.menuTree.flo.floOps
+        self.policy    = leafVm.menuTree.flo.policy
     }
 
     public var nextXY: CGPoint {
