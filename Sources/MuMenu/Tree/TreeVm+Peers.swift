@@ -19,7 +19,9 @@ extension TreeVm { // + Peers
                 branchVm = stepNodeVm.nextBranchVm
                 if branchVm == nil {
                     remoteTree()
-                    return nodeNow ?? stepNodeVm
+                    let candidate = nodeNow ?? stepNodeVm
+                    let isPrivate = candidate.menuTree.flo.policy.contains(.private)
+                    return isPrivate ? nil : candidate
                 }
             }
         }
@@ -28,7 +30,8 @@ extension TreeVm { // + Peers
         func findNode(_ name: String) -> NodeVm? {
             if let nodeVms = branchVm?.nodeVms {
                 for nodeVm in nodeVms {
-                    if nodeVm.menuTree.flo.name == name {
+                    let flo = nodeVm.menuTree.flo
+                    if flo.name == name {
                         return nodeVm
                     }
                 }
