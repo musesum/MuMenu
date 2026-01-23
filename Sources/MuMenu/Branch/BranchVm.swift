@@ -77,10 +77,12 @@ public class BranchVm: @MainActor Identifiable, ObservableObject {
                               prevNodeVm: NodeVm?) {
 
         for menuTree in menuTrees {
-            let nodeVm = makeNodeVm(menuTree)
-            nodeVms.append(nodeVm)
-            if nodeVm.spotlight || menuTree.nodeType.isControl {
-                nodeSpotVm = nodeVm
+            if menuTree.flo.policy.contains(.menu) {
+                let nodeVm = makeNodeVm(menuTree)
+                nodeVms.append(nodeVm)
+                if nodeVm.spotlight || menuTree.nodeType.isControl {
+                    nodeSpotVm = nodeVm
+                }
             }
         }
 
@@ -106,13 +108,14 @@ public class BranchVm: @MainActor Identifiable, ObservableObject {
     /// add a branch to selected node and follow next node
     func expandBranch() {
         guard let nodeSpotVm else { return }
-        
+
         if nodeSpotVm.menuTree.children.count > 0 {
-            BranchVm.cached(menuTrees: nodeSpotVm.menuTree.children,
-                   treeVm: treeVm,
-                   branchPrev: self,
-                   prevNodeVm: nodeSpotVm,
-                   zindex: zindex+1)
+            let menuTrees = nodeSpotVm.menuTree.children
+            BranchVm.cached(menuTrees  : menuTrees,
+                            treeVm     : treeVm,
+                            branchPrev : self,
+                            prevNodeVm : nodeSpotVm,
+                            zindex     : zindex+1)
             .expandBranch()
         }
     }

@@ -42,9 +42,10 @@ open class MenuTree: Identifiable, Equatable {
         return lhs.hash == rhs.hash
     }
 
-    public init(_ flo: Flo,
+    public init?(_ flo: Flo,
                 parentTree: MenuTree? = nil) {
 
+        guard flo.policy.contains(.menu) else { return nil }
         self.flo = flo
         self.parentTree = parentTree
         self.icon = makeFloIcon(flo)
@@ -53,11 +54,11 @@ open class MenuTree: Identifiable, Equatable {
     }
 
     /// this is a leaf node
-    init(_ flo: Flo,
+    init?(_ flo: Flo,
          _ nodeType: NodeType,
          _ icon: Icon,
          parentTree: MenuTree? = nil) {
-
+        guard flo.policy.contains(.menu) else { return nil }
         self.flo = flo
         self.icon = icon
         self.parentTree = parentTree

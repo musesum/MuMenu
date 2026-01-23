@@ -43,16 +43,17 @@ import MuFlo
         let branchVm = BranchVm.cached(treeVm: treeVm)
         let cornerFlo = Flo(rootVm.cornerType.key)
 
-        let iconLogo = Icon(.symbol, logoName)
-        let cornerLogo = MenuTree(cornerFlo, .none, iconLogo)
-        logoNodeVm = NodeVm(cornerLogo, branchVm, nil)
+        if let cornerLogo = MenuTree(cornerFlo, .none,
+                                     Icon(.symbol, logoName)) {
+            logoNodeVm = NodeVm(cornerLogo, branchVm, nil)
+            branchVm.addRootNodeVm(logoNodeVm)
+        }
+        if let cornerRing = MenuTree(cornerFlo, .none,
+                                     Icon(.cursor, Menu.iconRing)) {
 
-        let iconRing = Icon(.cursor, Menu.iconRing)
-        let cornerRing = MenuTree(cornerFlo, .none, iconRing)
-        ringNodeVm = NodeVm(cornerRing, branchVm, nil)
-
-        branchVm.addRootNodeVm(logoNodeVm)
-        branchVm.addRootNodeVm(ringNodeVm)
+            ringNodeVm = NodeVm(cornerRing, branchVm, nil)
+            branchVm.addRootNodeVm(ringNodeVm)
+        }
     }
     
     public func updateDragXY(_ touchXY: CGPoint) {

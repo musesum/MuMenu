@@ -62,7 +62,7 @@ public class NodeVm: Identifiable, ObservableObject {
     public init (_ menuTree: MenuTree, // shared Menu Model
                  _ branchVm: BranchVm,
                  _ prevVm: NodeVm?) {
-        
+
         self.menuTree = menuTree
         self.rootVm = branchVm.treeVm.rootVm
         self.nodeType = menuTree.nodeType

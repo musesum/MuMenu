@@ -6,11 +6,11 @@ nonisolated(unsafe) var BranchCache = [Int: BranchVm]()
 
 extension BranchVm {
     @discardableResult
-    static func cached(menuTrees: [MenuTree] = [],
-                       treeVm: TreeVm,
-                       branchPrev: BranchVm? = nil,
-                       prevNodeVm: NodeVm? = nil,
-                       zindex: CGFloat = 0) -> BranchVm {
+    static func cached(menuTrees  : [MenuTree] = [],
+                       treeVm     : TreeVm,
+                       branchPrev : BranchVm? = nil,
+                       prevNodeVm : NodeVm? = nil,
+                       zindex     : CGFloat = 0) -> BranchVm {
 
         /// predict hash of next Branch
         var nextHash: (Int, BranchVm?) {
@@ -34,11 +34,11 @@ extension BranchVm {
             return oldBranch
         }
 
-        let newBranch = BranchVm(menuTrees: menuTrees,
-                                 treeVm: treeVm,
-                                 branchPrev: branchPrev,
-                                 prevNodeVm: prevNodeVm,
-                                 zindex: zindex)
+        let newBranch = BranchVm(menuTrees  : menuTrees,
+                                 treeVm     : treeVm,
+                                 branchPrev : branchPrev,
+                                 prevNodeVm : prevNodeVm,
+                                 zindex     : zindex)
 
         BranchCache[hash] = newBranch
 

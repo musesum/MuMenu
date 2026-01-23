@@ -79,8 +79,7 @@ open class MenuVm {
         let cornerRoot˚ = rootMenu.flo
 
         if let namedFlo = cornerRoot˚.findPath(floName) {
-            let menuTree = makeMenuTree(from: namedFlo,
-                                        parentTree: rootMenu)
+            let menuTree = makeMenuTree(from: namedFlo, parentTree: rootMenu)
             updateSpotTree(floName, menuTree)
             return menuTree
         }
@@ -134,8 +133,8 @@ open class MenuVm {
 
     /// recursively parse flo hierachy
     @discardableResult
-    func makeMenuTree(from: Flo, parentTree: MenuTree) -> MenuTree {
-        let menuTree = MenuTree(from, parentTree: parentTree)
+    func makeMenuTree(from: Flo, parentTree: MenuTree) -> MenuTree? {
+        guard let menuTree = MenuTree(from, parentTree: parentTree) else { return nil }
         for child in from.children {
             if child.name.first != "_" {
                 makeMenuTree(from: child, parentTree: menuTree)
@@ -145,7 +144,7 @@ open class MenuVm {
     }
 
     /// merge menu.view with with model
-    func mergeSpotMenu(_ menuType   : MenuType,
+    func mergeSpotMenu(_ menuType : MenuType,
                        _ spotFlo  : Flo,
                        _ menuTree : MenuTree) {
 

@@ -11,7 +11,7 @@ open class PanicState: ObservableObject {
     public init(_ root˚: Flo,
                 _ nextFrame: NextFrame) {
         self.nextFrame = nextFrame
-        self.panic˚ = root˚.bind("more.panic") { f,_ in
+        self.panic˚ = root˚.bind("tape.panic") { f,_ in
             self.nextFrame.addBetweenFrame {
                 Reset.reset()
             }

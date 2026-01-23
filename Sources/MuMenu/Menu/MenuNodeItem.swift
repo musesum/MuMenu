@@ -12,7 +12,6 @@ public struct MenuNodeItem: Codable, Sendable {
     public let policy   : Policy   // who, when, and where node can be used
 
     public init(_ nodeVm : NodeVm) {
-
         self.nodeType = nodeVm.nodeType.rawValue
         self.menuType = nodeVm.branchVm.treeVm.menuType
         self.wordPath = nodeVm.menuTree.wordPath

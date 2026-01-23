@@ -44,8 +44,10 @@ public struct Menus {
         let swv = MenuBranch([.S,.W,.V], WNames) //SW Verti
         let sev = MenuBranch([.S,.E,.V], ENames) //SE Verti
         #if true // only vertical menu
-        menuVms.append(MenuVm(rootSW, [swv], rootTree))
-        menuVms.append(MenuVm(rootSE, [sev], rootTree))
+        if let rootTree {
+            menuVms.append(MenuVm(rootSW, [swv], rootTree))
+            menuVms.append(MenuVm(rootSE, [sev], rootTree))
+        }
         #else // both vertical and horizontal menu
         let hNames: [String] = ["chat"]
         let swh = MenuBranch([.S,.W,.H], hNames) //SW Horiz
