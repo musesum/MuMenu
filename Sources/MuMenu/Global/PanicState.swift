@@ -6,13 +6,10 @@ import MuFlo
 open class PanicState: ObservableObject {
 
     private var panic˚: Flo?
-    private var nextFrame: NextFrame
 
-    public init(_ root˚: Flo,
-                _ nextFrame: NextFrame) {
-        self.nextFrame = nextFrame
+    public init(_ root˚: Flo) {
         self.panic˚ = root˚.bind("tape.panic") { f,_ in
-            self.nextFrame.addBetweenFrame {
+            NextFrame.shared.addBetweenFrame {
                 Reset.reset()
             }
         }

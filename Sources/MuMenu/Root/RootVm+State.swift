@@ -142,7 +142,7 @@ extension RootVm { // + State
             case 2: // ᴱ² end tap twice
                 nodeSpotVm?.updateSpotNodes()
             case 4: // ᴱ⁴ tap 4 times to clear buffers
-                archiveVm.nextFrame.addBetweenFrame {
+                NextFrame.shared.addBetweenFrame {
                     Reset.reset()
                 }
             default: break

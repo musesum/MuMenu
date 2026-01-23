@@ -48,7 +48,6 @@ struct SaveArchiveView: View {
 
     let leafArchiveVm: LeafArchiveVm
     let archiveVm: ArchiveVm
-    let nextFrame: NextFrame
 
     @State var title: String = ""
     @State var description: String = ""
@@ -58,8 +57,7 @@ struct SaveArchiveView: View {
 
         self.leafArchiveVm = leafArchiveVm
         self.archiveVm = leafArchiveVm.archiveVm
-        self.nextFrame = archiveVm.nextFrame
-        nextFrame.pause = true
+        NextFrame.shared.pause = true
         let date = Date().description.titleCase()
         self.title = "My Snapshot \(date)"
         self.description = date
@@ -77,10 +75,10 @@ struct SaveArchiveView: View {
             .navigationBarTitle("Create a Mū", displayMode: .inline)
             .navigationBarItems(leading: Button("Cancel") {
                 presentationMode.wrappedValue.dismiss()
-                nextFrame.pause = false
+                NextFrame.shared.pause = false
             }, trailing: Button("Save") {
                 presentationMode.wrappedValue.dismiss()
-                nextFrame.pause = false
+                NextFrame.shared.pause = false
                 leafArchiveVm.archiveVm.archiveProto?.saveArchive(title, description) {
                     print("saved\n archive: \(title)\n description: \(description)")
                 }
