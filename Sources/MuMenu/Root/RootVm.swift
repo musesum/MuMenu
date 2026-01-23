@@ -15,7 +15,6 @@ public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable
     public static func == (lhs: RootVm, rhs: RootVm) -> Bool { return lhs.id == rhs.id }
     let id = Visitor.nextId()
     let archiveVm: ArchiveVm
-    let peers: Peers
 
     /// what is the finger touching now?
     @Published var touchType = TouchType.none
@@ -57,21 +56,19 @@ public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable
                 _ logoName   : String,
                 _ menuVms    : MenuVms,
                 _ archiveVm  : ArchiveVm,
-                _ handsPhase : HandsPhase,
-                _ peers      : Peers) {
+                _ handsPhase : HandsPhase) {
 
         self.cornerType = cornerType
         self.menuVms = menuVms
         self.cornerVm = CornerVm(cornerType, logoName)
         self.archiveVm = archiveVm
         self.handsPhase = handsPhase
-        self.peers = peers
 
         handsPhase.$update.sink { _ in
             self.updateHandsPhase()
         }.store(in: &cancellables)
         
-        peers.addDelegate(self, for: .menuFrame)
+        Peers.shared.addDelegate(self, for: .menuFrame)
     }
     public func addTreeVm(_ treeVm: TreeVm) {
         self.treeVms.append(treeVm)

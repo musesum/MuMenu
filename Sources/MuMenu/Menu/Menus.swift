@@ -15,8 +15,7 @@ public struct Menus {
     
     public init(_ root˚: Flo,
                 _ archiveVm: ArchiveVm,
-                _ phase: HandsPhase,
-                _ peers: Peers) {
+                _ phase: HandsPhase) {
 
         Menus.bundles.append(MuMenu.bundle)
         Menus.bundles.append(MuVision.bundle)
@@ -39,8 +38,8 @@ public struct Menus {
         let ENames: [String] = ["music", "mic", "tape", "archive", "more" ]
         let WLogo = "eye"
         let ELogo = "ear"
-        let rootSW = RootVm([.S,.W,.L], WLogo, menuVms, archiveVm, phase, peers) // SW Left
-        let rootSE = RootVm([.S,.E,.R], ELogo, menuVms, archiveVm, phase, peers) // SE Right
+        let rootSW = RootVm([.S,.W,.L], WLogo, menuVms, archiveVm, phase) // SW Left
+        let rootSE = RootVm([.S,.E,.R], ELogo, menuVms, archiveVm, phase) // SE Right
         let swv = MenuBranch([.S,.W,.V], WNames) //SW Verti
         let sev = MenuBranch([.S,.E,.V], ENames) //SE Verti
         #if true // only vertical menu
