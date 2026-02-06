@@ -68,7 +68,7 @@ public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable
             self.updateHandsPhase()
         }.store(in: &cancellables)
         
-        Peers.shared.addDelegate(self, for: .menuFrame)
+        Peers.shared.addDelegate(self, for: .menuItem)
     }
     public func addTreeVm(_ treeVm: TreeVm) {
         self.treeVms.append(treeVm)

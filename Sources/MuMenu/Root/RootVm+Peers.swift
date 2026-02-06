@@ -15,12 +15,15 @@ extension RootVm: @MainActor PeersDelegate {
             MenuTouch.remoteItem(item)
         }
     }
+    public func resetItem(_ item: PlayItem) {
+        //...... maybe ignore?
+    }
 
     public func shareItem(_ item: Any) {
         guard let item = item as? MenuItem,
             item.policy.contains(.share) else { return }
         Task.detached {
-            await Peers.shared.sendItem(.menuFrame) {
+            await Peers.shared.sendItem(.menuItem) {
                 do {
                     return try JSONEncoder().encode(item)
                 } catch {
