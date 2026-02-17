@@ -65,13 +65,13 @@ extension MenuTouch: CircleBufferDelegate {
 }
 extension MenuTouch {
 
-    public static func remoteItem(_ item: MenuItem) {
+    public static func remoteItem(_ item: MenuItem, from: DataFrom) {
         if let menu = menuKey[item.key] {
-            menu.buffer.addItem(item, from: .remote)
+            menu.buffer.addItem(item, from: from)
         } else {
             let touchMenu = MenuTouch(isRemote: true)
             menuKey[item.key] = touchMenu
-            touchMenu.buffer.addItem(item, from: .remote)
+            touchMenu.buffer.addItem(item, from: from)
         }
     }
 }

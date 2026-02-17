@@ -12,7 +12,7 @@ extension RootVm: @MainActor PeersDelegate {
 
         let decoder = JSONDecoder()
         if let item = try? decoder.decode(MenuItem.self, from: data) {
-            MenuTouch.remoteItem(item)
+            MenuTouch.remoteItem(item, from: from)
         }
     }
     public func resetItem(_ item: PlayItem) {
@@ -35,6 +35,7 @@ extension RootVm: @MainActor PeersDelegate {
             }
         }
     }
-
+    public func dropped(from: DataFrom) {
+        //PrintLog("📡 RootVm dropped")
+    }
 }
-
