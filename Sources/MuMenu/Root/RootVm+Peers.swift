@@ -16,7 +16,7 @@ extension RootVm: @MainActor PeersDelegate {
         }
     }
     public func resetItem(_ item: PlayItem) {
-        //...... maybe ignore?
+        //.. maybe ignore?
     }
     public func playItem(_ item: PlayItem, from: DataFrom) {
         received(data: item.data, from: from)
