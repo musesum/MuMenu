@@ -57,7 +57,9 @@ struct NodeIconView: View {
                         .background(.clear)
                     )
 
+                    #if !os(watchOS)
                     .hoverEffect()
+                    #endif
                     .cornerRadius(Menu.cornerRadius)
 
             }

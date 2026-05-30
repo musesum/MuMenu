@@ -1,3 +1,4 @@
+#if !os(watchOS)
 //  created by musesum on 9/26/22
 
 import UIKit
@@ -75,3 +76,4 @@ extension MenuTouch {
         }
     }
 }
+#endif

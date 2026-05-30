@@ -1,3 +1,4 @@
+#if !os(watchOS)
 //  created by musesum on 1/2/23.
 
 
@@ -39,3 +40,4 @@ extension RootVm: @MainActor PeersDelegate {
         //PrintLog("📡 RootVm dropped")
     }
 }
+#endif

@@ -1,25 +1,29 @@
-// swift-tools-version: 6.1
+// swift-tools-version: 6.2
 
 import PackageDescription
 
 let package = Package(
     name: "MuMenu",
-    platforms: [.iOS(.v17), .visionOS(.v2)],
+    platforms: [.iOS(.v17), .visionOS(.v2), .watchOS(.v10)],
     products: [.library(name: "MuMenu", targets: ["MuMenu"])],
     dependencies: [
-        .package(url: "https://github.com/musesum/MuFlo.git", branch: "main"),
-        .package(url: "https://github.com/musesum/MuVision.git", branch: "main"),
-        .package(url: "https://github.com/musesum/MuPeers.git", branch: "main"),
-        .package(url: "https://github.com/musesum/MuHands.git", branch: "main"),
+        // DEV: local paths during watchOS port. Restore github URLs before publish.
+        .package(name: "MuFlo", path: "../MuFlo"),
+        .package(name: "MuVision", path: "../MuVision"),
+        .package(name: "MuPeers", path: "../MuPeers"),
+        .package(name: "MuHands", path: "../MuHands"),
     ],
     targets: [
         .target(
             name: "MuMenu",
             dependencies: [
                 .product(name: "MuFlo", package: "MuFlo"),
-                .product(name: "MuVision", package: "MuVision"),
-                .product(name: "MuPeers", package: "MuPeers"),
-                .product(name: "MuHands", package: "MuHands"),
+                .product(name: "MuVision", package: "MuVision",
+                         condition: .when(platforms: [.iOS, .visionOS])),
+                .product(name: "MuPeers", package: "MuPeers",
+                         condition: .when(platforms: [.iOS, .visionOS, .watchOS])),
+                .product(name: "MuHands", package: "MuHands",
+                         condition: .when(platforms: [.iOS, .visionOS])),
                 ],
             resources: [.process("Resources")]),
         .testTarget(

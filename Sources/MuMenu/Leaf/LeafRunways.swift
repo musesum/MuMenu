@@ -203,23 +203,27 @@ public class LeafRunways {
         return expandItem(type, thumb.tween)
     }
     func expandItem(_ type: LeafRunwayType, _ item: SIMD3<Double>) -> CGSize {
-        guard let bounds = bounds(type) else { return .zero }
-        let radius = thumbRadius(type)
-        let xMax = max(radius, Double(bounds.width) - radius)
-        let yMax = max(radius, Double(bounds.height) - radius)
-
-        let x: Double
-        let y: Double
+        // Use panelVm natural dimensions — stored bounds may be in visual (post-scaleEffect)
+        // space on watchOS, which would make the centering offsets ~3× too large.
+        let thumbR = (type.thumbRadius - 2.0) / 2.0
+        let nat    = panelVm.innerPanel(type)
+        let bW     = Double(nat.width)
+        let bH     = Double(nat.height)
         switch type {
-        case .runZ: x = item.x; y = item.z
-        default:    x = item.x; y = item.y
+        case .runX:
+            let cx = thumbR + item.x.clamped(to: 0...1) * max(0, bW - 2 * thumbR)
+            return CGSize(width: cx - thumbR, height: bH / 2.0 - thumbR)
+        case .runY:
+            let cy = thumbR + (1 - item.y).clamped(to: 0...1) * max(0, bH - 2 * thumbR)
+            return CGSize(width: bW / 2.0 - thumbR, height: cy - thumbR)
+        case .runZ:
+            let cy = thumbR + (1 - item.z).clamped(to: 0...1) * max(0, bH - 2 * thumbR)
+            return CGSize(width: bW / 2.0 - thumbR, height: cy - thumbR)
+        default:
+            let cx = thumbR + item.x.clamped(to: 0...1) * max(0, bW - 2 * thumbR)
+            let cy = thumbR + (1 - item.y).clamped(to: 0...1) * max(0, bH - 2 * thumbR)
+            return CGSize(width: cx - thumbR, height: cy - thumbR)
         }
-
-        // Invert the normalization:
-        let xClamped =    x  * (xMax - radius)
-        let yClamped = (1-y) * (yMax - radius)
-        let size = CGSize(width: xClamped, height: yClamped)
-        return size
     }
 
     /// user touch gesture inside runway

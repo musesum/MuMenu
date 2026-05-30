@@ -2,7 +2,9 @@
 
 import SwiftUI
 import MuFlo
+#if !os(watchOS)
 import MuVision
+#endif
 
 extension TreeVm { // + Boundary
 

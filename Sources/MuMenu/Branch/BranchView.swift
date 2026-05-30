@@ -14,6 +14,11 @@ struct BranchView: View {
     }
     var body: some View {
         let cornerAxis = treeVm.menuType.cornerAxis
+        #if os(watchOS)
+        // Panel titles are suppressed on watchOS — the top-of-face label
+        // already shows the currently-selected node name.
+        if branchVm.columns > 1 { Grid(branchVm) } else { Body_(branchVm) }
+        #else
         if branchVm.columns > 1 {
             switch cornerAxis {
             case .SWV, .SEV: VStack { Title(branchVm); Grid(branchVm)  }
@@ -31,6 +36,7 @@ struct BranchView: View {
             case .none     : VStack { Title(branchVm); Body_(branchVm)  }
             }
         }
+        #endif
     }
 }
 

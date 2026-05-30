@@ -2,7 +2,9 @@
 
 import SwiftUI
 import MuFlo
+#if !os(watchOS)
 import MuPeers
+#endif
 @MainActor
 
 
@@ -23,7 +25,9 @@ public struct MenuView: View {
                     MenuRootView(menuVm: menuVm)
                 }
             }
+            #if !os(watchOS)
             .statusBar(hidden: true)
+            #endif
         }
     }
 }

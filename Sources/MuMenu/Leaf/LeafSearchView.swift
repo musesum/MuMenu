@@ -1,5 +1,6 @@
 // created by musesum on 6/13/25
 
+#if !os(watchOS)
 import SwiftUI
 import Speech
 import MuFlo
@@ -38,3 +39,5 @@ public struct LeafSearchView: View {
     }
 }
 
+
+#endif

@@ -19,7 +19,7 @@ struct BranchPanelView: View {
 
     var body: some View {
 
-        if #available(iOS 26.0, *) {
+        if #available(iOS 26.0, watchOS 26.0, *) {
             GeometryReader { geo in
                 Rectangle()
                     .opacity(0)

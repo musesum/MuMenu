@@ -12,7 +12,7 @@ public class LeafVm: NodeVm {
     var ranges = [String : ClosedRange<Double>]()
 
     lazy var leafPath: String = { branchVm.treeVm.menuType.key + "." + menuTree.path }()
-    public lazy var leafHash: Int = { leafPath.strHash() }()
+    public lazy var leafHash: Int = { Int(leafPath.strHash()) }()
 
     init (_ menuTree: MenuTree,
           _ branchVm: BranchVm,
@@ -100,5 +100,37 @@ public class LeafVm: NodeVm {
         let result = scale(Double(value), from: 0...1, to: range)
         return result
     }
-    
+
+    /// Public API for external gesture surfaces (e.g. watchOS DeepWatch) to
+    /// write normalized 0…1 axis values directly. Updates the runway thumb
+    /// values so the existing LeafXyView/LeafXyzView render the thumb in the
+    /// new position, then syncs to the underlying flo (.fire policy).
+    public func setNormalized(_ nameNorms: [(String, Double)]) {
+        for (name, norm) in nameNorms {
+            let v = max(0, min(1, norm))
+            switch name {
+            case "x":
+                runways.thumb(.runX)?.value.x = v
+                runways.thumb(.runXY)?.value.x = v
+            case "y":
+                runways.thumb(.runY)?.value.y = v
+                runways.thumb(.runXY)?.value.y = v
+            case "z":
+                runways.thumb(.runZ)?.value.z = v
+            default: break
+            }
+        }
+        let expanded: [(String, Double)] = nameNorms.map { (name, norm) in
+            let clamped = max(0, min(1, norm))
+            return (name, expand(named: name, CGFloat(clamped)))
+        }
+        menuTree.flo.setNameNums(expanded, .fire, Visitor(0, .user))
+        Task { @MainActor in refreshView() }
+    }
+
+    /// Exposes the stored global-visual runway bounds set by LeafBezelView.updateBounds.
+    /// Used by watchOS WatchLeafController to map touch coordinates to runway values.
+    public func runwayBounds(_ type: LeafRunwayType) -> CGRect? {
+        runways.bounds(type)
+    }
 }

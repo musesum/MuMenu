@@ -2,7 +2,9 @@
 
 import SwiftUI
 import MuFlo
+#if !os(watchOS)
 import MuVision
+#endif
 @MainActor
 public class BranchVm: @MainActor Identifiable, ObservableObject {
 
@@ -97,9 +99,11 @@ public class BranchVm: @MainActor Identifiable, ObservableObject {
             case .val   : return LeafValVm     (m,b,p, [.runVal])
             case .seg   : return LeafSegVm     (m,b,p, [.runVal])
             case .tog   : return LeafTogVm     (m,b,p, [.none])
+            #if !os(watchOS)
             case .hand  : return LeafHandVm    (m,b,p, [.runX, .runY, .runZ, .runXY])
             case .peer  : return LeafPeerVm    (m,b,p, [])
             case .arch  : return LeafArchiveVm (m,b,p, [], treeVm.rootVm.archiveVm)
+            #endif
             default     : return NodeVm        (m,b,p)
             }
         }

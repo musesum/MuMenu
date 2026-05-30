@@ -54,9 +54,14 @@ public class PanelVm {
             aspect(1.0 * CGFloat(columns),
                    1.0 * CGFloat(columns))
 
-        case .val  : (menuType.vertical
-                      ? aspect(1.0, 4.0)
-                      : aspect(4.0, 1.0))
+        case .val  :
+            #if os(watchOS)
+            // watchOS uses a square panel for val so the menu-mode tap target
+            // is large enough; orientation no longer affects the layout.
+            aspect(3.0, 3.0)
+            #else
+            menuType.vertical ? aspect(1.0, 4.0) : aspect(4.0, 1.0)
+            #endif
 
         case .xy     : aspect(4.0, 4.0)
         case .xyz    : aspect(4.5, 4.0)
@@ -116,9 +121,12 @@ public class PanelVm {
         case .runX,.runT : return CGSize(width: d * 2.5, height: d * 0.5)
         case .runY,.runZ : return CGSize(width: d * 0.5, height: d * 2.5)
 
-        case .runVal     : return (menuType.vertical
-                                   ? CGSize(width: d * 1.0, height: d * 4.0)
-                                   : CGSize(width: d * 1.0, height: d * 4.0))
+        case .runVal     :
+            #if os(watchOS)
+            return CGSize(width: d * 3.0, height: d * 3.0)
+            #else
+            return CGSize(width: d * 1.0, height: d * 4.0)
+            #endif
 
         default          : return CGSize(width: d * 3.0, height: d * 3.0)
         }

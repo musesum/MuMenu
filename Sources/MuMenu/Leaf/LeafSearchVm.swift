@@ -1,3 +1,4 @@
+#if !os(watchOS)
 import SwiftUI
 import Speech
 import MuFlo
@@ -70,3 +71,5 @@ public class LeafSearchVm: LeafVm {
     }
 }
 
+
+#endif

@@ -1,3 +1,4 @@
+#if !os(watchOS)
 //  created by musesum on 1/3/23.
 
 import UIKit
@@ -14,3 +15,4 @@ public struct MenuTouchItem: Codable, Sendable {
     public var cgPoint: CGPoint { CGPoint(x: touch[0], y: touch[1]) }
 }
 
+#endif

@@ -3,9 +3,13 @@
 import SwiftUI
 import MuFlo
 
-struct LeafXyzView: View {
+public struct LeafXyzView: View {
 
     @ObservedObject var leafVm: LeafXyzVm
+
+    public init(leafVm: LeafXyzVm) {
+        self.leafVm = leafVm
+    }
 
     public var body: some View {
         GeometryReader { geo in
@@ -14,7 +18,11 @@ struct LeafXyzView: View {
                 HStack(alignment: .center, spacing: 4) {
 
                     LeafHeaderDeltaView(leafVm)
+                        #if os(watchOS)
+                        .padding(EdgeInsets(top: 2, leading: 2, bottom: 0, trailing: 0))
+                        #else
                         .padding(EdgeInsets(top: 2, leading: 4, bottom: 0, trailing: 0))
+                        #endif
                     LeafBezelView(leafVm, .runX) {
                         LeafThumbSlideView(leafVm, .runX)
                     }
@@ -27,7 +35,11 @@ struct LeafXyzView: View {
                         LeafThumbSlideView(leafVm, .runY)
                     }
                     LeafBezelView(leafVm, .runXY)  {
+                        #if os(watchOS)
+                        LeafThumbSlideView(leafVm, .runXY)
+                        #else
                         LeafThumbSlideView(leafVm, .runXY, leafVm.ticks())
+                        #endif
                     }
                     LeafBezelView(leafVm, .runZ) {
                         LeafThumbSlideView(leafVm, .runZ)

@@ -3,6 +3,26 @@
 import SwiftUI
 import MuFlo
 
+#if os(watchOS)
+public enum MenuTouchPhase: Int {
+    case began = 0, moved = 1, stationary = 2, ended = 3, cancelled = 4
+
+    public var done: Bool { self == .ended || self == .cancelled }
+
+    public var symbol: String {
+        switch self {
+        case .began : "ᴮ"
+        case .moved : "ᴹ"
+        case .ended : "ᴱ"
+        default     : "⁰"
+        }
+    }
+}
+#else
+import UIKit
+public typealias MenuTouchPhase = UITouch.Phase
+#endif
+
 public class TouchState {
 
     let tapThreshold = TimeInterval(0.5) /// tap time threshold
@@ -13,7 +33,7 @@ public class TouchState {
     var touchEndedCount = 0 /// count `touchEnd`s within tapThreshold
     var isFast = false  /// is moving fast to skip branches
     var pointNow = CGPoint.zero /// current position of touch
-    var phase = UITouch.Phase.ended
+    var phase: MenuTouchPhase = .ended
     var touching: Bool { return timeBegin > timeEnded }
 
     var timeBegin = TimeInterval(0) /// starting time for tap candidate

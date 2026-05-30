@@ -2,7 +2,9 @@
 
 import SwiftUI
 import MuFlo
+#if !os(watchOS)
 import MuVision
+#endif
 
 open class MenuTree: Identifiable, Equatable {
     public var id = Visitor.nextId()

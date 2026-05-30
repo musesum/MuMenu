@@ -37,18 +37,35 @@ public class LeafValVm: LeafVm {
         }
     }
 
+    public var isVertical: Bool { panelVm.menuType.vertical }
+
+    /// Current normalized 0…1 value for display (reads value, not tween).
+    public var valNorm: Double {
+        guard let thumb = runways.thumb(.runVal) else { return 0 }
+        return panelVm.menuType.vertical ? thumb.value.y : thumb.value.x
+    }
+
+    /// Set a normalized 0…1 value directly (e.g. from a watchOS full-face gesture).
+    /// Routes through syncVal so the flo fires and the view refreshes.
+    public func setValNormalized(_ normVal: Double) {
+        let v = max(0, min(1, normVal))
+        guard let thumb = runways.thumb(.runVal) else { return }
+        if panelVm.menuType.vertical { thumb.value.y = v } else { thumb.value.x = v }
+        syncVal(Visitor(0, .user))
+    }
+
     override public func treeTitle() -> String {
-        guard let thumb = runways.thumb() else { return "" }
+        // Read the .runVal thumb explicitly so callers that don't go through
+        // touchLeaf (e.g. watchOS WatchLeafYController) still get the right value.
+        guard let thumb = runways.thumb(.runVal) else { return "" }
         let vertical = panelVm.menuType.vertical
         let value = vertical ? thumb.value.y : thumb.value.x
         let tween = vertical ? thumb.tween.y : thumb.tween.x
-        return (range.upperBound > 1
-                ? (runways.touching
-                   ? String(format: "%.1f", scale(value, from: 0...1, to: range))
-                   : String(format: "%.1f", scale(tween, from: 0...1, to: range)))
-                : (runways.touching
-                   ? String(format: "%.2f", value)
-                   : String(format: "%.2f", tween)))
+        let touching = runways.touching
+        let active = touching ? value : tween
+        return range.upperBound > 1
+            ? String(format: "%.1f", scale(active, from: 0...1, to: range))
+            : String(format: "%.2f", active)
     }
 
     override public func syncVal(_ visit: Visitor) {

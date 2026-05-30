@@ -2,7 +2,9 @@
 
 import SwiftUI
 import MuFlo // strHash
+#if !os(watchOS)
 import MuVision // Chiral
+#endif
 
 @MainActor
 public class NodeVm: Identifiable, ObservableObject {
@@ -16,7 +18,7 @@ public class NodeVm: Identifiable, ObservableObject {
     internal var nextBranchVm: BranchVm? /// branch this node generates
     internal var panelVm: PanelVm        /// the panel that this node belongs to
     private var prevNodeVm: NodeVm?     /// parent nodeVm in hierarchy
-    internal var rootVm: RootVm
+    public internal(set) var rootVm: RootVm
 
     @Published var refresh: Int = 0
     @Published var zIndex: CGFloat = 0 /// stack current spotlight node on top of others
@@ -43,8 +45,7 @@ public class NodeVm: Identifiable, ObservableObject {
     }
 
     public var nodeHash: Int {
-        let id = menuTree.path.strHash()
-        return id
+        return Int(menuTree.path.strHash())
     }
 
     public var nodeVmPath: [NodeVm] {
@@ -108,7 +109,7 @@ public class NodeVm: Identifiable, ObservableObject {
         superSpotlight()
         branchVm.expandBranch()
     }
-    func refreshView() {
+    public func refreshView() {
         refresh += 1 // animated tween via published edit var
         branchVm.show = branchVm.show
     }

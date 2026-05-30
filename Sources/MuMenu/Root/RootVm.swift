@@ -2,10 +2,12 @@
 
 import SwiftUI
 import Combine
-import MuPeers
 import MuFlo
+#if !os(watchOS)
+import MuPeers
 import MuVision
 import MuHands
+#endif
 @MainActor
 public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable {
 
@@ -31,7 +33,7 @@ public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable
     
     public var cornerType: MenuType /// corner where root begins, ex: `[down,left]`
 
-    var treeVms = [TreeVm]() /// vertical or horizontal stack of branches
+    public internal(set) var treeVms = [TreeVm]() /// vertical or horizontal stack of branches
     var treeSpotVm: TreeVm? /// most recently used tree
     var touchState = TouchState()
 
@@ -67,8 +69,10 @@ public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable
         handsPhase.$update.sink { _ in
             self.updateHandsPhase()
         }.store(in: &cancellables)
-        
+
+        #if !os(watchOS)
         Peers.shared.addDelegate(self, for: .menuItem)
+        #endif
     }
     public func addTreeVm(_ treeVm: TreeVm) {
         self.treeVms.append(treeVm)

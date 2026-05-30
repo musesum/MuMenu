@@ -1,9 +1,11 @@
 //  created by musesum on 12/1/22.
 
 import MuFlo
+#if !os(watchOS)
 import MuPeers
 import MuVision
 import MuHands
+#endif
 import Foundation
 
 
@@ -18,7 +20,9 @@ public struct Menus {
                 _ phase: HandsPhase) {
 
         Menus.bundles.append(MuMenu.bundle)
+        #if !os(watchOS)
         Menus.bundles.append(MuVision.bundle)
+        #endif
 
         let rootTree = MenuTree(root˚)
         #if os(visionOS)

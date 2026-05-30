@@ -1,3 +1,4 @@
+#if !os(watchOS)
 // created by musesum on 10/6/24
 
 import SwiftUI
@@ -22,3 +23,4 @@ public class LeafArchiveVm: LeafVm {
     override public func leafTitle() -> String { archiveVm.nameNow }
     override public func syncVal(_ : Visitor) {}
 }
+#endif

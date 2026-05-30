@@ -1,3 +1,4 @@
+#if !os(watchOS)
 //  created by musesum on 1/3/23.
 
 import UIKit
@@ -86,3 +87,4 @@ extension TouchMenuLocal: CircleBufferDelegate {
     }
 }
 
+#endif

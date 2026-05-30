@@ -8,9 +8,9 @@ import MuFlo
 @Observable public class CornerVm {
 
     var ringIconXY = CGPoint.zero /// current position
-    var parkIconXY = CGPoint.zero /// fixed position of icon
+    public internal(set) var parkIconXY = CGPoint.zero /// fixed position of icon
 
-    var rootVm: RootVm?
+    public internal(set) var rootVm: RootVm?
     var logoNodeVm: NodeVm?  /// fixed root node in corner in which to drag from
     var ringNodeVm: NodeVm?  /// drag from root with duplicate node icon
     var touchState = TouchState() /// begin,moved,end state plus t count
@@ -72,10 +72,10 @@ import MuFlo
     public func updateTouchXY(_ touchXY: CGPoint,
                               _ phase: Int) {
 
-        switch phase.uiPhase() {
-            case .began: begin(touchXY, fromRemote: false)
-            case .moved: moved(touchXY, fromRemote: false)
-            default:     ended(touchXY, fromRemote: false)
+        switch phase {
+            case 0:  begin(touchXY, fromRemote: false)
+            case 1, 2: moved(touchXY, fromRemote: false)
+            default: ended(touchXY, fromRemote: false)
         }
         alignCursor(touchXY)
     }

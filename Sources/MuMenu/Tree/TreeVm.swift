@@ -17,7 +17,7 @@ public class TreeVm: @MainActor Identifiable, @MainActor Equatable, ObservableOb
     @Published var treeBounds: CGRect = .zero
     var treeBoundsPad: CGRect = .zero
 
-    @Published var showTree = ShowTime()
+    @Published public internal(set) var showTree = ShowTime()
 
     var rootVm: RootVm
     var branchSpotVm: BranchVm?

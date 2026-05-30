@@ -1,0 +1,28 @@
+name: MuMenuTestHost
+options:
+  bundleIdPrefix: com.deepmuse
+  createIntermediateGroups: true
+  deploymentTarget:
+    iOS: "17.0"
+
+packages:
+  MuMenu:
+    path: .
+
+targets:
+  MuMenuTestHost:
+    type: application
+    platform: iOS
+    sources:
+      - path: TestHost
+    dependencies:
+      - package: MuMenu
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SWIFT_VERSION: "6.0"
+        PRODUCT_BUNDLE_IDENTIFIER: com.deepmuse.MuMenuTestHost
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: ""

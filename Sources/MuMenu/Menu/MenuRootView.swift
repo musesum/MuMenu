@@ -27,9 +27,11 @@ public struct MenuRootView: View {
 
                     .onAppear { geoFrame(geo) }
                     .onChange(of: geo.frame(in: .global)) { geoFrame(geo) }
+                    #if !os(watchOS)
                     .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .global)
                         .updating($touchXY) { (value, touchXY, _) in touchXY = value.location })
                     .onChange(of: touchXY) { cornerVm.updateDragXY($1) }
+                    #endif
                     .offset(Menu.offset(menuCorner))
             }
         }

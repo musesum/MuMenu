@@ -1,9 +1,11 @@
 // created by musesum on 6/15/25
 
 import SwiftUI
-import MuPeers
 import MuFlo
+#if !os(watchOS)
+import MuPeers
 import MuVision
+#endif
 
 extension RootVm { // + Layout
 

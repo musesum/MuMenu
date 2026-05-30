@@ -12,7 +12,7 @@ public struct MenuItem: Codable, @unchecked Sendable {
     public let element  : MenuElement
     public let time     : TimeInterval
     public let menuType : MenuType
-    public let phase    : Int // UITouch.Phase
+    public let phase    : Int // MenuTouchPhase
     public let item     : Any?
     public let policy   : Policy
     
@@ -27,7 +27,7 @@ public struct MenuItem: Codable, @unchecked Sendable {
     }
 
     public init(node: MenuNodeItem,
-                _ phase : UITouch.Phase) {
+                _ phase : MenuTouchPhase) {
 
         self.element  = .node
         self.time     = Date().timeIntervalSince1970
@@ -38,7 +38,7 @@ public struct MenuItem: Codable, @unchecked Sendable {
     }
     // via LeafVm::updateLeafPeers
     public init(leaf: MenuLeafItem,
-                _ phase: UITouch.Phase) {
+                _ phase: MenuTouchPhase) {
 
         self.element  = .leaf
         self.time     = Date().timeIntervalSince1970
@@ -48,6 +48,7 @@ public struct MenuItem: Codable, @unchecked Sendable {
         self.policy   = leaf.policy
     }
 
+    #if !os(watchOS)
     public init(location   : CGPoint, //touch.location(in: nil)
                 _ phase    : Int, // touch.phase.rawValue
                 _ finger   : Int, // touch.hash
@@ -61,6 +62,7 @@ public struct MenuItem: Codable, @unchecked Sendable {
         self.menuType = menuType
         self.policy   = policy ?? Policy()
     }
+    #endif
 
     enum CodingKeys: String, CodingKey {
         case element, time, menuType, phase, item, policy }
@@ -76,7 +78,10 @@ public struct MenuItem: Codable, @unchecked Sendable {
         case .trees : try c.encode(item as? MenuTreesItem, forKey: .item)
         case .node  : try c.encode(item as? MenuNodeItem,  forKey: .item)
         case .leaf  : try c.encode(item as? MenuLeafItem,  forKey: .item)
-        case .touch : try c.encode(item as? MenuTouchItem, forKey: .item)
+        case .touch :
+            #if !os(watchOS)
+            try c.encode(item as? MenuTouchItem, forKey: .item)
+            #endif
         }
     }
     public init(from decoder: Decoder) throws {
@@ -90,20 +95,28 @@ public struct MenuItem: Codable, @unchecked Sendable {
         case .trees : try item = c.decode(MenuTreesItem.self, forKey: .item)
         case .node  : try item = c.decode(MenuNodeItem .self, forKey: .item)
         case .leaf  : try item = c.decode(MenuLeafItem .self, forKey: .item)
-        case .touch : try item = c.decode(MenuTouchItem.self, forKey: .item)
+        case .touch :
+            #if !os(watchOS)
+            try item = c.decode(MenuTouchItem.self, forKey: .item)
+            #else
+            item = nil
+            #endif
         }
     }
 
     var key: Int {
         switch element {
+            #if !os(watchOS)
             case .touch: return (item as? MenuTouchItem)?.finger ?? element.rawValue.hash
+            #endif
             default: return element.rawValue.hash
         }
     }
     var isDone: Bool {
-        (phase == UITouch.Phase.ended.rawValue ||
-         phase == UITouch.Phase.cancelled.rawValue)
+        (phase == MenuTouchPhase.ended.rawValue ||
+         phase == MenuTouchPhase.cancelled.rawValue)
     }
+    #if !os(watchOS)
     var cornerVm: CornerVm? {
         if let vm = (MenuTypeCornerVm[menuType.rawValue] ??
                      MenuTypeCornerVm[MenuType.flipNS(menuType.rawValue)]) {
@@ -116,6 +129,7 @@ public struct MenuItem: Codable, @unchecked Sendable {
         }
         return nil
     }
+    #endif
 
 }
 

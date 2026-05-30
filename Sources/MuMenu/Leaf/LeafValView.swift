@@ -7,9 +7,13 @@ struct LeafValView: View {
     @ObservedObject var leafVm: LeafVm
 
     var body: some View {
+        #if os(watchOS)
+        LeafYWatchView(leafVm: leafVm)
+        #else
         LeafBezelView(leafVm, .runVal) {
             LeafThumbSlideView(leafVm, .runVal)
         }
+        #endif
     }
 }
 

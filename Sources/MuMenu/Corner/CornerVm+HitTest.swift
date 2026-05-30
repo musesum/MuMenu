@@ -1,3 +1,4 @@
+#if !os(watchOS)
 //  created by musesum on 12/13/22.
 
 import Foundation
@@ -31,3 +32,4 @@ extension CornerVm {
         return nil // does NOT hit menu
     }
 }
+#endif

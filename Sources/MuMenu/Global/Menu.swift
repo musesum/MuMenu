@@ -8,15 +8,25 @@ func Animate(_ sec: TimeInterval) -> Animation {
 
 public enum Menu {
 
-    static let diameter: CGFloat = 40
-    static let diameter2: CGFloat = 48 // always diameter + padding2
-    static let radius: CGFloat = 20
-    static let padding: CGFloat = 4
-    static let padding2: CGFloat = 8 // always padding * 2
-    static var cornerRadius: CGFloat { radius + padding }
-    static let labelSize = CGSize(width: diameter+8, height: diameter-8)
-    /// distance from center while inside node
-    static let insideNode: CGFloat = 24
+#if os(watchOS)
+    public static let diameter: CGFloat = 13
+    public static let diameter2: CGFloat = 17
+    public static let radius: CGFloat = 6
+    public static let padding: CGFloat = 2
+    public static let padding2: CGFloat = 4
+    public static var cornerRadius: CGFloat { radius + padding }
+    public static let labelSize = CGSize(width: diameter+4, height: diameter-4)
+    public static let insideNode: CGFloat = 8
+#else
+    public static let diameter: CGFloat = 40
+    public static let diameter2: CGFloat = 48
+    public static let radius: CGFloat = 20
+    public static let padding: CGFloat = 4
+    public static let padding2: CGFloat = 8
+    public static var cornerRadius: CGFloat { radius + padding }
+    public static let labelSize = CGSize(width: diameter+8, height: diameter-8)
+    public static let insideNode: CGFloat = 24
+#endif
 
     static let iconRing = "icon.ring"
 //    static let iconLogo = "icon.logo"
@@ -61,13 +71,22 @@ public enum Menu {
     static var flashAnim: Animation { .easeInOut(duration: 0.20) }
 
     static func strokeColor(_ high: Bool) -> Color {
+        #if os(watchOS)
+        // Match node IconView stroke palette on watchOS — white spotlit, mid-gray otherwise.
+        return high ? .white : Color(white: 0.5)
+        #else
         let color = (high
                      ? Color(white: 1.0, opacity: 0.8)
                      : Color(white: 0.8, opacity: 0.7))
         return color
+        #endif
     }
     static func strokeWidth(_ high: Bool) -> CGFloat {
+        #if os(watchOS)
+        return 1.0  // Match node IconView stroke thickness.
+        #else
         return(high ? 2.0 : 1.2)
+        #endif
     }
 
     static func tapColor(_ high: Bool) -> Color {

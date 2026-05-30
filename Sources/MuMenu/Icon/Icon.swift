@@ -1,11 +1,15 @@
 //  created by musesum on 7/29/22.
 
 import Foundation
+#if !os(watchOS)
 import UIKit
+#endif
 
 public enum IconType { case none, cursor, image, svg, symbol, text }
 
+typealias IconTypeName = (IconType, String)
 
+#if !os(watchOS)
 extension UIImage {
     @MainActor
     static func named(_ name: String) -> UIImage? {
@@ -20,9 +24,7 @@ extension UIImage {
         return nil
     }
 }
-
-
-typealias IconTypeName = (IconType, String)
+#endif
 
 public class Icon {
 
@@ -30,11 +32,12 @@ public class Icon {
     let iconOff: IconTypeName?
     let nodeType: NodeType
 
-    var nameOn  : String    { iconOn .map(\.1) ?? ""}
-    var nameOff : String    { iconOff.map(\.1) ?? nameOn }
-    var typeOn  : IconType  { iconOn .map(\.0) ?? .none }
-    var typeOff : IconType  { iconOff.map(\.0) ?? .none }
+    public var nameOn  : String    { iconOn .map(\.1) ?? ""}
+    public var nameOff : String    { iconOff.map(\.1) ?? nameOn }
+    public var typeOn  : IconType  { iconOn .map(\.0) ?? .none }
+    public var typeOff : IconType  { iconOff.map(\.0) ?? .none }
 
+    #if !os(watchOS)
     @MainActor
     var imageOn: UIImage? {
         if let _ = iconOn {
@@ -57,7 +60,7 @@ public class Icon {
         }
         return imageOn
     }
-
+    #endif
 
     init(_ iconOn   : IconTypeName?,
          _ iconOff  : IconTypeName? = nil,
@@ -77,4 +80,3 @@ public class Icon {
         self.nodeType = nodeType
     }
 }
-

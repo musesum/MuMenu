@@ -2,8 +2,10 @@
 
 import SwiftUI
 import MuFlo
+#if !os(watchOS)
 import MuPeers
 import MuVision
+#endif
 
 @MainActor
 open class MenuVm {

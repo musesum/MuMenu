@@ -36,9 +36,7 @@ struct LeafHeaderDeltaView: View {
     let leafVm: LeafVm
 
     @State var originRotate : Double
-    var originImage  : UIImage { UIImage.named("icon.flip.original")! }
     var originOpacity: Double  { leafVm.origin ? 1 : 0 }
-    var deltaImage   : UIImage { UIImage.named("icon.flip.delta")! }
     var deltaOpacity : Double  { leafVm.origin ? 0 : 1 }
 
     init(_ leafVm: LeafVm) {
@@ -46,43 +44,44 @@ struct LeafHeaderDeltaView: View {
         self.originRotate = leafVm.origin ? .pi : 0
     }
 
-    func image(_ name: String) -> UIImage? {
-
-        if let img = UIImage(named: name) {
-            return img
-        } else {
-            for bundle in Menus.bundles {
-                if let img =  UIImage(named: name, in: bundle, with: nil) {
-                    return img
-                }
-            }
-        }
-        return nil
-    }
+    #if os(watchOS)
+    /// Smaller width on watch so the X runway placement stays aligned with
+    /// the iOS layout proportionally.
+    private let dim: CGFloat = Menu.diameter
+    #else
+    private let dim: CGFloat = 30
+    #endif
 
     var body: some View {
-
         Button {
             leafVm.updateNodeValue(Visitor(0,.user))
         } label: {
             ZStack {
-                Image(uiImage: deltaImage)
+                // SwiftUI Image(_:bundle:) loads the asset on all platforms.
+                Image("icon.flip.delta", bundle: .main)
+                    .renderingMode(.template)
                     .resizable()
-                    .frame(width: 30, height: 30)
+                    .scaledToFit()
+                    .frame(width: dim, height: dim)
+                    .foregroundColor(.white)
                     .opacity(deltaOpacity)
                     .rotationEffect(.radians(originRotate + .pi))
 
-                Image(uiImage: originImage)
+                Image("icon.flip.original", bundle: .main)
+                    .renderingMode(.template)
                     .resizable()
-                    .frame(width: 30, height: 30)
+                    .scaledToFit()
+                    .frame(width: dim, height: dim)
+                    .foregroundColor(.white)
                     .opacity(originOpacity)
                     .rotationEffect(.radians(originRotate))
             }
         }
+        .buttonStyle(.plain)  // remove watchOS default capsule chrome
         .onChange(of: leafVm.origin) {
             originRotate += .pi
         }
-        .frame(width: 30, height: 30)
+        .frame(width: dim, height: dim)
         .animation(Animate(1.0), value: deltaOpacity)
         .animation(Animate(1.0), value: originOpacity)
         .animation(Animate(1.0), value: originRotate)

@@ -1,3 +1,4 @@
+#if !os(watchOS)
 import SwiftUI
 import MuFlo
 import MuPeers
@@ -135,3 +136,4 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
     open override func touchesEnded(_ touches: Set<UITouch>, with _: UIEvent?) { addTouches(touches) }
     open override func touchesCancelled(_ touches: Set<UITouch>, with _: UIEvent?) { addTouches(touches) }
 }
+#endif

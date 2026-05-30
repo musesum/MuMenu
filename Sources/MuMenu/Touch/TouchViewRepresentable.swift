@@ -1,3 +1,4 @@
+#if !os(watchOS)
 //  created by musesum on 12/11/22.
 
 import SwiftUI
@@ -48,3 +49,4 @@ public struct TouchViewRepresentable: UIViewRepresentable {
     }
 
 }
+#endif
