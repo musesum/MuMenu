@@ -27,7 +27,8 @@ open class MenuVm {
     public init(_ rootVm   : RootVm ,
                 _ branches : [MenuBranch],
                 _ rootMenu : MenuTree,
-                columns    : Int? = nil) {
+                columns    : Int? = nil,
+                startHidden: Bool = false) {
 
         // both veritical and horizontal menu will share the same root
         self.rootVm = rootVm
@@ -49,13 +50,16 @@ open class MenuVm {
             rootVm.addTreeVm(treeVm)
         }
         // updateBranches
-        rootVm.showFirstTree()
-        rootVm.startAutoFades()
+        if !startHidden {
+            rootVm.showFirstTree()
+            rootVm.startAutoFades()
+        }
     }
     public init(_ rootVm   : RootVm,
                 _ menuType : MenuType,
                 _ floNames : [String],
-                _ rootMenu : MenuTree) {
+                _ rootMenu : MenuTree,
+                startHidden: Bool = false) {
 
         // both veritical and horizontal menu will share the same root
         self.rootVm = rootVm
@@ -73,8 +77,10 @@ open class MenuVm {
         let branchVm = BranchVm(menuTrees: menuTrees, treeVm: treeVm)
         treeVm.addBranchVm(branchVm)
         rootVm.addTreeVm(treeVm)
-        rootVm.showFirstTree()
-        rootVm.startAutoFades()
+        if !startHidden {
+            rootVm.showFirstTree()
+            rootVm.startAutoFades()
+        }
     }
     func makeMenuTree(_ floName: String) -> MenuTree? {
 

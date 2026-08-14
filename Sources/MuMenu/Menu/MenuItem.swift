@@ -104,6 +104,16 @@ public struct MenuItem: Codable, @unchecked Sendable {
         }
     }
 
+    /// Dotted word path of the wrapped node/leaf item ("" when none applies), used as the
+    /// `PlayItem.path` flo-key at tape capture.
+    @MainActor var wordPathDotted: String {
+        switch element {
+        case .node: return (item as? MenuNodeItem)?.wordPath.joined(separator: ".") ?? ""
+        case .leaf: return (item as? MenuLeafItem)?.wordPath.joined(separator: ".") ?? ""
+        default:    return ""
+        }
+    }
+
     var key: Int {
         switch element {
             #if !os(watchOS)

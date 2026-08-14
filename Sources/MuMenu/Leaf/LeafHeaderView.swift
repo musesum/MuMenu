@@ -57,8 +57,8 @@ struct LeafHeaderDeltaView: View {
             leafVm.updateNodeValue(Visitor(0,.user))
         } label: {
             ZStack {
-                // SwiftUI Image(_:bundle:) loads the asset on all platforms.
-                Image("icon.flip.delta", bundle: .main)
+                // assets live in the package bundle, not the app's main bundle
+                Image("icon.flip.delta", bundle: MuMenu.bundle)
                     .renderingMode(.template)
                     .resizable()
                     .scaledToFit()
@@ -67,7 +67,7 @@ struct LeafHeaderDeltaView: View {
                     .opacity(deltaOpacity)
                     .rotationEffect(.radians(originRotate + .pi))
 
-                Image("icon.flip.original", bundle: .main)
+                Image("icon.flip.original", bundle: MuMenu.bundle)
                     .renderingMode(.template)
                     .resizable()
                     .scaledToFit()

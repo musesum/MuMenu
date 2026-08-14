@@ -6,7 +6,7 @@ import SwiftUI
 struct CornerView: View {
 
     var cornerVm: CornerVm
-    var opacity: CGFloat { cornerVm.touchState.touching ? 1 : 0.25 }
+    var opacity: CGFloat { cornerVm.touchState.touching || cornerVm.centering ? 1 : 0.25 }
 
     var body: some View {
 
@@ -21,6 +21,7 @@ struct CornerView: View {
 
                     .padding(Menu.padding2)
                     .position(cornerVm.parkIconXY)
+                    .opacity(cornerVm.positioned ? 1 : 0)
             }
 
             // drag icon, follows touch
@@ -29,8 +30,8 @@ struct CornerView: View {
                 CursorView(ringNodeVm, Menu.diameter2)
                     .position(cornerVm.ringIconXY)
                     .offset(cornerVm.dragNodeΔ()) // .kludge
-                    .animation(Animate(0.25), value: cornerVm.ringIconXY)
-                    .opacity(opacity)
+                    .animation(cornerVm.centering ? nil : Animate(0.25), value: cornerVm.ringIconXY)
+                    .opacity(cornerVm.positioned ? opacity : 0)
                     .animation(Animate(0.50), value: opacity)
             }
         }

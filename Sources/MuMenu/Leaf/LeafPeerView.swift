@@ -6,7 +6,7 @@ import MuPeers
 
 struct LeafPeerView: View {
 
-    public var leafVm: LeafPeerVm
+    @ObservedObject public var leafVm: LeafPeerVm
     @State private var findPeers = false
 
     var body: some View {
@@ -21,6 +21,18 @@ struct LeafPeerView: View {
                 .frame(width: 32, height: 32)
                 LeafHeaderTitleView(leafVm, inset: 0)
                 Spacer()
+                // the bonjour switch, at the corner the header leaves open
+                Button {
+                    leafVm.bonjourOn.toggle()
+                } label: {
+                    Image(systemName: leafVm.bonjourOn
+                          ? "antenna.radiowaves.left.and.right"
+                          : "antenna.radiowaves.left.and.right.slash")
+                        .foregroundColor(leafVm.bonjourOn
+                                         ? .white
+                                         : .white.opacity(0.35))
+                }
+                .frame(width: 32, height: 32)
             }
             LeafBezelView(leafVm, .none) {
                 PeersView()

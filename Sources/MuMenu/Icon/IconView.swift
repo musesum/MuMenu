@@ -14,6 +14,7 @@ private let svgToSFSymbol: [String: String] = [
     "icon.brush":    "paintbrush.pointed",
     "icon.plato":    "cube",
     "icon.cell":     "circle.grid.3x3.fill",
+    "icon.cellular.automata": "circle.grid.3x3.fill",
     "icon.camera":   "camera",
     "icon.more":     "ellipsis",
     "icon.chat":     "bubble.left",
@@ -35,7 +36,7 @@ private let svgToSFSymbol: [String: String] = [
 ]
 #endif
 
-struct IconView: View {
+public struct IconView: View {
 
     @Environment(\.colorScheme) var colorScheme // darkMode
     @ObservedObject var nodeVm: NodeVm
@@ -59,22 +60,23 @@ struct IconView: View {
     var fillColor = Color(white: 0).opacity(0.62)
     #if os(watchOS)
     // watchOS: solid stroke, white when spotlit and mid-gray otherwise.
+    // Thinner than iOS — small screen needs lighter strokes.
     var strokeColor: Color { spotlight ? .white : Color(white: 0.5) }
-    var strokeWidth: CGFloat { 1.0 }
+    var strokeWidth: CGFloat { spotlight ? 0.8 : 0.4 }
     #else
     var strokeColor: Color { spotlight ? .white : Color(white: 0.7) }
     var strokeWidth: CGFloat { spotlight ? 5.0 : 1.0 }
     #endif
 
-    init(_ nodeVm: NodeVm,
-         _ icon: Icon,
-         _ runwayType: LeafRunwayType) {
+    public init(_ nodeVm: NodeVm,
+                _ icon: Icon,
+                _ runwayType: LeafRunwayType) {
         self.nodeVm = nodeVm
         self.icon = icon
         self.runwayType = runwayType
     }
 
-    var body: some View {
+    public var body: some View {
         ZStack {
 
             if icon.typeOn != .cursor {
@@ -95,7 +97,8 @@ struct IconView: View {
             }
             switch runwayType {
             case .runX, .runY, .runU, .runV, .runW, .runZ, .runS, .runT:
-                IconSideView(runwayType, strokeColor)
+                IconSideView((nodeVm as? LeafVm)?.thumbLabel(runwayType) ?? runwayType.label,
+                             strokeColor)
             default:
                 switch icon.typeOn {
                 case .none: IconTitleView(title: title, color: strokeColor)
@@ -187,25 +190,11 @@ struct IconTitleView: View {
 
 private struct IconSideView: View {
 
-    let runwayType: LeafRunwayType
+    let title: String
     let color: Color
-    var title: String {
-        switch runwayType {
-        case .runX: "x"
-        case .runY: "y"
-        case .runU: "u"
-        case .runV: "v"
-        case .runW: "w"
-        case .runZ: "z"
-        case .runS: "s"
-        case .runT: "t"
-        default: "?"
-         }
-
-    }
-    init(_ runwayType: LeafRunwayType,
+    init(_ title: String,
          _ color: Color) {
-        self.runwayType = runwayType
+        self.title = title
         self.color = color
     }
     var body: some View {

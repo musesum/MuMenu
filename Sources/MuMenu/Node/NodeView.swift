@@ -5,46 +5,46 @@ import SwiftUI
 struct NodeView: View {
 
     @ObservedObject var nodeVm: NodeVm
-    var size: CGSize {
-        #if os(watchOS)
-        // All node types collapse to a single icon slot on watchOS so the
-        // menu column has uniform circle sizes. Leaves that need richer
-        // interaction (XY/XYZ/val/seg) get the WatchLeafController overlay.
-        switch nodeVm.menuTree.nodeType {
-        case .none, .node, .tog, .tap:
-            return nodeVm.panelVm.innerPanel(.none)
-        default:
-            return CGSize(width: Menu.diameter, height: Menu.diameter)
-        }
-        #else
-        return nodeVm.panelVm.innerPanel(.none)
-        #endif
-    }
+    var size: CGSize { nodeVm.panelVm.innerPanel(.none) }
 
     var body: some View {
         GeometryReader() { geo in
             Group {
                 switch nodeVm {
-                #if !os(watchOS)
                 // Inline panel-XY / panel-XYZ / panel-Seg / panel-Val leaves
-                // render inside their iOS/visionOS panel slot. On watchOS they
-                // collapse to plain IconView in the menu space; full-face
-                // WatchLeafController takes over for interaction.
+                // render in their natural panel slot on ALL platforms so the
+                // menu-mode small leaf is a live representation (thumb moves
+                // with value). watchOS edit-mode still routes through the
+                // full-face WatchLeafController for richer interaction.
                 case let n as LeafXyVm      : LeafXyView      (leafVm: n)
+                case let n as LeafXyzwVm    : LeafXyzwView    (leafVm: n) // before LeafXyzVm: subclass must match first
+                case let n as LeafVfVm      : LeafVfView      (leafVm: n)
                 case let n as LeafXyzVm     : LeafXyzView     (leafVm: n)
                 case let n as LeafSegVm     : LeafSegView     (leafVm: n)
                 case let n as LeafValVm     : LeafValView     (leafVm: n)
-                #endif
                 #if !os(watchOS)
                 case let n as LeafPeerVm    : LeafPeerView    (leafVm: n)
                 case let n as LeafSearchVm  : LeafSearchView  (leafVm: n)
                 case let n as LeafArchiveVm : LeafArchiveView (leafVm: n)
+                case let n as LeafGraphVm   : LeafGraphView   (leafVm: n)
+                case let n as LeafCodeVm    : LeafCodeView    (leafVm: n)
+                case let n as LeafMidiVm    : LeafMidiView    (leafVm: n)
+                case let n as LeafSequencerVm : LeafSequencerView (leafVm: n)
                 #endif
                 case let n as LeafTogVm     : LeafTogView     (leafVm: n)
                 case let n as LeafTapVm     : LeafTapView     (leafVm: n)
                 default: IconView(nodeVm, nodeVm.menuTree.icon, .none)
                 }
             }
+            #if os(watchOS)
+            // Menu-mode cover on watchOS: the leaf body is a live visual
+            // representation only. All touch/drag/tap belongs to the outer
+            // ContentView gesture chain (sticky-leaf detection + lift/double
+            // tap → edit mode), and to the crown for MRU navigation. Letting
+            // the inner runways absorb touches stole gestures from the MRU
+            // stack — especially for XYZ which renders the largest panel.
+            .allowsHitTesting(false)
+            #endif
             .onAppear { nodeVm.updateCenter(geo.frame(in: .global)) }
             .onChange(of: geo.frame(in: .global)) { nodeVm.updateCenter($1) }
         }

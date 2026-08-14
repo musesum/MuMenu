@@ -36,6 +36,7 @@ extension TreeVm { // +Show
             branch = branch.nodeSpotVm?.nextBranchVm ?? nil
         }
         branchVms = newBranches
+        showTree.autoFadeOff = disablesAutoFade
 
         for branchVm in branchVms {
             branchVm.updateShiftRange()

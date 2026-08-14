@@ -76,7 +76,7 @@ extension RootVm {
         }
     }
 
-    func showTrunks(_ fromRemote: Bool) {
+    public func showTrunks(_ fromRemote: Bool) {
         if treeVms.count == 1 {
             showFirstTree(fromRemote: true)
         } else {

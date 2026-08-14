@@ -29,10 +29,15 @@ public class LeafVm: NodeVm {
         updateFromFlo(menuTree.flo, Visitor(0, .bind))
     }
 
+    /// display label for a slider thumb; nil = IconSideView's runway letter.
+    /// Subclasses remap slots whose meaning differs from the flo component
+    /// (LeafVfVm: y slot shows "v", w slot shows "f").
+    public func thumbLabel(_ runwayType: LeafRunwayType) -> String? { nil }
+
     public func setRanges() {
         // set ranges
         if let exprs = menuTree.flo.exprs {
-            for name in ["x","y","z"] {
+            for name in ["x","y","z","w"] {
                 if let scalar = exprs.nameAny[name] as? Scalar {
                     ranges[name] = scalar.range()
                 }
@@ -66,6 +71,7 @@ public class LeafVm: NodeVm {
         let remoteThumb = leafItem.leafThumb
         let remoteOrigin = leafItem.origin
         guard let thumb = runways.thumb(remoteThumb.type) else { return }
+        runways.setTouchType(remoteThumb.type) // scoped user/remote fires follow the moved runway
         thumb.value = remoteThumb.value
         if !menuTree.flo.hasPlugins {
             thumb.tween = thumb.value
@@ -111,12 +117,30 @@ public class LeafVm: NodeVm {
             switch name {
             case "x":
                 runways.thumb(.runX)?.value.x = v
+                runways.thumb(.runX)?.tween.x = v
                 runways.thumb(.runXY)?.value.x = v
+                runways.thumb(.runXY)?.tween.x = v
             case "y":
                 runways.thumb(.runY)?.value.y = v
+                runways.thumb(.runY)?.tween.y = v
                 runways.thumb(.runXY)?.value.y = v
+                runways.thumb(.runXY)?.tween.y = v
             case "z":
                 runways.thumb(.runZ)?.value.z = v
+                runways.thumb(.runZ)?.tween.z = v
+                runways.thumb(.runXY)?.value.z = v
+                runways.thumb(.runXY)?.tween.z = v
+                if runways.hasWZ { // runWZ pad thumb carries z in its y-slot
+                    runways.thumb(.runWZ)?.value.y = v
+                    runways.thumb(.runWZ)?.tween.y = v
+                }
+            case "w": // runW thumb carries w in its x-slot
+                runways.thumb(.runW)?.value.x = v
+                runways.thumb(.runW)?.tween.x = v
+                if runways.hasWZ { // runWZ pad thumb carries w in its x-slot
+                    runways.thumb(.runWZ)?.value.x = v
+                    runways.thumb(.runWZ)?.tween.x = v
+                }
             default: break
             }
         }
@@ -125,7 +149,9 @@ public class LeafVm: NodeVm {
             return (name, expand(named: name, CGFloat(clamped)))
         }
         menuTree.flo.setNameNums(expanded, .fire, Visitor(0, .user))
-        Task { @MainActor in refreshView() }
+        // refreshView is @MainActor — call synchronously so the thumb
+        // position redraw lands in the same frame as the value change.
+        refreshView()
     }
 
     /// Exposes the stored global-visual runway bounds set by LeafBezelView.updateBounds.

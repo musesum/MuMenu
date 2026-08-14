@@ -36,8 +36,9 @@ public class TouchMenuLocal {
                 return addMenu(nodeVm)
             } else {
                 for treeVm in cornerVm.rootVm?.treeVms ?? [] {
+                    // per-branch containment — hull corners pass to canvas
                     if !treeVm.showTree.state.hidden,
-                        treeVm.treeBoundsPad.contains(location) {
+                        treeVm.treeContains(location) {
                         let nodeVm = treeVm.branchVms.first?.nodeVms.first
                         return addMenu(nodeVm)
                     }

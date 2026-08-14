@@ -17,7 +17,8 @@ public struct Menus {
     
     public init(_ root˚: Flo,
                 _ archiveVm: ArchiveVm,
-                _ phase: HandsPhase) {
+                _ phase: HandsPhase,
+                startHidden: Bool = false) {
 
         Menus.bundles.append(MuMenu.bundle)
         #if !os(watchOS)
@@ -46,10 +47,19 @@ public struct Menus {
         let rootSE = RootVm([.S,.E,.R], ELogo, menuVms, archiveVm, phase) // SE Right
         let swv = MenuBranch([.S,.W,.V], WNames) //SW Verti
         let sev = MenuBranch([.S,.E,.V], ENames) //SE Verti
+        #if !os(watchOS) // graph leaf needs WebKit
+        let NNames: [String] = ["graph"]
+        let NLogo = "point.3.connected.trianglepath.dotted"
+        let rootNE = RootVm([.N,.E,.R], NLogo, menuVms, archiveVm, phase) // NE Right
+        let nev = MenuBranch([.N,.E,.V], NNames) //NE Verti
+        #endif
         #if true // only vertical menu
         if let rootTree {
-            menuVms.append(MenuVm(rootSW, [swv], rootTree))
-            menuVms.append(MenuVm(rootSE, [sev], rootTree))
+            menuVms.append(MenuVm(rootSW, [swv], rootTree, startHidden: startHidden))
+            menuVms.append(MenuVm(rootSE, [sev], rootTree, startHidden: startHidden))
+            #if !os(watchOS)
+            menuVms.append(MenuVm(rootNE, [nev], rootTree, startHidden: startHidden))
+            #endif
         }
         #else // both vertical and horizontal menu
         let hNames: [String] = ["chat"]
@@ -58,5 +68,7 @@ public struct Menus {
         menuVms.append(MenuVm(rootSW, [swv,swh], rootTree))
         menuVms.append(MenuVm(rootSE, [sev,seh], rootTree))
         #endif
+        // RootVm captured an empty snapshot above; backfill after both menuVms exist
+        for menuVm in menuVms { menuVm.rootVm.menuVms = menuVms }
     }
 }

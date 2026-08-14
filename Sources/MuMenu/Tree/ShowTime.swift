@@ -24,19 +24,24 @@ public class ShowTime: ObservableObject, Codable, @unchecked Sendable {
         case .fadeOut : return 0.00
         }
     }
+    var collapsing: Bool { state.fadeOut && fadeInterval == animInterval } /// fadeNow victim
 
     let autoFadeInterval: TimeInterval = 4.0
     let fadeOutInterval: TimeInterval = 8.0
     let animInterval: TimeInterval = 0.25
     let tapInterval: TimeInterval = 0.5
+    private var fadeInterval: TimeInterval = 8.0 /// current fadeOut animation duration
 
     public var animation: Animation {
         switch state {
         case .hidden  : return Animate(animInterval)
         case .showing : return Animate(animInterval)
-        case .fadeOut : return Animate(fadeOutInterval)
+        case .fadeOut : return Animate(fadeInterval)
         }
     }
+
+    /// pinned by a shown leaf such as the graph; re-arms when released
+    public var autoFadeOff = false { didSet { startAutoFade() } }
 
     private var autoFadeTimer: Timer?
     private var fadeOutTimer: Timer?
@@ -52,7 +57,7 @@ public class ShowTime: ObservableObject, Codable, @unchecked Sendable {
     public func startAutoFade() {
 
         clearTimers()
-        if state == .hidden {
+        if state == .hidden || autoFadeOff {
             return
         }
         autoFadeTimer = Timer.scheduledTimer(
@@ -64,10 +69,25 @@ public class ShowTime: ObservableObject, Codable, @unchecked Sendable {
     }
     func fadeOut() {
         clearTimers()
+        fadeInterval = fadeOutInterval
         state = .fadeOut
 
         fadeOutTimer = Timer.scheduledTimer(
             withTimeInterval: fadeOutInterval,
+            repeats: false) {_ in
+                self.hideNow()
+            }
+    }
+    /// animated collapse: quick fade then hidden (hideNow snaps)
+    public func fadeNow() {
+        if state.hidden { return }
+        if state.fadeOut, fadeInterval == animInterval { return } // already collapsing
+        clearTimers()
+        fadeInterval = animInterval
+        state = .fadeOut
+
+        fadeOutTimer = Timer.scheduledTimer(
+            withTimeInterval: animInterval,
             repeats: false) {_ in
                 self.hideNow()
             }

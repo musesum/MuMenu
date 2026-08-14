@@ -14,8 +14,10 @@ extension CornerVm {
             return logoNodeVm // hits the root (home) node icon
         } else {
             for treeVm in rootVm?.treeVms ?? [] {
+                // per-branch containment — the hull rect's empty corners
+                // must fall through to the canvas
                 if !treeVm.showTree.state.hidden,
-                    treeVm.treeBoundsPad.contains(touchNow) {
+                    treeVm.treeContains(touchNow) {
                     for branchVm in treeVm.branchVms {
                         if branchVm.show, branchVm.contains(touchNow) {
                             if let nodeVm =  branchVm.nearestNode(touchNow) {

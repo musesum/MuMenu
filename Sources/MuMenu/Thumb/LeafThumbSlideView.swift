@@ -31,6 +31,7 @@ public struct LeafThumbSlideView: View {
             IconView(leafVm, leafVm.menuTree.icon, runwayType)
                 .frame(width: diameter, height: diameter)
                 .offset(leafVm.runways.valueOffset(runwayType))
+                .id(leafVm.refresh)
         }
     }
 }

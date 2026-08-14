@@ -46,11 +46,19 @@ public class LeafValVm: LeafVm {
     }
 
     /// Set a normalized 0…1 value directly (e.g. from a watchOS full-face gesture).
-    /// Routes through syncVal so the flo fires and the view refreshes.
+    /// Snaps tween to value so menu-mode views that read tween (the standard
+    /// LeafThumbSlideView path) show the new position immediately, then routes
+    /// through syncVal so the flo fires and the view refreshes.
     public func setValNormalized(_ normVal: Double) {
         let v = max(0, min(1, normVal))
         guard let thumb = runways.thumb(.runVal) else { return }
-        if panelVm.menuType.vertical { thumb.value.y = v } else { thumb.value.x = v }
+        if panelVm.menuType.vertical {
+            thumb.value.y = v
+            thumb.tween.y = v
+        } else {
+            thumb.value.x = v
+            thumb.tween.x = v
+        }
         syncVal(Visitor(0, .user))
     }
 
@@ -99,9 +107,10 @@ public class LeafValVm: LeafVm {
         if !menuTree.flo.hasPlugins {
             thumb.tween = thumb.value
         }
-        Task { @MainActor in
-            self.refreshView()
-        }
+        // syncVal2 is @MainActor (LeafValVm inherits from @MainActor NodeVm),
+        // so refresh synchronously — deferring via Task adds a frame of lag
+        // between value change and thumb redraw.
+        refreshView()
     }
 
 }

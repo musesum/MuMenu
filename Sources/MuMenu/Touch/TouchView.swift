@@ -50,6 +50,20 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
     var touchCanvas: TouchCanvas?
     let hashBump = HashBump()
 
+    /// every canvas begin — finger and pencil alike — held until travel
+    /// passes the gate; a sub-gate tap draws nothing and fires canvasTap
+    /// instead (graph deselect). One path, no touch-type branch. The gate
+    /// stands only while a graph page holds canvasTap; without one the
+    /// canvas draws plainly from the touch down
+    var canvasPending = [Hash: (data: TouchData, begin: CGPoint)]()
+    /// hashes that shared the screen with another pending touch — a pinch,
+    /// not a tap, so neither finger may deselect on lift
+    var canvasPaired = Set<Hash>()
+    /// travel a canvas touch owes before the stroke commits; a tap to deselect
+    /// rides well under it, and the stroke it gates keeps its origin
+    static let canvasMoveMin = CGFloat(20)
+    public static var canvasTap: (() -> Void)?
+
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
@@ -92,13 +106,44 @@ open class TouchView: UIView, UIGestureRecognizerDelegate {
                 if TouchMenuLocal.beginTouch(location, phase, hash) {  from = .menu }
                 else if willBeginFromEdge() {
                     touchCanvas?.beginTouch(touchData); from = .edge
-                } else {
+                } else if Self.canvasTap == nil {
                     touchCanvas?.beginTouch(touchData); from = .canvas
+                } else {
+                    // held until travel passes the gate; a tap must not draw
+                    if !canvasPending.isEmpty {
+                        canvasPaired.insert(hash)  // a second finger makes a pinch
+                        canvasPending.keys.forEach { canvasPaired.insert($0) }
+                    }
+                    canvasPending[hash] = (touchData, location); from = .canvas
                 }
             default: // moved, stationary, ended
                 if beganFromEdge() { from = .edge }
                 else if TouchMenuLocal.updateTouch(location,phase,hash) {
                     from = .menu
+                } else if let pending = canvasPending[hash] {
+                    from = .canvas
+                    let travel = hypot(location.x - pending.begin.x,
+                                       location.y - pending.begin.y)
+                    if touch.phase == .cancelled {
+                        // A stolen gesture draws nothing, whatever it traveled —
+                        // but a touch that never traveled is a tap either way.
+                        // The menu's own zero-distance drag recognizes on touch
+                        // down and takes the gesture, so a still tap can be
+                        // delivered here as `.cancelled` and never as `.ended`;
+                        // answering only `.ended` lost every one of them
+                        canvasPending.removeValue(forKey: hash)
+                        let paired = canvasPaired.remove(hash) != nil
+                        if travel < Self.canvasMoveMin, !paired { Self.canvasTap?() }
+                    } else if travel >= Self.canvasMoveMin {
+                        canvasPending.removeValue(forKey: hash)
+                        canvasPaired.remove(hash)
+                        touchCanvas?.beginTouch(pending.data) // stroke keeps its origin
+                        touchCanvas?.updateTouch(touchData)
+                    } else if touch.phase == .ended {
+                        canvasPending.removeValue(forKey: hash)
+                        let paired = canvasPaired.remove(hash) != nil
+                        if !paired { Self.canvasTap?() }      // a tap deselects, draws nothing
+                    }
                 } else {
                     touchCanvas?.updateTouch(touchData); from = .canvas
                 }

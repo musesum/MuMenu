@@ -13,6 +13,8 @@ open class MenuTree: Identifiable, Equatable {
     public var parentTree: MenuTree?
     public var children = [MenuTree]()
     public var nodeType = NodeType.node
+    /// `{}` row riding under a value control, not a chooser sibling
+    public internal(set) var isCodeRow = false
     public var chiralSpot: [MenuType: Flo] = [:]
 
     var axis: Axis = .vertical
@@ -73,12 +75,32 @@ open class MenuTree: Identifiable, Equatable {
 
         if children.count > 0 { return }
         let nodeType = getNodeType()
-        if nodeType.isControl {
-
+        if nodeType == .graph {
+            // one leaf, so the chooser row a multi-leaf branch needs would be an
+            // empty step: the graph opens from the node it was declared on, the
+            // way .tog and .tap do
+            self.nodeType = nodeType
+        } else if nodeType.isControl {
+            // .code included: a multi-leaf branch needs the chooser row, and the
+            // leaf opens full-size from its own child branch
             _ = MenuTree(flo, nodeType, icon, parentTree: self)
+            makeOptionalCode(nodeType)
         } else {
             self.nodeType = nodeType
         }
+    }
+
+    /// `{{ @<file> }}` on the flo hangs a `{}` row under its value control;
+    /// the row's own child is the editor, so it opens to the right
+    func makeOptionalCode(_ nodeType: NodeType) {
+        #if !os(watchOS)
+        guard nodeType != .code, flo.embed != nil else { return }
+        let curly: IconTypeName = (.symbol, "curlybraces")
+        if let codeRow = MenuTree(flo, .node, Icon(curly, curly, .node), parentTree: self) {
+            codeRow.isCodeRow = true
+            _ = MenuTree(flo, .code, Icon(curly, curly, .code), parentTree: codeRow)
+        }
+        #endif
     }
 
     /// expression parameters: val vxy tog seg tap x,y indicates a leaf node

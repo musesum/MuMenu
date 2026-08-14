@@ -109,7 +109,7 @@ fileprivate struct Grid: View {
             .onChange(of: geo.frame(in: .global)) { branchVm.changedGeoFrame($1) }
         }
         .frame(width: outerWidth, height: outerHeight)
-        .offset(branchVm.branchShift)
+        .offset(branchVm.branchShift + branchVm.panelOrigin)
         .opacity(opacity)
         .animation(Animate(0.25), value: opacity)
     }
@@ -151,7 +151,7 @@ fileprivate struct Body_: View {
             .onChange(of: geo.frame(in: .global)) { branchVm.changedGeoFrame($1) }
         }
         .frame(width: outerPanel.width, height: outerPanel.height)
-        .offset(branchVm.branchShift)
+        .offset(branchVm.branchShift + branchVm.panelOrigin)
         .opacity(opacity)
         .animation(Animate(0.50), value: opacity)
         .animation(Animate(0.25), value: branchVm.branchShift )
@@ -174,7 +174,7 @@ struct BranchAxisView<Content: View>: View {
         // even though .vxy has only one inner view, a .horizonal scroll view shifts and truncates the inner views. So, perhaps there is a phantom space for indicators?
 
         if panelVm.menuType.vertical ||
-            [.xy, .xyz, .arch, .peer].contains(panelVm.nodeType) {
+            [.xy, .xyz, .xyzw, .arch, .peer].contains(panelVm.nodeType) {
 
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .center, spacing: spacing, content: content)

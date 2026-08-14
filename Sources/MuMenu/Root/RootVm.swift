@@ -37,8 +37,8 @@ public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable
     var treeSpotVm: TreeVm? /// most recently used tree
     var touchState = TouchState()
 
-    // all menu corners
-    let menuVms: MenuVms
+    // all menu corners, backfilled by Menus.init after both exist
+    var menuVms: MenuVms
     var _menuSpotVm: MenuVm?
     var menuSpot: MenuVm? {
         if let _menuSpotVm { return _menuSpotVm }
@@ -51,7 +51,10 @@ public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable
         //PrintLog("RootVm::menuSpot[\(_menuSpotVm?.cornerType.icon ?? "??")] not found")
         return nil
     }
-    public var nodeSpotVm: NodeVm?   /// current last touched or hovered node
+    /// current last touched or hovered node
+    public var nodeSpotVm: NodeVm? {
+        didSet { MenuLineage.shared.post(nodeSpotVm) } // read-only seam for the graph leaf
+    }
     private var handState: leftRight<TouchPhase> = .init(.ended, .ended)
     
     public init(_ cornerType : MenuType,
@@ -73,6 +76,10 @@ public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable
         #if !os(watchOS)
         Peers.shared.addDelegate(self, for: .menuItem)
         #endif
+    
+        #if canImport(WatchConnectivity) && (os(iOS) || os(watchOS))
+        _ = WatchSync.shared
+        #endif
     }
     public func addTreeVm(_ treeVm: TreeVm) {
         self.treeVms.append(treeVm)
@@ -85,6 +92,22 @@ public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable
             treeSpotVm = treeVm
             treeVm.growTree(depth: 9, "first", fromRemote)
             viewOps = [.root]
+        }
+    }
+
+    /// when overlapping, hide other
+    func hideOverlapped(_ growing: TreeVm) {
+        guard growing.showTree.state != .hidden,
+              !growing.showTree.collapsing,
+              growing.treeBounds != .zero else { return }
+        for menuVm in menuVms where menuVm.rootVm !== self {
+            for tree in menuVm.rootVm.treeVms {
+                if tree.showTree.state != .hidden,
+                   tree.treeBounds != .zero,
+                   growing.treeBounds.intersects(tree.treeBounds) {
+                    tree.showTree.fadeNow()
+                }
+            }
         }
     }
 

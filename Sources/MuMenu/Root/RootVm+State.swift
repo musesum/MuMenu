@@ -31,7 +31,17 @@ extension RootVm { // + State
         // stay exclusively on .leaf or .edit mode
         switch touchType {
         case .canopy : logRoot("shiftCanopy"  ); return shiftCanopy()
-        case .leaf   : logRoot("editLeaf"     ); return editLeaf(nodeSpotVm)
+        case .leaf   :
+            // dragging onto the root corner escapes an open leaf — fold to
+            // trunks (mirrors shiftCanopy's root re-check; without it the
+            // leaf swallows every move and blocks navigation on phone)
+            if cornerVm.touchingRoot(touchNow), !touchState.phase.done {
+                showTrunks(fromRemote)
+                touchState.beginPoint(touchNow)
+                touchType = .root
+                return
+            }
+            logRoot("editLeaf"); return editLeaf(nodeSpotVm)
         default      : break // logRoot(menuType.description)
         }
         if      beganLeaf()  { logRoot("beganLeaf ↦ 🍁") } // touch began on leaf
@@ -63,9 +73,11 @@ extension RootVm { // + State
         }
 
         func beganCanopy() -> Bool {
+            // per-branch containment — a canopy grab starts ON the tree,
+            // never in the hull's empty corner beside a short leaf
             if touchState.phase == .began,
                let treeSpotVm,
-               treeSpotVm.treeBounds.contains(touchState.pointNow) {
+               treeSpotVm.treeContains(touchState.pointNow) {
 
                 touchType = .canopy
                 treeSpotVm.shiftTree(touchState, fromRemote)
@@ -75,6 +87,9 @@ extension RootVm { // + State
         }
         func beganLeaf() -> Bool {
 
+            // the root icon outranks leaf capture — nearestNode would grab
+            // any tree-area touch for an oversized leaf and block the corner
+            if cornerVm.touchingRoot(touchNow) { return false }
             guard let leafVm = treeSpotVm?.nearestNode(touchNow) as? LeafVm else { return false }
 
             if touchState.phase == .began {

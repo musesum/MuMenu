@@ -35,8 +35,6 @@ struct BranchPanelView: View {
                     .cornerRadius(Menu.cornerRadius)
             }
         }
-
-
     }
 }
 #endif

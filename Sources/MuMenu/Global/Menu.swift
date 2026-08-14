@@ -1,6 +1,9 @@
 // created by musesum on 10/31/21.
 
 import SwiftUI
+#if !os(watchOS)
+import MuPeers // Idiom
+#endif
 
 func Animate(_ sec: TimeInterval) -> Animation {
     .easeInOut(duration: sec)
@@ -49,6 +52,37 @@ public enum Menu {
                height: -geo.safeAreaInsets.top)
     }
 
+    /// upright portrait on a phone, where the island sits between the corners
+    /// and the roots may park at the true screen corners; every other idiom
+    /// and orientation keeps the inset placement. Measured on the screen, not
+    /// on a proxy, so a raised keyboard cannot flip the test
+    @MainActor
+    public static var phonePortrait: Bool {
+        #if os(iOS)
+        let bounds = UIScreen.main.bounds.size
+        return !Idiom.iPadOS && bounds.height > bounds.width
+        #else
+        return false
+        #endif
+    }
+
+    /// portrait reclaims the top and side insets; the bottom edge stays put
+    /// so the south roots never ride under the home indicator
+    @MainActor
+    public static func rootWidth(_ geo: GeometryProxy) -> CGFloat {
+        phonePortrait ? touchWidth(geo) : geo.size.width
+    }
+    @MainActor
+    public static func rootHeight(_ geo: GeometryProxy) -> CGFloat {
+        phonePortrait
+        ? geo.size.height + geo.safeAreaInsets.top
+        : geo.size.height
+    }
+    @MainActor
+    public static func rootOffset(_ geo: GeometryProxy) -> CGSize {
+        phonePortrait ? touchOffset(geo) : .zero
+    }
+
 
 #if os(visionOS) || os(iPadOS)
     public static let margin = CGFloat(16)
@@ -70,7 +104,7 @@ public enum Menu {
     /// quick animation for fla
     static var flashAnim: Animation { .easeInOut(duration: 0.20) }
 
-    static func strokeColor(_ high: Bool) -> Color {
+    public static func strokeColor(_ high: Bool) -> Color {
         #if os(watchOS)
         // Match node IconView stroke palette on watchOS — white spotlit, mid-gray otherwise.
         return high ? .white : Color(white: 0.5)
@@ -81,9 +115,11 @@ public enum Menu {
         return color
         #endif
     }
-    static func strokeWidth(_ high: Bool) -> CGFloat {
+    public static func strokeWidth(_ high: Bool) -> CGFloat {
         #if os(watchOS)
-        return 1.0  // Match node IconView stroke thickness.
+        // Small screen: very thin baseline, only slightly thicker while
+        // actively edited.
+        return high ? 0.7 : 0.3
         #else
         return(high ? 2.0 : 1.2)
         #endif

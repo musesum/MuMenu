@@ -42,6 +42,11 @@ struct TreeView: View {
                 }
             }
         }
+        // anchor overflow at the root's corner: a tree wider than the
+        // container clips AWAY from the root (E stays flush-right, mirroring
+        // W), never past the screen edge
+        .frame(maxWidth: .infinity, maxHeight: .infinity,
+               alignment: menuType.alignment)
         .opacity(showOpacity)
         .animation(showAnimation, value: showOpacity)
         .offset(treeVm.treeOffset)

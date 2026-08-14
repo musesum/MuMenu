@@ -21,6 +21,23 @@ public enum LeafRunwayType: String, Codable {
     case runST  = "st"
     case runVal = "val"
 
+    /// display letter shown on a slider thumb — single source of truth.
+    /// A leaf may remap it per-instance via `LeafVm.thumbLabel` (e.g. the
+    /// vf leaf shows v/f while its flo components stay y/w).
+    var label: String {
+        switch self {
+        case .runX: "x"
+        case .runY: "y"
+        case .runU: "u"
+        case .runV: "v"
+        case .runW: "w"
+        case .runZ: "z"
+        case .runS: "s"
+        case .runT: "t"
+        default:    "?"
+        }
+    }
+
     var thumbRadius: Double {
         #if os(watchOS)
         // Scale thumbs down ~3× on watchOS so they fit inside the rescaled

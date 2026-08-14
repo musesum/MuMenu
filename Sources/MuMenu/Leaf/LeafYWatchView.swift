@@ -27,6 +27,7 @@ private struct LeafYBarSlideView: View {
                 .fill(Menu.strokeColor(leafVm.spotlight))
                 .frame(width: geo.size.width, height: barH)
                 .offset(x: 0, y: offset.height)
+                .id(leafVm.refresh)
         }
     }
 }

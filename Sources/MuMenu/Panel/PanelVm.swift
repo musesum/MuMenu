@@ -14,6 +14,7 @@ public class PanelVm {
     let maxNodes = CGFloat(7)
     var aspectSz = CGSize(width: 1, height: 1) /// multiplier aspect ratio
     var columns: Int
+    var codeRows: Int /// `{}` rows stacked under a value control
 
     init(branchVm: BranchVm,
          menuTrees: [MenuTree],
@@ -24,7 +25,13 @@ public class PanelVm {
         self.menuTrees = menuTrees
         self.columns = columns
         self.count = CGFloat(menuTrees.count)
-        self.nodeType = (count > 1 ? .node : menuTrees.first?.nodeType ?? .node)
+        // `{}` code rows ride under the value control instead of turning the
+        // branch into a chooser, so the control keeps its own panel shape
+        self.codeRows = menuTrees.filter { $0.isCodeRow }.count
+        let controls = menuTrees.filter { !$0.isCodeRow }
+        self.nodeType = (codeRows > 0 && controls.count == 1
+                         ? controls[0].nodeType
+                         : count > 1 ? .node : menuTrees.first?.nodeType ?? .node)
         self.menuType = treeVm.menuType
         setAspectFromType()
     }
@@ -63,13 +70,54 @@ public class PanelVm {
             menuType.vertical ? aspect(1.0, 4.0) : aspect(4.0, 1.0)
             #endif
 
-        case .xy     : aspect(4.0, 4.0)
-        case .xyz    : aspect(4.5, 4.0)
+        case .xy     :
+            #if os(watchOS)
+            // watchOS XY row layout is runY (d·0.5) + 4 + runXY (d·3) =
+            // ~3.96·d wide PLUS HStack spacing + bezel stroke padding.
+            // Total vertical = row1 (~d·0.6) + row2 (d·3) = ~3.6·d.
+            // 4.0·d clips on small screen — give visible margin on both
+            // axes so the panel doesn't touch the slot edges.
+            aspect(4.7, 4.7)
+            #else
+            aspect(4.0, 4.0)
+            #endif
+        case .xyz    :
+            #if os(watchOS)
+            // watchOS XYZ row layout is runY (d·0.5) + 4 + runXY (d·3) +
+            // 4 + runZ (d·0.5) = ~4.62·d wide. Height same as XY.
+            // Earlier 5.0·d still clipped — bump to 5.5·d wide and 4.7·d
+            // tall to match XY's safe margin.
+            aspect(5.5, 4.7)
+            #else
+            aspect(4.5, 4.0)
+            #endif
+        case .xyzw   :
+            // xyz plus a bottom runW row (d·0.5 + spacing) under the pad
+            #if os(watchOS)
+            aspect(5.5, 5.4)
+            #else
+            aspect(4.5, 4.75)
+            #endif
+        case .vf     :
+            // vf rides the xyzw frame: grayed x row + y|scope|z row + w row
+            #if os(watchOS)
+            aspect(5.5, 5.4)
+            #else
+            aspect(4.5, 4.75)
+            #endif
         case .seg    : aspect(1.0, 4.0)
         case .peer   : aspect(6.0, 6.0)
         case .search : aspect(6.0, 3.0)
         case .arch   : aspect(6.0, 6.0)
         case .hand   : aspect(4.0, 3.5)
+        case .graph  : aspect(17.0, 12.0) // 680·480; LeafGraphVm rewrites this on resize
+        case .code   : aspect(14.0, 12.0) // 560·480 editor page plus bottom bar
+        case .midi   :
+            // phone portrait: fit beside the 48pt trunk column inside 402pt
+            Menu.phonePortrait ? aspect(8.0, 8.5) : aspect(9.0, 8.0) // 11×8 grid + legend + source row
+        case .sequencer :
+            // starts two rows tall; LeafSequencerVm grows this per row count
+            Menu.phonePortrait ? aspect(8.5, 3.0) : aspect(11.0, 3.0)
         }
         func aspect(_ lo: CGFloat,_ hi: CGFloat  ) {
             aspectSz = (menuType.vertical || nodeType == .peer)
@@ -82,7 +130,7 @@ public class PanelVm {
 
     func thumbDiameter(_ type: LeafRunwayType) -> Double {
         switch type {
-        case .runX,.runY,.runZ : return thumbRadius
+        case .runX,.runY,.runZ,.runW : return thumbRadius
         default                : return thumbRadius * 2
         }
     }
@@ -92,7 +140,7 @@ public class PanelVm {
         let diameter = thumbDiameter(runwayType)
         let length: Double
         switch runwayType {
-        case .runX,.runT : length = inner.width  - diameter
+        case .runX,.runT,.runW : length = inner.width  - diameter
         case .runY,.runZ : length = inner.height - diameter
         default          : length = (menuType.vertical
                                   ? inner.height - diameter
@@ -112,13 +160,22 @@ public class PanelVm {
         return result
     }
 
+    /// one node row per `{}` code row, along the branch's stacking axis
+    private var codeRowsSize: CGSize {
+        guard codeRows > 0 else { return .zero }
+        let len = Menu.diameter2 * CGFloat(codeRows)
+        return menuType.vertical
+        ? CGSize(width: 0, height: len)
+        : CGSize(width: len, height: 0)
+    }
+
     func innerPanel(_ runwayType: LeafRunwayType) -> CGSize {
         let d = Menu.diameter
         switch runwayType {
 
         case .none       : return aspectSz * d
 
-        case .runX,.runT : return CGSize(width: d * 2.5, height: d * 0.5)
+        case .runX,.runT,.runW : return CGSize(width: d * 2.5, height: d * 0.5)
         case .runY,.runZ : return CGSize(width: d * 0.5, height: d * 2.5)
 
         case .runVal     :
@@ -140,9 +197,10 @@ public class PanelVm {
 
         switch nodeType {
 
-        case .val, .seg, .xyz, .xy:
+        case .val, .seg, .xyz, .xyzw, .vf, .xy, .graph, .code, .midi, .sequencer:
 
-            return innerSize + pad
+            // .graph and .code carry their own header inside innerSize
+            return innerSize + pad + codeRowsSize
 
         case .hand, .peer, .arch, .search: // header is always on top
 

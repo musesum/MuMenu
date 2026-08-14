@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="codemirror.min.css">
+<script src="codemirror.min.js"></script>
+<script src="clike.min.js"></script>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; }
+  .CodeMirror { height: 100%; font-size: 13px; background: #0b0b10; color: #ddd; }
+  .CodeMirror-gutters { background: #101018; border-right: 1px solid #222; }
+  .CodeMirror-linenumber { color: #556; }
+  .CodeMirror-cursor { border-left: 1px solid #eee; }
+  .CodeMirror-selected { background: #234; }
+  .cm-keyword { color: #c792ea; } .cm-type { color: #82aaff; }
+  .cm-number  { color: #f78c6c; } .cm-comment { color: #566; }
+  .cm-string  { color: #c3e88d; } .cm-variable { color: #ddd; }
+  .errorLine   { background: rgba(255, 60, 60, 0.16); }
+  .errorGutter { color: #f55; }
+</style>
+</head>
+<body>
+<script>
+var cm = CodeMirror(document.body, {
+    value: "",
+    mode: "text/x-c++src",
+    lineNumbers: true,
+    indentUnit: 4,
+    gutters: ["CodeMirror-linenumbers", "errors"]
+});
+var errorLines = [];
+
+function loadCode(text) {
+    cm.setValue(text);
+    cm.clearHistory();
+    setErrors([]);
+}
+function getCode() { return cm.getValue(); }
+
+function setErrors(list) {
+    errorLines.forEach(function(l) { cm.removeLineClass(l, "background", "errorLine"); });
+    errorLines = [];
+    cm.clearGutter("errors");
+    list.forEach(function(e) {
+        var line = Math.max(0, e.line - 1);
+        cm.addLineClass(line, "background", "errorLine");
+        errorLines.push(line);
+        var marker = document.createElement("div");
+        marker.className = "errorGutter";
+        marker.title = e.message;
+        marker.textContent = "●";
+        cm.setGutterMarker(line, "errors", marker);
+    });
+    if (list.length) {
+        cm.scrollIntoView({ line: Math.max(0, list[0].line - 1), ch: 0 }, 60);
+    }
+}
+cm.on("change", function(_, change) {
+    if (change.origin !== "setValue") { post({ kind: "dirty" }); }
+});
+function post(msg) {
+    if (window.webkit && webkit.messageHandlers.mucode) {
+        webkit.messageHandlers.mucode.postMessage(msg);
+    }
+}
+</script>
+</body>
+</html>

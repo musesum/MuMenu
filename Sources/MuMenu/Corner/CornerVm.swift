@@ -10,6 +10,12 @@ import MuFlo
     var ringIconXY = CGPoint.zero /// current position
     public internal(set) var parkIconXY = CGPoint.zero /// fixed position of icon
 
+    private var startupCenter: CGPoint? /// loading pin, global coords
+    private var frameGlobal = CGRect.zero /// last known global frame
+    internal private(set) var positioned = false /// true once frame has a size
+
+    var centering: Bool { startupCenter != nil }
+
     public internal(set) var rootVm: RootVm?
     var logoNodeVm: NodeVm?  /// fixed root node in corner in which to drag from
     var ringNodeVm: NodeVm?  /// drag from root with duplicate node icon
@@ -19,7 +25,7 @@ import MuFlo
     private var spotNodeΔ = CGSize.zero /// offset between touch point and center in coord
 
     func dragNodeΔ() -> CGSize { /// kludge to compsate for small right offset
-        if ringIconXY == parkIconXY { return .zero }
+        if centering || ringIconXY == parkIconXY { return .zero }
         let deltaEast = rootVm?.cornerType.east ?? false ? -Menu.padding2 : 0
         let offset = Menu.offset(menuType.corner)
         return CGSize(width: deltaEast - offset.width, height: -offset.height)
@@ -107,12 +113,44 @@ import MuFlo
         spotNodeΔ = .zero // no spotNode to align with
         rootNodeΔ = .zero // go back to rootNode
     }
+    /// loading: pin the ring to a global point; nil releases it home (animated by CornerView)
+    public func setStartupCenter(_ globalXY: CGPoint?) {
+        startupCenter = globalXY
+        guard !touchState.touching else { return }
+        if let globalXY, positioned {
+            ringIconXY = localXY(globalXY)
+        } else if globalXY == nil, positioned {
+            ringIconXY = parkIconXY
+        }
+    }
+    /// global point to CornerView local coord
+    private func localXY(_ globalXY: CGPoint) -> CGPoint {
+        CGPoint(x: globalXY.x - frameGlobal.minX,
+                y: globalXY.y - frameGlobal.minY)
+    }
     /// updated on startup or change in screen orientation
     func updateRootIcon(_ from: CGRect) {
-        parkIconXY = rootVm?.cornerXY(in: from) ?? .zero
-        ringIconXY = parkIconXY
+        frameGlobal = from
+        positioned = from.size != .zero
+        parkRootIcon()
     }
-    
+
+    /// clamp the corner to the container: a panel wider than the screen swells
+    /// this view's box past the edge, which would carry the parked icon along
+    private func parkRootIcon() {
+        guard let rootVm, positioned else { return } // never park from a zero frame
+        let clamped = frameGlobal.intersection(bounds)
+        let box = clamped.isEmpty ? frameGlobal : clamped
+        parkIconXY = localXY(rootVm.cornerXY(in: box) + box.origin)
+
+        guard !touchState.touching else { return } // alignCursor owns the ring
+        if let startupCenter {
+            ringIconXY = localXY(startupCenter) // the loading pin outranks a re-park
+        } else {
+            ringIconXY = parkIconXY
+        }
+    }
+
     /// either center dragNode icon on spotNode or track finger
     func alignCursor(_ touchXY: CGPoint) {
         
@@ -144,6 +182,8 @@ import MuFlo
     func updateBounds(_ bounds: CGRect) {
         DebugLog { P("\(self.rootVm?.cornerType.icon ?? "??") CornerVm changed geometry ") }
         self.bounds = bounds
+        guard !centering else { return } // loading pin owns the ring; updateRootIcon re-parks
+        parkRootIcon() // the container corner moved
         //log("RootVm",[bounds])
     }
 

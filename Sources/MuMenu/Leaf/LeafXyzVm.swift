@@ -33,6 +33,21 @@ public class LeafXyzVm: LeafVm {
         return ("x:\(x) y:\(y) z:\(z)")
     }
 
+    /// Public read-only access to current normalized axis values for
+    /// external gesture surfaces (e.g. watchOS WatchLeafXyzController).
+    public var xNorm: Double {
+        guard let thumb = runways.thumb(.runXY) else { return 0 }
+        return thumb.value.x
+    }
+    public var yNorm: Double {
+        guard let thumb = runways.thumb(.runXY) else { return 0 }
+        return thumb.value.y
+    }
+    public var zNorm: Double {
+        guard let thumb = runways.thumb(.runZ) else { return 0 }
+        return thumb.value.z
+    }
+
     /// called via user touch or via model update
     override public func syncVal(_ visit: Visitor) {
         

@@ -25,8 +25,9 @@ extension RootVm: @MainActor PeersDelegate {
     public func shareItem(_ item: Any) {
         guard let item = item as? MenuItem,
             item.policy.contains(.share) else { return }
+        let path = item.wordPathDotted
         Task.detached {
-            await Peers.shared.sendItem(.menuItem) {
+            await Peers.shared.sendItem(.menuItem, path: path) {
                 do {
                     return try JSONEncoder().encode(item)
                 } catch {

@@ -12,7 +12,8 @@ public class LeafSearchVm: LeafVm {
     private var audioEngine: AVAudioEngine?
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
-    private let recognizer = SFSpeechRecognizer()
+    // en-US first; device locale fallback — bare init() silently no-ops when the device locale has no recognizer
+    private let recognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US")) ?? SFSpeechRecognizer()
 
     override public func touchLeaf(_ : TouchState, _ : Visitor) {}
     override public func treeTitle() -> String { "" }
@@ -27,33 +28,51 @@ public class LeafSearchVm: LeafVm {
     }
 
     func startListening() {
-        SFSpeechRecognizer.requestAuthorization { authStatus in
-            guard authStatus == .authorized else { return }
-           self.isListening = true
-            self.audioEngine = AVAudioEngine()
-            let inputNode = self.audioEngine!.inputNode
-            self.recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-            guard let recognitionRequest = self.recognitionRequest else { return }
-            recognitionRequest.shouldReportPartialResults = true
-            self.recognitionTask = self.recognizer?.recognitionTask(with: recognitionRequest) { result, error in
-                if let result {
-                    self.transcript = result.bestTranscription.formattedString
-                    if result.isFinal {
+        // TCC completion lands on a background queue; NodeVm is @MainActor — hop before touching self
+        SFSpeechRecognizer.requestAuthorization { @Sendable authStatus in
+            Task { @MainActor in
+                guard authStatus == .authorized else { return }
+                self.beginRecognition()
+            }
+        }
+    }
+
+    private func beginRecognition() {
+        guard let recognizer, recognizer.isAvailable else {
+            DebugLog { P("LeafSearchVm no speech recognizer available") }
+            isListening = false
+            return
+        }
+        isListening = true
+        audioEngine = AVAudioEngine()
+        let inputNode = audioEngine!.inputNode
+        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+        guard let recognitionRequest else { return }
+        recognitionRequest.shouldReportPartialResults = true
+        // handler lands off-main; extract Sendable values, hop — the result object is not Sendable
+        recognitionTask = recognizer.recognitionTask(with: recognitionRequest) { @Sendable result, error in
+            let text = result?.bestTranscription.formattedString
+            let isFinal = result?.isFinal ?? false
+            let failed = error != nil
+            Task { @MainActor in
+                if let text {
+                    self.transcript = text
+                    if isFinal {
                         self.stopListening()
-                        self.queryIntelligenceModel(text: self.transcript)
+                        self.queryIntelligenceModel(text: text)
                     }
                 }
-                if error != nil {
+                if failed {
                     self.stopListening()
                 }
             }
-            let recordingFormat = inputNode.outputFormat(forBus: 0)
-            inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
-                recognitionRequest.append(buffer)
-            }
-            self.audioEngine?.prepare()
-            try? self.audioEngine?.start()
         }
+        let recordingFormat = inputNode.outputFormat(forBus: 0)
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
+            recognitionRequest.append(buffer)
+        }
+        audioEngine?.prepare()
+        try? audioEngine?.start()
     }
 
     func stopListening() {

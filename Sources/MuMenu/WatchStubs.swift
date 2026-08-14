@@ -36,22 +36,18 @@ public final class HandsPhase: ObservableObject {
     public init(_ root˚: Flo) {}
 }
 
-// shareItem on watchOS broadcasts MenuItems to MuPeers — same payload
-// format the iOS RootVm+Peers extension uses. Watch sends only; receive
-// path stays gated until MenuTouch is ported.
+// shareItem on watchOS routes MenuItems through WatchSync (WCSession) —
+// MuPeers / Network framework can't reach the phone from watchOS due to
+// NECP policy on the IPSec companion tunnel (see WatchSync.swift header).
 extension RootVm {
     public func shareItem(_ item: Any) {
         guard let item = item as? MenuItem,
               item.policy.contains(.share) else { return }
-        Task.detached {
-            await Peers.shared.sendItem(.menuItem) {
-                do {
-                    return try JSONEncoder().encode(item)
-                } catch {
-                    PrintLog(error.localizedDescription)
-                    return nil
-                }
-            }
+        do {
+            let data = try JSONEncoder().encode(item)
+            WatchSync.shared.send(data)
+        } catch {
+            PrintLog(error.localizedDescription)
         }
     }
 }

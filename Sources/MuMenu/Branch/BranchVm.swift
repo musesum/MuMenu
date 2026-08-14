@@ -16,6 +16,9 @@ public class BranchVm: @MainActor Identifiable, ObservableObject {
     @Published var show: Bool = false
     @Published var opacity: CGFloat = 1 /// branch may be partially occluded
 
+    /// grab-handle shift of the panel off its corner anchor; zero everywhere else
+    @Published var panelOrigin = CGSize.zero
+
     var branchShift: CGSize {
         treeVm.treeShift.clamped(to: shiftRange)
     }
@@ -96,6 +99,8 @@ public class BranchVm: @MainActor Identifiable, ObservableObject {
             switch menuTree.nodeType { //              __________ runways _________
             case .xy    : return LeafXyVm      (m,b,p, [.runX, .runY, .runXY])
             case .xyz   : return LeafXyzVm     (m,b,p, [.runX, .runY, .runZ, .runXY])
+            case .xyzw  : return LeafXyzwVm    (m,b,p, [.runX, .runY, .runZ, .runW, .runXY, .runWZ])
+            case .vf    : return LeafVfVm      (m,b,p, [.runY, .runW]) // v/f sliders only; center is a scope, x/z grayed
             case .val   : return LeafValVm     (m,b,p, [.runVal])
             case .seg   : return LeafSegVm     (m,b,p, [.runVal])
             case .tog   : return LeafTogVm     (m,b,p, [.none])
@@ -103,6 +108,10 @@ public class BranchVm: @MainActor Identifiable, ObservableObject {
             case .hand  : return LeafHandVm    (m,b,p, [.runX, .runY, .runZ, .runXY])
             case .peer  : return LeafPeerVm    (m,b,p, [])
             case .arch  : return LeafArchiveVm (m,b,p, [], treeVm.rootVm.archiveVm)
+            case .graph : return LeafGraphVm   (m,b,p, [.none])
+            case .code  : return LeafCodeVm    (m,b,p, [.none])
+            case .midi  : return LeafMidiVm    (m,b,p, [.none])
+            case .sequencer : return LeafSequencerVm (m,b,p, [.none])
             #endif
             default     : return NodeVm        (m,b,p)
             }
@@ -158,18 +167,22 @@ public class BranchVm: @MainActor Identifiable, ObservableObject {
                 return nodeSpotVm
             }
         }
+        // Use each node's own contains() (which on watchOS reflects the
+        // node's actual panel bounds, not a fixed Menu.diameter radius),
+        // then distance to break ties between overlapping candidates.
         var candidate: NodeVm?
+        var bestDistance: CGFloat = .infinity
         for nodeVm in nodeVms {
+            guard nodeVm.contains(touchNow) else { continue }
             let distance = nodeVm.center.distance(touchNow)
-            if distance < Menu.diameter {
-                if distance < candidate?.center.distance(touchNow) ?? .infinity {
-                    candidate = nodeVm
-                }
+            if distance < bestDistance {
+                bestDistance = distance
+                candidate = nodeVm
             }
-            if let candidate {
-                updateNodeSpot(candidate)
-                return candidate
-            }
+        }
+        if let candidate {
+            updateNodeSpot(candidate)
+            return candidate
         }
         return nil
     }
@@ -221,6 +234,7 @@ public class BranchVm: @MainActor Identifiable, ObservableObject {
             boundsNow = panelVm.updatePanelBounds(fromBounds)
             boundsPad = boundsNow.pad(Menu.padding)
             updateShiftRange()
+            if show { treeVm.updateTreeBounds() } /// real geometry, recheck overlap
         }
     }
 

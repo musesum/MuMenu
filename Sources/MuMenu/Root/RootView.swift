@@ -57,7 +57,6 @@ private struct NorthEastView: View {
                 Spacer()
                 ZStack(alignment: .topTrailing) {
                     ForestView()
-                    Spacer()
                 }
             }
             Spacer()

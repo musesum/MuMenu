@@ -24,8 +24,8 @@ public class NodeVm: Identifiable, ObservableObject {
     @Published var zIndex: CGFloat = 0 /// stack current spotlight node on top of others
     @Published var origin = true
 
-    @Published var _spotlight: Bool = false /// publish when selected or is under cursor
-    var spotlight: Bool {
+    @Published public var _spotlight: Bool = false /// publish when selected or is under cursor
+    public var spotlight: Bool {
         get { self._spotlight }
         set { _spotlight = newValue
             if let spotFlo = menuTree.chiralSpot[menuType.chiral]  {
@@ -57,8 +57,23 @@ public class NodeVm: Identifiable, ObservableObject {
         return path
     }
 
+    /// If this node is the sole parent of a single leaf child, return that
+    /// leaf. Used by watch lift-tap: landing on a non-leaf node that has
+    /// exactly one leaf child is treated as landing on the leaf itself.
+    public var soleChildLeaf: LeafVm? {
+        guard let next = nextBranchVm,
+              next.nodeVms.count == 1,
+              let leaf = next.nodeVms.first as? LeafVm else {
+            return nil
+        }
+        return leaf
+    }
+
     public func treeTitle() -> String { menuTree.flo.name  }
     public func leafTitle() -> String { "" }
+
+    /// a shown leaf may pin its tree open, opting out of the fade timers
+    public var disablesAutoFade: Bool { false }
 
     public init (_ menuTree: MenuTree, // shared Menu Model
                  _ branchVm: BranchVm,
@@ -101,15 +116,30 @@ public class NodeVm: Identifiable, ObservableObject {
     }
     
     func contains(_ point: CGPoint) -> Bool {
-        center.distance(point) < (Menu.radius + Menu.padding)
+        #if os(watchOS)
+        // Value-bearing leaves (val/xy/xyz/seg) render their actual panel
+        // views on watchOS now — those panels are 39–71pt wide, far larger
+        // than the legacy Menu.diameter (13pt) radius the iOS check uses.
+        // Use the panel's full bounds so a touch anywhere on the rendered
+        // leaf registers as "on this node".
+        let panelSize = panelVm.innerPanel(.none)
+        let halfW = panelSize.width  / 2 + Menu.padding
+        let halfH = panelSize.height / 2 + Menu.padding
+        let dx = abs(point.x - center.x)
+        let dy = abs(point.y - center.y)
+        return dx <= halfW && dy <= halfH
+        #else
+        return center.distance(point) < (Menu.radius + Menu.padding)
+        #endif
     }
     
     /// evenly space branches leading up to current branch's position
-    func refreshBranch() {
+    public func refreshBranch() {
         superSpotlight()
         branchVm.expandBranch()
     }
     public func refreshView() {
+        objectWillChange.send()
         refresh += 1 // animated tween via published edit var
         branchVm.show = branchVm.show
     }
@@ -119,7 +149,7 @@ public class NodeVm: Identifiable, ObservableObject {
         rootVm.showTrees(/* fromRemote */ false)
 
         switch nodeType {
-        case .xy, .xyz  : update(withPrior: true)
+        case .xy, .xyz, .xyzw : update(withPrior: true)
         case .val, .seg : updateDefault()
         default         : update(withPrior: false)
         }

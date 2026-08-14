@@ -43,14 +43,19 @@ extension RootVm { // + Layout
         let w: CGFloat
         let h: CGFloat
         #if os(iOS)
-        w = 0
-        h = cornerType.north ? padding2 : 0
-        #elseif os(iPadOS)
-        w = padding2
-        h = cornerType.south ? padding2 : 0
+        // os(iPadOS) is not a valid platform condition, so iPad
+        // needs a runtime idiom check; +5 clears the grab handles
+        // on phone too — a flush park clipped the panel's right edge
+        if Idiom.iPadOS {
+            w = 5
+            h = (cornerType.north ? padding2 : 0) + 5
+        } else {
+            w = 5
+            h = cornerType.north ? padding2 : 0
+        }
         #elseif os(visionOS)
-        w = padding2 * 2
-        h = padding2 * 2
+        w = padding2 * 2 + 5
+        h = padding2 * 2 + 5
         #else
         w = 0
         h = 0
