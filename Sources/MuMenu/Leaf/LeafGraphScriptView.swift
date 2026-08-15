@@ -794,9 +794,8 @@ private struct ScriptKeysView: UIViewRepresentable {
 // MARK: - options
 
 /// the filter bar's own options: the comment tails the rows carry, the wrap,
-/// whether a parent row gathers its subtree, whether a verified fan draws as
-/// its shorthand, and whether the selection posts its own wires beside it.
-/// All five live where they stand — none is written anywhere
+/// whether a parent row gathers its subtree, and whether a verified fan draws
+/// as its shorthand. All four live where they stand — none is written anywhere
 private struct ScriptOptsView: View {
 
     @ObservedObject var leafVm: LeafGraphVm
@@ -814,8 +813,6 @@ private struct ScriptOptsView: View {
             check("Group", leafVm.scriptGroup) { leafVm.scriptGroup.toggle() }
             rule
             check("Compact", leafVm.scriptCompact) { leafVm.scriptCompact.toggle() }
-            rule
-            check("Edges", leafVm.scriptEdges) { leafVm.scriptEdges.toggle() }
         }
         .frame(width: 108)
         .background(RoundedRectangle(cornerRadius: 6)

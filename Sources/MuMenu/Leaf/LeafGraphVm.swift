@@ -163,16 +163,6 @@ public class LeafGraphVm: LeafVm {
         didSet { buildScript() }
     }
 
-    /// the standing selection posted with its own direct wires beside it. Off
-    /// by default, so the post carries the gathered set and nothing else. On,
-    /// the neighbors ride the same `markIds` channel, which is what puts two
-    /// or more sources on the page and engages its path machinery: with one
-    /// source there is no path to draw, so Focus, Context and All read alike
-    /// at Depth infinity, and with the wires added they part again
-    @Published public var scriptEdges = false {
-        didSet { applyMarks() }
-    }
-
     /// row index -> the character ranges the find pattern hit in that row
     @Published public var scriptSpans = [Int: [Range<Int>]]()
     @Published public var scriptFound = 0   /// find hits over the whole column
@@ -868,29 +858,13 @@ public class LeafGraphVm: LeafVm {
         if scriptMarks != ids { scriptMarks = ids }
     }
 
-    /// what the page is told to mark. Edges off, this is the gathered set
-    /// itself, so the post is exactly what it always was. Edges on, the
-    /// standing selection and its own direct wires merge in on the way out.
-    /// The merge is transient by design: `scriptMarks` never takes the
-    /// neighbors, so the row tint, the anchor, and every set operation
-    /// `flipScript` and `spanScript` run go on reading the explicit set alone,
-    /// and switching the option off leaves nothing of it behind to clear
-    private var markPost: Set<Int> {
-        guard scriptEdges, focusId >= 0 else { return scriptMarks }
-        var ids = scriptMarks
-        ids.insert(focusId)
-        ids.formUnion(d3In[focusId] ?? [])
-        ids.formUnion(d3Out[focusId] ?? [])
-        return ids
-    }
-
     /// subscriber — the page. The set is a channel of its own now, sent through
     /// `markIds` rather than the search door it used to share, so a gathered
     /// set and a running search no longer overwrite one another. A set the page
     /// already holds costs nothing, and a column that never gathered one never
     /// posts at all
     public func applyMarks() {
-        let post = markPost
+        let post = scriptMarks
         guard marksSent != post else { return }
         marksSent = post
         runScript?("markIds(\(Self.jsInts(post.sorted())))")
@@ -1251,7 +1225,7 @@ public class LeafGraphVm: LeafVm {
         pickHipo(id)
         pickScriptRow(id)
         pickPage(id, from)
-        applyMarks()    // last: the merge reads the focus this event just set
+        applyMarks()    // the gathered set, posted as it stands
     }
 
     /// background tap: the sections fall back to what the search holds and the
@@ -1263,7 +1237,7 @@ public class LeafGraphVm: LeafVm {
         markScript([])  // the gathered set clears with the focus
         applySearchSections()
         pickHipo(searchCenter())
-        applyMarks()    // no focus left to merge, so the wires drop with it
+        applyMarks()    // the gathered set, now empty
     }
 
     /// subscriber — sidebar sections: inputs, outputs, comments
@@ -1350,9 +1324,16 @@ public class LeafGraphVm: LeafVm {
         }
     }
 
-    /// a stack with a hop left in it; its button is live while this holds
-    public var hipoUndoOn: Bool { !hipoBack.isEmpty }
-    public var hipoRedoOn: Bool { !hipoFore.isEmpty }
+    /// A stack with a hop left in it; its button is live while this holds. The
+    /// flanks stand whether the card is folded or not, so a folded card narrows
+    /// them to the graph slots: a card recenter no reader can see is no hop to
+    /// offer, while an undo of a graph action reads on the graph itself
+    public var hipoUndoOn: Bool {
+        hipoHidden ? hipoBack.last == Self.graphStep : !hipoBack.isEmpty
+    }
+    public var hipoRedoOn: Bool {
+        hipoHidden ? hipoFore.last == Self.graphStep : !hipoFore.isEmpty
+    }
 
     /// the page recorded a user action: it takes the next undo slot, and the
     /// forward tail a hop had left is dropped, exactly as a recenter drops it
@@ -1396,6 +1377,12 @@ public class LeafGraphVm: LeafVm {
         }
         hipoFore.removeLast()
         hipoBack = roamHipo(to, hipoBack)
+    }
+
+    /// clear every hand-drawn group on the page — one undoable step; the
+    /// view confirms with the reader before calling
+    public func clearDrawn() {
+        runScript?("clearDrawn()")
     }
 
     // MARK: - layout sessions
@@ -1449,14 +1436,15 @@ public class LeafGraphVm: LeafVm {
 
     /// the recall leg: saved positions land right after the payload does, so
     /// the opening solve starts from where the hand last left the graph. The
-    /// algo guard drops files saved before the calm era — every earlier file
-    /// may carry a whole-field capture of a mid-reheat scramble, and a
-    /// recalled scramble re-saves itself at the next cold, forever
+    /// algo guard drops files saved before the current era — an earlier file
+    /// may carry a whole-field capture of a mid-reheat scramble or a mix of
+    /// two eras' rows, and a recalled scramble re-saves itself at the next
+    /// cold, forever. "calm2" is the era of whole-display files
     public func recallLayout() {
         guard let dir = Self.sessionDir,
               let data = try? Data(contentsOf: dir.appendingPathComponent("layout.json")),
               let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              dict["algo"] as? String == "calm",
+              dict["algo"] as? String == "calm2",
               let list = dict["nodes"] as? [[Any]], !list.isEmpty,
               let json = try? JSONSerialization.data(withJSONObject: list),
               let text = String(data: json, encoding: .utf8)
@@ -1535,7 +1523,7 @@ public class LeafGraphVm: LeafVm {
         guard let dir = Self.sessionDir,
               let data = try? Data(contentsOf: dir.appendingPathComponent("layout.json")),
               let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              dict["algo"] as? String == "calm",
+              dict["algo"] as? String == "calm2",
               let list = dict["nodes"] as? [[Any]] else { return [] }
         return Self.numberRows(list)
     }

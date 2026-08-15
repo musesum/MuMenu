@@ -162,7 +162,8 @@ public class BranchVm: @MainActor Identifiable, ObservableObject {
 
         if let nodeSpotVm {
             if nodeSpotVm.contains(touchNow) ||
-                nodeSpotVm.nodeType.isControl // dragged outside of control?
+                (nodeSpotVm.nodeType.isControl && // dragged outside of control?
+                 !touchingCodeRow(touchNow))      // `{}` row takes its own touch
             {
                 return nodeSpotVm
             }
@@ -186,6 +187,12 @@ public class BranchVm: @MainActor Identifiable, ObservableObject {
         }
         return nil
     }
+    /// a `{}` row rides under the control on the same branch,
+    /// so a touch on it is not "dragged outside of control"
+    private func touchingCodeRow(_ touchNow: CGPoint) -> Bool {
+        nodeVms.contains(where: { $0.menuTree.isCodeRow && $0.contains(touchNow) })
+    }
+
     func updateNodeSpot(_ candidate: NodeVm) {
         // update new nodespot
         nodeSpotVm?.spotlight = false

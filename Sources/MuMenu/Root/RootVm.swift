@@ -22,6 +22,8 @@ public class RootVm: @unchecked Sendable, ObservableObject, @MainActor Equatable
     @Published var touchType = TouchType.none
     /// what was finger touching at began phase?
     var touchTypeBegin = TouchType.none
+    /// was a `{}` row, or its editor, the spot when this touch began?
+    var codeSpotBegan = false
 
     /// starting corner to dispatch 
     public let cornerVm: CornerVm!

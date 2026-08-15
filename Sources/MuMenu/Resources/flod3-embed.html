@@ -31,7 +31,7 @@
   // ── contract ───────────────────────────────────────────────────────────
   // Tr3Viewer color contract: saturated / muted per edge kind, plus a faded
   // state for edges touching a grayed-out node (link-paths / depth filters).
-  var BUILD_TOKEN = "flod3-v3w1";              // served-copy check for the dev harness
+  var BUILD_TOKEN = "flod3-v4b1";              // served-copy check for the dev harness
   window.__flod3Build = function () { return BUILD_TOKEN; };
 
   var COLOR = {
@@ -247,7 +247,12 @@
   var panning = false;                         // programmatic pan — not a pointer gesture
 
   var zoom = d3.zoom().scaleExtent([0.05, 12]).on("zoom", function () {
-    if (!panning) { moved = true; }
+    if (!panning) {
+      moved = true;
+      animViewMoved = false;   // a hand on the view outranks the flight's frame:
+                               // the nodes go on flying, the transform is the
+                               // reader's from here
+    }
     root.attr("transform", d3.event.transform);
   });
   // touch belongs to the gesture block below; d3 keeps wheel and mouse drag
@@ -327,16 +332,31 @@
   var pickSel = {};                            // id -> true (pickNames)
   var markSel = {};                            // id -> true (markIds)
   var menuSel = {};                            // id -> true (menuIds)
+  var menuLead = -1;                           // the menu path's leaf: the one id of
+                                               // the path the selection is read from
   var grayed = {};                             // id -> true (off the member scope)
   var memberSet = null;                        // id -> true, or null: the whole graph
   var hubReach = {};                           // id -> true (pred/succ of a selected node)
   var hubLink = {};                            // pairKey -> true, a selected node's own edges
   var ballGlow = {};                           // id -> true (depth-expansion members)
-  var adjSeed = -1;                            // one-hop single selection, else -1
+  var scopeHold = null;                        // id -> true, the scope a deselect keeps
+                                               // standing until the next canvas tap
+  var holdArm = false;                         // set by that tap alone, so every other
+                                               // door releases the hold on its own
+  var handField = false;                       // the field carries hand work: a drag pin,
+                                               // a ledger entry, or a recalled layout. A
+                                               // resize re-frames it and never re-bands it
+  var adjSeed = -1;                            // one-hop single selection, else -1;
+                                               // read by equality, as hoverId is: a capsule
+                                               // id is negative and a sign test drops it
   var hidden = {};                             // id -> true (beyond the depth horizon)
   var folded = {};                             // id -> true (hidden by depth or collapse alone)
 
-  var hoverId = -1;                            // node under the cursor, -1 when none
+  var hoverId = -1;                            // node under the cursor, -1 when none.
+                                               // Compared against -1 and never by sign:
+                                               // a supernet capsule's id is NEGATIVE, and a
+                                               // `< 0` test read every hovered group as no
+                                               // hover at all
   var hoverOf = {};                            // id -> hover class key
   var hoverLine = {};                          // pairKey -> true, the lineage chain edges
   var hoverReveal = {};                        // id -> true, brought back for this hover
@@ -555,19 +575,25 @@
     linkSel = nodeSel = capSel = textSel = imgSel = null;
     haloSel = null; hoverId = -1; hoverOf = {}; hoverLine = {}; hoverShown = false;
     pulseSel = null; pulseAt = {}; pulseLit = false;
+    pulseScopeWas = ""; pulseSolve = false; pulseCapWarn = false;
+    if (pulseScopeTimer) { clearTimeout(pulseScopeTimer); pulseScopeTimer = null; }
     hoverReveal = {}; hoverRevealAny = false;
     hubSels = []; hubAny = false;
     nodes = []; links = []; byId = {}; adj = {}; kids = {}; dads = {}; rootIds = [];
     focus = null; seedId = -1; collapsed = {}; collapsedAt = {};
     pinIds = {}; pinDoorAny = false;
-    searchSel = {}; interSel = {}; pickSel = {}; markSel = {}; menuSel = {};
+    searchSel = {}; interSel = {}; pickSel = {}; markSel = {}; menuSel = {}; menuLead = -1;
     grayed = {}; hidden = {}; folded = {};
     memberSet = null; hubReach = {}; hubLink = {}; ballGlow = {};
     adjSeed = -1;
     touchHold = {}; pairKeys = {}; pair = null;
     superOps = null; superK = 0; superObjs = {}; superActive = [];
     superOf = {}; burned = {};
-    txnLog = []; undoA = []; redoA = []; replaying = false;
+    txnLog = []; undoA = []; redoA = []; replaying = false; handField = false;
+    if (animTimer) { animTimer.stop(); animTimer = null; }
+    if (animGuard) { clearTimeout(animGuard); animGuard = null; }
+    animFrom = null; animView = null; animExit = null; animExitAt = null;
+    animMoves = null; animFlights = null; animTo = null; animViewMoved = false;
     layoutSentAt = -1; layoutSentN = 0; txnSeq = 0;
     if (layoutTimer) { clearTimeout(layoutTimer); layoutTimer = null; }
     manualSupers = []; manualSeq = 0; superManualWas = "";
@@ -575,7 +601,7 @@
     synIx = {}; synIxNext = 1000000;
     compOf = {}; compList = [];
     colorOn = { red: true, green: true, blue: true, sync: true };
-    hiddenWas = ""; focusWas = null;
+    hiddenWas = ""; focusWas = null; scopeHold = null; holdArm = false;
     // iconMap and iconMode outlive a reload; flo ids are stable across it
     root.attr("transform", null);
   }
@@ -635,8 +661,12 @@
     bindGraph();    // binds DOM and applies the standing icon channel
 
     refresh(true);  // load path: the tidy solve below is the opening answer
-    if (superLevel > 0) { applySupers(); }     // the slider outlives a reload,
-                                               // and its cut lands inside the freeze
+    // the slider outlives a reload and its cut lands inside the freeze; the
+    // caller owns the solve, because applySupers runs quiet — without one the
+    // entering capsules carry no band and open on top of the graph
+    if (superLevel > 0) { applySupers(); solveFit(); animEnd(); }
+                                               // landed before the tail below
+                                               // captures the base and the frame
     // the tidy layout is the opening answer: the run rests on it and the first
     // tick captures it as the saved base the anchor force holds later reheats to
     baseWant = true;
@@ -659,7 +689,7 @@
       .merge(join);
 
     var nj = nodeG.selectAll("g.node").data(nodes, function (d) { return d.id; });
-    nj.exit().remove();
+    animPark(nj.exit());           // absorbed members fly into their carrier
     var enter = nj.enter().append("g").attr("class", "node");
 
     enter.append("rect").attr("class", "cap")
@@ -884,7 +914,7 @@
 
   // icons stand in for the labels while on; off restores the text exactly
   window.setIconMode = function (on) {
-    if (iconMode === !!on) { return iconMode; }
+    if (iconMode === !!on) { return iconMode; }   // an unchanged resend owes nothing
     iconMode = !!on;
     applyIcons();
     solveFit();     // capsule widths moved: the solved graph changed
@@ -973,6 +1003,22 @@
     // levels in parent-placed order, so sibling groups stay adjacent: level d
     // is built by walking level d-1 and appending each parent's own kids
     var levels = [], taken = {}, lv0 = [];
+    // pattern nodes — wildcard edge declarations like *(-> *(on 0)) — never
+    // take a band of their own: each seats one band right of the deepest
+    // node it connects to. Pre-taken so neither the root row nor the walk
+    // seats them; they are inserted once the tree bands stand.
+    var patterns = [], patternIds = {};
+    for (i = 0; i < nodes.length; i++) {
+      var pn = nodes[i], pc = String(pn.name || "").charAt(0);
+      // real, kid-less declarations only: a supernet capsule wearing a
+      // member's name, or a pattern with a subtree of its own, bands normally
+      if ((pc === "*" || pc === "˚") && !pn.sup && !hidden[pn.id] &&
+          !(kids[pn.id] || []).length) {
+        taken[pn.id] = true;
+        patternIds[pn.id] = true;
+        patterns.push(pn);
+      }
+    }
     for (i = 0; i < rootIds.length; i++) {
       if (dep[rootIds[i]] === 0 && !taken[rootIds[i]]) {
         taken[rootIds[i]] = true;
@@ -994,9 +1040,50 @@
       if (!next.length) { break; }
       levels.push(next);
     }
-    // whatever no tree edge reaches: a trailing band of its own
+    // whatever no tree edge reaches: a trailing band of its own. It stands
+    // BEFORE the pattern seating, so a pattern wired into it seats to its
+    // right instead of in front of it — under Focus that band is exactly
+    // where a node whose tree line the mode hid comes to rest
     var rest = nodes.filter(function (n) { return !taken[n.id] && !hidden[n.id]; });
-    if (rest.length) { levels.push(rest); }
+    var restIx = -1;
+    if (rest.length) { levels.push(rest); restIx = levels.length - 1; }
+    // seat each pattern node one band right of the deepest band any wire of
+    // its own reaches, over EVERY wire regardless of the color filter — a
+    // legend toggle must never move a band; one whose wires reach nothing
+    // placed falls to the rest band
+    function bandOf(id) {
+      if (hidden[id] || patternIds[id]) { return -1; }   // a pattern seats no pattern
+      if (taken[id] && dep[id] !== undefined) { return dep[id]; }
+      return restIx;                                     // -1 where no rest band stands
+    }
+    var pnbAll = {};
+    if (patterns.length) {
+      for (i = 0; i < links.length; i++) {
+        var la = endId(links[i].source), lb = endId(links[i].target);
+        if (patternIds[la]) { (pnbAll[la] = pnbAll[la] || []).push(lb); }
+        if (patternIds[lb]) { (pnbAll[lb] = pnbAll[lb] || []).push(la); }
+      }
+    }
+    for (i = 0; i < patterns.length; i++) {
+      var pd = -1, pnb = pnbAll[patterns[i].id] || [];
+      for (var pi = 0; pi < pnb.length; pi++) {
+        var bd = bandOf(pnb[pi]);
+        if (bd > pd) { pd = bd; }
+      }
+      // nothing placed to seat against, or the seat IS the rest band: either
+      // way it joins rest, and a rest member carries no depth — one that did
+      // would flow its whole column off a dad row pack never centered
+      if (pd < 0 || pd + 1 === restIx) {
+        delete taken[patterns[i].id];
+        delete dep[patterns[i].id];
+        if (restIx < 0) { levels.push(rest); restIx = levels.length - 1; }
+        rest.push(patterns[i]);                // levels[restIx] IS rest
+        continue;
+      }
+      dep[patterns[i].id] = pd + 1;
+      while (levels.length <= pd + 1) { levels.push([]); }
+      levels[pd + 1].push(patterns[i]);
+    }
 
     // each level ordered by its neighbors — two sweeps, down by dads and up
     // by adjacent-level kids — so tree edges run short and cross less; the
@@ -1045,12 +1132,109 @@
       }
     }
 
+    // ── rows inside a band ────────────────────────────────────────────────
+    // The tree sweeps above stand the skeleton up; this one shortens the
+    // wires. Every wire counts, not the tree alone, which is what moves a
+    // wildcard declaration off the floor of its band and up beside the nodes
+    // it fans onto. Three rules keep it honest:
+    //   the unit is the sibling RUN pack centers as one block, so nothing the
+    //     tree grouped is broken apart, and a run no wire leaves holds its
+    //     place among the runs the way a keyless node holds its slot;
+    //   the key is the LOWER MEDIAN of its neighbours' rows — a sum of |dy| is
+    //     shortest at the median, and one far neighbour cannot drag a run the
+    //     way it drags a mean;
+    //   the rows are read over the UNFILTERED wire and normalised per band, so
+    //     a legend toggle re-orders nothing and bands of unequal length
+    //     compare.
+    // Two sweeps, fixed and even, so a re-solve of an unchanged set answers
+    // the same order every time.
+    var band = {}, wireNb = {};
+    for (i = 0; i < levels.length; i++) {
+      for (var bx = 0; bx < levels[i].length; bx++) { band[levels[i][bx].id] = i; }
+    }
+    for (i = 0; i < links.length; i++) {
+      var wa = endId(links[i].source), wb = endId(links[i].target);
+      if (wa === wb || band[wa] === undefined || band[wb] === undefined) { continue; }
+      (wireNb[wa] = wireNb[wa] || []).push(wb);
+      (wireNb[wb] = wireNb[wb] || []).push(wa);
+    }
+    // pack's own run test: same dad, one band to the left, already placed
+    function runDad(n) {
+      var d = dads[n.id];
+      return (d !== undefined && dep[d] === dep[n.id] - 1) ? d : undefined;
+    }
+    function runsOf(level) {
+      var out = [], cur = null, lead;
+      for (var ix = 0; ix < level.length; ix++) {
+        var dd = runDad(level[ix]);
+        if (cur && dd !== undefined && dd === lead) { cur.push(level[ix]); continue; }
+        cur = [level[ix]]; lead = dd; out.push(cur);
+      }
+      return out;
+    }
+    // Every run is keyed on ONE scale — the normalised row it wants. A run the
+    // tree places wants the row the tree sweeps above already gave it, so its
+    // key is where it stands and the tree order survives this sweep intact. A
+    // run the tree places nowhere — no dad one band to the left, wires only,
+    // which is exactly a wildcard declaration — wants the median row of what
+    // it is wired to, and slots in among the others there.
+    // One scale for both branches: the row a run wants, as a fraction of its
+    // band. A run the tree places wants the row the tree sweeps gave it; every
+    // other run wants the median row of what it is wired to. A wildcard
+    // declaration always takes the median branch — its red parent often sits
+    // one band to its left, and reading that as "the tree placed it" is what
+    // left it on the floor of its band. (A band pack later wraps into
+    // side-by-side columns is read here as one column; measured against the
+    // alternative — keying on the y of the measure pass — this order is the
+    // shorter one: 202541 against 232473 of wire, 13625 crossings against
+    // 22714, on sky.json at 1280x860.)
+    function runKey(run, at, len) {
+      if (runDad(run[0]) !== undefined && !patternIds[run[0].id]) {
+        return (pos[run[0].id] === undefined) ? null : (pos[run[0].id] + 0.5) / len;
+      }
+      var v = [], ri, ni;
+      for (ri = 0; ri < run.length; ri++) {
+        var nb = wireNb[run[ri].id] || [];
+        for (ni = 0; ni < nb.length; ni++) {
+          var bd = band[nb[ni]];
+          if (bd === undefined || bd === at || pos[nb[ni]] === undefined) { continue; }
+          v.push((pos[nb[ni]] + 0.5) / levels[bd].length);
+        }
+      }
+      if (!v.length) { return null; }          // never NaN: null holds the slot
+      v.sort(function (a, b) { return a - b; });
+      return v[(v.length - 1) >> 1];           // lower median, so the key is a row
+    }
+    function sortWires(level, at) {
+      var runs = runsOf(level), keyed = [], slot = [], ix, ri;
+      if (runs.length < 2) { return; }
+      for (ix = 0; ix < runs.length; ix++) {
+        var k = runKey(runs[ix], at, level.length);
+        slot.push(k !== null);
+        if (k !== null) { keyed.push({ r: runs[ix], ix: ix, k: k }); }
+      }
+      if (keyed.length < 2) { return; }
+      keyed.sort(function (a, b) { return (a.k - b.k) || (a.ix - b.ix); });
+      var out = [], ki = 0;
+      for (ix = 0; ix < runs.length; ix++) {
+        var run = slot[ix] ? keyed[ki++].r : runs[ix];
+        for (ri = 0; ri < run.length; ri++) { out.push(run[ri]); }
+      }
+      for (ix = 0; ix < out.length; ix++) { level[ix] = out[ix]; }
+    }
+    for (var wsw = 0; wsw < 2; wsw++) {
+      for (i = 0; i < levels.length; i++) { sortWires(levels[i], i); reindex(levels[i]); }
+      for (i = levels.length - 1; i >= 0; i--) { sortWires(levels[i], i); reindex(levels[i]); }
+    }
+
     // one level fills as many side-by-side columns as the row budget asks
     // for: the field grows to the right, never off the bottom of its band
     function pack(usable) {
       var run = 0;
       for (var li = 0; li < levels.length; li++) {
-        var level = levels[li], ld = (li < levels.length - 1 || !rest.length) ? li : 0;
+        // the rest band is named by identity, not by position: a pattern can
+        // now seat to its right, so "the last band" is no longer the rest one
+        var level = levels[li], ld = (level === rest && rest.length) ? 0 : li;
         var col = [], colH = 0, colWide = 0;
         var flush = function () {
           if (!col.length) { return; }
@@ -1771,11 +1955,27 @@
   // Flo ids the host navigates. A path source like the rest, and [] clears it
   window.menuIds = function (ids) {
     menuSel = {};
+    var last = -1;
     if (ids && ids.length) {
       for (var i = 0; i < ids.length; i++) {
         var id = +ids[i];
-        if (byId[id] || realById[id]) { menuSel[id] = true; }
+        if (byId[id] || realById[id]) { menuSel[id] = true; last = id; }
       }
+    }
+    // The path arrives root first: every id on it is painted, and its LAST id
+    // is the leaf the menu is standing on. The leaf alone is the selection the
+    // rest of the page reads — a ball grown from the root swallows the graph
+    // at one hop, which is why the Depth slider read as doing nothing — and it
+    // anchors the horizon the way a tap and a host focus anchor it. The line
+    // above it is never lost: lineageScope puts it back in. An absorbed leaf
+    // stands for its carrier.
+    var seed = (last >= 0 && byId[last] === undefined) ? superOf[last] : last;
+    menuLead = (seed !== undefined && byId[seed]) ? seed : -1;
+    // an empty or unresolvable payload clears the green channel and nothing
+    // else: the anchor a tap or a host focus set is not the menu's to drop
+    if (menuLead !== -1 && menuLead !== seedId) {
+      seedId = menuLead;
+      ctxForget();                             // the seed moved, the snapshots go
     }
     refresh();
   };
@@ -1792,6 +1992,11 @@
     if (m === was) { return true; }
     linkMode = m;
     ctxForget();                               // the context undo set is mode-owned
+    holdRelease();                             // a control moved: the held scope is stale
+    // "all" seats no ring, so the memo reads empty while the mode stands. Leaving
+    // it there makes the expiry that ends a seat this switch just made look like
+    // no change at all, and the seat would never be given back
+    pulseScopeSync();
     // the snapshot is taken before anything is hidden, so it names every node
     if (m === "focus" && was !== "focus") { focusSnap(); }
     if (m !== "focus" && was === "focus") {
@@ -1812,11 +2017,13 @@
     } else if (!enabled) { superLevel = 0; }
     // a pin holds only until the cut moves under it: the new cut re-solves the
     // graph, and a node still nailed where the old solve left it reads as stuck
-    if (superLevel !== levelWas) { pinRelease(); }
+    if (superLevel !== levelWas) { pinRelease(); holdRelease(); }
     var was = superK;
+    var manualWas = superManualWas;
     applySupers();
-    // a changed cut re-tidies in place, so the left-to-right orientation holds
-    if (simulation && superK !== was) { resolveFresh(); }
+    // a changed cut re-tidies in place, so the left-to-right orientation
+    // holds; a drawn group crossing its level gate is the same display change
+    if (simulation && (superK !== was || superManualWas !== manualWas)) { resolveFresh(); }
   };
 
   // legend filter; color is "red" | "green" | "blue" | "yellow", nodes are never hidden
@@ -1875,6 +2082,7 @@
     if (v === depthN) { return; }
     depthN = v;
     ctxForget();                               // the horizon moves, the snapshots go
+    holdRelease();                             // a control moved: the held scope is stale
     refresh();                                 // display moved: the chokepoint solves
   };
 
@@ -1912,7 +2120,8 @@
     Object.keys(interSel).forEach(put);
     Object.keys(pickSel).forEach(put);
     Object.keys(markSel).forEach(put);
-    Object.keys(menuSel).forEach(put);
+    if (menuLead !== -1) { put(menuLead); }    // the menu path names one selection
+
     if (focus) { out[focus.id] = true; }
     nodes.forEach(function (n) { if (out[n.id]) { list.push(n.id); } });
     return list;
@@ -1934,6 +2143,7 @@
 
   function pinDrop(d) {
     if (!d || d.x === undefined) { return; }
+    handField = true;              // a completed drag is hand work, ledger or not
     d.fx = d.x; d.fy = d.y; d.vx = 0; d.vy = 0;
     delete frozenIds[d.id];                    // the door owns fx from here
     pinIds[d.id] = true; pinDoorAny = true;
@@ -2096,14 +2306,40 @@
 
   var backgroundAt = 0;                        // one clear per gesture, every route
 
+  // Two steps, not one. Under Focus a canvas tap used to deselect AND open the
+  // graph back up to every node in the same gesture, which is a lot of picture
+  // to lose on one tap. So the first tap deselects and keeps the scope it was
+  // reading — the nodes off screen stay off — and the second, with nothing
+  // selected, releases the hold and flies out to the whole graph. Every other
+  // mode keeps the one-step contract: there is no scope to hold.
   function backgroundTap() {
     var now = Date.now();
     if (now - backgroundAt < 250) { return; }  // touch, click, pen and native dedupe here
     backgroundAt = now;
     hoverClear();
+    // a standing highlight is a selection this tap deselects, and a picture it
+    // drew is a picture worth keeping for the second tap, exactly like one.
+    // A hold already standing does not make this that second tap: the highlight
+    // came after it and drew a picture of its own, so the hold is re-taken from
+    // what is on screen NOW and the tap after this one is the one that opens
+    var litAny = pulseSeedIds().length > 0;
+    var hadSel = selectedIds().length > 0 || litAny;
+    pulseClear(true);                          // this tap's own refresh carries it
     ctxForget();
     focus = null;
-    refresh();     // display moved: the chokepoint solves
+    seedId = -1;   // the deselect releases the horizon too, or one stale tap
+                   // anchors every later depth walk on a node nothing names
+    if (linkMode === "focus" && hadSel && (!scopeHold || litAny)) {
+      var keep = {}, any = false;              // keep the picture, drop the selection
+      Object.keys(hidden).forEach(function (key) { keep[+key] = true; any = true; });
+      if (any) {                               // nothing off screen is nothing to hold,
+        scopeHold = keep;                      // and an empty hold eats the next tap
+        holdArm = true;                        // this tap alone may keep it
+      }
+    } else {
+      scopeHold = null;                        // the second tap opens the graph
+    }
+    refresh();     // display moved: the chokepoint solves, and the field flies
     postNode(null);
   }
   // host door: a native canvas tap deselects through the same path a page
@@ -2147,7 +2383,8 @@
   // so every standing channel underneath renders exactly as it did. A link
   // takes the brighter of its two ends, which lights the wire an event
   // travelled and leaves a lone node's own edges lit around it.
-  // Nothing here moves a node or touches the forces.
+  // The paint itself never moves a node; the pulse-scope block below is the
+  // one place the lit set reaches the member scope, as a temporary selection.
 
   var PULSE_MS = 600;                          // ring life, one event down to nothing
   var PULSE_PAD = 9;                           // outside the hover halo's own pad
@@ -2235,6 +2472,7 @@
       if (key) { livePref[key] = on; }
     }
     liveVer++;
+    pulseScopeKick();                          // a pref flip re-gates the lit set
     post({ kind: "live", prefs: livePref });   // the host keeps the archive
   }
 
@@ -2246,6 +2484,7 @@
     }
     liveVer++;
     togPaint();
+    pulseScopeKick();                          // the archive may re-gate the lit set
     if (nodeSel) { pulsePaint(Date.now()); }
     return Object.keys(livePref).length;
   };
@@ -2253,8 +2492,11 @@
   // host door: the Live channel. Off hides every switch, since there is no live
   // paint to accept or ignore while the channel itself is down
   window.setLive = function (on) {
+    var was = liveShow;
     liveShow = !!on;
     togPaint();
+    // switching the channel off is the other way a reader ends the highlight
+    if (was && !liveShow) { pulseClear(false); } else { pulseScopeKick(); }
     return liveShow;
   };
 
@@ -2304,14 +2546,14 @@
   function pulseLevel(d, now) {
     if (!liveOf(d)) { return 0; }     // this node, or its branch, is ignoring
     var best = 0, at = pulseAt[d.id];
-    if (at !== undefined) { best = 1 - (now - at) / PULSE_MS; }
+    if (at !== undefined) { best = pulseFade(at, now); }
     if (d.sup) {
       for (var i = 0; i < d.members.length; i++) {
         var m = realById[d.members[i]];
         if (m && !livePrefOf(livePathOf(m))) { continue; }   // a quiet member is quiet
         var was = pulseAt[d.members[i]];
         if (was === undefined) { continue; }
-        var lit = 1 - (now - was) / PULSE_MS;
+        var lit = pulseFade(was, now);
         if (lit > best) { best = lit; }
       }
     }
@@ -2327,7 +2569,7 @@
     if (!liveOf(d)) { return { level: 0, id: -1 }; }
     if (!d.sup) {
       var at = pulseAt[d.id];
-      if (at !== undefined) { best = 1 - (now - at) / PULSE_MS; who = d.id; }
+      if (at !== undefined) { best = pulseFade(at, now); who = d.id; }
       return { level: best > 0 ? best : 0, id: who };
     }
     for (var i = 0; i < d.members.length; i++) {
@@ -2335,7 +2577,7 @@
       if (mem && !livePrefOf(livePathOf(mem))) { continue; }
       var was = pulseAt[d.members[i]];
       if (was === undefined) { continue; }
-      var lit = 1 - (now - was) / PULSE_MS;
+      var lit = pulseFade(was, now);
       if (lit > best) { best = lit; who = d.members[i]; }
     }
     return { level: best > 0 ? best : 0, id: who };
@@ -2404,8 +2646,10 @@
   function pulseStep() {
     pulseRaf = 0;
     var now = Date.now(), live = false;
+    // stamps are never dropped on a clock: the ring holds at its floor and the
+    // seat with it. The driver runs only while a fade is still falling
     for (var key in pulseAt) {
-      if (now - pulseAt[key] < PULSE_MS) { live = true; } else { delete pulseAt[key]; }
+      if (pulseAge(pulseAt[key], now) < PULSE_MS) { live = true; }
     }
     pulsePaint(now);
     if (live && typeof requestAnimationFrame === "function") {
@@ -2426,6 +2670,7 @@
       pulseAt[id] = now;
       n++;
     }
+    pulseScopeKick();                          // a fresh id may move the lit set
     if (!pulseRaf) {
       if (typeof requestAnimationFrame === "function") {
         pulseRaf = requestAnimationFrame(pulseStep);
@@ -2436,11 +2681,124 @@
     return n;
   };
 
+  // ── pulse scope ────────────────────────────────────────────────────────
+  // A standing ring is a temporary selection: the member scope reads the lit
+  // ids as seeds, so Focus reshapes the layout around what is firing and
+  // Context grays around it. The lit set is read only where the scope and the
+  // reveal are computed — never selectedIds() itself — so the canvas tap, the
+  // scope hold, the depth anchor and the hover all keep reading the hand-made
+  // selection alone. Changes coalesce on a trailing timer sitting above ANIM_MS,
+  // so each flight lands before the next compare: a re-fired node is no change,
+  // a NEW id is one, and the recompute is the ordinary refresh(false) — Focus
+  // solves through the one chokepoint, Context repaints its gray.
+  //
+  // The highlight does not time out. A ring fades from full to a floor it holds
+  // — so what fired last still reads brightest — and the seat it took stands
+  // with it. Two things end it, both the reader's: a tap on blank canvas, which
+  // clears the highlight the way it clears a selection, and switching Live off.
+  var PULSE_SCOPE_MS = 450;                    // trailing coalesce, over ANIM_MS
+  var PULSE_FLOOR = 0.4;                       // the held ring, once the fade lands
+  var pulseScopeWas = "";                      // last lit-seed signature acted on
+  var pulseScopeTimer = null;
+  // A highlight is a selection, so its solve frames the way a selection's does:
+  // the contraction is scaled and centered like any other. The flag marks only
+  // what a live event may NOT do — take the hold the reader's canvas tap made
+  var pulseSolve = false;                      // a solve the machine asked for
+  var pulseCapWarn = false;                    // the source cap warns once
+
+  // age in ms. A wall clock can step backwards — NTP, sleep and resume, a hand
+  // on the clock — and a stamp in the future would read brighter than full
+  function pulseAge(at, now) {
+    var age = now - at;
+    return (age < 0) ? PULSE_MS : age;
+  }
+
+  // the fade, floored: full at the event, PULSE_FLOOR from PULSE_MS on. A held
+  // ring never reaches nothing, because nothing is what a cleared one shows
+  function pulseFade(at, now) {
+    var lit = 1 - pulseAge(at, now) / PULSE_MS;
+    return lit > PULSE_FLOOR ? lit : PULSE_FLOOR;
+  }
+
+  // the lit ids as scope seats: highlight standing, branch accepting, remapped
+  // to whatever carries them on screen. "all" has no scope for a ring to seat in
+  function pulseSeedIds() {
+    if (!liveShow || linkMode === "all") { return []; }
+    var out = {}, list = [];
+    for (var key in pulseAt) {
+      var id = +key, rd = realById[id];
+      if (rd && !livePrefOf(livePathOf(rd))) { continue; }  // quiet branch: no ring, no seat
+      var did = (superOf[id] !== undefined) ? superOf[id] : id;
+      if (byId[did]) { out[did] = true; }
+    }
+    Object.keys(out).forEach(function (k) { list.push(+k); });
+    return list.sort(function (a, b) { return a - b; });
+  }
+
+  // the scope's seed list: the hand-made selection first, the lit rings after
+  // it, so the source cap keeps the hand's picks when both overflow it
+  function scopeSeeds() {
+    var sel = selectedIds(), out = sel.slice(), inSel = {}, i;
+    for (i = 0; i < sel.length; i++) { inSel[sel[i]] = true; }
+    var lit = pulseSeedIds();
+    for (i = 0; i < lit.length; i++) { if (!inSel[lit[i]]) { out.push(lit[i]); } }
+    return out;
+  }
+
+  function pulseScopeFire() {
+    pulseScopeTimer = null;
+    if (dragging) { pulseScopeKick(); return; }   // never a solve under the hand
+    var sig = pulseSeedIds().join(",");
+    if (sig !== pulseScopeWas) {
+      pulseScopeWas = sig;
+      pulseSolve = true;                          // the reader's frame is not ours to move
+      try { refresh(false); } finally { pulseSolve = false; }
+    }
+    if (!pulseRaf) { pulsePaint(Date.now()); }    // no driver: the paint is owed here
+  }
+
+  // the highlight let go, whole: the rings, the seats they took and the memo.
+  // Both doors — a tap on blank canvas and Live off — come through here
+  function pulseClear(quiet) {
+    var any = false;
+    for (var key in pulseAt) { any = true; break; }
+    if (!any && !pulseScopeWas) { return false; }
+    pulseAt = {};
+    pulseScopeWas = "";
+    if (pulseScopeTimer) { clearTimeout(pulseScopeTimer); pulseScopeTimer = null; }
+    if (nodeSel) { pulsePaint(Date.now()); }
+    if (!quiet) {                                 // the caller's own refresh owns it otherwise
+      pulseSolve = true;
+      try { refresh(false); } finally { pulseSolve = false; }
+    }
+    return true;
+  }
+
+  function pulseScopeKick() {
+    if (pulseScopeTimer) { return; }
+    pulseScopeTimer = setTimeout(pulseScopeFire, PULSE_SCOPE_MS);
+  }
+
+  // a caller about to recompute on its own owns the seat it is drawing: the
+  // memo is stamped to what that recompute will read, so the seat's own expiry
+  // is still a change when it comes, and the chain is armed to carry it
+  function pulseScopeSync() {
+    pulseScopeWas = pulseSeedIds().join(",");
+    if (pulseScopeWas) { pulseScopeKick(); }
+  }
+
+  // headless door — run the coalesce compare right now
+  window.__flod3PulseScope = function () {
+    if (pulseScopeTimer) { clearTimeout(pulseScopeTimer); pulseScopeTimer = null; }
+    pulseScopeFire();
+    return pulseScopeWas;
+  };
+
   // headless door — the rings standing right now, brightest first
   window.__flod3Pulse = function () {
     var now = Date.now(), out = [];
     for (var key in pulseAt) {
-      var lit = 1 - (now - pulseAt[key]) / PULSE_MS;
+      var lit = pulseFade(pulseAt[key], now);
       if (lit > 0) { out.push([+key, +lit.toFixed(3)]); }
     }
     out.sort(function (a, b) { return b[1] - a[1]; });
@@ -2496,7 +2854,7 @@
   //   3  hover gray                        — only where 1 and 2 left the node lit
   // A member already grayed by 1 or 2 stays gray. A link stays lit only when
   // both of its ends are in the hover set.
-  function hoverGray(id) { return hoverId >= 0 && !hoverOf[id]; }
+  function hoverGray(id) { return hoverId !== -1 && !hoverOf[id]; }
 
   // What a hover is allowed to bring back on screen, past the depth horizon.
   // Against a standing selection the cursor asks one question — what does this
@@ -2506,7 +2864,7 @@
   // names is revealed instead. The set is temporary and consumed exactly the
   // way revealSelected is consumed; hoverClear drops it.
   function hoverRing(d) {
-    var out = {}, sel = selectedIds();
+    var out = {}, sel = scopeSeeds();          // a live seat is a picture too
     if (!sel.length) { return ballSet(d.id, ballRadius(), true); }
     if (!nearMember(d.id)) { return out; }
     var nb = hoverNbrs(d.id), kinds = ["green", "blue", "sync"];
@@ -2542,7 +2900,7 @@
   }
 
   function hoverClear() {
-    if (hoverId < 0) { return; }
+    if (hoverId === -1) { return; }
     hoverId = -1;
     hoverOf = {};
     hoverLine = {};
@@ -2554,13 +2912,13 @@
 
   // nothing on and nothing left over costs no DOM work at all
   function hoverPaint() {
-    if (!haloSel || (hoverId < 0 && !hoverShown)) { return; }
+    if (!haloSel || (hoverId === -1 && !hoverShown)) { return; }
     haloSel
       .attr("stroke", function (d) { return HOVER_COLOR[hoverOf[d.id]] || null; })
       .style("display", function (d) {
         return (hoverOf[d.id] && !hidden[d.id]) ? null : "none";
       });
-    hoverShown = hoverId >= 0;
+    hoverShown = hoverId !== -1;
   }
 
   // the label and the icon share one class, so one hit contract covers both;
@@ -2573,7 +2931,17 @@
     return el.__data__ || null;
   }
 
-  function hoverTarget(t) { return labelDatum(t); }
+  // the whole capsule answers the cursor, not the lettering alone: a group's
+  // body is a plain rect carrying no label class, so a pointer inside one used
+  // to read as background and drop the hover between the member names. The tap
+  // is already bound on the node group; hover joins that same hit contract.
+  function nodeDatum(target) {
+    var el = target;
+    while (el && el.classList && !el.classList.contains("node")) { el = el.parentNode; }
+    return (el && el.classList && el.__data__) || null;
+  }
+
+  function hoverTarget(t) { return labelDatum(t) || nodeDatum(t); }
 
   // delegated on the stage: three listeners for the whole graph, and a touch
   // pointer is turned away before any of it runs
@@ -2961,7 +3329,8 @@
       }
       var spec = { id: -(1000000 + (++manualSeq)),
                    name: lines[0] + "+" + (lines.length - 1),
-                   lines: lines, members: members };
+                   lines: lines, members: members,
+                   atK: superK };                // drawn at this cut: below it, the group reverts
       manualSupers.push(spec);
       txnPush({ type: "create", spec: spec, at: manualSupers.length - 1 });
       applySupers();
@@ -3010,6 +3379,7 @@
 
   function txnPush(a) {
     if (replaying) { return; }
+    handField = true;              // the hand has placed something in this field
     a.ms = Date.now();
     a.k = superK;
     undoA.push(a);
@@ -3043,6 +3413,7 @@
       f.gid = (a.gid !== undefined) ? a.gid : (a.spec ? a.spec.id : undefined);
       f.size = a.spec ? a.spec.members.length
              : (a.next ? a.next.members.length : undefined);
+      if (a.type === "clearAll") { f.size = a.specs.length; }
     }
     return f;
   }
@@ -3069,6 +3440,7 @@
       manualSupers.splice(Math.min(a.at, manualSupers.length), 0, a.spec);
     }
     else if (a.type === "expand") { delete burned[a.opIx]; }
+    else if (a.type === "clearAll") { manualSupers = a.specs.slice(); }
     superManualWas = "\u0001";
     applySupers();
     solveFit();
@@ -3080,6 +3452,7 @@
     else if (a.type === "join") { restoreManual(a.gid, a.next); }
     else if (a.type === "strike" || a.type === "split") { spliceManual(a.spec.id); }
     else if (a.type === "expand") { burned[a.opIx] = true; }
+    else if (a.type === "clearAll") { manualSupers = []; }
     superManualWas = "\u0001";
     applySupers();
     solveFit();
@@ -3119,40 +3492,82 @@
     return true;
   };
 
+  // host door: every hand-drawn group cleared as ONE undoable step; the
+  // host confirms with the reader before calling
+  window.clearDrawn = function () {
+    if (dragging) { return 0; }                // same guard the stroke paths carry
+    if (!manualSupers.length) { return 0; }
+    var specs = manualSupers.slice();
+    txnPush({ type: "clearAll", specs: specs });
+    manualSupers = [];
+    applySupers();
+    solveFit();
+    return specs.length;
+  };
+
   // the rest snapshot the host persists: positions plus the ledger. Memoed on
   // the ledger, so a save point is a user action, not every quiet settle
   function postLayout() {
     if (!realNodes.length) { return; }
     if (!txnLog.length && !undoA.length) { return; }   // nothing user-made to save
     if (layoutSentAt === txnSeq && layoutSentN === realNodes.length) { return; }
-    layoutSentAt = txnSeq; layoutSentN = realNodes.length;
+    // A file describes ONE display, whole. A hidden node keeps the row the
+    // last solve that could see it gave it and an absorbed member keeps its
+    // pre-cut row, so a save taken while anything is off screen — a cut, a
+    // drawn group, a fold, a horizon, Focus — would mix two eras into one
+    // file. Rather than write a narrower file the recall must then refuse,
+    // write nothing at all and leave the last whole one standing.
     var out = [];
     for (var i = 0; i < realNodes.length; i++) {
       var d = realNodes[i];
-      if (d.x === undefined) { continue; }
+      if (d.x === undefined || hidden[d.id] || superOf[d.id] !== undefined) { return; }
       out.push([d.id, Math.round(d.x * 10) / 10, Math.round(d.y * 10) / 10]);
     }
+    // the memo is stamped only by a save that happened, so a drag made under a
+    // cut is still written the moment the whole display comes back
+    layoutSentAt = txnSeq; layoutSentN = realNodes.length;
     // algo tags the layout era: the host recall guard drops every earlier
     // era's file — a pre-calm capture may be a mid-reheat scramble, and a
-    // recalled scramble re-saves itself at the next cold, forever
-    post({ kind: "layout", algo: "calm", nodes: out, txns: txnLog.slice() });
+    // recalled scramble re-saves itself at the next cold, forever. "calm2" is
+    // the era in which a file holds ONLY what the standing solve owns; a
+    // "calm" file may carry a hidden or absorbed node's row from another era,
+    // and the coverage rule below cannot tell that apart from a good one
+    post({ kind: "layout", algo: "calm2", nodes: out, txns: txnLog.slice() });
   }
 
-  // the recall door: saved positions land on the real nodes and the run rests
+  // The recall door: saved positions land on the real nodes and the run rests.
+  // A saved field describes ONE display. Where it does not name every node
+  // drawn right now — a community cut is standing and its capsules are not in
+  // any file, a group is drawn, the flo tree has grown since the save — half a
+  // field of saved rows over a tidy solve of the other half IS the jumble. So
+  // it lands whole or not at all, and the tidy answer stands.
   window.applyLayout = function (list) {
+    var rows = list || [], i;
+    var have = {};
+    for (i = 0; i < rows.length; i++) { have[+rows[i][0]] = true; }
+    for (i = 0; i < nodes.length; i++) {
+      if (!hidden[nodes[i].id] && !have[nodes[i].id]) { return 0; }
+    }
+    animCapture();       // the recall names the field it is flying from
     var n = 0;
-    for (var i = 0; i < (list || []).length; i++) {
-      var row = list[i], d = realById[+row[0]];
+    for (i = 0; i < rows.length; i++) {
+      var row = rows[i], d = realById[+row[0]];
       if (!d) { continue; }
       d.x = +row[1]; d.y = +row[2]; d.vx = 0; d.vy = 0;
       setBase(d);
       n++;
     }
+    // a recalled field is the hand's own work arriving from disk: the panel
+    // settling to its real size must re-frame it, never re-band it away
+    if (n) { handField = true; }
     if (n && simulation) {
       reheatCancel();
       simulation.alpha(0); simulation.alphaTarget(0); simulation.stop();
       tick();
       fitField();         // the frame follows the recalled field, not the tidy one
+      animPlay();         // and the graph flies to it, as every other solve does
+    } else {
+      animFrom = null; animView = null;        // nothing landed: no flight to fly
     }
     return n;
   };
@@ -3162,6 +3577,7 @@
   // the layout — the tidy solve or the recalled one — exactly as placed
   window.settleCold = function () {
     if (!simulation) { return false; }
+    animEnd();                    // the closing leg reads the field at rest
     reheatCancel();
     simulation.alpha(0); simulation.alphaTarget(0); simulation.stop();
     tick();
@@ -3201,8 +3617,33 @@
     hideByCollapse();
     folded = {};                               // before path pruning: what a tap can undo
     Object.keys(hidden).forEach(function (key) { folded[key] = true; });
+    holdScope();                               // a held scope outlives its selection
     revealSelected();                          // a selected node is never off screen
-    revealHover();                             // nor is one the cursor is asking about
+    revealHover();                             // nor is one the cursor is asking about,
+                                               // and both still outrank the hold
+  }
+
+  // A control moved: whatever the canvas tap was keeping on screen is stale.
+  // The hidden set is what carries the hold, so dropping the flag alone leaves
+  // it applied until something else recomputes — the recompute happens here,
+  // quietly, and the caller's own solve paints and frames it.
+  function holdRelease() {
+    if (!scopeHold) { return; }
+    scopeHold = null;
+    refresh(true);
+  }
+
+  // The scope a deselect leaves standing. Under Focus the first canvas tap
+  // drops the selection but not the picture it drew: the nodes that were off
+  // screen stay off until the second tap. It is a union, so anything the
+  // deselect newly revealed still shows, and it can never hide a node the
+  // horizon did not already have hidden.
+  function holdScope() {
+    if (!scopeHold) { return; }
+    var keys = Object.keys(scopeHold);
+    for (var i = 0; i < keys.length; i++) {
+      if (byId[+keys[i]]) { hidden[+keys[i]] = true; }
+    }
   }
 
   // mark, pick, interconnect and menu sync outrank depth and collapse: the flags
@@ -3216,6 +3657,8 @@
         delete hidden[(superOf[id] !== undefined) ? superOf[id] : id];
       }
     }
+    var lit = pulseSeedIds();                  // a ring is never off screen while it stands
+    for (var p = 0; p < lit.length; p++) { delete hidden[lit[p]]; }
   }
 
   // the hover reveal, consumed on the same rule and dropped on the same hover
@@ -3322,10 +3765,10 @@
     var member = {}, i;
     // the reach channel answers the selection itself and runs in every mode:
     // "all" has nothing to gray, and the ring is still what a selection means
-    var seeds = held ? pair.slice() : selectedIds();
+    var seeds = held ? pair.slice() : scopeSeeds();
     for (i = 0; i < seeds.length; i++) { reachScope(seeds[i], member); }
 
-    var sel = held ? pair.slice() : (linkMode === "all" ? [] : selectedIds());
+    var sel = held ? pair.slice() : (linkMode === "all" ? [] : scopeSeeds());
     if (!sel.length) { return; }
     var capped = false;
     if (sel.length > PATH_MAX_SOURCES) {
@@ -3357,7 +3800,12 @@
     memberSet = member;
     // a compare pair always grays, so the graph it is read against stays put
     markMembers(member, !held && linkMode === "focus");
-    if (capped) { console.warn("member scope: selection capped at " + PATH_MAX_SOURCES + " sources"); }
+    // once per run: a live stream can overflow the cap fifty times a second,
+    // and a warning nobody can read is a warning nobody gets
+    if (capped && !pulseCapWarn) {
+      pulseCapWarn = true;
+      console.warn("member scope: selection capped at " + PATH_MAX_SOURCES + " sources");
+    }
   }
 
   function addAll(into, from) {
@@ -3665,6 +4113,32 @@
                     name: realById[fdad].name + ".*", members: ms });
       });
     }
+    // a lone childless kid the fine stream left loose joins its siblings'
+    // family — `tape.*` must carry panic. Runs after the whole depth walk, so
+    // the pools and catch-alls keep first pick. One family under the dad only:
+    // two families both wearing `dad.*` make the orphan's home ambiguous.
+    // Every dad entry must BE the family dad — dadsR tallies per link, and a
+    // second dad elsewhere means the kid is not this family's to take
+    var famsByDad = {};
+    for (i = 0; i < fams.length; i++) {
+      famsByDad[fams[i].parent] = (famsByDad[fams[i].parent] || 0) + 1;
+    }
+    for (i = 0; i < fams.length; i++) {
+      var fop = fams[i], fdk = kidsR[fop.parent] || [];
+      if (famsByDad[fop.parent] !== 1) { continue; }
+      for (var fo = 0; fo < fdk.length; fo++) {
+        var od = fdk[fo];
+        if (claimed[od] || !realById[od]) { continue; }
+        if (kidsR[od] && kidsR[od].length) { continue; }
+        var ods = dadsR[od], solo = !!(ods && ods.length);
+        for (var fp = 0; fp < (ods ? ods.length : 0); fp++) {
+          if (ods[fp] !== fop.parent) { solo = false; }
+        }
+        if (!solo) { continue; }
+        claimed[od] = true;
+        fop.members.push(od);
+      }
+    }
     // folds last, over the finished claimed map: a parent any group took —
     // family, partition — never folds solo, or the fold would rip it back out
     for (i = 0; i < parents.length; i++) {
@@ -3822,9 +4296,19 @@
     if (dragging || !realNodes.length) { return; }
     if (!superOps) { superOps = clusterOps(); }
     var k = Math.max(0, Math.min(superOps.length, Math.round(superLevel * superOps.length)));
-    var manualKey = manualSupers.map(function (m) { return m.id; }).join(",") +
+    // the key holds only the groups the gate lets through. The gate compares
+    // the CUT INDEX, not the raw slider double, so a nudge that moves no op
+    // can never dissolve a drawn group or tear the display down
+    var manualKey = manualSupers.filter(function (m) {
+                      return k >= (m.atK || 0);
+                    }).map(function (m) { return m.id; }).join(",") +
                     "#" + Object.keys(burned).join(".");
     if (k === superK && manualKey === superManualWas) { return; }
+
+    // the cut is real: name the field before the rebuild moves it, so the
+    // caller's solve flies members into and out of their capsule
+    animCapture();
+    holdRelease();                             // the held ids are about to change
 
     var wasActive = superActive.slice();
     var carrier = {}, kidsR = {}, i, mi;
@@ -3921,6 +4405,7 @@
     }
     for (i = 0; i < manualSupers.length; i++) {
       var mg = manualSupers[i], inSet = {}, seenC = {}, take = [], bodies = 0;
+      if (k < (mg.atK || 0)) { continue; }     // reverted below its creation cut
       for (mi = 0; mi < mg.members.length; mi++) { inSet[mg.members[mi]] = true; }
       for (mi = 0; mi < mg.members.length; mi++) {
         var cid = carrier[mg.members[mi]];
@@ -3992,7 +4477,9 @@
 
     // state that named an absorbed node lets go
     if (focus && !byId[focus.id]) { focus = null; }
-    if (seedId !== -1 && !byId[seedId]) { seedId = -1; }
+    if (seedId !== -1 && !byId[seedId]) {      // absorbed: the carrier is the anchor
+      seedId = (superOf[seedId] !== undefined && byId[superOf[seedId]]) ? superOf[seedId] : -1;
+    }
     Object.keys(pinIds).forEach(function (key) {
       if (byId[+key]) { return; }
       var pd = realById[+key];
@@ -4003,7 +4490,7 @@
     Object.keys(hidden).forEach(function (key) { if (!byId[+key]) { delete hidden[key]; } });
     collapsed = {}; collapsedAt = {};
     thawFar();                                 // release the far field, never orphan its fx
-    if (hoverId >= 0 && !byId[hoverId]) { hoverClear(); }
+    if (hoverId !== -1 && !byId[hoverId]) { hoverClear(); }
     ctxForget();
     focusKeep = null;
     superK = k; superManualWas = manualKey; superActive = act;
@@ -4412,6 +4899,7 @@
   // the first tick re-bases the anchors there. A fresh solve supersedes the
   // Focus snapshot, so the way back goes with it.
   function resolveFresh() {
+    animCapture();
     thawFar();
     focusKeep = null;
     baseSolve();
@@ -4424,13 +4912,185 @@
     simulation.alpha(0); simulation.alphaTarget(0); simulation.stop();
     tick();
     fitField();                   // the fresh solve opens on the same fit frame
+    animPlay();                   // and flies to it rather than cutting
   }
+
+  // ── the transition ─────────────────────────────────────────────────────
+  // Every solve below answers with a whole new field, and cutting to it reads
+  // as the graph teleporting. So the answer is computed exactly as before and
+  // then FLOWN to: the field is rewound to where it stood, and one timer walks
+  // every node from there to its solved row while the frame walks with it.
+  //
+  // Three rules hold the calm regime intact:
+  //   the run never wakes — this is paint over solved positions, alpha stays
+  //     at 0 and no force is handed anything;
+  //   the last frame writes the solved numbers EXACTLY, so a probe, a save or
+  //     the next solve reads the answer and not an interpolation;
+  //   a solve landing mid-flight rewinds from where the field IS, so a hand on
+  //     the slider drags the graph rather than restarting it.
+  // A node with nowhere to come from — one entering the display — starts where
+  // the supernet engine already put it: a fresh capsule at its members'
+  // centroid, a released member beside the capsule it just left. That is what
+  // makes a Community change read as members flying into and out of the group.
+  var ANIM_MS = 420;                           // one flight, end to end
+  var animTimer = null;                        // the running flight, or null
+  var animGuard = null;                        // lands the flight if frames stop coming
+  var animFrom = null;                         // id -> [x, y] the field left
+  var animView = null;                         // the transform the frame left
+  var animExit = null;                         // d3 selection held for the flight
+  var animExitAt = null;                       // exit id -> [x, y] it left from
+  var animMoves = null;                        // the flight itself: node, from, to
+  var animFlights = null;                      // the held elements, same shape
+  var animTo = null;                           // the transform the frame is flying to
+  var animViewMoved = false;
+
+  function animOn() { return ANIM_MS > 0 && !dragging && !!simulation; }
+
+  // ease in and out, so the field leans into the move and settles out of it
+  function animEase(t) {
+    return (t < 0.5) ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  // where the display stands right now: read before the solve rewrites it
+  function animCapture() {
+    if (animFrom) { return; }                  // a capture stands: the field it
+                                               // named is the one being flown from
+    animAbort();                               // a flight still up is left exactly
+                                               // where it has got to — landing it
+                                               // first would snap the field forward
+                                               // once per slider event
+    if (!animOn()) { animFrom = null; return; }
+    animFrom = {};
+    for (var i = 0; i < nodes.length; i++) {
+      var d = nodes[i];
+      if (d.x === undefined || hidden[d.id]) { continue; }
+      animFrom[d.id] = [d.x, d.y];
+    }
+    animView = d3.zoomTransform(svg.node());
+  }
+
+  // the departing elements, kept in the DOM for the flight into their carrier
+  function animPark(gone) {
+    if (!animFrom) { gone.remove(); return; }
+    if (animExit) { animExit.remove(); }       // one flight holds one set
+    gone.style("pointer-events", "none");      // it is paint from here: no tap,
+                                               // no drag, no hover on a node the
+                                               // graph has already let go of
+    animExit = gone;
+    animExitAt = {};
+    gone.each(function (d) {
+      if (d && d.x !== undefined) { animExitAt[d.id] = [d.x, d.y]; }
+    });
+  }
+
+  // where a held element is flying to: the carrier that absorbed it, else the
+  // nearest standing kin, else nowhere — it simply goes
+  function animExitTo(d) {
+    var c = superOf[d.id];
+    var to = (c !== undefined) ? byId[c] : null;
+    if (!to) { to = anchorOf(d.id); }
+    return (to && to.x !== undefined) ? to : null;
+  }
+
+  // paint one frame of the flight at eased position e
+  function animFrame(e) {
+    var i;
+    for (i = 0; i < animMoves.length; i++) {
+      var m = animMoves[i];
+      m.d.x = m.x0 + (m.x1 - m.x0) * e;
+      m.d.y = m.y0 + (m.y1 - m.y0) * e;
+    }
+    for (i = 0; i < animFlights.length; i++) {
+      var f = animFlights[i];
+      d3.select(f.el).attr("transform", "translate(" +
+        (f.x0 + (f.x1 - f.x0) * e) + "," + (f.y0 + (f.y1 - f.y0) * e) + ")");
+    }
+    if (animViewMoved) {
+      panning = true;
+      svg.call(zoom.transform, d3.zoomIdentity
+        .translate(animView.x + (animTo.x - animView.x) * e,
+                   animView.y + (animTo.y - animView.y) * e)
+        .scale(animView.k + (animTo.k - animView.k) * e));
+      panning = false;
+    }
+    tick();
+  }
+
+  // Rewind and fly. The solve has left every node on its answer, so the answer
+  // is stashed, the field is put back where it came from IN THIS SAME FRAME —
+  // the reader never sees the destination flash — and a timer walks it forward.
+  function animPlay() {
+    if (!animFrom) { animExit = null; animExitAt = null; return; }
+    var from = animFrom, i, d;
+    animFrom = null;
+    animTo = d3.zoomTransform(svg.node());
+    animMoves = []; animFlights = [];
+    for (i = 0; i < nodes.length; i++) {
+      d = nodes[i];
+      if (d.x === undefined || hidden[d.id]) { continue; }
+      var f = from[d.id];
+      if (!f) { continue; }                    // entering: it starts on its anchor
+      if (Math.abs(f[0] - d.x) < 0.5 && Math.abs(f[1] - d.y) < 0.5) { continue; }
+      animMoves.push({ d: d, x0: f[0], y0: f[1], x1: d.x, y1: d.y });
+    }
+    if (animExit) {
+      animExit.each(function (ed) {
+        var at = animExitAt[ed.id], onto = animExitTo(ed);
+        if (!at || !onto) { return; }
+        animFlights.push({ el: this, x0: at[0], y0: at[1], x1: onto.x, y1: onto.y });
+      });
+    }
+    animViewMoved = !!animView && (Math.abs(animView.k - animTo.k) > 1e-4 ||
+                                   Math.abs(animView.x - animTo.x) > 0.5 ||
+                                   Math.abs(animView.y - animTo.y) > 0.5);
+    if (!animMoves.length && !animFlights.length && !animViewMoved) { animLand(); return; }
+    animFrame(0);                              // the rewind, in this frame
+    var t0 = Date.now();
+    animTimer = d3.timer(function () {
+      var t = Math.min(1, (Date.now() - t0) / ANIM_MS);
+      if (t < 1) { animFrame(animEase(t)); return; }
+      animEnd();
+    });
+    // frames can stop coming — a hidden pane, a backgrounded app — and a field
+    // stranded halfway is worse than one that never flew: land it either way
+    animGuard = setTimeout(function () { animGuard = null; animEnd(); }, ANIM_MS + 400);
+  }
+
+  // the flight is over: everything lands EXACTLY on the answer, the held
+  // elements go, and the timers go with them
+  function animEnd() {
+    if (!animTimer && !animMoves && !animExit) { return; }
+    if (animTimer) { animTimer.stop(); animTimer = null; }
+    if (animGuard) { clearTimeout(animGuard); animGuard = null; }
+    if (animMoves) { animFrame(1); }
+    animLand();
+  }
+
+  // drop the flight where it stands: no final frame, so the rows the next
+  // capture reads are the rows on screen
+  function animAbort() {
+    if (!animTimer && !animMoves && !animExit) { return; }
+    animLand();
+  }
+
+  // the bookkeeping half: no positions are written here
+  function animLand() {
+    if (animTimer) { animTimer.stop(); animTimer = null; }
+    if (animGuard) { clearTimeout(animGuard); animGuard = null; }
+    if (animExit) { animExit.remove(); animExit = null; }
+    animExitAt = null; animMoves = null; animFlights = null;
+    animTo = null; animView = null; animViewMoved = false;
+  }
+
+  window.__flod3AnimEnd = function () { animEnd(); return ANIM_MS; };
 
   // the anchor's own legs answering a membership move: the tidy solve over
   // what is visible now, the frame fit to it, and the run left cold. The
-  // Focus snapshot is kept — the way back is still the way back.
+  // Focus snapshot is kept — the way back is still the way back. The field
+  // flies to the answer rather than cutting to it.
   function solveFit() {
     if (!simulation) { return; }
+    animCapture();
     thawFar();
     baseSolve();
     pinRestore();                 // a drag pin keeps its ground, as in resolveFresh
@@ -4442,10 +5102,12 @@
     simulation.alpha(0); simulation.alphaTarget(0); simulation.stop();
     tick();
     fitField();
+    animPlay();
   }
 
   // headless probe — visibility, pin and viewport numbers for the dev harness
   window.__flod3Probe = function () {
+    animEnd();                    // a probe reads the solved field, not a frame of it
     var vis = 0;
     nodes.forEach(function (n) { if (!hidden[n.id]) { vis++; } });
     var t = d3.zoomTransform(svg.node());
@@ -4500,8 +5162,8 @@
     links.forEach(function (l) {
       if (!linkOn(l) || hidden[endId(l.source)] || hidden[endId(l.target)]) { return; }
       if (grayed[endId(l.source)] || grayed[endId(l.target)]) { return; }
-      if (hoverId >= 0 && hoverLine[pairKey(endId(l.source), endId(l.target))]) { lineLit++; return; }
-      if (hoverId >= 0 && !(hoverOf[endId(l.source)] && hoverOf[endId(l.target)])) { dimByHover++; }
+      if (hoverId !== -1 && hoverLine[pairKey(endId(l.source), endId(l.target))]) { lineLit++; return; }
+      if (hoverId !== -1 && !(hoverOf[endId(l.source)] && hoverOf[endId(l.target)])) { dimByHover++; }
     });
     return { id: hoverId, members: members, grayByHover: grayHover,
              halos: halo, linksDimByHover: dimByHover, lineLinks: lineLit,
@@ -4599,6 +5261,7 @@
   // headless probe — the saved layout, the live view onto it, and both frames
   // per node, so a flip can be measured as the geometry it is
   window.__flod3Layout = function (ids) {
+    animEnd();
     var list = (ids && ids.length)
       ? ids.map(function (i) { return byId[+i]; })
       : nodes;
@@ -4622,6 +5285,7 @@
 
   // headless probe — deterministic settle, replacing the animation-frame timer
   window.__flod3Settle = function (n) {
+    animEnd();
     if (!simulation) { return 0; }
     if (reheatTimer) { clearTimeout(reheatTimer); reheatTimer = null; reheatNow(); }
     simulation.stop();
@@ -4662,6 +5326,7 @@
 
   // headless probe — planarity numbers for the layout sweep
   window.__flod3Metrics = function () {
+    animEnd();
     var lens = [], seen = {};
     links.forEach(function (l) {
       if (l.kind !== "red" || !linkOn(l)) { return; }
@@ -4812,6 +5477,10 @@
     return { level: superLevel, k: superK,
              ops: (superOps || []).map(function (o) { return o.type + ":" + o.name; }),
              active: act, manual: manualSupers.length,
+             gatedOut: manualSupers.filter(function (m) {
+               return superK < (m.atK || 0); }).length,
+             specs: manualSupers.map(function (m) {
+               return { id: m.id, atK: m.atK || 0, size: m.members.length }; }),
              nodes: nodes.length, links: links.length,
              synLinks: links.reduce(function (m, l) { return m + (l.sup ? 1 : 0); }, 0) };
   };
@@ -4822,6 +5491,15 @@
   // anything under the cursor. The signature is taken all the same, so the
   // reveal and the clear both leave the rebuild guard reading true.
   function refresh(quiet) {
+    // The hold belongs to the canvas tap that took it. A NEW selection releases
+    // it — the reader is reading something else now — but an empty one never
+    // does: the host echoes the very deselect that took the hold back as an
+    // empty mark set, and that echo must not open the graph the tap just kept.
+    // The controls release it by hand, through holdRelease.
+    // …and a live event is not a reader: a pulse solve landing inside that echo
+    // window would take the hold the tap just made, on nobody's gesture at all
+    if (!quiet && !holdArm && !pulseSolve && scopeHold && selectedIds().length) { scopeHold = null; }
+    holdArm = false;
     buildAdjacency();
     recomputeHidden();
     recomputePaths();   // focus mode adds to hidden, so the rest reads it after
@@ -4902,12 +5580,12 @@
     if (grayed[d.source.id] || grayed[d.target.id]) { return "dim"; }
     // the chain to the root is the hover, so a focus or a one-hop selection
     // sitting elsewhere cannot mute the lineage the cursor is standing on
-    if (hoverId >= 0 && hoverLine[pairKey(d.source.id, d.target.id)]) { return "on"; }
+    if (hoverId !== -1 && hoverLine[pairKey(d.source.id, d.target.id)]) { return "on"; }
     // a one-hop ball only: both ends lit but neither is the selection, so the
     // wire runs neighbor to neighbor, outside the incident set the ring stands
     // for. A wider ball lights every edge it closes over and sets no seed here.
-    if (adjSeed >= 0 && d.source.id !== adjSeed && d.target.id !== adjSeed) { return "dim"; }
-    if (hoverId >= 0 && !(hoverOf[d.source.id] && hoverOf[d.target.id])) { return "dim"; }
+    if (adjSeed !== -1 && d.source.id !== adjSeed && d.target.id !== adjSeed) { return "dim"; }
+    if (hoverId !== -1 && !(hoverOf[d.source.id] && hoverOf[d.target.id])) { return "dim"; }
     if (!focus) { return "on"; }
     return (d.source.id === focus.id || d.target.id === focus.id) ? "on" : "off";
   }
@@ -5035,6 +5713,8 @@
   // A drag is a layout edit, not an excuse to re-solve: the hand moves the
   // one node it holds and everything else is not touched at all.
   function dragStart(d) {
+    animEnd();     // the hand takes the field first: a flight still writing x
+                   // and y would fight the drag for every node it holds
     dragging = true;
     // d3-drag stops propagation on mousedown and touchstart alike, so the
     // page's own handlers never get to clear the pan latch — and one drag
@@ -5106,6 +5786,7 @@
 
   function dragEnd(d) {
     dragging = false;
+    pulseScopeKick();                          // whatever the hand deferred is owed now
     if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
     holdOn = false; flingOn = 0; frictApply();
     var placed = dragMoved;
@@ -5145,10 +5826,25 @@
   }
 
   // ── resize ─────────────────────────────────────────────────────────────
-  // A resize moves the frame, never the graph: the stage numbers follow the
-  // viewport, the transform slides by half the delta so the view keeps its
-  // centre, and every node stands exactly where it was. The forces read the
-  // new width and height on whatever rebuild comes next.
+  // A resize moves the frame, never the graph the HAND placed: the stage
+  // numbers follow the viewport, the transform slides by half the delta so the
+  // view keeps its centre, and every node stands exactly where it was. A field
+  // no hand has touched is re-banded instead, because its columns were packed
+  // against a viewport it no longer has. The forces read the new width and
+  // height on whatever rebuild comes next.
+  var rebandTimer = null;
+
+  // a panel fold animates, so the events arrive in a stream: one solve at the
+  // end of it, never one per frame
+  function reband() {
+    if (rebandTimer) { clearTimeout(rebandTimer); }
+    rebandTimer = setTimeout(function () {
+      rebandTimer = null;
+      if (!simulation || handField || dragging) { fitField(); return; }
+      solveFit();
+    }, 150);
+  }
+
   window.addEventListener("resize", function () {
     var dw = window.innerWidth - width;
     var dh = window.innerHeight - height;
@@ -5156,6 +5852,15 @@
     height = window.innerHeight;
     svg.attr("width", width).attr("height", height);
     if (!dw && !dh) { return; }
+    animViewMoved = false;     // the frame below is fitted to the new viewport;
+                               // a flight still writing the old one would undo it
+    // The bands were packed against the viewport that stood at solve time, so
+    // a machine-made field belongs to a size it no longer has: re-band it. A
+    // field the hand has placed — a drag pin, a ledger entry — is re-framed
+    // and never re-banded. The panel opens at a provisional size and settles
+    // one runloop later, so this is also what makes the first frame the
+    // reader sees a field packed for the panel actually on screen.
+    if (simulation && !handField && !dragging) { reband(); return; }
     if (visibleBox()) { fitField(); return; }  // the frame follows the field into the new viewport
     var t = d3.zoomTransform(svg.node());
     panning = true;

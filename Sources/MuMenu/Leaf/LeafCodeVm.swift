@@ -71,9 +71,12 @@ public class LeafCodeVm: LeafVm {
                     guard let self else { return }
                     self.errors = errors
                     if errors.isEmpty {
-                        if body != Self.seed?(embedFlo) { // unedited template stays out of archives
-                            embedFlo.setEmbed(body)
-                        }
+                        // the flo body is both what the archive saves and what
+                        // the rule's own closure recompiles on its next touch,
+                        // so an undone tweak left here swaps itself back in.
+                        // An unedited body equals the template, so it carries
+                        // no delta and stays out of archives on its own
+                        embedFlo.setEmbed(body)
                         self.dirty = false
                         self.status = "compiled · live"
                     } else {
@@ -87,6 +90,36 @@ public class LeafCodeVm: LeafVm {
 
     public func undo() { runScript?("cm.undo()") }
     public func redo() { runScript?("cm.redo()") }
+
+    /// bottom bar: 12pt labels, 5pt capsule padding, 8pt around the row
+    public static let barHeight = CGFloat(40)
+    /// panel floor in Menu.diameter units; the value column beside it is 4·d
+    static let heightLeast = CGFloat(5)
+    /// panel at rest, the aspect PanelVm hands out before any measure
+    static let heightRest = CGFloat(12)
+
+    private var pageHeight = CGFloat(0)
+
+    /// posted content height -> panel height (LeafGraphVm aspect mechanism).
+    /// The page keeps `height: 100%`, so a body past the cap goes on scrolling
+    /// inside CodeMirror instead of growing the panel past the screen
+    public func applyCodeHeight(_ posted: Double) {
+        let want = CGFloat(posted)
+        guard want > 0, want != pageHeight else { return }
+        pageHeight = want
+        let screen = MenuScreen.shared.size.value.height
+        let most = (screen > 0
+                    ? screen - Menu.diameter2 * 2
+                    : Self.heightRest * Menu.diameter)
+        let tall = min(most, max(Self.heightLeast * Menu.diameter,
+                                 want + Self.barHeight))
+        let unit = CGSize(width: panelVm.aspectSz.width,
+                          height: tall / Menu.diameter)
+        guard unit.height != panelVm.aspectSz.height else { return }
+        panelVm.aspectSz = unit
+        branchVm.panelVm.aspectSz = unit
+        refreshView()
+    }
 
     public func applyErrors() {
         if let data = try? JSONEncoder().encode(errors),

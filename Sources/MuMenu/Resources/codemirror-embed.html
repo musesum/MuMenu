@@ -35,6 +35,7 @@ function loadCode(text) {
     cm.setValue(text);
     cm.clearHistory();
     setErrors([]);
+    postSize();
 }
 function getCode() { return cm.getValue(); }
 
@@ -59,6 +60,36 @@ function setErrors(list) {
 cm.on("change", function(_, change) {
     if (change.origin !== "setValue") { post({ kind: "dirty" }); }
 });
+// content height: the line band plus the .CodeMirror-lines 4px top/bottom.
+// getScrollInfo() floors at the pane height, so it never reads a short body
+function postSize() {
+    post({ kind: "size", h: cm.defaultTextHeight() * cm.lineCount() + 8 });
+}
+cm.on("changes", postSize);
+// CodeMirror places a touch caret only on touchend, gated on zero movement
+// within 300ms, and its mousedown handler refuses to run while activeTouch
+// stands — 1000ms after any touch, cancel included. So a finger that jitters
+// or gets cancelled lands no caret and gets no mouse fallback. A pencil
+// reports radiusX<=1, skips the touch path, and takes the mouse path. This
+// leg answers the finger with the same caret.
+(function () {
+    var scroller = cm.getScrollerElement(), down = null;
+    scroller.addEventListener("touchstart", function (ev) {
+        down = ev.touches.length === 1
+            ? { left: ev.touches[0].pageX, top: ev.touches[0].pageY, at: Date.now() }
+            : null;
+    }, true);
+    function settle(ev) {
+        var was = down, end = ev.changedTouches && ev.changedTouches[0];
+        down = null;
+        if (!was || Date.now() - was.at > 500) { return; }
+        if (end && Math.hypot(end.pageX - was.left, end.pageY - was.top) > 10) { return; }
+        cm.setCursor(cm.coordsChar(was, "page"));
+        cm.focus();
+    }
+    scroller.addEventListener("touchend", settle, true);
+    scroller.addEventListener("touchcancel", settle, true);
+})();
 function post(msg) {
     if (window.webkit && webkit.messageHandlers.mucode) {
         webkit.messageHandlers.mucode.postMessage(msg);

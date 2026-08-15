@@ -120,13 +120,18 @@ private struct GraphSpanView: View {
 }
 
 /// the bottom card boundary: a drag up gives the card the travel, with the two
-/// history hops flanking it while the card stands. Both flanks are one width,
-/// so the centered row leaves the handle on the page midline, and the row is
-/// bottom aligned, so the handle keeps the same 14pt band. The flanks ride the
-/// card because a folded one drops this row onto the panel floor, where a page
-/// squeezed to `webLeast` would stand them in the SW and SE grab bands; a card
-/// at its own floor holds the row 88pt clear of both
+/// history hops flanking it. Both flanks are one width, so the centered row
+/// leaves the handle on the page midline, and the row is bottom aligned, so the
+/// handle keeps the same 14pt band. The flanks stand whether the card does or
+/// not — undo and redo are graph actions, and a folded card is no reason to
+/// lose them — so a folded card lifts the whole row off the panel floor
+/// instead: at the floor a page squeezed to `webLeast` would stand the flanks
+/// in the SW and SE grab bands, and a standing card already holds them 88pt
+/// clear of both
 private struct GraphHipoFoldView: View {
+
+    /// what a folded card lifts the row by, clear of the corner grab bands
+    static let floorLift: CGFloat = 34
 
     @ObservedObject var leafVm: LeafGraphVm
 
@@ -134,11 +139,9 @@ private struct GraphHipoFoldView: View {
 
     var body: some View {
         HStack(alignment: .bottom, spacing: HipoRoamView.gap) {
-            if !leafVm.hipoHidden {
-                HipoRoamView(icon: "chevron.left",
-                             live: leafVm.hipoUndoOn,
-                             step: { leafVm.undoHipo() })
-            }
+            HipoRoamView(icon: "chevron.left",
+                         live: leafVm.hipoUndoOn,
+                         step: { leafVm.undoHipo() })
             GraphSpanView(icon: leafVm.hipoHidden
                           ? "rectangle"
                           : "rectangle.bottomthird.inset.filled",
@@ -146,13 +149,11 @@ private struct GraphHipoFoldView: View {
                           span: { leafVm.hipoSpan },
                           drag: { leafVm.dragHipo($0, $1) },
                           fold: { leafVm.hipoHidden.toggle() })
-            if !leafVm.hipoHidden {
-                HipoRoamView(icon: "chevron.right",
-                             live: leafVm.hipoRedoOn,
-                             step: { leafVm.redoHipo() })
-            }
+            HipoRoamView(icon: "chevron.right",
+                         live: leafVm.hipoRedoOn,
+                         step: { leafVm.redoHipo() })
         }
-        .padding(.bottom, 1)
+        .padding(.bottom, leafVm.hipoHidden ? GraphHipoFoldView.floorLift : 1)
     }
 }
 
@@ -626,6 +627,7 @@ private struct GraphNotesView: View {
 private struct GraphControlsView: View {
 
     @ObservedObject var leafVm: LeafGraphVm
+    @State private var confirmReset = false
 
     init(_ leafVm: LeafGraphVm) { self.leafVm = leafVm }
 
@@ -633,7 +635,21 @@ private struct GraphControlsView: View {
         VStack(alignment: .leading, spacing: 2) {
             GraphModeView(leafVm)
             GraphMenuView(leafVm)
-            Text("Community")
+            HStack {
+                Text("Community")
+                Spacer(minLength: 0)
+                Button("Reset") { confirmReset = true }
+                    .font(.system(size: 11))
+                    .foregroundColor(.white.opacity(0.7))
+                    .confirmationDialog("Are you sure?",
+                                        isPresented: $confirmReset,
+                                        titleVisibility: .visible) {
+                        Button("Clear all drawn", role: .destructive) { leafVm.clearDrawn() }
+                        Button("Cancel", role: .cancel) { }
+                    } message: {
+                        Text("Clears every drawn group. Undo restores them.")
+                    }
+            }
             Slider(value: $leafVm.communityLevel, in: 0...1)
             Text("Depth \(leafVm.depthTitle)")
             // the hold marks the drag for the page's friction ramp; no energy

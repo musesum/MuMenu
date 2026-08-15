@@ -32,6 +32,7 @@ struct LeafCodeView: View {
                 }
             }
             .padding(8)
+            .frame(height: LeafCodeVm.barHeight)
             .background(Color.black.opacity(0.9))
         }
         .cornerRadius(Menu.radius)
@@ -64,7 +65,7 @@ private struct CodeWebView: UIViewRepresentable {
         let config = WKWebViewConfiguration()
         config.userContentController.add(context.coordinator, name: Self.handlerName)
 
-        let webView = WKWebView(frame: .zero, configuration: config)
+        let webView = CodeWebUIView(frame: .zero, configuration: config)
         webView.navigationDelegate = context.coordinator
         webView.isOpaque = false
         webView.backgroundColor = .black
@@ -97,6 +98,48 @@ private struct CodeWebView: UIViewRepresentable {
     }
 }
 
+/// WebKit's form accessory carries two chevrons it builds already disabled, and
+/// on phone its own Done bar. The content view reads both through the web view,
+/// so the two public seams below are where they are refused and replaced
+private final class CodeWebUIView: WKWebView {
+
+    #if !os(visionOS)
+    /// on pad the chevrons ride the shortcut bar, not an accessory, so the item
+    /// itself is what has to refuse them
+    private let bareAssistant = BareAssistantItem()
+
+    override var inputAssistantItem: UITextInputAssistantItem { bareAssistant }
+
+    /// on phone this replaces the whole form bar; on pad it is the only bar
+    override var inputAccessoryView: UIView? { doneBar }
+
+    private lazy var doneBar: UIToolbar = {
+        let bar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 0, height: 44))
+        bar.items = [.flexibleSpace(),
+                     UIBarButtonItem(image: UIImage(systemName: "checkmark"),
+                                     style: .done, target: self,
+                                     action: #selector(closeKeys))]
+        bar.sizeToFit()
+        return bar
+    }()
+
+    /// the content view holds the caret, not the web view, so the resign walks down
+    @objc private func closeKeys() { endEditing(true) }
+    #endif
+}
+
+#if !os(visionOS)
+/// swallows the groups WebKit writes, in whatever order it writes them
+private final class BareAssistantItem: UITextInputAssistantItem {
+    override var leadingBarButtonGroups: [UIBarButtonItemGroup] {
+        get { [] } set { }
+    }
+    override var trailingBarButtonGroups: [UIBarButtonItemGroup] {
+        get { [] } set { }
+    }
+}
+#endif
+
 /// injects the embed body after load; routes dirty edits
 @MainActor
 final class CodeWebCoordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
@@ -115,6 +158,7 @@ final class CodeWebCoordinator: NSObject, WKNavigationDelegate, WKScriptMessageH
         guard let body = message.body as? [String: Any] else { return }
         switch body["kind"] as? String {
         case "dirty" : leafVm.dirty = true
+        case "size"  : leafVm.applyCodeHeight(body["h"] as? Double ?? 0)
         default      : DebugLog { P("{} code ?\(body)") }
         }
     }

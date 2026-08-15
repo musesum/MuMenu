@@ -11,6 +11,8 @@ extension RootVm { // touch
 
         self.touchState = touchState
         beginViewOps = viewOps
+        codeSpotBegan = (nodeSpotVm?.menuTree.isCodeRow == true ||
+                         nodeSpotVm?.menuTree.parentTree?.isCodeRow == true)
 
         updateRoot(fromRemote)
         updateSpot(nodeSpotVm, fromRemote)

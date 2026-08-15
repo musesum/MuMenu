@@ -77,8 +77,10 @@ extension RootVm {
     }
 
     public func showTrunks(_ fromRemote: Bool) {
-        if treeVms.count == 1 {
-            showFirstTree(fromRemote: true)
+        if treeVms.count == 1, let treeVm = treeVms.first {
+            treeSpotVm = treeVm
+            treeVm.growTree(depth: 1, "trunk", fromRemote)
+            viewOps = [.root, .trunks]
         } else {
             for treeVm in treeVms {
                 treeVm.growTree(depth: 1, "trunk", fromRemote)

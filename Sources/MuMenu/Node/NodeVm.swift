@@ -148,6 +148,9 @@ public class NodeVm: Identifiable, ObservableObject {
     func updateNodeValue(_ visit: Visitor = Visitor(0,.user)) {
         rootVm.showTrees(/* fromRemote */ false)
 
+        // `{}` row and its editor share the control's flo, carry no value
+        if menuTree.isCodeRow || menuTree.parentTree?.isCodeRow == true { return }
+
         switch nodeType {
         case .xy, .xyz, .xyzw : update(withPrior: true)
         case .val, .seg : updateDefault()

@@ -46,6 +46,7 @@ extension RootVm { // + State
         }
         if      beganLeaf()  { logRoot("beganLeaf ↦ 🍁") } // touch began on leaf
         else if endedTog()   { logRoot("endedTog ⇥ 🔘") } // touch ended on toggle
+        else if endedCode()  { logRoot("endedCode ⇥ {}") } // tap closed `{}` editor
         else if hoverNode()  { logRoot("hoverNode ⟳ ⚪️") } // over the spot node
         else if hoverRoot()  { logRoot("hoverRoot ⟳ 🫚") } // over the root node
         else if hoverTree()  { logRoot("hoverTree ⟳ 🌲") } // new node on same tree
@@ -113,6 +114,24 @@ extension RootVm { // + State
                 return true
             }
             return false
+        }
+        /// second tap on an open `{}` row closes its editor: the branch spot
+        /// drops back to the control, so growTree stops before the editor
+        func endedCode() -> Bool {
+            guard codeSpotBegan,
+                  let codeVm = nodeSpotVm,
+                  codeVm.menuTree.isCodeRow,
+                  touchState.phase == .ended,
+                  touchState.touchEndedCount == 1,
+                  codeVm.contains(touchNow),
+                  let controlVm = codeVm.branchVm.nodeVms
+                    .first(where: { $0.nodeType.isControl })
+            else { return false }
+
+            touchType = .node
+            updateSpot(controlVm, fromRemote)
+            treeSpotVm?.growTree(depth: 9, "endedCode-", fromRemote)
+            return true
         }
 
         func hoverNode() -> Bool {
