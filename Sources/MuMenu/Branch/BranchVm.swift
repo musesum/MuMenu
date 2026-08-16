@@ -168,6 +168,16 @@ public class BranchVm: @MainActor Identifiable, ObservableObject {
                 return nodeSpotVm
             }
         }
+        // A control's runway is its real hit area. The icon circle below is
+        // a fraction of it, so without this the `{}` row — which holds the
+        // branch spot while its editor is open — leaves most of the slider
+        // unreachable, and its own circle claims the runway's foot
+        if let runwayVm = nodeVms.first(where: {
+            ($0 as? LeafVm)?.runways.contains(touchNow) ?? false
+        }) {
+            updateNodeSpot(runwayVm)
+            return runwayVm
+        }
         // Use each node's own contains() (which on watchOS reflects the
         // node's actual panel bounds, not a fixed Menu.diameter radius),
         // then distance to break ties between overlapping candidates.

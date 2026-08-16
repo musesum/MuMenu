@@ -165,6 +165,15 @@ public class LeafCodeVm: LeafVm {
         let want = CGFloat(posted)
         guard want > 0, want != pageHeight else { return }
         pageHeight = want
+        // the page posts from inside a WKScriptMessage turn, which can land
+        // while the tree is still committing a layout; publishing panel
+        // geometry there is a write during an update, so take the next turn
+        DispatchQueue.main.async { [weak self] in
+            self?.applyPageHeight(want)
+        }
+    }
+
+    private func applyPageHeight(_ want: CGFloat) {
         let screen = MenuScreen.shared.size.value.height
         let most = (screen > 0
                     ? screen - Menu.diameter2 * 2
