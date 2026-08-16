@@ -49,11 +49,68 @@ public class LeafCodeVm: LeafVm {
         return ""
     }
 
-    /// push code plus current annotations into a freshly loaded page
+    /// push code plus current annotations into a freshly loaded page,
+    /// resuming the text and undo stack left behind by an earlier session
     public func loadPage() {
-        runScript?("loadCode(\(Self.jsText(code)))")
+        let body = code
+        if let stash = readStash(), stash.base == body {
+            runScript?("loadCode(\(Self.jsText(stash.text)), \(Self.jsText(stash.history)))")
+            dirty = stash.text != body
+        } else {
+            clearStash() // the flo moved on; its stack no longer maps
+            runScript?("loadCode(\(Self.jsText(body)))")
+            dirty = false
+        }
         applyErrors()
-        dirty = false
+    }
+
+    //  MARK: - stash
+
+    /// editor state that outlives the leaf: the text as last shown, its
+    /// CodeMirror history, and the flo body both were measured against
+    private struct CodeStash: Codable {
+        let base: String
+        let text: String
+        let history: String
+    }
+    /// a runaway stack is not worth the defaults store
+    private static let stashMost = 256 * 1024
+
+    private var stashKey: String? {
+        guard let embedFlo else { return nil }
+        return "MuMenu.code." + embedFlo.path()
+    }
+
+    /// the page hands out text plus stack once per edit burst
+    public func applyCodeStash(_ text: String, _ history: String) {
+        writeStash(CodeStash(base: code, text: text, history: history))
+    }
+
+    /// a compile makes the submitted body the new baseline; the stack stands
+    private func rebaseStash(_ body: String) {
+        writeStash(CodeStash(base: body, text: body,
+                             history: readStash()?.history ?? ""))
+    }
+
+    private func readStash() -> CodeStash? {
+        guard let stashKey,
+              let data = UserDefaults.standard.data(forKey: stashKey)
+        else { return nil }
+        return try? JSONDecoder().decode(CodeStash.self, from: data)
+    }
+
+    private func writeStash(_ stash: CodeStash) {
+        guard let stashKey,
+              let data = try? JSONEncoder().encode(stash)
+        else { return }
+        if data.count > Self.stashMost { return clearStash() }
+        UserDefaults.standard.set(data, forKey: stashKey)
+    }
+
+    private func clearStash() {
+        if let stashKey {
+            UserDefaults.standard.removeObject(forKey: stashKey)
+        }
     }
 
     public func submit() {
@@ -77,6 +134,7 @@ public class LeafCodeVm: LeafVm {
                         // An unedited body equals the template, so it carries
                         // no delta and stays out of archives on its own
                         embedFlo.setEmbed(body)
+                        self.rebaseStash(body)
                         self.dirty = false
                         self.status = "compiled · live"
                     } else {

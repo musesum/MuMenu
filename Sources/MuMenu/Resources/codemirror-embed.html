@@ -31,11 +31,18 @@ var cm = CodeMirror(document.body, {
 });
 var errorLines = [];
 
-function loadCode(text) {
+var loading = false;
+
+function loadCode(text, historyJson) {
+    loading = true;
     cm.setValue(text);
     cm.clearHistory();
+    if (historyJson) {
+        try { cm.setHistory(JSON.parse(historyJson)); } catch (e) {}
+    }
     setErrors([]);
     postSize();
+    loading = false;
 }
 function getCode() { return cm.getValue(); }
 
@@ -66,6 +73,21 @@ function postSize() {
     post({ kind: "size", h: cm.defaultTextHeight() * cm.lineCount() + 8 });
 }
 cm.on("changes", postSize);
+// the undo stack outlives this page, so hand it out with the text it belongs
+// to. One post per edit burst, never during a load — the restored stack would
+// only be handed straight back
+var stashTimer = null;
+function postStash() {
+    if (loading) { return; }
+    if (stashTimer) { clearTimeout(stashTimer); }
+    stashTimer = setTimeout(function () {
+        stashTimer = null;
+        post({ kind: "stash",
+               text: cm.getValue(),
+               history: JSON.stringify(cm.getHistory()) });
+    }, 400);
+}
+cm.on("changes", postStash);
 // CodeMirror places a touch caret only on touchend, gated on zero movement
 // within 300ms, and its mousedown handler refuses to run while activeTouch
 // stands — 1000ms after any touch, cancel included. So a finger that jitters

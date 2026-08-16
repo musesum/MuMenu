@@ -159,6 +159,8 @@ final class CodeWebCoordinator: NSObject, WKNavigationDelegate, WKScriptMessageH
         switch body["kind"] as? String {
         case "dirty" : leafVm.dirty = true
         case "size"  : leafVm.applyCodeHeight(body["h"] as? Double ?? 0)
+        case "stash" : leafVm.applyCodeStash(body["text"] as? String ?? "",
+                                             body["history"] as? String ?? "")
         default      : DebugLog { P("{} code ?\(body)") }
         }
     }
